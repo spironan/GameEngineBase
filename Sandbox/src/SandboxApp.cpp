@@ -18,7 +18,15 @@ Technology is prohibited.
 class Sandbox : public Engine::Application
 {
 public:
-    Sandbox() = default;
+    Sandbox() //= default;
+    {
+        LOG_TRACE("Trace Log!");
+        LOG_INFO("Info Log!");
+        LOG_WARN("Warning Log!");
+        LOG_ERROR("Error Log!");
+        LOG_CRITICAL("Critical Log!");
+    };
+
     virtual ~Sandbox() = default;
 };
 

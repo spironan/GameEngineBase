@@ -16,6 +16,8 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/Application.h"
+#include "Engine/Log.h"
+#include "Engine/Assert.h"
 
 //---entry point
 #include "Engine/EntryPoint.h"

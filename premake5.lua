@@ -4,6 +4,8 @@
 -- Always use forward slash, premake converts to the appropriate slash when built
 workspace "GameEngineBase"
     architecture "x64"
+    -- set startup project
+    startproject "Sandbox"
 
     configurations
     {
@@ -13,36 +15,46 @@ workspace "GameEngineBase"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
--- set startup project
-startproject "Sandbox"
+-- Include directories relative to root folder(solution directory)
+-- this is an example for SPDLOG but its not actually used.
+IncludeDir = {}
+IncludeDir["SPDLOG"] = "%{prj.name}/vendor/spdlog/include"
 
 project "Engine"
     location "Engine"
     kind "StaticLib"
     language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
 
+    -- Engine output directory
     targetdir("bin/"..outputdir.. "/%{prj.name}")
     objdir("bin-int/"..outputdir.."/%{prj.name}")
 
+    -- Engine's files
     files
     {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp"
     }
 
-    includedirs
+    -- Engine's defines 
+    defines
     {
-        "%{prj.name}/src"
+        "_CRT_SECURE_NO_WARNINGS",
     }
 
+    -- Engine's include directories
+    includedirs
+    {
+        "%{prj.name}/src",
+        --"%{prj.name}/vendor/spdlog/include"
+        "%{IncludeDir.SPDLOG}"
+    }
+
+    --precompiled headers
     pchheader ("pch.h")
     pchsource ("%{prj.name}/src/Engine/pch.cpp")
-
-    -- Engine's include directories
-    -- includedirs 
-    -- {
-    --     "%{prj.name}/vendor"
-    -- }
 
     filter "system:windows"
         cppdialect "C++17"
@@ -75,6 +87,8 @@ project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir("bin/"..outputdir.. "/%{prj.name}")
     objdir("bin-int/"..outputdir.."/%{prj.name}")
@@ -87,8 +101,9 @@ project "Sandbox"
 
     includedirs
     {
-        "Engine/src"
-        "%{prj.name}/src"
+        "Engine/src",
+        "%{prj.name}/src",
+        "Engine/vendor/spdlog/include"
     }
 
     filter "system:windows"
