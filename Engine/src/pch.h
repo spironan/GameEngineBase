@@ -23,6 +23,10 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+// Utility files
+#include "Utility/Bitmask.h"
+
+
 // Commonly use external libraries
 #include <iostream>
 #include <sstream>

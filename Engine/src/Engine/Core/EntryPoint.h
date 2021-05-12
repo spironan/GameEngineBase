@@ -15,30 +15,17 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-extern Engine::Application* Engine::CreateApplication();
+#include "Application.h"
+#include "Log.h"
+
+extern Engine::Application* Engine::CreateApplication(Engine::CommandLineArgs args);
 
 int main(int argc, char** argv)
 {
+    // Initialize logging system
     Engine::Log::Init();
-    
-    bool pass = true;
-    ENGINE_ASSERT(true);
-    //ENGINE_ASSERT(false);
-    ENGINE_ASSERT_MSG(pass,"failed test case");
-    ENGINE_ASSERT_MSG(!pass, "failed test case");
 
-    ENGINE_VERIFY(pass);
-    //ENGINE_VERIFY(!pass);
-    ENGINE_VERIFY_MSG(pass, "failed test case");
-    //ENGINE_VERIFY_MSG(!pass, "failed test case");
-
-    LOG_ENGINE_TRACE("Trace Log!");
-    LOG_ENGINE_INFO("Info Log!");
-    LOG_ENGINE_WARN("Warning Log!");
-    LOG_ENGINE_ERROR("Error Log!");
-    LOG_ENGINE_CRITICAL("Critical Log!");
-
-    auto app = Engine::CreateApplication();
+    auto app = Engine::CreateApplication({argc, argv});
     app->Run();
     delete app;
 }

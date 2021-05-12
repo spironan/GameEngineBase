@@ -13,6 +13,8 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+#include "Log.h"
+
 //Windows only, visual studios only.
 #ifdef ENGINE_DEBUG
     //Asserts are completely stripped upon not in debug 
