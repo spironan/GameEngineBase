@@ -18,7 +18,8 @@ Technology is prohibited.
 class Sandbox : public Engine::Application
 {
 public:
-    Sandbox() //= default;
+    Sandbox(Engine::CommandLineArgs args)
+        : Application{ "Sandbox" , args }
     {
         LOG_TRACE("Trace Log!");
         LOG_INFO("Info Log!");
@@ -30,7 +31,7 @@ public:
     virtual ~Sandbox() = default;
 };
 
-Engine::Application* Engine::CreateApplication()
+Engine::Application* Engine::CreateApplication(CommandLineArgs args)
 {
-    return new Sandbox();
+    return new Sandbox(args);
 }

@@ -41,7 +41,7 @@ project "Engine"
     -- Engine's defines 
     defines
     {
-        "_CRT_SECURE_NO_WARNINGS",
+        "_CRT_SECURE_NO_WARNINGS"
     }
 
     -- Engine's include directories
@@ -54,7 +54,7 @@ project "Engine"
 
     --precompiled headers
     pchheader ("pch.h")
-    pchsource ("%{prj.name}/src/Engine/pch.cpp")
+    pchsource ("%{prj.name}/src/pch.cpp")
 
     filter "system:windows"
         cppdialect "C++17"
