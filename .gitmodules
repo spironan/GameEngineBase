@@ -1,3 +1,6 @@
 [submodule "Engine/vendor/spdlog"]
 	path = Engine/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Engine/vendor/sdl2"]
+	path = Engine/vendor/sdl2
+	url = https://github.com/spurious/SDL-mirror

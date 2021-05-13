@@ -4,40 +4,56 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{130D9B61-7FC2-1357-08B7-0D2E746B0A5B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{5FAFB439-CB6F-3070-94AA-79ED002A754C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{594615A9-C525-9444-CE3D-1F1B3A9CFAA5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Engine\Core\Application.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\Assert.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\EntryPoint.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Log.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\MouseCodes.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Events\ApplicationEvent.h">
+      <Filter>Engine\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Events\Event.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Core\Log.h">
-      <Filter>Engine</Filter>
+    <ClInclude Include="src\Engine\Events\KeyEvent.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Events\MouseEvent.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility\Bitmask.h">
+      <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\Engine\Events\MouseEvent.h" />
-    <ClInclude Include="src\Engine\Events\ApplicationEvent.h" />
-    <ClInclude Include="src\Engine\Events\KeyEvent.h" />
-    <ClInclude Include="src\Engine\Core\MouseCodes.h" />
-    <ClInclude Include="src\Utility\Bitmask.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Core\Application.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Core\Log.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp" />
   </ItemGroup>
