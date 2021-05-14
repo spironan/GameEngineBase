@@ -13,7 +13,7 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "pch.h"
+#include "Utility/Bitmask.h"
 
 namespace Engine 
 {
@@ -35,7 +35,8 @@ namespace Engine
         MouseButton,
     };
 
-    using EventCategoryType = bitmask<EventCategory>;   //typesafe enum that still has normal enum operations.
+    //typesafe enum that still has normal enum operations.
+    using EventCategoryType = bitmask<EventCategory>;   
 
     #define EVENT_CLASS_CATEGORY(category) \
     virtual EventCategoryType GetCategoryFlag() const override { return category; }

@@ -15,17 +15,15 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "Application.h"
-#include "Log.h"
-
-#include "SDL.h"
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Base.h"
 
 extern Engine::Application* Engine::CreateApplication(Engine::CommandLineArgs args);
 
 int main(int argc, char** argv)
 {
     // Memory Leak Checker in Debug builds
-#ifdef _DEBUG
+#ifdef ENGINE_DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
     // Uncomment to cause a break on allocation for debugging
@@ -35,13 +33,8 @@ int main(int argc, char** argv)
     // Initialize logging system
     Engine::Log::Init();
 
-    // windows creation
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_CreateWindow("window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
-
     auto app = Engine::CreateApplication({argc, argv});
     app->Run();
     delete app;
 
-    return 0;
 }

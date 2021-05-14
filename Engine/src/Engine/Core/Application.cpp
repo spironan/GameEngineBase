@@ -15,25 +15,31 @@ Technology is prohibited.
 #include "pch.h"
 #include "Application.h"
 
-#include "Assert.h"
-#include "Engine/Events/ApplicationEvent.h"
-#include "Engine/Events/KeyEvent.h"
-#include "Engine/Events/MouseEvent.h"
-
 namespace Engine
 {
+    Application* Application::s_Instance = nullptr;
+
     Application::Application(const std::string& name, CommandLineArgs args)
         :_commandLineArgs{ args }, _running{ true }
     {
+        ENGINE_ASSERT_MSG(!s_Instance, "Application already exist!");
+        s_Instance = this;
         //TODO : use window to display name of application
+        m_Window = Window::Create(WindowProperties{ name });
+        //Binds window callback to call Application::OnEvent
+        m_Window->SetEventCallback(ENGINE_BIND_EVENT_FN(Application::OnEvent));
     }
 
     Application::~Application()
     {
+        delete m_Window;
     }
 
     void Application::Run()
     {
+
+//#define BASIC_DEBUG_LOGS
+#ifdef BASIC_DEBUG_LOGS
         // Testing debug
         bool pass = true;
         ENGINE_ASSERT(true);
@@ -51,8 +57,9 @@ namespace Engine
         LOG_ENGINE_WARN("Warning Log!");
         LOG_ENGINE_ERROR("Error Log!");
         LOG_ENGINE_CRITICAL("Critical Log!");
+#endif //BASIC_DEBUG_LOG
 
-#define EVENTS_DEBUG_LOG
+//#define EVENTS_DEBUG_LOG
 #ifdef  EVENTS_DEBUG_LOG
         //Debug log for events
         std::vector<Engine::Event*> events;
@@ -211,6 +218,27 @@ namespace Engine
 
 #endif  //EVENT_DEBUG_LOG
 
-        while (_running);
-    };
+        while (_running)
+        {
+            m_Window->OnUpdate();
+        }
+    }
+
+    void Application::Close()
+    {
+        _running = false;
+    }
+    
+    void Application::OnEvent(Event& e)
+    {
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowCloseEvent>(ENGINE_BIND_EVENT_FN(Application::OnWindowClose));
+    }
+
+    bool Application::OnWindowClose(WindowCloseEvent& e)
+    {
+        _running = false;
+        return true;
+    }
+
 }

@@ -13,7 +13,7 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "Log.h"
+#include "Engine/Core/Log.h"
 
 //Windows only, visual studios only.
 #ifdef ENGINE_DEBUG

@@ -8,7 +8,7 @@ include "dependencies.lua"
 
 workspace "GameEngineBase"
     
-    architecture "x86"
+    architecture "x86_64"
     startproject "Sandbox" -- set startup project
 
     configurations

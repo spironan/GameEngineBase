@@ -10,6 +10,12 @@
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{5FAFB439-CB6F-3070-94AA-79ED002A754C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{594615A9-C525-9444-CE3D-1F1B3A9CFAA5}</UniqueIdentifier>
     </Filter>
@@ -22,6 +28,9 @@
     <ClInclude Include="src\Engine\Core\Assert.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Core\Base.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Core\EntryPoint.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
@@ -29,6 +38,12 @@
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\MouseCodes.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\PlatformDetection.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Window.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Events\ApplicationEvent.h">
@@ -43,6 +58,9 @@
     <ClInclude Include="src\Engine\Events\MouseEvent.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Utility\Bitmask.h">
       <Filter>Utility</Filter>
     </ClInclude>
@@ -54,6 +72,12 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Core\Log.cpp">
       <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Core\Window.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\Windowswindow.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp" />
   </ItemGroup>

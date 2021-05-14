@@ -15,8 +15,8 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "spdlog/spdlog.h"
-#include "spdlog/fmt/ostr.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
 
 namespace Engine
 {

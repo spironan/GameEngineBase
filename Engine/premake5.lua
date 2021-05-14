@@ -59,7 +59,7 @@ project "Engine"
 
         defines
         {
-            "ENGINE_PLATFORM_WINDOWS"
+            --"ENGINE_PLATFORM_WINDOWS"
         }
 
     filter "configurations:Debug"

@@ -31,7 +31,7 @@ public:
     virtual ~Sandbox() = default;
 };
 
-Engine::Application* Engine::CreateApplication(CommandLineArgs args)
+Engine::Application* Engine::CreateApplication(Engine::CommandLineArgs args)
 {
-    return new Sandbox(args);
+    return new Sandbox{ args };
 }
