@@ -14,7 +14,12 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "pch.h"
+#include "Engine/Core/Base.h"
+#include "Engine/Core/Window.h"
+
+#include "Engine/Events/ApplicationEvent.h"
+#include "Engine/Events/KeyEvent.h"
+#include "Engine/Events/MouseEvent.h"
 
 namespace Engine
 {
@@ -25,6 +30,7 @@ namespace Engine
 
         const char* operator[](int index) const
         {
+            ENGINE_ASSERT(index < Count);
             return Args[index];
         }
     };
@@ -36,14 +42,26 @@ namespace Engine
         virtual ~Application();
 
         void Run();
+        void Close();
+
+        void OnEvent(Event& e);
+
+        static Application& Get() { return*s_Instance; }
 
         CommandLineArgs GetCommandLineArgs() const { return _commandLineArgs; }
 
     private:
+        bool OnWindowClose(WindowCloseEvent& e);
+
+    private:
         CommandLineArgs _commandLineArgs;
         bool _running;
+        Window* m_Window;
+        
+        static Application* s_Instance;
     };
 
+    // To be defined in CLIENT
     Application* CreateApplication(CommandLineArgs commandLineArgs);
 }
 
