@@ -18,7 +18,8 @@ project "Sandbox"
         "src",
         "%{wks.location}/Engine/src",
         "%{wks.location}/Engine/vendor/spdlog/include",
-        "%{wks.location}/Engine/vendor/sdl2/include",
+        "%{wks.location}/Engine/vendor/sdl2/include/sdl2",
+        "%{wks.location}/Engine/vendor/gl3w",
         "%{wks.location}/Engine/vendor/rttr/include", --rttr
         "%{wks.location}/Engine/vendor/rpj", --rapidjson
         "%{wks.location}/Engine/vendor/mono/include/mono-2.0" --mono
@@ -27,12 +28,18 @@ project "Sandbox"
     -- library diretories
     libdirs 
     {
+        "%{wks.location}/Engine/vendor/sdl2/lib/x64",
         "%{wks.location}/Engine/vendor/rttr/lib",
         "%{wks.location}/Engine/vendor/mono/lib"
+
     }
 
     links
     {
+        "opengl32",
+        "SDL2",
+        "SDL2main",
+        "SDL2test",
         "Engine",
         "mono-2.0-sgen",
         "MonoPosixHelper"
