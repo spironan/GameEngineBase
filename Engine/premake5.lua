@@ -32,9 +32,7 @@ project "Engine"
         "src",
         "vendor/spdlog/include",
         "vendor/sdl2/include",
-        "vendor/rttr/include", --rttr
-        "vendor/rpj", --rapidjson
-        "vendor/mono/include/mono-2.0" --mono
+
     }
 
     -- library diretories
@@ -51,9 +49,7 @@ project "Engine"
     {
         "SDL2",
         "SDL2main",
-        "SDL2test",
-        "mono-2.0-sgen",
-        "MonoPosixHelper"
+        "SDL2test"
     }
     
     --Disable PCH beyond this point
@@ -72,20 +68,13 @@ project "Engine"
     filter "configurations:Debug"
         defines "ENGINE_DEBUG"
         symbols "On"
-        links{
-            "rttr_core_d"
-        }
+
 
     filter "configurations:Release"
         defines "ENGINE_RELEASE"
         optimize "On"
-        links{
-            "rttr_core"
-        }
+
 
     filter "configurations:Production"
         defines "ENGINE_PRODUCTION"
         optimize "On"
-        links{
-            "rttr_core"
-        }

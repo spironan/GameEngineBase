@@ -78,8 +78,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;..\Engine\vendor\rttr\include;..\Engine\vendor\rpj;..\Engine\vendor\mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -90,17 +90,22 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>mono-2.0-sgen.lib;MonoPosixHelper.lib;rttr_core_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Engine\vendor\rttr\lib;..\Engine\vendor\mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\mono\lib\mono\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s_d.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s_d.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s_d.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;..\Engine\vendor\rttr\include;..\Engine\vendor\rpj;..\Engine\vendor\mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -114,17 +119,22 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>mono-2.0-sgen.lib;MonoPosixHelper.lib;rttr_core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Engine\vendor\rttr\lib;..\Engine\vendor\mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\mono\lib\mono\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Release-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;..\Engine\vendor\rttr\include;..\Engine\vendor\rpj;..\Engine\vendor\mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -138,9 +148,14 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>mono-2.0-sgen.lib;MonoPosixHelper.lib;rttr_core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Engine\vendor\rttr\lib;..\Engine\vendor\mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\mono\lib\mono\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Production-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Production-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul)
+IF EXIST $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll ..\bin\Production-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
