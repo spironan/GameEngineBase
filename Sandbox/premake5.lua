@@ -71,7 +71,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/bin/rttr_core_s_d.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s_d.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
@@ -85,7 +85,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/bin/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
@@ -99,7 +99,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/bin/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{

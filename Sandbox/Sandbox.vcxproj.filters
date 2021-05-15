@@ -4,8 +4,8 @@
     <Filter Include="ImGui">
       <UniqueIdentifier>{C0FF640D-2C14-8DBE-F595-301E616989EF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ImGui\GL">
-      <UniqueIdentifier>{a7f05834-5b13-4361-b16f-efa8844775f3}</UniqueIdentifier>
+    <Filter Include="GL">
+      <UniqueIdentifier>{503ba753-2992-4dab-9cd2-9edea662c7ec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -34,10 +34,10 @@
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Engine\vendor\gl3w\GL\gl3w.h">
-      <Filter>ImGui\GL</Filter>
+      <Filter>GL</Filter>
     </ClInclude>
     <ClInclude Include="..\Engine\vendor\gl3w\GL\glcorearb.h">
-      <Filter>ImGui\GL</Filter>
+      <Filter>GL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -67,7 +67,7 @@
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="..\Engine\vendor\gl3w\GL\gl3w.c">
-      <Filter>ImGui\GL</Filter>
+      <Filter>GL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
