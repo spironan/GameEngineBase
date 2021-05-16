@@ -10,6 +10,9 @@
 #include <stdio.h>
 #include <SDL.h>
 
+#include "Editor/Editor.h"
+
+#define NOMINMAX
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
 // About Desktop OpenGL function loaders:
@@ -41,6 +44,7 @@ using namespace gl;
 // Main code
 int main(int, char**)
 {
+    Editor editorObject;
     // Setup SDL
     // (Some versions of SDL before <2.0.10 appears to have performance/stalling issues on a minority of Windows systems,
     // depending on whether SDL_INIT_GAMECONTROLLER is enabled or disabled.. updating to latest version of SDL is recommended!)
@@ -180,9 +184,9 @@ int main(int, char**)
         ImGui::NewFrame();
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
+        //if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
+        editorObject.TestFunction();
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
         {
             static float f = 0.0f;

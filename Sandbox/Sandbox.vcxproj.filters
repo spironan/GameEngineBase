@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Editor">
+      <UniqueIdentifier>{8C1A20B0-78BC-4A86-6177-5EDA4DB8D1D6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{C0FF640D-2C14-8DBE-F595-301E616989EF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GL">
-      <UniqueIdentifier>{503ba753-2992-4dab-9cd2-9edea662c7ec}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Editor\Editor.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
     <ClInclude Include="src\ImGui\imconfig.h">
       <Filter>ImGui</Filter>
     </ClInclude>
@@ -33,14 +36,14 @@
     <ClInclude Include="src\ImGui\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\Engine\vendor\gl3w\GL\gl3w.h">
-      <Filter>GL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Engine\vendor\gl3w\GL\glcorearb.h">
-      <Filter>GL</Filter>
-    </ClInclude>
+    <ClInclude Include="src\testclass.h" />
+    <ClInclude Include="..\Engine\vendor\gl3w\GL\gl3w.h" />
+    <ClInclude Include="..\Engine\vendor\gl3w\GL\glcorearb.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor\Editor.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
     <ClCompile Include="src\ImGui\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -66,8 +69,7 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp" />
-    <ClCompile Include="..\Engine\vendor\gl3w\GL\gl3w.c">
-      <Filter>GL</Filter>
-    </ClCompile>
+    <ClCompile Include="src\testclass.cpp" />
+    <ClCompile Include="..\Engine\vendor\gl3w\GL\gl3w.c" />
   </ItemGroup>
 </Project>
