@@ -2,7 +2,7 @@ project "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir("%{wks.location}/bin/"..outputdir.. "/%{prj.name}")
     objdir("%{wks.location}/bin-int/"..outputdir.."/%{prj.name}")
@@ -47,7 +47,7 @@ project "Sandbox"
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime "On"
+        staticruntime "off"
         systemversion "latest"
 
         defines
@@ -71,7 +71,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s_d.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_d.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
@@ -85,7 +85,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
@@ -99,7 +99,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
