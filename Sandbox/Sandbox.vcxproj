@@ -94,10 +94,7 @@
       <AdditionalLibraryDirectories>..\Engine\vendor\rttr\lib;..\Engine\vendor\mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)
-IF EXIST $(SolutionDir)Engine\vendor\mono\lib\mono\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)
-IF EXIST $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)
-IF EXIST $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s_d.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s_d.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s_d.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -123,10 +120,8 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s_d.dll\ (xcopy /Q /E /Y
       <AdditionalLibraryDirectories>..\Engine\vendor\rttr\lib;..\Engine\vendor\mono\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\sdl2\lib\x64\SDL2.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)
-IF EXIST $(SolutionDir)Engine\vendor\mono\lib\mono\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\lib\mono ..\bin\Release-windows-x86_64\Sandbox &gt; nul)
-IF EXIST $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\mono\dll\mono-2.0-sgen.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)
-IF EXIST $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll\ (xcopy /Q /E /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)Engine\vendor\rttr\bin\rttr_core_s.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'">

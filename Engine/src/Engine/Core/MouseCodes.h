@@ -1,11 +1,13 @@
 #pragma once
 
-namespace Engine
+namespace engine
 {
     using MouseCode = unsigned int;
 
     namespace Mouse 
     {
+        // TODO : figure out how this works, aka anonymous enum.
+
         enum : MouseCode
         {
             // from glfw3.h

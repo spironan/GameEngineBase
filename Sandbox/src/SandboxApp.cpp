@@ -15,10 +15,10 @@ Technology is prohibited.
 
 #include "Engine.h" // single-include file to get all the relevant functions from our engine.
 
-class Sandbox : public Engine::Application
+class Sandbox : public engine::Application
 {
 public:
-    Sandbox(Engine::CommandLineArgs args)
+    Sandbox(engine::CommandLineArgs args)
         : Application{ "Sandbox" , args }
     {
         LOG_TRACE("Trace Log!");
@@ -31,7 +31,7 @@ public:
     virtual ~Sandbox() = default;
 };
 
-Engine::Application* Engine::CreateApplication(Engine::CommandLineArgs args)
+engine::Application* engine::CreateApplication(engine::CommandLineArgs args)
 {
     return new Sandbox{ args };
 }

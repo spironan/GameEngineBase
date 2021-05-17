@@ -16,11 +16,11 @@ Technology is prohibited.
 
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace Engine 
+namespace engine
 {
     //static defines
-    std::shared_ptr<spdlog::logger> Log::s_Corelogger;
-    std::shared_ptr<spdlog::logger> Log::s_Clientlogger;
+    std::shared_ptr<spdlog::logger> Log::s_coreLogger;
+    std::shared_ptr<spdlog::logger> Log::s_clientLogger;
 
     void Log::Init()
     {
@@ -30,14 +30,14 @@ namespace Engine
         // %v%$ == Log Message
         spdlog::set_pattern("%^ [%T] %n: %v%$");
         // Creates a multi-threaded, Colored std out console
-        s_Corelogger = spdlog::stdout_color_mt("ENGINE");
+        s_coreLogger = spdlog::stdout_color_mt("ENGINE");
         // Set logging level to trace : lowest level therefore traces everything
-        s_Corelogger->set_level(spdlog::level::trace);
+        s_coreLogger->set_level(spdlog::level::trace);
 
         // Creates a multi-threaded, Colored std out console
-        s_Clientlogger = spdlog::stdout_color_mt("CLIENT");
+        s_clientLogger = spdlog::stdout_color_mt("CLIENT");
         // Set logging level to trace : lowest level therefore traces everything
-        s_Clientlogger->set_level(spdlog::level::trace);
+        s_clientLogger->set_level(spdlog::level::trace);
     }
 
 

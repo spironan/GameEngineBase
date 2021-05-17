@@ -3,7 +3,7 @@
 #include <string>
 #include "Engine/Events/Event.h"
 
-namespace Engine
+namespace engine
 {
     // Properties that make up a window
     struct WindowProperties

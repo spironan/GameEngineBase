@@ -18,16 +18,16 @@ Technology is prohibited.
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 
-namespace Engine
+namespace engine
 {
     class Log
     {
     public:
         static void Init();
 
-        inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()      { return s_Corelogger; }
+        inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()      { return s_coreLogger; }
 
-        inline static std::shared_ptr<spdlog::logger>& GetClientLogger()    { return s_Clientlogger; }
+        inline static std::shared_ptr<spdlog::logger>& GetClientLogger()    { return s_clientLogger; }
 
     protected:
         // do not create an instance of this class
@@ -35,8 +35,8 @@ namespace Engine
         ~Log()  = default;
 
     private:
-        static std::shared_ptr<spdlog::logger> s_Corelogger;
-        static std::shared_ptr<spdlog::logger> s_Clientlogger;
+        static std::shared_ptr<spdlog::logger> s_coreLogger;
+        static std::shared_ptr<spdlog::logger> s_clientLogger;
     };
 
 }
@@ -45,18 +45,18 @@ namespace Engine
 // disable all logging if not in debug
 #ifdef ENGINE_DEBUG
     // Engine Log macros
-    #define LOG_ENGINE_TRACE(...)       ::Engine::Log::GetCoreLogger()->trace(__VA_ARGS__)
-    #define LOG_ENGINE_INFO(...)        ::Engine::Log::GetCoreLogger()->info(__VA_ARGS__)
-    #define LOG_ENGINE_WARN(...)        ::Engine::Log::GetCoreLogger()->warn(__VA_ARGS__)
-    #define LOG_ENGINE_ERROR(...)       ::Engine::Log::GetCoreLogger()->error(__VA_ARGS__)
-    #define LOG_ENGINE_CRITICAL(...)    ::Engine::Log::GetCoreLogger()->critical(__VA_ARGS__)
+    #define LOG_ENGINE_TRACE(...)       ::engine::Log::GetCoreLogger()->trace(__VA_ARGS__)
+    #define LOG_ENGINE_INFO(...)        ::engine::Log::GetCoreLogger()->info(__VA_ARGS__)
+    #define LOG_ENGINE_WARN(...)        ::engine::Log::GetCoreLogger()->warn(__VA_ARGS__)
+    #define LOG_ENGINE_ERROR(...)       ::engine::Log::GetCoreLogger()->error(__VA_ARGS__)
+    #define LOG_ENGINE_CRITICAL(...)    ::engine::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
     // Client Log macros
-    #define LOG_TRACE(...)              ::Engine::Log::GetClientLogger()->trace(__VA_ARGS__)
-    #define LOG_INFO(...)               ::Engine::Log::GetClientLogger()->info(__VA_ARGS__)
-    #define LOG_WARN(...)               ::Engine::Log::GetClientLogger()->warn(__VA_ARGS__)
-    #define LOG_ERROR(...)              ::Engine::Log::GetClientLogger()->error(__VA_ARGS__)
-    #define LOG_CRITICAL(...)           ::Engine::Log::GetClientLogger()->critical(__VA_ARGS__)
+    #define LOG_TRACE(...)              ::engine::Log::GetClientLogger()->trace(__VA_ARGS__)
+    #define LOG_INFO(...)               ::engine::Log::GetClientLogger()->info(__VA_ARGS__)
+    #define LOG_WARN(...)               ::engine::Log::GetClientLogger()->warn(__VA_ARGS__)
+    #define LOG_ERROR(...)              ::engine::Log::GetClientLogger()->error(__VA_ARGS__)
+    #define LOG_CRITICAL(...)           ::engine::Log::GetClientLogger()->critical(__VA_ARGS__)
 
 #else
     #define LOG_ENGINE_TRACE(...)

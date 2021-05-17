@@ -4,7 +4,7 @@
 #include "Engine/Core/Base.h"
 #include "Platform/Windows/WindowsWindow.h"
 
-namespace Engine
+namespace engine
 {
     Window* Window::Create(const WindowProperties& properties)
     {

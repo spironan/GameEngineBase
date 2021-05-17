@@ -16,8 +16,9 @@ Technology is prohibited.
 
 #include <type_traits>
 
-namespace Engine 
-{
+namespace engine{
+namespace utility{
+
     /********************************************************************************//*!
         @brief    Allows enum classes to be used as a bitmask
     *//*********************************************************************************/
@@ -37,14 +38,14 @@ namespace Engine
         /********************************************************************************//*!
             @brief     Default ctor creates a bitmask with no options selected.
         *//*********************************************************************************/
-        constexpr bitmask() : mask(0) {}
+        constexpr bitmask() : m_mask(0) {}
 
         /********************************************************************************//*!
             @brief     Creates a bitmask with just one bit set.
                     This ctor is intentionally non-explicit, to allow for stuff like:
                     bitmask<enum> bitmask(enum::option1)
         *//*********************************************************************************/
-        constexpr bitmask(option_type o) : mask(mask_value(o)) {}
+        constexpr bitmask(option_type o) : m_mask(mask_value(o)) {}
 
         /********************************************************************************//*!
             @brief     Set the bit corresponding to the given option.
@@ -54,54 +55,54 @@ namespace Engine
         *//*********************************************************************************/
         constexpr bitmask operator|(option_type t)
         {
-            return bitmask(mask | mask_value(t));
+            return bitmask(m_mask | mask_value(t));
         }
 
         /********************************************************************************//*!
             @brief     Set the bit corresponding to the given option and appply to current
-                    mask.
+                    m_mask.
                     Functions the same as the bitwise |= operator
 
             @return    Returns a bitmask of the resultant operation
         *//*********************************************************************************/
         constexpr bitmask operator|=(option_type t)
         {
-            mask = mask | mask_value(t);
-            return bitmask(mask);
+            m_mask = m_mask | mask_value(t);
+            return bitmask(m_mask);
         }
 
         /********************************************************************************//*!
             @brief     Get the value of the bit corresponding to the given option.
                     Functions the same as the bitwise & operator
 
-            @return    boolean determining if the current mask contains what was passed in.
+            @return    boolean determining if the current m_mask contains what was passed in.
         *//*********************************************************************************/
         constexpr bool operator&(option_type t)
         {
-            return mask & mask_value(t);
+            return m_mask & mask_value(t);
         }
 
         /********************************************************************************//*!
             @brief     Get the value of the bit corresponding to the given option
-                    and apply it to the current mask.
+                    and apply it to the current m_mask.
                     Functions the same as the bitwise &= operator
 
             @return    Returns a bitmask of the resultant operation
         *//*********************************************************************************/
         constexpr bitmask operator&=(option_type t)
         {
-            mask = mask & mask_value(t);
-            return bitmask(mask);
+            m_mask = m_mask & mask_value(t);
+            return bitmask(m_mask);
         }
 
         /********************************************************************************//*!
             @brief     Allows users who knows what they are doing to abstract
-                    the mask underlying value via static_cast explicitly:
+                    the m_mask underlying value via static_cast explicitly:
                     static_cast<bitmask<enum>::underlying_type>(bitmask)
 
-            @return    Returns the underlying type of the mask value
+            @return    Returns the underlying type of the m_mask value
         *//*********************************************************************************/
-        explicit constexpr operator underlying_type () const { return mask; }
+        explicit constexpr operator underlying_type () const { return m_mask; }
 
     private:
 
@@ -117,9 +118,9 @@ namespace Engine
         /********************************************************************************//*!
             @brief     Private ctor to be used internally.
         *//*********************************************************************************/
-        explicit constexpr bitmask(underlying_type o) : mask(o) {}
+        explicit constexpr bitmask(underlying_type o) : m_mask(o) {}
 
-        underlying_type mask = 0;
+        underlying_type m_mask = 0;
     };
 
     /********************************************************************************//*!
@@ -127,10 +128,11 @@ namespace Engine
                 bitmask(enum::flag1|enum::flag2|enum::flag3)
     *//*********************************************************************************/
 
-    template <class option_type,
+    template <class option_type, class void_type = void, 
+        typename = typename std::enable_if_t<std::is_void_v<void_type>>,
         typename = typename std::enable_if_t<std::is_enum_v<option_type>>>
         constexpr bitmask<option_type> operator|(option_type lhs, option_type rhs)
     {
         return bitmask<option_type>{lhs} | rhs;
     }
-}
+}}

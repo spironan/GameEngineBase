@@ -21,7 +21,7 @@ Technology is prohibited.
 #include "Engine/Events/KeyEvent.h"
 #include "Engine/Events/MouseEvent.h"
 
-namespace Engine
+namespace engine
 {
     struct CommandLineArgs
     {
@@ -46,19 +46,19 @@ namespace Engine
 
         void OnEvent(Event& e);
 
-        static Application& Get() { return*s_Instance; }
+        static Application& Get() { return*s_instance; }
 
-        CommandLineArgs GetCommandLineArgs() const { return _commandLineArgs; }
+        CommandLineArgs GetCommandLineArgs() const { return m_commandLineArgs; }
 
     private:
         bool OnWindowClose(WindowCloseEvent& e);
 
     private:
-        CommandLineArgs _commandLineArgs;
-        bool _running;
-        Window* m_Window;
+        CommandLineArgs m_commandLineArgs;
+        bool m_running;
+        Window* m_window;
         
-        static Application* s_Instance;
+        static Application* s_instance;
     };
 
     // To be defined in CLIENT

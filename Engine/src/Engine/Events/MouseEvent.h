@@ -16,28 +16,28 @@ Technology is prohibited.
 #include "Engine/Events/Event.h"
 #include "Engine/Core/MouseCodes.h"
 
-namespace Engine
+namespace engine
 {
     class MouseMovedEvent : public Event
     {
     public:
         MouseMovedEvent(const float x, const float y)
-            : _MouseX{x}, _MouseY{y} {}
+            : m_mouseX{x}, m_mouseY{y} {}
 
-        float GetX() const { return _MouseX; }
-        float GetY() const { return _MouseY; }
+        float GetX() const { return m_mouseX; }
+        float GetY() const { return m_mouseY; }
 
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseMovedEvent: " << _MouseX << ", " << _MouseY;
+            ss << "MouseMovedEvent: " << m_mouseX << ", " << m_mouseY;
             return ss.str();
         }
 
         EVENT_CLASS_TYPE(MouseMoved)
-        EVENT_CLASS_CATEGORY(EventCategory::Mouse | EventCategory::Input)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Mouse } | EVENT_CATEGORY::Input)
     private:
-        float _MouseX, _MouseY;
+        float m_mouseX, m_mouseY;
     };
 
 
@@ -45,23 +45,22 @@ namespace Engine
     {
     public:
         MouseScrolledEvent(const float xOffset, const float yOffset)
-            : _XOffset{ xOffset }, _YOffset{ yOffset } {}
+            : m_xOffset{ xOffset }, m_yOffset{ yOffset } {}
 
-        float GetX() const { return _XOffset; }
-        float GetY() const { return _YOffset; }
+        float GetX() const { return m_xOffset; }
+        float GetY() const { return m_yOffset; }
 
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseScrolledEvent: " << _XOffset << ", " << _YOffset;
+            ss << "MouseScrolledEvent: " << m_xOffset << ", " << m_yOffset;
             return ss.str();
         }
 
         EVENT_CLASS_TYPE(MouseScrolled)
-        EVENT_CLASS_CATEGORY(bitmask{ EventCategory::Mouse }
-                            | EventCategory::Input)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Mouse } | EVENT_CATEGORY::Input)
     private:
-        float _XOffset, _YOffset;
+        float m_xOffset, m_yOffset;
     };
 
     class MouseButtonEvent : public Event
@@ -69,7 +68,7 @@ namespace Engine
     public:
         MouseCode GetMouseButton() const { return m_Button; }
 
-        EVENT_CLASS_CATEGORY( EventCategory::Mouse | EventCategory::Input | EventCategory::MouseButton)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Mouse } | EVENT_CATEGORY::Input | EVENT_CATEGORY::MouseButton)
     protected:
         MouseButtonEvent(const MouseCode button)
             : m_Button(button) {}
