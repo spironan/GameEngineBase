@@ -50,43 +50,43 @@ namespace engine
         SDL_DestroyWindow(m_window);
     }
     
-    // work around function
-    int FunctionCallback(void* dat, SDL_Event* e)
-    {
-        engine::Windowswindow::WindowData *data = static_cast<engine::Windowswindow::WindowData*>(dat);
-        switch (e->type)
-        {
-            case SDL_QUIT:
-                Application::Get().Close();
-                break;
-            case SDL_WINDOWEVENT:
-            {
-                switch (e->window.event)
-                {
-                    //Windows resize event
-                    case SDL_WINDOWEVENT_RESIZED:
-                    {
-                        data->Width = e->window.data1;
-                        data->Height = e->window.data2;
+    //// work around function
+    //int FunctionCallback(void* dat, SDL_Event* e)
+    //{
+    //    engine::Windowswindow::WindowData *data = static_cast<engine::Windowswindow::WindowData*>(dat);
+    //    switch (e->type)
+    //    {
+    //        case SDL_QUIT:
+    //            Application::Get().Close();
+    //            break;
+    //        case SDL_WINDOWEVENT:
+    //        {
+    //            switch (e->window.event)
+    //            {
+    //                //Windows resize event
+    //                case SDL_WINDOWEVENT_RESIZED:
+    //                {
+    //                    data->Width = e->window.data1;
+    //                    data->Height = e->window.data2;
 
-                        WindowResizeEvent resizeEvent(data->Width, data->Height);
-                        data->EventCallback(resizeEvent);
-                        return 1;
-                        break;
-                    }
-                    default:
-                        break;
-                }
+    //                    WindowResizeEvent resizeEvent(data->Width, data->Height);
+    //                    data->EventCallback(resizeEvent);
+    //                    return 1;
+    //                    break;
+    //                }
+    //                default:
+    //                    break;
+    //            }
 
-                break;
-            }
-            default:
-                break;
-        }
+    //            break;
+    //        }
+    //        default:
+    //            break;
+    //    }
 
-        // consume away the event
-        return 0;
-    }
+    //    // consume away the event
+    //    return 0;
+    //}
 
     void Windowswindow::OnUpdate()
     {
@@ -94,20 +94,105 @@ namespace engine
         SDL_SetRenderDrawColor(m_renderer, 96, 128, 255, 255);
         SDL_RenderClear(m_renderer);
         
-        SDL_AddEventWatch(FunctionCallback, (void*)&m_data);
+        //SDL_AddEventWatch(FunctionCallback, (void*)&m_data);
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            /*switch (event.type)
+            switch (event.type)
             {
-            case SDL_QUIT:
-                Application::Get().Close();
+            // WINDOWS EVENT
+            case SDL_WINDOWEVENT:
+            {
+                switch (event.window.event)
+                {
+                    //Windows resize event
+                    case SDL_WINDOWEVENT_RESIZED:
+                    {
+                        m_data.Width = event.window.data1;
+                        m_data.Height = event.window.data2;
+
+                        WindowResizeEvent resizeEvent(m_data.Width, m_data.Height);
+                        m_data.EventCallback(resizeEvent);
+                        break;
+                    }
+                    //Windows close event
+                    case SDL_WINDOWEVENT_CLOSE:
+                    {
+                        WindowCloseEvent closeEvent;
+                        m_data.EventCallback(closeEvent);
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_MAXIMIZED:
+                    case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    {
+                        WindowFocusEvent windowFocusEvent;
+                        m_data.EventCallback(windowFocusEvent);
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_MINIMIZED:
+                    case SDL_WINDOWEVENT_FOCUS_LOST:
+                    {
+                        WindowLoseFocusEvent windowLoseFocusEvent;
+                        m_data.EventCallback(windowLoseFocusEvent);
+                        break;
+                    }
+                    case SDL_WINDOWEVENT_MOVED:
+                    {
+                        WindowMovedEvent windowMovedEvent;
+                        m_data.EventCallback(windowMovedEvent);
+                        break;
+                    }
+                default:
+                    break;
+                }
+
+                break;
+            }
+
+            case SDL_KEYDOWN:
+            {
+                KeyPressedEvent keyPressEvent(event.key.keysym.sym, event.key.repeat ? 1 : 0);
+                m_data.EventCallback(keyPressEvent);
+            }
+                break;
+
+            case SDL_KEYUP:
+            {
+                KeyReleasedEvent keyPressEvent(event.key.keysym.sym);
+                m_data.EventCallback(keyPressEvent);
+            }
+                break;
+
+            case SDL_MOUSEBUTTONUP:
+            {
+                MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.sym);
+                m_data.EventCallback(mouseButtonReleasedEvent);
+            }
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.sym);
+                m_data.EventCallback(mouseButtonPressedEvent);
+            }
+                break;
+            case SDL_MOUSEWHEEL:
+            {
+                MouseScrolledEvent mouseScrolledEvent(event.wheel.x, event.wheel.y);
+                m_data.EventCallback(mouseScrolledEvent);
+            }
+                break;
+            case SDL_MOUSEMOTION:
+            {
+                MouseMovedEvent mouseMovedEvent(event.motion.x, event.motion.y);
+                m_data.EventCallback(mouseMovedEvent);
+            }
                 break;
 
             default:
                 break;
-            }*/
+            }
         }
 
         // render : must be called

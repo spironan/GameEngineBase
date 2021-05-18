@@ -1,0 +1,1 @@
+{"otherData": {},"traceEvents":[{},{"cat":"function","dur":174852,"name":"engine::Application::Application(const class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > &,struct engine::CommandLineArgs)","ph":"X","pid":0,"tid":2884,"ts":367868577805.000}]}
