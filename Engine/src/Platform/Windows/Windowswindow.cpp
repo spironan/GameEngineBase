@@ -179,13 +179,13 @@ namespace engine
                 break;
             case SDL_MOUSEWHEEL:
             {
-                MouseScrolledEvent mouseScrolledEvent(event.wheel.x, event.wheel.y);
+                MouseScrolledEvent mouseScrolledEvent(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
                 m_data.EventCallback(mouseScrolledEvent);
             }
                 break;
             case SDL_MOUSEMOTION:
             {
-                MouseMovedEvent mouseMovedEvent(event.motion.x, event.motion.y);
+                MouseMovedEvent mouseMovedEvent(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
                 m_data.EventCallback(mouseMovedEvent);
             }
                 break;

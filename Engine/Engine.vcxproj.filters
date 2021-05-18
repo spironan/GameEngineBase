@@ -7,6 +7,9 @@
     <Filter Include="Engine\Core">
       <UniqueIdentifier>{130D9B61-7FC2-1357-08B7-0D2E746B0A5B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Debug">
+      <UniqueIdentifier>{910A0995-7D6D-9839-26F3-D0EF123564BC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{5FAFB439-CB6F-3070-94AA-79ED002A754C}</UniqueIdentifier>
     </Filter>
@@ -46,6 +49,9 @@
     <ClInclude Include="src\Engine\Core\Window.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Debug\Instrumentor.h">
+      <Filter>Engine\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Events\ApplicationEvent.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
@@ -65,7 +71,6 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\Engine\Debug\Instrumentor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Core\Application.cpp">
