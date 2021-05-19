@@ -15,6 +15,8 @@ Technology is prohibited.
 #include "pch.h"
 #include "Application.h"
 
+#include <sdl2/SDL.h>
+
 namespace engine
 {
     Application* Application::s_instance = nullptr;
@@ -230,7 +232,14 @@ namespace engine
         {
             ENGINE_PROFILE_SCOPE("Runloop");
 
-            m_window->OnUpdate();
+            // temporary solution : can be improved by encapsulating the 
+            // frame time get to use our own function call 
+            // rather then calling sdl here directly.
+            double time = static_cast<double>(SDL_GetPerformanceCounter());
+            Timestep dt { (time - m_lastFrameTime) * 1000.0 / SDL_GetPerformanceFrequency() };
+            m_lastFrameTime = time;
+
+            m_window->OnUpdate(dt);
         }
     }
 

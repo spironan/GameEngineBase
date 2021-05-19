@@ -13,7 +13,7 @@ namespace engine
 
         virtual ~Windowswindow();
 
-        void OnUpdate() override;
+        void OnUpdate(Timestep dt) override;
 
         unsigned int GetWidth() const override { return m_data.Width; };
         unsigned int GetHeight() const override { return m_data.Height; };

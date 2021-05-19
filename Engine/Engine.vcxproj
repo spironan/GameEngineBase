@@ -152,6 +152,7 @@
     <ClInclude Include="src\Engine\Core\Log.h" />
     <ClInclude Include="src\Engine\Core\MouseCodes.h" />
     <ClInclude Include="src\Engine\Core\PlatformDetection.h" />
+    <ClInclude Include="src\Engine\Core\Timestep.h" />
     <ClInclude Include="src\Engine\Core\Window.h" />
     <ClInclude Include="src\Engine\Debug\Instrumentor.h" />
     <ClInclude Include="src\Engine\Events\ApplicationEvent.h" />

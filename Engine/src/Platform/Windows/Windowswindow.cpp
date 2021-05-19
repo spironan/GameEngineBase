@@ -39,7 +39,7 @@ namespace engine
 
         // -1 means use whatever available card
         // SDL_RENDERER_ACCELERATED tells the system to use gpu if possible
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         ENGINE_ASSERT_MSG(m_renderer, "Failed to create SDL Rendere: {0}", SDL_GetError());
 
         SetVSync(true);
@@ -50,46 +50,10 @@ namespace engine
         SDL_DestroyWindow(m_window);
     }
     
-    //// work around function
-    //int FunctionCallback(void* dat, SDL_Event* e)
-    //{
-    //    engine::Windowswindow::WindowData *data = static_cast<engine::Windowswindow::WindowData*>(dat);
-    //    switch (e->type)
-    //    {
-    //        case SDL_QUIT:
-    //            Application::Get().Close();
-    //            break;
-    //        case SDL_WINDOWEVENT:
-    //        {
-    //            switch (e->window.event)
-    //            {
-    //                //Windows resize event
-    //                case SDL_WINDOWEVENT_RESIZED:
-    //                {
-    //                    data->Width = e->window.data1;
-    //                    data->Height = e->window.data2;
-
-    //                    WindowResizeEvent resizeEvent(data->Width, data->Height);
-    //                    data->EventCallback(resizeEvent);
-    //                    return 1;
-    //                    break;
-    //                }
-    //                default:
-    //                    break;
-    //            }
-
-    //            break;
-    //        }
-    //        default:
-    //            break;
-    //    }
-
-    //    // consume away the event
-    //    return 0;
-    //}
-
-    void Windowswindow::OnUpdate()
+    void Windowswindow::OnUpdate(Timestep dt)
     {
+        LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
+
         //Clear color and clear color buffer bit equivalent
         SDL_SetRenderDrawColor(m_renderer, 96, 128, 255, 255);
         SDL_RenderClear(m_renderer);
@@ -203,8 +167,11 @@ namespace engine
     {
         LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
         enabled 
-            ? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1") 
-            : SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+            ? SDL_GL_SetSwapInterval(1)
+            : SDL_GL_SetSwapInterval(0);
+            /*? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1") 
+            : SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");*/
+
         m_data.VSync = enabled;
     }
 

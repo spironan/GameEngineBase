@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Engine/Events/Event.h"
+#include "Engine/Core/Timestep.h"
 
 namespace engine
 {
@@ -27,7 +28,7 @@ namespace engine
 
         virtual ~Window() = default;
 
-        virtual void OnUpdate() = 0;
+        virtual void OnUpdate(Timestep dt) = 0;
 
         virtual unsigned int GetWidth() const = 0;
         virtual unsigned int GetHeight() const = 0;

@@ -21,6 +21,8 @@ Technology is prohibited.
 #include "Engine/Events/KeyEvent.h"
 #include "Engine/Events/MouseEvent.h"
 
+#include "Engine/Core/Timestep.h"
+
 namespace engine
 {
     struct CommandLineArgs
@@ -57,6 +59,8 @@ namespace engine
         CommandLineArgs m_commandLineArgs;
         bool m_running;
         Window* m_window;
+        
+        double m_lastFrameTime;
         
         static Application* s_instance;
     };
