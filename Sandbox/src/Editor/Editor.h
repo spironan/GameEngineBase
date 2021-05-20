@@ -16,14 +16,14 @@ public:
 	Editor();
 	~Editor();
 	//uses the (or) operator to set the flag
-	void SetGUIActive(GUIACTIVE_FLAGS flag) { activeFlagGUI |= static_cast<int>(flag); }
+	void SetGUIActive(GUIACTIVE_FLAGS flag) { m_activeFlagGUI |= static_cast<int>(flag); }
 	//uses the (xor) operator to set the flag
-	void SetGUIInactive(GUIACTIVE_FLAGS flag) { activeFlagGUI ^= static_cast<int>(flag); }
+	void SetGUIInactive(GUIACTIVE_FLAGS flag) { m_activeFlagGUI ^= static_cast<int>(flag); }
 
 	void UpdateUI();
 	void TestFunction();
 private:
-	testclass* ShowObject(testclass& tc);
+	void ShowObject(testclass& tc);
 	void PathDir(std::filesystem::path& entry, std::string& path);
 	void ProjectFile(const std::string& path, std::string& selected_dir);
 	void PreviewFolder(std::string& path);
@@ -33,10 +33,12 @@ private:
 	void SaveData();
 	
 	void LoadData(const char* dir);
-	void ReadData(testclass* data);
+	void ReadData();
 
 private:
+	int m_activeFlagGUI = 0;
+
+	testclass* m_focused = nullptr;
+	std::string m_currentPath;
 	std::vector<testclass> testList;
-	int activeFlagGUI = 0;
-	std::string currentPath;
 };

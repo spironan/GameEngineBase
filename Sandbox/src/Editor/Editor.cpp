@@ -31,12 +31,12 @@ void Editor::SaveHirechy(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStre
         SaveHirechy(*tc.childs[i], writer);
     }
 }
-testclass* Editor::ShowObject(testclass& tc)
+void Editor::ShowObject(testclass& tc)
 {
-    static testclass* ptr = nullptr;
+
 
     ImGui::PushID(tc.uid);
-    ImGuiTreeNodeFlags flag = (ptr == &tc) ? ImGuiTreeNodeFlags_Selected : 0;
+    ImGuiTreeNodeFlags flag = (m_focused == &tc) ? ImGuiTreeNodeFlags_Selected : 0;
     if (tc.childs.size() > 0)
         flag = flag | ImGuiTreeNodeFlags_OpenOnArrow;
     else
@@ -67,7 +67,7 @@ testclass* Editor::ShowObject(testclass& tc)
         ImGui::EndDragDropTarget();
     }
     if (ImGui::IsItemClicked())
-        ptr = &tc;
+        m_focused = &tc;
 
     if (activated)
     {
@@ -80,7 +80,6 @@ testclass* Editor::ShowObject(testclass& tc)
             ImGui::TreePop();
         }
     }
-    return ptr;
 }
 
 //show a clickable directory path and modify it when clicked
@@ -339,29 +338,29 @@ void Editor::LoadData(const char* dir)
         ++counter;
     }
 }
-void Editor::ReadData(testclass* data)
+void Editor::ReadData()
 {
-    rttr::type t = data->get_type();
+    rttr::type t = m_focused->get_type();
     auto types = t.get_properties();
     ImGui::Begin("inspector");
 
     {
-        ImGui::Text("Name :  %s", data->name.c_str());
+        ImGui::Text("Name :  %s", m_focused->name.c_str());
         ImGui::BeginChild("child", { 200,200 }, true);
         for (auto element : types)
         {
             if (element.get_type().get_id() == rttr::type::get<int>().get_id())
             {
-                int value = element.get_value(data).get_value<int>();
+                int value = element.get_value(m_focused).get_value<int>();
                 ImGui::SliderInt(element.get_name().c_str(), &value, 0, 10);
-                element.set_value(data, value);
+                element.set_value(m_focused, value);
             }
         }
         ImGui::EndChild();
 
         ImGui::BeginChild("itemcount", { 200,200 }, true);
 
-        ImGui::Text("Child Count :  %d", data->childs.size());
+        ImGui::Text("Child Count :  %d", m_focused->childs.size());
 
         ImGui::EndChild();
     }
@@ -372,36 +371,28 @@ void Editor::TestFunction()
     static bool init = false;
     static const int size = 5;
     static int index = -1;
-    static testclass* focus = nullptr;
     //main banner
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-    {
-        ImGui::Begin("first object");
-        static float value = 0;
-        static float angle = 0;
-        ImGui::Text("test");
-        ImGui::Button("testbtn", { 100,60 });
-        ImGui::SliderAngle("angle slider", &angle);
-        ImGui::SliderFloat("float slider", &value, 0, 10.0f);
-        ImGui::End();
-    }
+
 
     {
-        ImGui::Begin("second window");
+        ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
+        ImGui::Begin("Hierarchy");
         for (int i = 0; i < testList.size(); ++i)
         {
-            focus = ShowObject(testList[i]);
+            ShowObject(testList[i]);
         }
         ImGui::End();
     }
 
-    if (focus)
-        ReadData(focus);
+    ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
+    if (m_focused)
+        ReadData();
 
 
     {
         static std::string focus_item = "./";
-
+        ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
         ImGui::Begin("Project Dir");
         ProjectFile("./", focus_item);
         ImGui::End();
