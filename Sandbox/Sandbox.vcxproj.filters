@@ -1,87 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\vendor">
-      <UniqueIdentifier>{D899D2AA-445A-4EE1-0D95-975E791493BD}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\vendor\gl3w">
-      <UniqueIdentifier>{044EC11E-F031-8274-5992-7CC745956CF6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\vendor\gl3w\GL">
-      <UniqueIdentifier>{E690E95D-52FD-A458-1BF1-3CB6871CC7C0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ImGui">
-      <UniqueIdentifier>{170E22B3-8378-D629-CCB6-87CF3860B47E}</UniqueIdentifier>
+    <Filter Include="src\Editor">
+      <UniqueIdentifier>{C3F37E0D-AFAB-C05A-18B3-99B6048A5B4B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui">
+      <UniqueIdentifier>{1DA38CEE-0906-1C93-B28B-54499ECDE715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\gl3w">
+      <UniqueIdentifier>{BF8879C1-2B3E-F2B6-B432-EC8D20E7E8BA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\gl3w\GL">
+      <UniqueIdentifier>{C115D6C5-ADE3-C9CB-9677-3AF282E4A530}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Engine\vendor\gl3w\GL\gl3w.h">
-      <Filter>Engine\vendor\gl3w\GL</Filter>
+    <ClInclude Include="src\Editor\Editor.h">
+      <Filter>src\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="..\Engine\vendor\gl3w\GL\glcorearb.h">
-      <Filter>Engine\vendor\gl3w\GL</Filter>
+    <ClInclude Include="src\testclass.h">
+      <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imconfig.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imconfig.h">
+      <Filter>vendor\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imgui.h">
+      <Filter>vendor\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui_impl_opengl3.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imgui_impl_opengl3.h">
+      <Filter>vendor\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui_impl_sdl.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imgui_impl_sdl.h">
+      <Filter>vendor\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imgui_internal.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imgui_internal.h">
+      <Filter>vendor\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imstb_rectpack.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imstb_rectpack.h">
+      <Filter>vendor\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imstb_textedit.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imstb_textedit.h">
+      <Filter>vendor\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\imstb_truetype.h">
-      <Filter>src\ImGui</Filter>
+    <ClInclude Include="vendor\ImGui\imstb_truetype.h">
+      <Filter>vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\gl3w\GL\gl3w.h">
+      <Filter>vendor\gl3w\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\gl3w\GL\glcorearb.h">
+      <Filter>vendor\gl3w\GL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Engine\vendor\gl3w\GL\gl3w.c">
-      <Filter>Engine\vendor\gl3w\GL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_demo.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_draw.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_impl_opengl3.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_impl_sdl.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_tables.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\imgui_widgets.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\main.cpp">
-      <Filter>src\ImGui</Filter>
+    <ClCompile Include="src\Editor\Editor.cpp">
+      <Filter>src\Editor</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\testclass.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_demo.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_draw.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_impl_opengl3.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_impl_sdl.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_tables.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\main.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\gl3w\GL\gl3w.c">
+      <Filter>vendor\gl3w\GL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
