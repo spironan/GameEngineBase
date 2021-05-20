@@ -4,38 +4,40 @@
 
 #include <sdl2/SDL.h>
 
-namespace Engine
+namespace engine
 {
-    class Windowswindow final : public Window
+    class WindowsWindow final : public Window
     {
     public:
-        Windowswindow(const WindowProperties& props);
+        WindowsWindow(const WindowProperties& props);
 
-        virtual ~Windowswindow();
+        virtual ~WindowsWindow();
 
-        void OnUpdate() override;
+        void OnUpdate(Timestep dt) override;
 
-        unsigned int GetWidth() const override { return m_Data.Width; };
-        unsigned int GetHeight() const override { return m_Data.Height; };
+        unsigned int GetWidth() const override { return m_data.Width; };
+        unsigned int GetHeight() const override { return m_data.Height; };
 
         void SetEventCallback(const EventCallbackFn & callback) override 
         {
-            m_Data.EventCallback = callback;
+            m_data.EventCallback = callback;
         }
 
         void SetVSync(bool enabled) override;
         bool IsVSync() const override;
 
-        void* GetNativeWindow() const override { return m_Window; };
+        void* GetNativeWindow() const override { return m_window; };
 
     private:
         void Init(const WindowProperties& properties);
         void Shutdown();
 
     private:
-        SDL_Window* m_Window;
-        SDL_Renderer* m_Renderer;
+        SDL_Window* m_window;
+        SDL_Renderer* m_renderer;
 
+    public:
+        //expose this for now
         struct WindowData
         {
             std::string Title;
@@ -45,6 +47,7 @@ namespace Engine
             EventCallbackFn EventCallback;
         };
 
-        WindowData m_Data;
+    private:
+        WindowData m_data;
     };
 }

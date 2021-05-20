@@ -21,7 +21,11 @@ Technology is prohibited.
 #include "Engine/Events/KeyEvent.h"
 #include "Engine/Events/MouseEvent.h"
 
-namespace Engine
+#include "Engine/Core/Timestep.h"
+
+#include "Engine/Core/LayerStack.h"
+
+namespace engine
 {
     struct CommandLineArgs
     {
@@ -42,23 +46,31 @@ namespace Engine
         virtual ~Application();
 
         void Run();
-        void Close();
 
         void OnEvent(Event& e);
 
-        static Application& Get() { return*s_Instance; }
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* overlay);
 
-        CommandLineArgs GetCommandLineArgs() const { return _commandLineArgs; }
+        void Close();
+
+        CommandLineArgs GetCommandLineArgs() const { return m_commandLineArgs; }
+
+        static Application& Get() { return*s_instance; }
 
     private:
         bool OnWindowClose(WindowCloseEvent& e);
 
     private:
-        CommandLineArgs _commandLineArgs;
-        bool _running;
-        Window* m_Window;
+        CommandLineArgs m_commandLineArgs;
+        bool m_running;
+        Window* m_window;
+
+        LayerStack m_layerStack;
+
+        double m_lastFrameTime;
         
-        static Application* s_Instance;
+        static Application* s_instance;
     };
 
     // To be defined in CLIENT

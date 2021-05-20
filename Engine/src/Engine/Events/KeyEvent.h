@@ -15,19 +15,21 @@ Technology is prohibited.
 
 #include "Engine/Events/Event.h"
 
-namespace Engine 
+namespace engine
 {
+    //using namespace utility;
+
     class KeyEvent : public Event
     {
     public:
-        inline int GetKeyCode() const { return _keycode; }
+        inline int GetKeyCode() const { return m_keycode; }
         
-        EVENT_CLASS_CATEGORY(EventCategory::Keyboard | EventCategory::Input)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Keyboard } | EVENT_CATEGORY::Input)
     protected:
         KeyEvent(int keycode)
-            : _keycode{ keycode } {}
+            : m_keycode{ keycode } {}
         
-        int _keycode;
+        int m_keycode;
     };
 
 
@@ -35,20 +37,20 @@ namespace Engine
     {
     public:
         KeyPressedEvent(int keycode, int repeatCount)
-            : KeyEvent{ keycode }, _RepeatCount{ repeatCount } {}
+            : KeyEvent{ keycode }, m_repeatCount{ repeatCount } {}
     
-        inline int GetRepeatCount() const { return _RepeatCount; }
+        inline int GetRepeatCount() const { return m_repeatCount; }
 
         std::string ToString() const override 
         {
             std::stringstream ss;
-            ss << "KeyPressedEvent : " << _keycode << "(" << _RepeatCount << ")";
+            ss << "KeyPressedEvent : " << m_keycode << "(" << m_repeatCount << ")";
             return ss.str();
         }
 
         EVENT_CLASS_TYPE(KeyPressed)
     private:
-        int _RepeatCount;
+        int m_repeatCount;
     };
 
     class KeyReleasedEvent : public KeyEvent
@@ -60,7 +62,7 @@ namespace Engine
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "KeyReleasedEvent : " << _keycode;
+            ss << "KeyReleasedEvent : " << m_keycode;
             return ss.str();
         }
 
@@ -77,7 +79,7 @@ namespace Engine
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "KeyTypedEvent : " << _keycode;
+            ss << "KeyTypedEvent : " << m_keycode;
             return ss.str();
         }
 

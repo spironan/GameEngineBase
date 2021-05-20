@@ -15,29 +15,29 @@ Technology is prohibited.
 
 #include "Engine/Events/Event.h"
 
-namespace Engine 
+namespace engine
 {
     class WindowResizeEvent : public Event
     {
     public:
         WindowResizeEvent(unsigned int width, unsigned int height)
-            : _width{ width }, _height{ height } {}
+            : m_width{ width }, m_height{ height } {}
 
-        unsigned int GetWidth() const { return _width; }
-        unsigned int GetHeight() const { return _height; }
+        unsigned int GetWidth() const { return m_width; }
+        unsigned int GetHeight() const { return m_height; }
 
         std::string ToString() const override 
         {
             std::stringstream ss;
-            ss << "WindowResizeEvent: " << _width << ", " << _height;
+            ss << "WindowResizeEvent: " << m_width << ", " << m_height;
             return ss.str();
         }
 
         EVENT_CLASS_TYPE(WindowResize)
-        EVENT_CLASS_CATEGORY(bitmask{ EventCategory::Application })
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
 
     private:
-        unsigned int _width, _height;
+        unsigned int m_width, m_height;
     };
 
     class WindowCloseEvent : public Event
@@ -45,7 +45,7 @@ namespace Engine
     public:
         WindowCloseEvent() = default;
         EVENT_CLASS_TYPE(WindowClose)
-        EVENT_CLASS_CATEGORY(bitmask{ EventCategory::Application })
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
     };
 
     class WindowFocusEvent : public Event
@@ -53,7 +53,7 @@ namespace Engine
     public:
         WindowFocusEvent() = default;
         EVENT_CLASS_TYPE(WindowFocus)
-        EVENT_CLASS_CATEGORY(bitmask{ EventCategory::Application })
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
     };
 
     class WindowLoseFocusEvent : public Event
@@ -61,7 +61,7 @@ namespace Engine
     public:
         WindowLoseFocusEvent() = default;
         EVENT_CLASS_TYPE(WindowLoseFocus)
-        EVENT_CLASS_CATEGORY(bitmask{ EventCategory::Application })
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
     };
 
     class WindowMovedEvent : public Event
@@ -69,7 +69,7 @@ namespace Engine
     public:
         WindowMovedEvent() = default;
         EVENT_CLASS_TYPE(WindowMoved)
-        EVENT_CLASS_CATEGORY(bitmask{ EventCategory::Application })
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
     };
 
 }

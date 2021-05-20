@@ -10,7 +10,10 @@ project "Sandbox"
     files
     {
         "src/**.h",
-        "src/**.cpp"
+        "src/**.cpp",
+        -- temporary fix using gl3w
+        "%{wks.location}/Engine/vendor/gl3w/GL/**.h",
+        "%{wks.location}/Engine/vendor/gl3w/GL/**.c"
     }
 
     includedirs

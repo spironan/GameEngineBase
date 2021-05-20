@@ -18,7 +18,7 @@ Technology is prohibited.
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Base.h"
 
-extern Engine::Application* Engine::CreateApplication(Engine::CommandLineArgs args);
+extern engine::Application* engine::CreateApplication(engine::CommandLineArgs args);
 
 int main(int argc, char** argv)
 {
@@ -31,10 +31,17 @@ int main(int argc, char** argv)
 #endif
 
     // Initialize logging system
-    Engine::Log::Init();
+    engine::Log::Init();
 
-    auto app = Engine::CreateApplication({argc, argv});
+    ENGINE_PROFILE_BEGIN_SESSION("Startup", "EngineProfile-Startup.json");
+    auto app = engine::CreateApplication({argc, argv});
+    ENGINE_PROFILE_END_SESSION();
+
+    ENGINE_PROFILE_BEGIN_SESSION("Runtime", "EngineProfile-Runtime.json");
     app->Run();
-    delete app;
+    ENGINE_PROFILE_END_SESSION();
 
+    ENGINE_PROFILE_BEGIN_SESSION("Shutdown", "EngineProfile-Shutdown.json");
+    delete app;
+    ENGINE_PROFILE_END_SESSION();
 }

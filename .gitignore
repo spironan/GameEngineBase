@@ -8,3 +8,6 @@ bin-int/
 
 #sln file
 *.sln
+
+#instrumentation JSON scripts in Sandbox
+Sandbox/*.json
