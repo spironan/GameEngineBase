@@ -2,7 +2,7 @@ project "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir("%{wks.location}/bin/"..outputdir.. "/%{prj.name}")
     objdir("%{wks.location}/bin-int/"..outputdir.."/%{prj.name}")
@@ -12,8 +12,10 @@ project "Sandbox"
         "src/**.h",
         "src/**.cpp",
         -- temporary fix using gl3w
-        "%{wks.location}/Engine/vendor/gl3w/GL/**.h",
-        "%{wks.location}/Engine/vendor/gl3w/GL/**.c"
+        "%{wks.location}/Sandbox/vendor/gl3w/GL/**.h",
+        "%{wks.location}/Sandbox/vendor/gl3w/GL/**.c",
+        "%{wks.location}/Sandbox/vendor/ImGui/**.h",
+        "%{wks.location}/Sandbox/vendor/ImGui/**.cpp"
     }
 
     includedirs
@@ -22,10 +24,10 @@ project "Sandbox"
         "%{wks.location}/Engine/src",
         "%{wks.location}/Engine/vendor/spdlog/include",
         "%{wks.location}/Engine/vendor/sdl2/include/sdl2",
-        "%{wks.location}/Engine/vendor/gl3w",
         "%{wks.location}/Engine/vendor/rttr/include", --rttr
-        "%{wks.location}/Engine/vendor/rpj", --rapidjson
-        "%{wks.location}/Engine/vendor/mono/include/mono-2.0" --mono
+        "%{wks.location}/Engine/vendor/mono/include/mono-2.0", --mono
+        "%{wks.location}/SandBox/vendor/rpj", --rapidjson
+        "%{wks.location}/Sandbox/vendor/gl3w",
     }
 
     -- library diretories
@@ -50,7 +52,7 @@ project "Sandbox"
 
     filter "system:windows"
         cppdialect "C++17"
-        staticruntime "On"
+        staticruntime "off"
         systemversion "latest"
 
         defines
@@ -74,7 +76,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s_d.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_d.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
@@ -88,7 +90,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
@@ -102,7 +104,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_s.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
         links{
