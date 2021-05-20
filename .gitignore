@@ -9,5 +9,5 @@ bin-int/
 #sln file
 *.sln
 
-#json scripts in Sandbox
+#instrumentation JSON scripts in Sandbox
 Sandbox/*.json

@@ -15,6 +15,9 @@ Technology is prohibited.
 #include "pch.h"
 #include "Application.h"
 
+#include "Engine/Core/Input.h"
+
+//temporary
 #include <sdl2/SDL.h>
 
 namespace engine
@@ -22,7 +25,9 @@ namespace engine
     Application* Application::s_instance = nullptr;
 
     Application::Application(const std::string& name, CommandLineArgs args)
-        :m_commandLineArgs{ args }, m_running{ true }
+        : m_commandLineArgs{ args }
+        , m_running{ true }
+        , m_lastFrameTime { 0.0 }
     {
         ENGINE_PROFILE_FUNCTION();
 
@@ -36,6 +41,9 @@ namespace engine
     Application::~Application()
     {
         ENGINE_PROFILE_FUNCTION();
+
+        //delete Input::Instance();
+        //Input::Destroy();
 
         delete m_window;
     }
@@ -232,12 +240,23 @@ namespace engine
         {
             ENGINE_PROFILE_SCOPE("Runloop");
 
+            /*Calculate dt*/
             // temporary solution : can be improved by encapsulating the 
             // frame time get to use our own function call 
             // rather then calling sdl here directly.
             double time = static_cast<double>(SDL_GetPerformanceCounter());
             Timestep dt { (time - m_lastFrameTime) * 1000.0 / SDL_GetPerformanceFrequency() };
             m_lastFrameTime = time;
+
+            //Layerstack update
+            {
+                ENGINE_PROFILE_SCOPE("LayerStack OnUpdate");
+
+                for (Layer* layer : m_layerStack)
+                {
+                    layer->OnUpdate(dt);
+                }
+            }
 
             m_window->OnUpdate(dt);
         }
@@ -253,10 +272,35 @@ namespace engine
         ENGINE_PROFILE_FUNCTION();
 
         //Log events
-        LOG_ENGINE_INFO("{0}", e);
+        //LOG_ENGINE_INFO("{0}", e);
 
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(ENGINE_BIND_EVENT_FN(Application::OnWindowClose));
+
+        for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it)
+        {
+            // if event is handled, stop propogating
+            if (e.Handled) break;
+
+            (*it)->OnEvent(e);
+        }
+
+    }
+
+    void Application::PushLayer(Layer* layer)
+    {
+        ENGINE_PROFILE_FUNCTION();
+
+        m_layerStack.PushLayer(layer);
+        layer->OnAttach();
+    }
+
+    void Application::PushOverlay(Layer* overlay)
+    {
+        ENGINE_PROFILE_FUNCTION();
+
+        m_layerStack.PushLayer(overlay);
+        overlay->OnAttach();
     }
 
     bool Application::OnWindowClose(WindowCloseEvent& e)

@@ -23,7 +23,7 @@ Technology is prohibited.
 
 namespace engine
 {
-    class Log
+    class Log final
     {
     public:
         static void Init();

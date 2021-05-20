@@ -3,22 +3,30 @@
 #include "Engine/Core/Base.h"
 #include "Engine/Core/Application.h"
 
+#include "Engine/Core/Input.h"
+
 namespace engine
 {
     static bool s_SDLInitialized = false;
 
-    Windowswindow::Windowswindow(const WindowProperties& props)
+    WindowsWindow::WindowsWindow(const WindowProperties& props)
     {
+        ENGINE_PROFILE_FUNCTION();
+
         Init(props);
     }
 
-    Windowswindow::~Windowswindow()
+    WindowsWindow::~WindowsWindow()
     {
+        ENGINE_PROFILE_FUNCTION();
+
         Shutdown();
     }
 
-    void Windowswindow::Init(const WindowProperties& properties)
+    void WindowsWindow::Init(const WindowProperties& properties)
     {
+        ENGINE_PROFILE_FUNCTION();
+
         m_data.Title = properties.Title;
         m_data.Width = properties.Width;
         m_data.Height = properties.Height;
@@ -28,32 +36,48 @@ namespace engine
         // windows creation
         if (!s_SDLInitialized)
         {
+            ENGINE_PROFILE_SCOPE("SDL_INIT");
+
             int success = SDL_Init(SDL_INIT_VIDEO);
             ENGINE_ASSERT_MSG((success == 0), "Failed to initialize SDL {0}", SDL_GetError());
 
             s_SDLInitialized = true;
         }
 
+
+        ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
         m_window = SDL_CreateWindow(m_data.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_data.Width, m_data.Height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
 
+
         // -1 means use whatever available card
         // SDL_RENDERER_ACCELERATED tells the system to use gpu if possible
+        ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         ENGINE_ASSERT_MSG(m_renderer, "Failed to create SDL Rendere: {0}", SDL_GetError());
 
         SetVSync(true);
     }
 
-    void Windowswindow::Shutdown()
+    void WindowsWindow::Shutdown()
     {
+        ENGINE_PROFILE_FUNCTION();
+
+        /*Delete Input Management here*/
+        delete Input::s_instance;
+
         SDL_DestroyWindow(m_window);
     }
     
-    void Windowswindow::OnUpdate(Timestep dt)
+    void WindowsWindow::OnUpdate(Timestep dt)
     {
-        LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
+        ENGINE_PROFILE_FUNCTION();
 
+        /*Update Input Management here*/
+        Input::s_instance->Update();
+
+        //LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
+        
         //Clear color and clear color buffer bit equivalent
         SDL_SetRenderDrawColor(m_renderer, 96, 128, 255, 255);
         SDL_RenderClear(m_renderer);
@@ -163,19 +187,20 @@ namespace engine
         SDL_RenderPresent(m_renderer);
     }
 
-    void Windowswindow::SetVSync(bool enabled)
+    void WindowsWindow::SetVSync(bool enabled)
     {
         LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
+
         enabled 
-            ? SDL_GL_SetSwapInterval(1)
-            : SDL_GL_SetSwapInterval(0);
-            /*? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1") 
-            : SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");*/
+            /*? SDL_GL_SetSwapInterval(1)
+            : SDL_GL_SetSwapInterval(0);*/
+            ? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1") 
+            : SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
 
         m_data.VSync = enabled;
     }
 
-    bool Windowswindow::IsVSync() const
+    bool WindowsWindow::IsVSync() const
     {
         return m_data.VSync;
     }

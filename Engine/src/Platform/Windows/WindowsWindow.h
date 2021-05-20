@@ -6,12 +6,12 @@
 
 namespace engine
 {
-    class Windowswindow final : public Window
+    class WindowsWindow final : public Window
     {
     public:
-        Windowswindow(const WindowProperties& props);
+        WindowsWindow(const WindowProperties& props);
 
-        virtual ~Windowswindow();
+        virtual ~WindowsWindow();
 
         void OnUpdate(Timestep dt) override;
 

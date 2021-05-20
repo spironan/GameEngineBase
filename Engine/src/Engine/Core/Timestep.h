@@ -2,7 +2,7 @@
 
 namespace engine
 {
-    class Timestep
+    class Timestep final
     {
     public:
         Timestep(double time = 0.f)

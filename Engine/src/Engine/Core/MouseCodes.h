@@ -6,8 +6,6 @@ namespace engine
 
     namespace Mouse 
     {
-        // TODO : figure out how this works, aka anonymous enum.
-
         enum : MouseCode
         {
             // from glfw3.h

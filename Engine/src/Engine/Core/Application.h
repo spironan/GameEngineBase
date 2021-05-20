@@ -23,6 +23,8 @@ Technology is prohibited.
 
 #include "Engine/Core/Timestep.h"
 
+#include "Engine/Core/LayerStack.h"
+
 namespace engine
 {
     struct CommandLineArgs
@@ -44,13 +46,17 @@ namespace engine
         virtual ~Application();
 
         void Run();
-        void Close();
 
         void OnEvent(Event& e);
 
-        static Application& Get() { return*s_instance; }
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* overlay);
+
+        void Close();
 
         CommandLineArgs GetCommandLineArgs() const { return m_commandLineArgs; }
+
+        static Application& Get() { return*s_instance; }
 
     private:
         bool OnWindowClose(WindowCloseEvent& e);
@@ -59,7 +65,9 @@ namespace engine
         CommandLineArgs m_commandLineArgs;
         bool m_running;
         Window* m_window;
-        
+
+        LayerStack m_layerStack;
+
         double m_lastFrameTime;
         
         static Application* s_instance;
