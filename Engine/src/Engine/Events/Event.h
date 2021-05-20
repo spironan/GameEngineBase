@@ -15,9 +15,9 @@ Technology is prohibited.
 
 #include "Utility/Bitmask.h"
 
-namespace Engine 
+namespace engine
 {
-    enum class EventType : int
+    enum class EVENT_TYPE : int
     {
         None = 0,
         WindowClose, WindowResize, WindowFocus, WindowLoseFocus, WindowMoved,
@@ -25,7 +25,7 @@ namespace Engine
         MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
     };
 
-    enum class EventCategory : int
+    enum class EVENT_CATEGORY : int
     {
         None,
         Application,
@@ -36,14 +36,14 @@ namespace Engine
     };
 
     //typesafe enum that still has normal enum operations.
-    using EventCategoryType = bitmask<EventCategory>;   
-
+    using EventCategoryType = utility::bitmask<EVENT_CATEGORY>;
+    
     #define EVENT_CLASS_CATEGORY(category) \
     virtual EventCategoryType GetCategoryFlag() const override { return category; }
 
     #define EVENT_CLASS_TYPE(type) \
-    static EventType GetStaticType() { return EventType::##type; }\
-    virtual EventType GetEventType() const override { return GetStaticType(); }\
+    static EVENT_TYPE GetStaticType() { return EVENT_TYPE::##type; }\
+    virtual EVENT_TYPE GetEventType() const override { return GetStaticType(); }\
     virtual const char* GetName() const override { return #type; }
 
     class Event 
@@ -51,12 +51,12 @@ namespace Engine
     public:
         bool Handled = false;
 
-        virtual EventType GetEventType() const = 0;
+        virtual EVENT_TYPE GetEventType() const = 0;
         virtual const char* GetName() const = 0;
         virtual EventCategoryType GetCategoryFlag() const = 0;
         virtual std::string ToString() const { return GetName(); }
 
-        inline bool IsInCategory(EventCategory categories)
+        inline bool IsInCategory(EVENT_CATEGORY categories)
         {
             return GetCategoryFlag() & categories;
         }
@@ -67,23 +67,23 @@ namespace Engine
     {
     public:
         EventDispatcher(Event& event)
-            : _Event(event)
+            : m_event(event)
         {
         }
 
         template<typename T, typename F>
         bool Dispatch(const F& func)
         {
-            if (_Event.GetEventType() == T::GetStaticType())
+            if (m_event.GetEventType() == T::GetStaticType())
             {
-                _Event.Handled |= func(static_cast<T&>(_Event));
+                m_event.Handled |= func(static_cast<T&>(m_event));
                 return true;
             }
             return false;
         }
 
     private:
-        Event& _Event;
+        Event& m_event;
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Event& e)

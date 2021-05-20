@@ -2,8 +2,9 @@
 
 #include <string>
 #include "Engine/Events/Event.h"
+#include "Engine/Core/Timestep.h"
 
-namespace Engine
+namespace engine
 {
     // Properties that make up a window
     struct WindowProperties
@@ -27,7 +28,7 @@ namespace Engine
 
         virtual ~Window() = default;
 
-        virtual void OnUpdate() = 0;
+        virtual void OnUpdate(Timestep dt) = 0;
 
         virtual unsigned int GetWidth() const = 0;
         virtual unsigned int GetHeight() const = 0;
