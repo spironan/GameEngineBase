@@ -8,10 +8,16 @@
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/document.h>
 #include <rapidjson/reader.h>
+#include "../../vendor/ImGui/imgui_internal.h"
 
+/* static vars */
+static testclass rootnode;
 
-Editor::Editor():testList(20)
+Editor::Editor()
 {
+    testList.reserve(50);
+	m_hotkeymapping[KEY_ACTIONS::RENAME_ITEM] = 59;//f2
+	m_hotkeymapping[KEY_ACTIONS::DELETE_ITEM] = 76;//del
 }
 
 Editor::~Editor()
@@ -20,66 +26,85 @@ Editor::~Editor()
 
 void Editor::UpdateUI()
 {
-
 }
 
-void Editor::SaveHirechy(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
-{
-    SaveObject(tc, writer);
-    for (int i = 0; i < tc.childs.size(); ++i)
-    {
-        SaveHirechy(*tc.childs[i], writer);
-    }
-}
+
 void Editor::ShowObject(testclass& tc)
 {
+	bool activated = false;
+	ImGuiTreeNodeFlags flag = 0;
 
 
-    ImGui::PushID(tc.uid);
-    ImGuiTreeNodeFlags flag = (m_focused == &tc) ? ImGuiTreeNodeFlags_Selected : 0;
-    if (tc.childs.size() > 0)
-        flag = flag | ImGuiTreeNodeFlags_OpenOnArrow;
-    else
-        flag = flag | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-    //open up the dropdown
-    bool activated = ImGui::TreeNodeEx(tc.name.c_str(), flag);
-    ImGui::PopID();
-
+	if (m_focused == &tc)
+	{
+		if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::RENAME_ITEM]))
+			m_editing = true;
+		flag = ImGuiTreeNodeFlags_Selected;
+		if (m_editing)
+		{
+			flag |= ImGuiTreeNodeFlags_AllowItemOverlap;
+			//if editing item ( draw a text box above )
+			{
+				static char s_Buffer[100];
+				static bool s_FocusedItem = false;
+				if (ImGui::InputText("", s_Buffer, 100,ImGuiInputTextFlags_EnterReturnsTrue |ImGuiInputTextFlags_AutoSelectAll |ImGuiInputTextFlags_CharsNoBlank))
+				{
+					m_editing = false;
+					s_FocusedItem = false;
+					tc.name = s_Buffer;
+					s_Buffer[0] = '\0';
+				}
+				if (!s_FocusedItem)
+				{
+					ImGui::SetKeyboardFocusHere();
+					s_FocusedItem = true;
+				}
+				else if (ImGui::IsItemDeactivated())//if clicked else where the textbox will dissapear
+				{
+					m_editing = false;
+					s_FocusedItem = false;
+				}
+			}
+		}
+	}
+	flag |= (tc.childs.size()) ? ImGuiTreeNodeFlags_OpenOnArrow : ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+	
+	ImGui::PushID(tc.uid);
+	activated = ImGui::TreeNodeEx((tc.name).c_str() , flag);
+	ImGui::PopID();
+	
+	if (ImGui::IsItemFocused())
+		m_focused = &tc;
+	
     //drag and drop
-    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoDisableHover) && m_focused)
     {
-        testclass* temp = &tc;
         // Set payload to carry the index of our item (could be anything)
-        ImGui::SetDragDropPayload("testclass", &temp, sizeof(testclass*));
-        ImGui::Text("%s", tc.name.c_str());
+        ImGui::SetDragDropPayload("HIERACHY_OBJ", nullptr, 0);
+        ImGui::Text("%s", m_focused->name.c_str());
         ImGui::EndDragDropSource();
+
     }
+
     if (ImGui::BeginDragDropTarget())
     {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("testclass"))
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
+        if (payload)
         {
-            IM_ASSERT(payload->DataSize == sizeof(testclass*));
-            testclass* pload = *((testclass**)payload->Data);
-
-            pload->SetParent(&tc);
+            m_focused->SetParent(&tc);
         }
         ImGui::EndDragDropTarget();
     }
-    if (ImGui::IsItemClicked())
-        m_focused = &tc;
 
-    if (activated)
-    {
-        for (int i = 0; i < tc.childs.size(); ++i)
-        {
-            ShowObject(*tc.childs[i]);
-        }
-        if (tc.childs.size() > 0)
-        {
-            ImGui::TreePop();
-        }
-    }
+	if (activated && tc.childs.size())
+	{
+		for (testclass* obj : tc.childs)
+		{
+			ShowObject(*obj);
+		}
+		ImGui::TreePop();
+	}
+
 }
 
 //show a clickable directory path and modify it when clicked
@@ -240,18 +265,15 @@ void Editor::PreviewFolder(std::string& path)
     //drag and drop interaction
     if (ImGui::BeginDragDropTarget())
     {
-        const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("testclass");
+        const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
         if (payload)
         {
-            IM_ASSERT(payload->DataSize == 8);
-            //temporary using this
-            testclass* temp = *((testclass**)payload->Data);
 
             std::ofstream stream("prefab");
             rapidjson::OStreamWrapper osw(stream);
             rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
             writer.StartObject();
-            SaveHirechy(*temp, writer);
+            SaveHirechy(*m_focused, writer);
             writer.EndObject();
         }
         ImGui::EndDragDropTarget();
@@ -281,6 +303,14 @@ void Editor::SaveObject(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStrea
     writer.EndArray();//end component 1
     writer.EndArray();
 
+}
+void Editor::SaveHirechy(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+{
+    SaveObject(tc, writer);
+    for (int i = 0; i < tc.childs.size(); ++i)
+    {
+        SaveHirechy(*tc.childs[i], writer);
+    }
 }
 void Editor::SaveData()
 {
@@ -342,6 +372,7 @@ void Editor::ReadData()
 {
     rttr::type t = m_focused->get_type();
     auto types = t.get_properties();
+
     ImGui::Begin("inspector");
 
     {
@@ -366,22 +397,40 @@ void Editor::ReadData()
     }
     ImGui::End();
 }
+void Editor::HierarchyPopUp()
+{
+    if (ImGui::MenuItem("New Object")) 
+    {
+        testclass tc{ 100 };
+        tc.name = "new gameobject";
+        testList.push_back(tc);
+		testList[testList.size() - 1].SetParent(&rootnode);
+    }
+}
+void Editor::FileWindowPopUp()
+{
+}
 void Editor::TestFunction()
 {
-    static bool init = false;
-    static const int size = 5;
-    static int index = -1;
     //main banner
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
 
     {
         ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
+        
         ImGui::Begin("Hierarchy");
-        for (int i = 0; i < testList.size(); ++i)
-        {
-            ShowObject(testList[i]);
-        }
+
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
+			ImGui::OpenPopup("hierarchy_PopUp");
+
+		if (ImGui::BeginPopup("hierarchy_PopUp"))
+		{
+			HierarchyPopUp();
+			ImGui::EndPopup();
+		}
+
+        ShowObject(rootnode);
         ImGui::End();
     }
 

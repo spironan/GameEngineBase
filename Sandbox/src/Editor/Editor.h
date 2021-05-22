@@ -10,6 +10,11 @@ enum class GUIACTIVE_FLAGS
 	PROJECTHIRECHY_ACTIVE = 4,
 	PROJECTVIEW_ACTIVE = 8
 };
+enum class KEY_ACTIONS
+{
+	RENAME_ITEM = 1,
+	DELETE_ITEM,
+};
 class Editor
 {
 public:
@@ -35,10 +40,16 @@ private:
 	void LoadData(const char* dir);
 	void ReadData();
 
+	void HierarchyPopUp();
+	void FileWindowPopUp();
 private:
 	int m_activeFlagGUI = 0;
 
 	testclass* m_focused = nullptr;
+	bool m_editing = false;//hirecrchy
+
+
 	std::string m_currentPath;
 	std::vector<testclass> testList;
+	std::map<KEY_ACTIONS, unsigned int> m_hotkeymapping;
 };

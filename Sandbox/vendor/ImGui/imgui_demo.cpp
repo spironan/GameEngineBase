@@ -4628,7 +4628,7 @@ static void ShowDemoWindowTables()
             static const MyTreeNode nodes[] =
             {
                 { "Root",                         "Folder",       -1,       1, 3    }, // 0
-                { "Music",                        "Folder",       -1,       4, 2    }, // 1
+                { "Music",                        "Folder",       -1,       4, 1    }, // 1
                 { "Textures",                     "Folder",       -1,       6, 3    }, // 2
                 { "desktop.ini",                  "System file",  1024,    -1,-1    }, // 3
                 { "File1_a.wav",                  "Audio file",   123000,  -1,-1    }, // 4
