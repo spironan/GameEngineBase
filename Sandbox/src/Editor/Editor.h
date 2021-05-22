@@ -47,7 +47,7 @@ private:
 
 	testclass* m_focused = nullptr;
 	bool m_editing = false;//hirecrchy
-
+	bool m_dragging = false;//hirerchy
 
 	std::string m_currentPath;
 	std::vector<testclass> testList;
