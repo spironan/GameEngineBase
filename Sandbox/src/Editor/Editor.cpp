@@ -41,7 +41,10 @@ void Editor::ShowObject(testclass& tc)
 			m_editing = true;
 		flag = ImGuiTreeNodeFlags_Selected;
 		if (m_dragging)
+		{
 			flag |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			m_dragging = !ImGui::IsMouseReleased(ImGuiMouseButton_Left);
+		}
 		if (m_editing)
 		{
 			flag |= ImGuiTreeNodeFlags_AllowItemOverlap;
@@ -81,7 +84,6 @@ void Editor::ShowObject(testclass& tc)
 	//drop
 	if (ImGui::BeginDragDropTarget())
 	{
-		//release your mouse
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
@@ -91,7 +93,7 @@ void Editor::ShowObject(testclass& tc)
 		ImGui::EndDragDropTarget();
 	}
 	//drag
-	if (m_focused && ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceNoDisableHover))
+	if (m_focused && ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
 	{
 		// Set payload to carry the index of our item (could be anything)
 		m_dragging = true;
@@ -101,7 +103,7 @@ void Editor::ShowObject(testclass& tc)
 	}
 
 
-	if (activated && tc.childs.size())
+	if (activated && tc.childs.size() && !(flag & ImGuiTreeNodeFlags_NoTreePushOnOpen))
 	{
 		for (testclass* obj : tc.childs)
 		{
@@ -418,7 +420,6 @@ void Editor::TestFunction()
 {
 	//main banner
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-
 
 	{
 		ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
