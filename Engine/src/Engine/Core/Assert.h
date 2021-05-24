@@ -15,11 +15,19 @@ Technology is prohibited.
 
 #include "Engine/Core/Log.h"
 
-//Windows only, visual studios only.
+/****************************************************************************//*!
+ @brief     Windows only, visual studios only debug definition.
+*//*****************************************************************************/
 #ifdef ENGINE_DEBUG
-    //Asserts are completely stripped upon not in debug 
-    //whereas verify still calls the original function (x).
-    //Use at own discretion.
+
+    /****************************************************************************//*!
+     @brief     Implements the functionality when to test asserts 
+                when engine is in debug mode.
+     
+     @note      Asserts are completely stripped upon not in debug
+                whereas verify still calls the original function (x).
+                Use at own discretion.
+    *//*****************************************************************************/
     #define ENGINE_ASSERT(x)            { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed"); __debugbreak();}}
     #define ENGINE_ASSERT_MSG(x, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed : {0}", __VA_ARGS__); __debugbreak();}}
     #define ENGINE_VERIFY(x)            { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed"); __debugbreak();} }

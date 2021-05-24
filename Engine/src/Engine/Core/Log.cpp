@@ -14,7 +14,10 @@ Technology is prohibited.
 #include "pch.h"
 #include "Log.h"
 
-#include "spdlog/sinks/stdout_color_sinks.h"
+// This ignores all warnings raised inside External headers
+#pragma warning(push, 0)
+#include <spdlog/sinks/stdout_color_sinks.h>
+#pragma warning(pop)
 
 namespace engine
 {

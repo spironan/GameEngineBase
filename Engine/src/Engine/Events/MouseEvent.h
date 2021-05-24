@@ -4,7 +4,9 @@
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
 \date           May 15, 2021
-\brief
+\brief          Implements an event related to the mouse. Used to extract info from
+                the event such as what mouse button was pressed and how much the mouse
+                has scrolled.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -14,7 +16,7 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/Events/Event.h"
-#include "Engine/Core/MouseCodes.h"
+#include "Engine/Core/MouseCode.h"
 
 namespace engine
 {

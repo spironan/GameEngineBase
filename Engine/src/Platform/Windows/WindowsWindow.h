@@ -1,8 +1,25 @@
+/************************************************************************************//*!
+\file           WindowsWindow.h
+\project        INSERT PROJECT NAME
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           May 15, 2021
+\brief          Describes a Windows(Platform) specific windows that implements 
+                the generic window interface. 
+                Currently using SDL as the backend abstraction.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 
 #include "Engine/Core/Window.h"
 
-#include <sdl2/SDL.h>
+//forward declaration
+struct SDL_Window;
+struct SDL_Renderer;
 
 namespace engine
 {

@@ -27,11 +27,23 @@ Technology is prohibited.
 
 namespace engine
 {
+    /********************************************************************************//*!
+     @brief     Defines what makes up a command line argument.
+    *//*********************************************************************************/
     struct CommandLineArgs
     {
         int Count = 0;
         char** Args = nullptr;
 
+        /********************************************************************************//*!
+         @brief     subscript operator overload for convinience when wanting to access
+                    arguments directly
+         
+         @note      make sure you do not use an invalid index that is larger then the 
+                    possible number of arguments.
+
+         @param     the index you want to retrieve the command line argument from.
+        *//*********************************************************************************/
         const char* operator[](int index) const
         {
             ENGINE_ASSERT(index < Count);
@@ -39,35 +51,83 @@ namespace engine
         }
     };
 
+    /********************************************************************************//*!
+     @brief     Application entails the core loop and the where and how each system is 
+                being used within.
+    *//*********************************************************************************/
     class Application
     {
     public:
+        /*-----------------------------------------------------------------------------*/
+        /* Constructors and Destructors                                                */
+        /*-----------------------------------------------------------------------------*/
         Application(const std::string& name = "Engine App", CommandLineArgs args = CommandLineArgs{});
         virtual ~Application();
 
-        void Run();
+        /*-----------------------------------------------------------------------------*/
+        /* Getters                                                                     */
+        /*-----------------------------------------------------------------------------*/
+        /****************************************************************************//*!
+         @brief     Retrieve the static instance of the create application.
+         
+         @note      Function will break if an Application is not yet created and 
+                    this function gets called.
 
-        void OnEvent(Event& e);
+         @return    returns the static instance of the created application.
+                    crashes if s_instance is null due to dereferencing.
+        *//*****************************************************************************/
+        static Application& Get() { return*s_instance; }
 
-        void PushLayer(Layer* layer);
-        void PushOverlay(Layer* overlay);
+        /****************************************************************************//*!
+         @brief     Retrieve the command line arguments passed to the application.
 
-        void Close();
-
+         @return    returns the command line arguments struct held by the application.
+        *//*****************************************************************************/
         CommandLineArgs GetCommandLineArgs() const { return m_commandLineArgs; }
 
-        static Application& Get() { return*s_instance; }
+        /*-----------------------------------------------------------------------------*/
+        /* Functions                                                                   */
+        /*-----------------------------------------------------------------------------*/
+        /****************************************************************************//*!
+         @brief     Describes the applications core run loop
+        *//*****************************************************************************/
+        void Run();
+        /****************************************************************************//*!
+         @brief     Describes the applications way of closing down
+        *//*****************************************************************************/
+        void Close();
+        /****************************************************************************//*!
+         @brief     Describes what happens when any type of event gets called
+        *//*****************************************************************************/
+        void OnEvent(Event& e);
+        /****************************************************************************//*!
+         @brief     Adds a layer to the core layerstack and calls the layers OnAttach
+
+         @param     layer
+                    The layer that will be added to the topmost layer of the layerstack.
+                    topmost layer is always behind overlay so all overlays will always
+                    render ontop of any normal layer.
+        *//*****************************************************************************/
+        void PushLayer(Layer* layer);
+        /****************************************************************************//*!
+         @brief     Adds a layer to the core layerstack as an OVERLAY and 
+                    calls the layers OnAttach.
+                    A layer added as an overlay will render at the topmost layer.
+                    Everytime a new overlay is added it will become the topmost layer.
+                    
+         @param     overlay
+                    The overlay that will be added to the topmost overlay of the layerstack.
+        *//*****************************************************************************/
+        void PushOverlay(Layer* overlay);
 
     private:
         bool OnWindowClose(WindowCloseEvent& e);
 
     private:
-        CommandLineArgs m_commandLineArgs;
         bool m_running;
+        CommandLineArgs m_commandLineArgs;
         Window* m_window;
-
         LayerStack m_layerStack;
-
         double m_lastFrameTime;
         
         static Application* s_instance;
