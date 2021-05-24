@@ -11,7 +11,7 @@ bin-int/
 *.sln
 
 #instrumentation JSON scripts in Sandbox
-*/*.json
-*/*.json
-*/*.json
+**/*.json
+**/*.json
+**/*.json
 
