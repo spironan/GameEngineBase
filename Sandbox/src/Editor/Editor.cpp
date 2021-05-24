@@ -13,17 +13,45 @@
 /* static vars */
 static testclass rootnode;
 
-Editor::Editor()
+Editor::Editor(const std::string& root) :m_rootPath{ root },m_currentPath{root}
 {
 	testList.reserve(50);
+
 	m_hotkeymapping[KEY_ACTIONS::RENAME_ITEM] = 59;//f2
 	m_hotkeymapping[KEY_ACTIONS::DELETE_ITEM] = 76;//del
+	m_hotkeymapping[KEY_ACTIONS::HIDE_INSPECTOR] = 30;//1
+	m_hotkeymapping[KEY_ACTIONS::HIDE_PROJECTHIRECHY] = 31;//2
+	m_hotkeymapping[KEY_ACTIONS::HIDE_PROJECTFOLDERVIEW] = 32;//3
+	m_hotkeymapping[KEY_ACTIONS::HIDE_PROJECTVIEW] = 33;//4
+
+	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
+	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTHIRECHY_ACTIVE);
+	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTFOLDERVIEW_ACTIVE);
+	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE);
 }
 
 Editor::~Editor()
 {
 }
-
+void Editor::HotKeysUpdate()
+{
+	if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::HIDE_INSPECTOR]))
+	{
+		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
+	}
+	else if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::HIDE_PROJECTHIRECHY]))
+	{
+		SetGUIInactive(GUIACTIVE_FLAGS::PROJECTHIRECHY_ACTIVE);
+	}
+	else if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::HIDE_PROJECTFOLDERVIEW]))
+	{
+		SetGUIInactive(GUIACTIVE_FLAGS::PROJECTFOLDERVIEW_ACTIVE);
+	}
+	else if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::HIDE_PROJECTVIEW]))
+	{
+		SetGUIInactive(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE);
+	}
+}
 void Editor::UpdateUI()
 {
 }
@@ -37,38 +65,33 @@ void Editor::ShowObject(testclass& tc)
 
 	if (m_focused == &tc)
 	{
+		flag = ImGuiTreeNodeFlags_Selected;
+
 		if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::RENAME_ITEM]))
 			m_editing = true;
-		flag = ImGuiTreeNodeFlags_Selected;
+
 		if (m_dragging)
 		{
 			flag |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
 			m_dragging = !ImGui::IsMouseReleased(ImGuiMouseButton_Left);
 		}
+
 		if (m_editing)
 		{
-			flag |= ImGuiTreeNodeFlags_AllowItemOverlap;
 			//if editing item ( draw a text box above )
 			static char s_Buffer[100];
-			static bool s_FocusedItem = false;
-			if (!s_FocusedItem)
-			{
-				ImGui::SetKeyboardFocusHere();
-				s_FocusedItem = true;
-			}
+
 			ImGui::PushID(tc.uid);
 			if (ImGui::InputText("rename", s_Buffer, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CharsNoBlank))
 			{
-				m_editing = false;
-				s_FocusedItem = false;
 				tc.name = s_Buffer;
-				s_Buffer[0] = '\0';
+				s_Buffer[0] = '\0';//empty the character buffer
 			}
+			if (!ImGui::IsItemFocused())
+				ImGui::SetKeyboardFocusHere();
 			if (ImGui::IsItemDeactivated())//if clicked else where the textbox will dissapear
-			{
 				m_editing = false;
-				s_FocusedItem = false;
-			}
+
 			ImGui::PopID();
 		}
 	}
@@ -101,8 +124,7 @@ void Editor::ShowObject(testclass& tc)
 		ImGui::Text("%s", m_focused->name.c_str());
 		ImGui::EndDragDropSource();
 	}
-
-
+	//creating childs(recurse)
 	if (activated && tc.childs.size() && !(flag & ImGuiTreeNodeFlags_NoTreePushOnOpen))
 	{
 		for (testclass* obj : tc.childs)
@@ -110,6 +132,66 @@ void Editor::ShowObject(testclass& tc)
 			ShowObject(*obj);
 		}
 		ImGui::TreePop();
+	}
+}
+
+//all the filepaths
+void Editor::ProjectFile(const std::string& path, std::string& selected_dir)
+{
+	static std::vector<char> layer;//the layer selected
+	static std::vector<char> curr;//the current layer
+	static std::string selected_itemname = "";
+
+	ImGuiTreeNodeFlags flag = 0;
+
+	//this is to get a img to draw
+	ImGuiIO& io = ImGui::GetIO();
+	ImFontAtlas* atlas = io.Fonts;
+
+	char counter = 0;
+	bool enable = false;
+	for (std::filesystem::directory_entry entry : std::filesystem::directory_iterator(path))
+	{
+		if (entry.is_directory())//if item is a folder use the folder img
+		{
+			flag = ImGuiTreeNodeFlags_OpenOnArrow;
+			ImGui::Image(atlas->TexID, { 10,10 });
+		}
+		else//use some img
+		{
+			flag = ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			ImGui::Image(atlas->TexID, { 20,10 });
+		}
+		ImGui::SameLine();
+
+		if (layer == curr)
+		{
+			if (entry.path().filename().generic_u8string() == selected_itemname)
+				flag |= ImGuiTreeNodeFlags_Selected;
+		}
+
+		enable = ImGui::TreeNodeEx(entry.path().filename().generic_u8string().c_str(), flag);
+
+		if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0))
+		{
+			if (entry.is_directory())//for the previde module
+				selected_dir = entry.path().generic_u8string();
+			//to mark the item that is focused
+			selected_itemname = entry.path().filename().generic_u8string();
+			layer = curr;
+		}
+
+		if (enable && entry.is_directory())
+		{
+			ImGui::PushID(counter);
+			curr.emplace_back(counter);
+			ProjectFile(entry.path().u8string(), selected_dir);
+			curr.pop_back();
+			ImGui::PopID();
+
+			ImGui::TreePop();//pop the tree nodes
+		}
+		++counter;
 	}
 }
 
@@ -135,72 +217,11 @@ void Editor::PathDir(std::filesystem::path& entry, std::string& path)
 	if (selected)
 		path = entry.generic_u8string().c_str();
 }
-void Editor::ProjectFile(const std::string& path, std::string& selected_dir)
-{
-	static ImGuiTreeNodeFlags flag = 0;
-	static std::vector<char> layer;//the layer selected
-	static std::vector<char> curr;//the current layer
-	static std::string selected_itemname = "";
-
-
-	ImGuiIO& io = ImGui::GetIO();
-	ImFontAtlas* atlas = io.Fonts;
-
-	char counter = 0;
-	bool enable = false;
-	for (std::filesystem::directory_entry entry : std::filesystem::directory_iterator(path))
-	{
-
-		if (entry.is_directory())
-		{
-			flag = ImGuiTreeNodeFlags_OpenOnArrow;
-
-			ImGui::Image(atlas->TexID, { 10,10 });
-			ImGui::SameLine();
-		}
-		else
-		{
-			flag = ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-			ImGui::Image(atlas->TexID, { 20,10 });
-			ImGui::SameLine();
-		}
-
-		if (layer == curr)
-		{
-			if (entry.path().filename().generic_u8string() == selected_itemname)
-				flag = flag | ImGuiTreeNodeFlags_Selected;
-		}
-
-		enable = ImGui::TreeNodeEx(entry.path().filename().generic_u8string().c_str(), flag);
-
-		if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0))
-		{
-			if (entry.is_directory())//for the previde module
-			{
-				selected_dir = entry.path().generic_u8string();
-			}
-			//to mark the item that is focused
-			selected_itemname = entry.path().filename().generic_u8string();
-			layer = curr;
-		}
-
-		if (enable && entry.is_directory())
-		{
-			ImGui::PushID(counter);
-			curr.emplace_back(counter);
-			ProjectFile(entry.path().u8string(), selected_dir);
-			ImGui::TreePop();
-			curr.pop_back();
-			ImGui::PopID();
-		}
-		++counter;
-	}
-}
-void Editor::PreviewFolder(std::string& path)
+//enlarged view of the projectfile
+void Editor::PreviewFolder()
 {
 	//remove this once integrated to the rendering system
-	ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO& io = ImGui::GetIO(); // use for scrolling
 	ImFontAtlas* atlas = io.Fonts;
 
 	//padding
@@ -213,49 +234,48 @@ void Editor::PreviewFolder(std::string& path)
 	static int size_multiplier = 1;
 
 	//local variables
-	std::filesystem::directory_iterator dir_iter = std::filesystem::directory_iterator(path);
+	std::filesystem::directory_iterator dir_iter = std::filesystem::directory_iterator(m_currentPath);
 
 	//when scrolled
 	float scroll_count = io.MouseWheel;
 	if (io.KeyCtrl && (scroll_count))
 	{
-		scroll_count = abs(scroll_count) > 1 ? scroll_count * 0.5 : scroll_count / abs(scroll_count);
+		scroll_count = abs(scroll_count) > 1 ? scroll_count * 0.5f : scroll_count / abs(scroll_count);
 		size_multiplier -= scroll_count;
-		size_multiplier = size_multiplier < 1 ? 1 : size_multiplier;
-		size_multiplier = size_multiplier > 7 ? 7 : size_multiplier;
-		padding = max_padding / size_multiplier;
+		size_multiplier = size_multiplier < 1 ? 1 : size_multiplier;//min
+		size_multiplier = size_multiplier > 7 ? 7 : size_multiplier;//max
+		padding = max_padding / size_multiplier;//determin the padding when scrolled
 		imgsize = max_imgsize / size_multiplier;
 	}
 	//show directory
-	{
-		ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvailWidth(),30 }, true);
-		PathDir(std::filesystem::path(path), path);
-		ImGui::EndChild();
-	}
+	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvailWidth(),30 }, true);
+	PathDir(std::filesystem::path(m_currentPath), m_currentPath);
+	ImGui::EndChild();
 
 	//table calculation
 	float row = ImGui::GetContentRegionAvailWidth() / (padding + imgsize);
 	if (ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)//when changing tabs this will be set to false
 		return;
-	ImGui::TableNextColumn();//is there a better way to this?
+	ImGui::TableNextColumn();//push 1 column first
 	for (std::filesystem::directory_entry entry : dir_iter)
 	{
-		ImGui::BeginGroup();
+		ImGui::BeginGroup();//start
 		//change this would be changed once rendering is integrated
 		if (entry.path().filename().has_extension() == false)
 			ImGui::ImageButton(atlas->TexID, { imgsize, imgsize }, { 0,0 }, { 0.125,1 });
 		else
 			ImGui::ImageButton(atlas->TexID, { imgsize, imgsize });
-
-		//text
+		//text of the filename
 		ImGui::TextWrapped(entry.path().filename().generic_u8string().c_str());
-		ImGui::EndGroup();
-		ImGui::TableNextColumn();
+		ImGui::EndGroup();//end
+		ImGui::TableNextColumn();//item done
+
+		//interactions of item
 		if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
 		{
 			if (entry.is_directory())
 			{
-				path = entry.path().generic_u8string().c_str();
+				m_currentPath = entry.path().generic_u8string().c_str();
 				ImGui::EndTable();
 				return;
 			}
@@ -263,12 +283,12 @@ void Editor::PreviewFolder(std::string& path)
 			else if (entry.path().has_extension())
 			{
 				std::string a = entry.path().generic_u8string().c_str();
-				std::system(a.substr(2).c_str());
+				std::system(a.substr(2).c_str());//substr can be removed one we have a proper filepath
 			}
 		}
 	}
 	ImGui::EndTable();
-	//drag and drop interaction
+	//drag and drop interaction for prefab
 	if (ImGui::BeginDragDropTarget())
 	{
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
@@ -304,7 +324,6 @@ void Editor::SaveObject(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStrea
 		{
 			writer.String(list[j].get_value(tc).to_string().c_str());
 		}
-
 	}
 	writer.EndArray();//end component 1
 	writer.EndArray();
@@ -320,7 +339,6 @@ void Editor::SaveHirechy(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStre
 }
 void Editor::SaveData()
 {
-	
 	std::vector<rttr::property> list = rttr::type::get<testclass>().get_properties();
 	std::ofstream stream("inspector.json");
 	rapidjson::OStreamWrapper osw(stream);
@@ -376,6 +394,8 @@ void Editor::LoadData(const char* dir)
 }
 void Editor::ReadData()
 {
+	if (!m_focused)
+		return;
 	rttr::type t = m_focused->get_type();
 	auto types = t.get_properties();
 
@@ -421,11 +441,16 @@ void Editor::TestFunction()
 	//main banner
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
+	if(m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE))
 	{
 		ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
-		
-		ImGui::Begin("Hierarchy");
+		ReadData();
+	}
 
+	if (m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::PROJECTHIRECHY_ACTIVE))
+	{
+		ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
+		ImGui::Begin("Hierarchy");
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
 			ImGui::OpenPopup("hierarchy_PopUp");
 
@@ -439,23 +464,23 @@ void Editor::TestFunction()
 		ImGui::End();
 	}
 
-	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
-	if (m_focused)
-		ReadData();
 
-
+	if (m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE))
 	{
-		static std::string focus_item = "./";
 		ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
 		ImGui::Begin("Project Dir");
-		ProjectFile("./", focus_item);
+		ProjectFile("./", m_currentPath);
 		ImGui::End();
+	}
 
+	if (m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::PROJECTFOLDERVIEW_ACTIVE))
+	{
 		//TODO:: change the max value to get from system
 		ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
 		ImGui::Begin("Project Folder");
-		PreviewFolder(focus_item);
+		PreviewFolder();
 		ImGui::End();
-
 	}
+
+	HotKeysUpdate();
 }
