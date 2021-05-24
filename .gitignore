@@ -10,4 +10,6 @@ bin-int/
 *.sln
 
 #instrumentation JSON scripts in Sandbox
-Sandbox/*.json
+Sandbox/EngineProfile-Runtime.json
+Sandbox/EngineProfile-Startup.json
+Sandbox/EngineProfile-Shutdown.json
