@@ -5,6 +5,7 @@ bin-int/
 
 # Files
 *.user
+*.*.filters
 
 #sln file
 *.sln
@@ -13,3 +14,4 @@ bin-int/
 */*.json
 */*.json
 */*.json
+
