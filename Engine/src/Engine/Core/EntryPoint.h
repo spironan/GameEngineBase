@@ -18,6 +18,8 @@ Technology is prohibited.
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Base.h"
 
+#ifdef ENGINE_PLATFORM_WINDOWS
+
 extern engine::Application* engine::CreateApplication(engine::CommandLineArgs args);
 
 int main(int argc, char** argv)
@@ -45,3 +47,5 @@ int main(int argc, char** argv)
     delete app;
     ENGINE_PROFILE_END_SESSION();
 }
+
+#endif

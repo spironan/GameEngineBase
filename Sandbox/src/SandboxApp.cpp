@@ -120,6 +120,12 @@ public:
         LOG_CRITICAL("Critical Log!");
         
         PushLayer(new ExampleLayer());
+        // one actual layer - gameplay logic
+        // one ui layer - game ui
+        // one imgui layer - imgui stuff
+            // one heirarchy layer - 
+            // one inspector layer - 
+
     };
 
     virtual ~Sandbox() = default;

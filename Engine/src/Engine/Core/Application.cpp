@@ -36,6 +36,9 @@ namespace engine
         m_window = Window::Create(WindowProperties{ name });
         //Binds window callback to call Application::OnEvent
         m_window->SetEventCallback(ENGINE_BIND_EVENT_FN(Application::OnEvent));
+
+        m_imGuiLayer = new ImGuiLayer();
+        PushOverlay(m_imGuiLayer);
     }
 
     Application::~Application()
@@ -248,7 +251,8 @@ namespace engine
             Timestep dt { (time - m_lastFrameTime) * 1000.0 / SDL_GetPerformanceFrequency() };
             m_lastFrameTime = time;
 
-            //Layerstack update
+            // Layerstack update : layers gets drawn first followed by overlays
+            // starting with the standard layers
             {
                 ENGINE_PROFILE_SCOPE("LayerStack OnUpdate");
 
@@ -257,6 +261,17 @@ namespace engine
                     layer->OnUpdate(dt);
                 }
             }
+            // followed by imgui updates
+            m_imGuiLayer->Begin();
+            {
+                ENGINE_PROFILE_SCOPE("LayerStack OnImGuiUpdate");
+
+                for (Layer* layer : m_layerStack)
+                {
+                    layer->OnImGuiRender();
+                }
+            }
+            m_imGuiLayer->End();
 
             m_window->OnUpdate(dt);
         }

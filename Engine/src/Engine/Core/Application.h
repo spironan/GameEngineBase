@@ -25,6 +25,11 @@ Technology is prohibited.
 
 #include "Engine/Core/LayerStack.h"
 
+#include "Engine/ImGui/ImGuiLayer.h"
+
+//forward declare main
+int main(int argc, char** argv);
+
 namespace engine
 {
     /********************************************************************************//*!
@@ -77,7 +82,14 @@ namespace engine
                     crashes if s_instance is null due to dereferencing.
         *//*****************************************************************************/
         static Application& Get() { return*s_instance; }
+        /****************************************************************************//*!
+         @brief     Retrieve window that the application holds.
 
+         @note      continue to call GetNativeWindow() to retrieve the actual window.
+
+         @return    returns a generic window reference
+        *//*****************************************************************************/
+        Window& GetWindow() { return *m_window; }
         /****************************************************************************//*!
          @brief     Retrieve the command line arguments passed to the application.
 
@@ -88,10 +100,7 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Functions                                                                   */
         /*-----------------------------------------------------------------------------*/
-        /****************************************************************************//*!
-         @brief     Describes the applications core run loop
-        *//*****************************************************************************/
-        void Run();
+        
         /****************************************************************************//*!
          @brief     Describes the applications way of closing down
         *//*****************************************************************************/
@@ -121,19 +130,25 @@ namespace engine
         void PushOverlay(Layer* overlay);
 
     private:
+        /****************************************************************************//*!
+         @brief     Describes the applications core run loop
+        *//*****************************************************************************/
+        void Run();
+
         bool OnWindowClose(WindowCloseEvent& e);
 
     private:
         bool m_running;
         CommandLineArgs m_commandLineArgs;
         Window* m_window;
+        ImGuiLayer* m_imGuiLayer;
         LayerStack m_layerStack;
         double m_lastFrameTime;
         
         static Application* s_instance;
+        friend int ::main(int argc, char** argv);
     };
 
     // To be defined in CLIENT
     Application* CreateApplication(CommandLineArgs commandLineArgs);
 }
-
