@@ -11,7 +11,6 @@ bin-int/
 *.sln
 
 #instrumentation JSON scripts in Sandbox
-**/*.json
-**/*.json
-**/*.json
-
+*/EngineProfile-Startup.json
+*/EngineProfile-Runtime.json
+*/EngineProfile-Shutdown.json

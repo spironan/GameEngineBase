@@ -23,14 +23,24 @@ Technology is prohibited.
 
 namespace engine
 {
+    /********************************************************************************//*!
+     @brief     Describes a Windows(Platform) specific input that implements 
+                the generic Input interface. 
+                Currently using SDL as the backend abstraction.
+     
+     @note      This class Should not be directly accessed but instead through the Input
+                class and its interface functions.
+    *//*********************************************************************************/
     class WindowsInput final : public Input
     {
     public:
+        /*-----------------------------------------------------------------------------*/
+        /* Constructors and Destructors                                                */
+        /*-----------------------------------------------------------------------------*/
         WindowsInput();
         virtual ~WindowsInput();
 
     protected:
-
         void Update() override;
 
         bool IsKeyDownImpl(KeyCode keycode) override;

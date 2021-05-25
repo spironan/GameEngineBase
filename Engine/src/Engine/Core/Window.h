@@ -28,6 +28,9 @@ namespace engine
         unsigned int Width;
         unsigned int Height;
 
+        /****************************************************************************//*!
+         @brief     Default constructor determining the title, width and height.
+        *//*****************************************************************************/
         WindowProperties(const std::string& title = "Core Engine",
             unsigned int width = 1600, unsigned int height = 900)
             : Title(title), Width(width), Height(height)
@@ -42,21 +45,44 @@ namespace engine
     {
     public:
         using EventCallbackFn = std::function<void(Event&)>;
-
+        /*-----------------------------------------------------------------------------*/
+        /* Constructors and Destructors                                                */
+        /*-----------------------------------------------------------------------------*/
         virtual ~Window() = default;
 
+        /*-----------------------------------------------------------------------------*/
+        /* Functions                                                                   */
+        /*-----------------------------------------------------------------------------*/
         virtual void OnUpdate(Timestep dt) = 0;
 
+        /****************************************************************************//*!
+         @brief     Static function to create a Window of the current platform
+
+         @return    the pointer to the created windows. Will result in nullptr if 
+                    the platform is not supported.
+        *//*****************************************************************************/
+        static Window* Create(const WindowProperties& props = WindowProperties{});
+
+        /*-----------------------------------------------------------------------------*/
+        /* Getters                                                                     */
+        /*-----------------------------------------------------------------------------*/
         virtual unsigned int GetWidth() const = 0;
         virtual unsigned int GetHeight() const = 0;
+        /****************************************************************************//*!
+         @brief     Retrieve the Native Window class of the backend system.
+                    Currently uses SDL_Window thus static cast it to SDL_Window*
+                    to make use of it.
 
-        virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
-
-        virtual void SetVSync(bool enabled) = 0;
+         @return    Pointer to the Actual Window implementation, requires the user to
+                    know the backend system and cast it to the appropriate window
+        *//*****************************************************************************/
+        virtual void* GetNativeWindow() const = 0;
         virtual bool IsVSync() const = 0;
 
-        virtual void* GetNativeWindow() const = 0;
-
-        static Window* Create(const WindowProperties& props = WindowProperties{});
+        /*-----------------------------------------------------------------------------*/
+        /* Setters                                                                     */
+        /*-----------------------------------------------------------------------------*/
+        virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+        virtual void SetVSync(bool enabled) = 0;
     };
 }

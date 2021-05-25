@@ -23,13 +23,27 @@ Technology is prohibited.
 
 namespace engine
 {
+    /********************************************************************************//*!
+     @brief     Core Logging library using external library spdlog.
+    *//*********************************************************************************/
     class Log final
     {
     public:
+        /********************************************************************************//*!
+         @brief     Initialization of logging library. Performed in main
+        *//*********************************************************************************/
         static void Init();
 
+        /********************************************************************************//*!
+         @brief     Retrieve the core logger used to store logging information of
+                    Game Engine
+        *//*********************************************************************************/
         inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()      { return s_coreLogger; }
 
+        /********************************************************************************//*!
+         @brief     Retrieve the client logger used to store logging information of
+                    Client Application
+        *//*********************************************************************************/
         inline static std::shared_ptr<spdlog::logger>& GetClientLogger()    { return s_clientLogger; }
 
     protected:
@@ -45,7 +59,9 @@ namespace engine
 }
 
 
-// disable all logging if not in debug
+/****************************************************************************//*!
+ @brief     Disables all logging information if not in debug mode
+*//*****************************************************************************/
 #ifdef ENGINE_DEBUG
     // Engine Log macros
     #define LOG_ENGINE_TRACE(...)       ::engine::Log::GetCoreLogger()->trace(__VA_ARGS__)

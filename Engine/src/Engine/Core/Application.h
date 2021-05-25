@@ -40,15 +40,15 @@ namespace engine
         int Count = 0;
         char** Args = nullptr;
 
-        /********************************************************************************//*!
-         @brief     subscript operator overload for convinience when wanting to access
-                    arguments directly
+        /****************************************************************************//*!
+         @brief     subscript operator overload for convinience when wanting to 
+                    access arguments directly
          
-         @note      make sure you do not use an invalid index that is larger then the 
+         @note      make sure you do not use an invalid index that is larger then the
                     possible number of arguments.
 
          @param     the index you want to retrieve the command line argument from.
-        *//*********************************************************************************/
+        *//*****************************************************************************/
         const char* operator[](int index) const
         {
             ENGINE_ASSERT(index < Count);
@@ -100,7 +100,6 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Functions                                                                   */
         /*-----------------------------------------------------------------------------*/
-        
         /****************************************************************************//*!
          @brief     Describes the applications way of closing down
         *//*****************************************************************************/
@@ -149,6 +148,8 @@ namespace engine
         friend int ::main(int argc, char** argv);
     };
 
-    // To be defined in CLIENT
+    /****************************************************************************//*!
+     @brief     Function prototype, implementation to be defined in client
+    *//*****************************************************************************/
     Application* CreateApplication(CommandLineArgs commandLineArgs);
 }

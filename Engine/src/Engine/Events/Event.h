@@ -24,10 +24,10 @@ namespace engine
     *//*********************************************************************************/
     enum class EVENT_TYPE : int
     {
-        None = 0,
-        WindowClose, WindowResize, WindowFocus, WindowLoseFocus, WindowMoved,
-        KeyPressed, KeyReleased, KeyTyped,
-        MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+        NONE = 0,
+        WINDOWCLOSE, WINDOWRESIZE, WINDOWFOCUS, WINDOWLOSEFOCUS, WINDOWMOVED,
+        KEYPRESSED, KEYRELEASED, KEYTYPED,
+        MOUSEBUTTONPRESSED, MOUSEBUTTONRELEASED, MOUSEMOVED, MOUSESCROLLED
     };
 
     /********************************************************************************//*!
@@ -38,12 +38,12 @@ namespace engine
     *//*********************************************************************************/
     enum class EVENT_CATEGORY : int
     {
-        None,
-        Application,
-        Input,
-        Keyboard,
-        Mouse,
-        MouseButton,
+        NONE,
+        APPLICATION,
+        INPUT,
+        KEYBOARD,
+        MOUSE,
+        MOUSEBUTTON,
     };
 
     /********************************************************************************//*!
@@ -105,6 +105,9 @@ namespace engine
         Event& m_event;
     };
 
+    /********************************************************************************//*!
+     @brief     Ostream operator overload for outputting events
+    *//*********************************************************************************/
     inline std::ostream& operator<<(std::ostream& os, const Event& e)
     {
         return os << e.ToString();

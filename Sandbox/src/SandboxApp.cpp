@@ -31,70 +31,70 @@ public :
     {
         //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
 
-        if (engine::Input::IsKeyDown(engine::Key::W))
+        if (engine::Input::IsKeyDown(engine::key::W))
         {
             LOG_TRACE("key W down!");
         }
-        if (engine::Input::IsKeyPressed(engine::Key::W))
+        if (engine::Input::IsKeyPressed(engine::key::W))
         {
             LOG_TRACE("key W pressed!");
         }
-        if (engine::Input::IsKeyReleased(engine::Key::W))
+        if (engine::Input::IsKeyReleased(engine::key::W))
         {
             LOG_TRACE("key W released!");
         }
 
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonLeft))
+        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLeft))
         {
-            LOG_TRACE("Mouse button Left is Down!");
+            LOG_TRACE("mouse button Left is Down!");
         }
-        if (engine::Input::IsMouseButtonPressed(engine::Mouse::ButtonLeft))
+        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLeft))
         {
-            LOG_TRACE("Mouse button Left is Pressed!");
+            LOG_TRACE("mouse button Left is Pressed!");
         }
-        if (engine::Input::IsMouseButtonReleased(engine::Mouse::ButtonLeft))
+        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLeft))
         {
-            LOG_TRACE("Mouse button Left is Released!");
-        }
-
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonRight))
-        {
-            LOG_TRACE("Mouse button Right is Down!");
-        }
-        if (engine::Input::IsMouseButtonPressed(engine::Mouse::ButtonRight))
-        {
-            LOG_TRACE("Mouse button Right is Pressed!");
-        }
-        if (engine::Input::IsMouseButtonReleased(engine::Mouse::ButtonRight))
-        {
-            LOG_TRACE("Mouse button Right is Released!");
+            LOG_TRACE("mouse button Left is Released!");
         }
 
+        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonRight))
+        {
+            LOG_TRACE("mouse button Right is Down!");
+        }
+        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonRight))
+        {
+            LOG_TRACE("mouse button Right is Pressed!");
+        }
+        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonRight))
+        {
+            LOG_TRACE("mouse button Right is Released!");
+        }
 
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonMiddle))
+
+        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonMiddle))
         {
-            LOG_TRACE("Mouse button Middle is Down!");
+            LOG_TRACE("mouse button Middle is Down!");
         }
-        if (engine::Input::IsMouseButtonPressed(engine::Mouse::ButtonMiddle))
+        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonMiddle))
         {
-            LOG_TRACE("Mouse button Middle is Pressed!");
+            LOG_TRACE("mouse button Middle is Pressed!");
         }
-        if (engine::Input::IsMouseButtonReleased(engine::Mouse::ButtonMiddle))
+        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonMiddle))
         {
-            LOG_TRACE("Mouse button Middle is Released!");
+            LOG_TRACE("mouse button Middle is Released!");
         }
 
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonLast))
+        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLast))
         {
-            LOG_TRACE("Mouse button Last is Down!");
+            LOG_TRACE("mouse button Last is Down!");
         }
-        if (engine::Input::IsMouseButtonPressed(engine::Mouse::ButtonLast))
+        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLast))
         {
-            LOG_TRACE("Mouse button Last is Pressed!");
+            LOG_TRACE("mouse button Last is Pressed!");
         }
-        if (engine::Input::IsMouseButtonReleased(engine::Mouse::ButtonLast))
+        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLast))
         {
-            LOG_TRACE("Mouse button Last is Released!");
+            LOG_TRACE("mouse button Last is Released!");
         }
 
         //LOG_TRACE("{0}, {1}", engine::Input::GetMousePosition().first, engine::Input::GetMousePosition().second);

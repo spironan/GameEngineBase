@@ -15,29 +15,35 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/Events/Event.h"
+#include "Engine/Core/KeyCode.h"
 
 namespace engine
 {
-    //using namespace utility;
-
+    /********************************************************************************//*!
+     @brief     Implements a basic Key Event. Stores the basic keycode
+                and is categorised under a keyboard and input category
+    *//*********************************************************************************/
     class KeyEvent : public Event
     {
     public:
-        inline int GetKeyCode() const { return m_keycode; }
+        inline KeyCode GetKeyCode() const { return m_keycode; }
         
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Keyboard } | EVENT_CATEGORY::Input)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::KEYBOARD } | EVENT_CATEGORY::INPUT)
     protected:
-        KeyEvent(int keycode)
+        KeyEvent(KeyCode keycode)
             : m_keycode{ keycode } {}
         
-        int m_keycode;
+        KeyCode m_keycode;
     };
 
-
+    /********************************************************************************//*!
+     @brief     Implements the Key Pressed Event. Stores the keycode and whether
+                the key currently pressed is a repeatedly held down key.
+    *//*********************************************************************************/
     class KeyPressedEvent : public KeyEvent
     {
     public:
-        KeyPressedEvent(int keycode, int repeatCount)
+        KeyPressedEvent(const KeyCode keycode, int repeatCount)
             : KeyEvent{ keycode }, m_repeatCount{ repeatCount } {}
     
         inline int GetRepeatCount() const { return m_repeatCount; }
@@ -49,15 +55,18 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(KeyPressed)
+        EVENT_CLASS_TYPE(KEYPRESSED)
     private:
         int m_repeatCount;
     };
 
+    /********************************************************************************//*!
+     @brief     Implements the Key Released Event.
+    *//*********************************************************************************/
     class KeyReleasedEvent : public KeyEvent
     {
     public:
-        KeyReleasedEvent(int keycode)
+        KeyReleasedEvent(const KeyCode keycode)
             : KeyEvent{ keycode } {}
 
         std::string ToString() const override
@@ -67,14 +76,16 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(KeyReleased)
+        EVENT_CLASS_TYPE(KEYRELEASED)
     };
 
-
+    /********************************************************************************//*!
+     @brief     Implements the Key Typed Event.
+    *//*********************************************************************************/
     class KeyTypedEvent : public KeyEvent
     {
     public:
-        KeyTypedEvent(int keycode) 
+        KeyTypedEvent(const KeyCode keycode)
             : KeyEvent(keycode) {}
 
         std::string ToString() const override
@@ -84,10 +95,7 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(KeyTyped)
+        EVENT_CLASS_TYPE(KEYTYPED)
     };
 
-
-
 }
-

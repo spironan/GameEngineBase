@@ -67,14 +67,15 @@ namespace engine
         m_window = SDL_CreateWindow(m_data.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_data.Width, m_data.Height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
 
+        // Set VSync Status
+        SetVSync(true);
 
         // -1 means use whatever available card
         // SDL_RENDERER_ACCELERATED tells the system to use gpu if possible
         ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/);
         ENGINE_ASSERT_MSG(m_renderer, "Failed to create SDL Rendere: {0}", SDL_GetError());
 
-        SetVSync(true);
     }
 
     void WindowsWindow::Shutdown()
@@ -208,10 +209,8 @@ namespace engine
     void WindowsWindow::SetVSync(bool enabled)
     {
         LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
-
+        
         enabled 
-            /*? SDL_GL_SetSwapInterval(1)
-            : SDL_GL_SetSwapInterval(0);*/
             ? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1") 
             : SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
 

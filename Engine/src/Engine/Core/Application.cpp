@@ -98,8 +98,8 @@ namespace engine
                                                                                                              
                     //mouse events                                                                                       
                     engine::MouseMovedEvent             mouseMoved{ 10, 20 };                           events.push_back(&mouseMoved);
-                    engine::MouseButtonPressedEvent     mousePressed{ engine::Mouse::Button0 };         events.push_back(&mousePressed);
-                    engine::MouseButtonReleasedEvent    mouseButtonReleased{ engine::Mouse::Button0 };  events.push_back(&mouseButtonReleased);
+                    engine::MouseButtonPressedEvent     mousePressed{ engine::mouse::Button0 };         events.push_back(&mousePressed);
+                    engine::MouseButtonReleasedEvent    mouseButtonReleased{ engine::mouse::Button0 };  events.push_back(&mouseButtonReleased);
                     engine::MouseScrolledEvent          mouseScrolled{ 20, 10 };                        events.push_back(&mouseScrolled);
 
                     std::cout << "EVENTS DEBUG" << std::endl;
@@ -111,7 +111,7 @@ namespace engine
                         std::cout << "[Event : " << e->ToString() << "]" << std::endl;
 
                         std::cout << "EVENT CATEGORY NONE : \t\t\t";
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::None))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::NONE))
                         {
                             std::cout << "[YES]";
                         }
@@ -122,7 +122,7 @@ namespace engine
                         std::cout << std::endl;
 
                         std::cout << "EVENT CATEGORY APPLICATION : \t\t";
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Application))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::APPLICATION))
                         {
                             std::cout << "[YES]";
                         }
@@ -133,7 +133,7 @@ namespace engine
                         std::cout << std::endl;
 
                         std::cout << "EVENT CATEGORY INPUT : \t\t\t";
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Input))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::INPUT))
                         {
                             std::cout << "[YES]";
                         }
@@ -144,7 +144,7 @@ namespace engine
                         std::cout << std::endl;
 
                         std::cout << "EVENT CATEGORY KEYBOARD : \t\t";
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Keyboard))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::KEYBOARD))
                         {
                             std::cout << "[YES]";
                         }
@@ -155,7 +155,7 @@ namespace engine
                         std::cout << std::endl;
 
                         std::cout << "EVENT CATEGORY MOUSE : \t\t\t";
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Mouse))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::MOUSE))
                         {
                             std::cout << "[YES]";
                         }
@@ -166,7 +166,7 @@ namespace engine
                         std::cout << std::endl;
 
                         std::cout << "EVENT CATEGORY MOUSEBUTTON : \t\t";
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::MouseButton))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::MOUSEBUTTON))
                         {
                             std::cout << "[YES]";
                         }
@@ -185,7 +185,7 @@ namespace engine
                     std::cout << "EVENT CATEGORY NONE" << std::endl;
                     for (engine::Event* e : events)
                     {
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::None))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::NONE))
                         {
                             LOG_ENGINE_TRACE(e->ToString());
                         }
@@ -194,7 +194,7 @@ namespace engine
                     std::cout << "EVENT CATEGORY APPLICATION" << std::endl;
                     for (engine::Event* e : events)
                     {
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Application))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::APPLICATION))
                         {
                             LOG_ENGINE_TRACE(e->ToString());
                         }
@@ -203,7 +203,7 @@ namespace engine
                     std::cout << "EVENT CATEGORY INPUT" << std::endl;
                     for (engine::Event* e : events)
                     {
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Input))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::INPUT))
                         {
                             LOG_ENGINE_TRACE(e->ToString());
                         }
@@ -212,7 +212,7 @@ namespace engine
                     std::cout << "EVENT CATEGORY KEYBOARD" << std::endl;
                     for (engine::Event* e : events)
                     {
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Keyboard))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::KEYBOARD))
                         {
                             LOG_ENGINE_TRACE(e->ToString());
                         }
@@ -221,7 +221,7 @@ namespace engine
                     std::cout << "EVENT CATEGORY MOUSE" << std::endl;
                     for (engine::Event* e : events)
                     {
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::Mouse))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::MOUSE))
                         {
                             LOG_ENGINE_TRACE(e->ToString());
                         }
@@ -230,7 +230,7 @@ namespace engine
                     std::cout << "EVENT CATEGORY MOUSEBUTTON" << std::endl;
                     for (engine::Event* e : events)
                     {
-                        if (e->IsInCategory(engine::EVENT_CATEGORY::MouseButton))
+                        if (e->IsInCategory(engine::EVENT_CATEGORY::MOUSEBUTTON))
                         {
                             LOG_ENGINE_TRACE(e->ToString());
                         }
