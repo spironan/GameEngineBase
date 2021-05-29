@@ -52,7 +52,7 @@
     <ClInclude Include="src\Engine\Core\Log.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Core\MouseCodes.h">
+    <ClInclude Include="src\Engine\Core\MouseCode.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\PlatformDetection.h">
@@ -112,7 +112,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Windows\Windowswindow.cpp">
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp" />

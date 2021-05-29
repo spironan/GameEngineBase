@@ -1,3 +1,16 @@
+/************************************************************************************//*!
+\file           Window.h
+\project        INSERT PROJECT NAME
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           May 24, 2021
+\brief          Describes a general abstracted window and its interface.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 
 #include <string>
@@ -6,7 +19,9 @@
 
 namespace engine
 {
-    // Properties that make up a window
+    /********************************************************************************//*!
+     @brief     Properties that make up a window
+    *//*********************************************************************************/
     struct WindowProperties
     {
         std::string Title;
@@ -20,7 +35,9 @@ namespace engine
         }
     };
 
-    // Interface representing a desktop system based window
+    /********************************************************************************//*!
+     @brief     Interface representing a desktop system based window
+    *//*********************************************************************************/
     class Window
     {
     public:

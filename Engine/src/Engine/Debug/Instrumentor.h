@@ -1,3 +1,18 @@
+/************************************************************************************//*!
+\file           Instrumentor.h
+\project        INSERT PROJECT NAME
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           May 24, 2021
+\brief          File that describes the recording of timings into a json file that can 
+                be viewed using google chrome's about:tracing for a visual tool
+                used in debugging.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 
 #include <algorithm>
@@ -202,6 +217,8 @@ namespace engine
     }
 }
 
+//SET ENGINE_PROFILE TO 1 TO ENABLE PROFILING
+//SET ENGINE_PROFILE TO 0 TO DISABLE PROFILING
 #define ENGINE_PROFILE 1
 #if ENGINE_PROFILE
     

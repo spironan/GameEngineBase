@@ -4,7 +4,8 @@
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
 \date           May 15, 2021
-\brief
+\brief          Implements an event related to the window. Used to extract info from
+                the event such as what is the screen resized to etc.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

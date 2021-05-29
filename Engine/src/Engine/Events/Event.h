@@ -4,7 +4,9 @@
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
 \date           May 15, 2021
-\brief
+\brief          Describes the various units that describes an events, from 
+                enum to determine an events type and category to what a basic event is
+                and what a dispatcher does.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -17,6 +19,9 @@ Technology is prohibited.
 
 namespace engine
 {
+    /********************************************************************************//*!
+     @brief     Describes the different types of events that the engine caters for.
+    *//*********************************************************************************/
     enum class EVENT_TYPE : int
     {
         None = 0,
@@ -25,6 +30,12 @@ namespace engine
         MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
     };
 
+    /********************************************************************************//*!
+     @brief     Describes the various categories used to classify each event type.
+     
+     @note      An event can have more then 1 category. Used to simplify when looking
+                for inputs
+    *//*********************************************************************************/
     enum class EVENT_CATEGORY : int
     {
         None,
@@ -35,7 +46,9 @@ namespace engine
         MouseButton,
     };
 
-    //typesafe enum that still has normal enum operations.
+    /********************************************************************************//*!
+     @brief     typesafe enum that still has normal enum operations.
+    *//*********************************************************************************/
     using EventCategoryType = utility::bitmask<EVENT_CATEGORY>;
     
     #define EVENT_CLASS_CATEGORY(category) \
@@ -46,6 +59,9 @@ namespace engine
     virtual EVENT_TYPE GetEventType() const override { return GetStaticType(); }\
     virtual const char* GetName() const override { return #type; }
 
+    /********************************************************************************//*!
+     @brief     Describes a basic event.
+    *//*********************************************************************************/
     class Event 
     {
     public:
@@ -63,6 +79,9 @@ namespace engine
 
     };
 
+    /********************************************************************************//*!
+     @brief     Describes an event that will handle and invoke any event it encounters.
+    *//*********************************************************************************/
     class EventDispatcher
     {
     public:
