@@ -159,10 +159,13 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Engine\vendor\gl3w\GL\gl3w.h" />
+    <ClInclude Include="..\Engine\vendor\gl3w\GL\glcorearb.h" />
     <ClInclude Include="src\Editor\Editor.h" />
     <ClInclude Include="src\testclass.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Engine\vendor\gl3w\GL\gl3w.c" />
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\testclass.cpp" />

@@ -4,9 +4,9 @@
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
 \date           May 15, 2021
-\brief          Describes a Windows(Platform) specific windows that implements 
-                the generic window interface. 
-                Currently using SDL as the backend abstraction.
+\brief          Describes a Windows(Platform) specific windows that implements
+				the generic window interface.
+				Currently using SDL as the backend abstraction.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -16,6 +16,7 @@ Technology is prohibited.
 #include "pch.h"
 
 #include <sdl2/SDL.h>
+#include <GL/gl3w.h>
 
 #include "Platform/Windows/WindowsWindow.h"
 #include "Engine/Core/Base.h"
@@ -23,202 +24,222 @@ Technology is prohibited.
 
 #include "Engine/Core/Input.h"
 
+
 namespace engine
 {
-    static bool s_SDLInitialized = false;
+	static bool s_SDLInitialized = false;
 
-    WindowsWindow::WindowsWindow(const WindowProperties& props)
-    {
-        ENGINE_PROFILE_FUNCTION();
+	WindowsWindow::WindowsWindow(const WindowProperties& props)
+	{
+		ENGINE_PROFILE_FUNCTION();
 
-        Init(props);
-    }
+		Init(props);
+	}
 
-    WindowsWindow::~WindowsWindow()
-    {
-        ENGINE_PROFILE_FUNCTION();
+	WindowsWindow::~WindowsWindow()
+	{
+		ENGINE_PROFILE_FUNCTION();
 
-        Shutdown();
-    }
+		Shutdown();
+	}
 
-    void WindowsWindow::Init(const WindowProperties& properties)
-    {
-        ENGINE_PROFILE_FUNCTION();
+	void WindowsWindow::Init(const WindowProperties& properties)
+	{
+		ENGINE_PROFILE_FUNCTION();
 
-        m_data.Title = properties.Title;
-        m_data.Width = properties.Width;
-        m_data.Height = properties.Height;
+		m_data.Title = properties.Title;
+		m_data.Width = properties.Width;
+		m_data.Height = properties.Height;
 
-        LOG_ENGINE_INFO("Creating Windows window using SDL: [{0} {1}x{2}]", properties.Title, properties.Width, properties.Height);
+		LOG_ENGINE_INFO("Creating Windows window using SDL: [{0} {1}x{2}]", properties.Title, properties.Width, properties.Height);
 
-        // windows creation
-        if (!s_SDLInitialized)
-        {
-            ENGINE_PROFILE_SCOPE("SDL_INIT");
+		// windows creation
+		if (!s_SDLInitialized)
+		{
+			ENGINE_PROFILE_SCOPE("SDL_INIT");
 
-            int success = SDL_Init(SDL_INIT_VIDEO);
-            ENGINE_ASSERT_MSG((success == 0), "Failed to initialize SDL {0}", SDL_GetError());
+			int success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER);
+			ENGINE_ASSERT_MSG((success == 0), "Failed to initialize SDL {0}", SDL_GetError());
 
-            s_SDLInitialized = true;
-        }
+			s_SDLInitialized = true;
+		}
 
 
-        ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
-        m_window = SDL_CreateWindow(m_data.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_data.Width, m_data.Height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-        ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
+		ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+		SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+		m_window = SDL_CreateWindow(m_data.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_data.Width, m_data.Height, window_flags /*SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL*/);
+		ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
 
-        // Set VSync Status
-        SetVSync(true);
+		// Set VSync Status
+		//SetVSync(true);
 
-        // -1 means use whatever available card
-        // SDL_RENDERER_ACCELERATED tells the system to use gpu if possible
-        ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/);
-        ENGINE_ASSERT_MSG(m_renderer, "Failed to create SDL Rendere: {0}", SDL_GetError());
+		// -1 means use whatever available card
+		// SDL_RENDERER_ACCELERATED tells the system to use gpu if possible
+		ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
 
-    }
+		SDL_GLContext gl_context = SDL_GL_CreateContext(m_window);
+		SDL_GL_MakeCurrent(m_window, gl_context);
+		SDL_GL_SetSwapInterval(1); // Enable vsync
+		// dont do this every attach
+		bool err = gl3wInit() != 0;
+		if (err)
+		{
+			fprintf(stderr, "Failed to initialize OpenGL loader!\n");
+			std::exit(EXIT_FAILURE);
+		}
 
-    void WindowsWindow::Shutdown()
-    {
-        ENGINE_PROFILE_FUNCTION();
+		//m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/);
+		//ENGINE_ASSERT_MSG(m_renderer, "Failed to create SDL Rendere: {0}", SDL_GetError());
 
-        /*Delete Input Management here*/
-        delete Input::s_instance;
+	}
 
-        SDL_DestroyWindow(m_window);
-    }
-    
-    void WindowsWindow::OnUpdate(Timestep dt)
-    {
-        ENGINE_PROFILE_FUNCTION();
+	void WindowsWindow::Shutdown()
+	{
+		ENGINE_PROFILE_FUNCTION();
 
-        /*Update Input Management here*/
-        Input::s_instance->Update();
+		/*Delete Input Management here*/
+		delete Input::s_instance;
 
-        //LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
-        
-        //Clear color and clear color buffer bit equivalent
-        SDL_SetRenderDrawColor(m_renderer, 96, 128, 255, 255);
-        SDL_RenderClear(m_renderer);
-        
-        //SDL_AddEventWatch(FunctionCallback, (void*)&m_data);
+		SDL_DestroyWindow(m_window);
+	}
 
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-            // WINDOWS EVENT
-            case SDL_WINDOWEVENT:
-            {
-                switch (event.window.event)
-                {
-                    //Windows resize event
-                    case SDL_WINDOWEVENT_RESIZED:
-                    {
-                        m_data.Width = event.window.data1;
-                        m_data.Height = event.window.data2;
+	void WindowsWindow::OnUpdate(Timestep dt)
+	{
+		ENGINE_PROFILE_FUNCTION();
 
-                        WindowResizeEvent resizeEvent(m_data.Width, m_data.Height);
-                        m_data.EventCallback(resizeEvent);
-                        break;
-                    }
-                    //Windows close event
-                    case SDL_WINDOWEVENT_CLOSE:
-                    {
-                        WindowCloseEvent closeEvent;
-                        m_data.EventCallback(closeEvent);
-                        break;
-                    }
-                    case SDL_WINDOWEVENT_MAXIMIZED:
-                    case SDL_WINDOWEVENT_FOCUS_GAINED:
-                    {
-                        WindowFocusEvent windowFocusEvent;
-                        m_data.EventCallback(windowFocusEvent);
-                        break;
-                    }
-                    case SDL_WINDOWEVENT_MINIMIZED:
-                    case SDL_WINDOWEVENT_FOCUS_LOST:
-                    {
-                        WindowLoseFocusEvent windowLoseFocusEvent;
-                        m_data.EventCallback(windowLoseFocusEvent);
-                        break;
-                    }
-                    case SDL_WINDOWEVENT_MOVED:
-                    {
-                        WindowMovedEvent windowMovedEvent;
-                        m_data.EventCallback(windowMovedEvent);
-                        break;
-                    }
-                default:
-                    break;
-                }
+		/*Update Input Management here*/
+		Input::s_instance->Update();
 
-                break;
-            }
+		//LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
 
-            case SDL_KEYDOWN:
-            {
-                KeyPressedEvent keyPressEvent(event.key.keysym.sym, event.key.repeat ? 1 : 0);
-                m_data.EventCallback(keyPressEvent);
-            }
-                break;
+		//Clear color and clear color buffer bit equivalent
+		//SDL_SetRenderDrawColor(m_renderer, 96, 128, 255, 255);
+		//SDL_RenderClear(m_renderer);
 
-            case SDL_KEYUP:
-            {
-                KeyReleasedEvent keyPressEvent(event.key.keysym.sym);
-                m_data.EventCallback(keyPressEvent);
-            }
-                break;
+		//SDL_AddEventWatch(FunctionCallback, (void*)&m_data);
 
-            case SDL_MOUSEBUTTONUP:
-            {
-                MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.sym);
-                m_data.EventCallback(mouseButtonReleasedEvent);
-            }
-                break;
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
+		{
+			switch (event.type)
+			{
+				// WINDOWS EVENT
+			case SDL_WINDOWEVENT:
+			{
+				switch (event.window.event)
+				{
+					//Windows resize event
+				case SDL_WINDOWEVENT_RESIZED:
+				{
+					m_data.Width = event.window.data1;
+					m_data.Height = event.window.data2;
 
-            case SDL_MOUSEBUTTONDOWN:
-            {
-                MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.sym);
-                m_data.EventCallback(mouseButtonPressedEvent);
-            }
-                break;
-            case SDL_MOUSEWHEEL:
-            {
-                MouseScrolledEvent mouseScrolledEvent(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
-                m_data.EventCallback(mouseScrolledEvent);
-            }
-                break;
-            case SDL_MOUSEMOTION:
-            {
-                MouseMovedEvent mouseMovedEvent(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
-                m_data.EventCallback(mouseMovedEvent);
-            }
-                break;
+					WindowResizeEvent resizeEvent(m_data.Width, m_data.Height);
+					m_data.EventCallback(resizeEvent);
+					break;
+				}
+				//Windows close event
+				case SDL_WINDOWEVENT_CLOSE:
+				{
+					WindowCloseEvent closeEvent;
+					m_data.EventCallback(closeEvent);
+					break;
+				}
+				case SDL_WINDOWEVENT_MAXIMIZED:
+				case SDL_WINDOWEVENT_FOCUS_GAINED:
+				{
+					WindowFocusEvent windowFocusEvent;
+					m_data.EventCallback(windowFocusEvent);
+					break;
+				}
+				case SDL_WINDOWEVENT_MINIMIZED:
+				case SDL_WINDOWEVENT_FOCUS_LOST:
+				{
+					WindowLoseFocusEvent windowLoseFocusEvent;
+					m_data.EventCallback(windowLoseFocusEvent);
+					break;
+				}
+				case SDL_WINDOWEVENT_MOVED:
+				{
+					WindowMovedEvent windowMovedEvent;
+					m_data.EventCallback(windowMovedEvent);
+					break;
+				}
+				default:
+					break;
+				}
 
-            default:
-                break;
-            }
-        }
+				break;
+			}
 
-        // render : must be called
-        SDL_RenderPresent(m_renderer);
-    }
+			case SDL_KEYDOWN:
+			{
+				KeyPressedEvent keyPressEvent(event.key.keysym.sym, event.key.repeat ? 1 : 0);
+				m_data.EventCallback(keyPressEvent);
+			}
+			break;
 
-    void WindowsWindow::SetVSync(bool enabled)
-    {
-        LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
-        
-        enabled 
-            ? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1") 
-            : SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+			case SDL_KEYUP:
+			{
+				KeyReleasedEvent keyPressEvent(event.key.keysym.sym);
+				m_data.EventCallback(keyPressEvent);
+			}
+			break;
 
-        m_data.VSync = enabled;
-    }
+			case SDL_MOUSEBUTTONUP:
+			{
+				MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.sym);
+				m_data.EventCallback(mouseButtonReleasedEvent);
+			}
+			break;
 
-    bool WindowsWindow::IsVSync() const
-    {
-        return m_data.VSync;
-    }
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.sym);
+				m_data.EventCallback(mouseButtonPressedEvent);
+			}
+			break;
+			case SDL_MOUSEWHEEL:
+			{
+				MouseScrolledEvent mouseScrolledEvent(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
+				m_data.EventCallback(mouseScrolledEvent);
+			}
+			break;
+			case SDL_MOUSEMOTION:
+			{
+				MouseMovedEvent mouseMovedEvent(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
+				m_data.EventCallback(mouseMovedEvent);
+			}
+			break;
+
+			default:
+				break;
+			}
+
+			ImGui_ImplSDL2_ProcessEvent(&event);
+		}
+
+		// render : must be called
+		//SDL_RenderPresent(m_renderer);
+		SDL_GL_SwapWindow(m_window);
+	}
+
+	void WindowsWindow::SetVSync(bool enabled)
+	{
+		LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
+
+		enabled
+			? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")
+			: SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+
+		m_data.VSync = enabled;
+	}
+
+	bool WindowsWindow::IsVSync() const
+	{
+		return m_data.VSync;
+	}
 }

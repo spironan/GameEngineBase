@@ -10,6 +10,8 @@
       <Filter>Editor</Filter>
     </ClInclude>
     <ClInclude Include="src\testclass.h" />
+    <ClInclude Include="..\Engine\vendor\gl3w\GL\gl3w.h" />
+    <ClInclude Include="..\Engine\vendor\gl3w\GL\glcorearb.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">
@@ -17,5 +19,6 @@
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\testclass.cpp" />
+    <ClCompile Include="..\Engine\vendor\gl3w\GL\gl3w.c" />
   </ItemGroup>
 </Project>

@@ -77,6 +77,9 @@ namespace engine
                     know the backend system and cast it to the appropriate window
         *//*****************************************************************************/
         virtual void* GetNativeWindow() const = 0;
+
+		virtual void* GetNativeRenderer() const = 0;
+
         virtual bool IsVSync() const = 0;
 
         /*-----------------------------------------------------------------------------*/

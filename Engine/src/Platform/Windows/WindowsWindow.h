@@ -51,6 +51,7 @@ namespace engine
         unsigned int GetWidth() const override { return m_data.Width; };
         unsigned int GetHeight() const override { return m_data.Height; };
         void* GetNativeWindow() const override { return m_window; };
+		void* GetNativeRenderer() const override { return m_renderer; };
         bool IsVSync() const override;
 
         /*-----------------------------------------------------------------------------*/

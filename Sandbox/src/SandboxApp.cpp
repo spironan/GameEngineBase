@@ -19,7 +19,24 @@ Technology is prohibited.
 #include <iostream>
 
 #include <SDL.h>
+#include "Editor/Editor.h"
+class EditorLayer : public engine::Layer
+{
+public:
 
+	Editor editor;
+	bool demo = true;
+	EditorLayer() : Layer{"EditorLayer"}
+	{
+	}
+	virtual void OnImGuiRender() override
+	{
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+		//editor.TestFunction();
+		ImGui::ShowDemoWindow(&demo);
+	}
+};
 class ExampleLayer : public engine::Layer
 {
 public :
@@ -119,7 +136,8 @@ public:
         LOG_ERROR("Error Log!");
         LOG_CRITICAL("Critical Log!");
         
-        PushLayer(new ExampleLayer());
+        //PushLayer(new ExampleLayer());
+		PushOverlay(new EditorLayer());
         // one actual layer - gameplay logic
         // one ui layer - game ui
         // one imgui layer - imgui stuff
