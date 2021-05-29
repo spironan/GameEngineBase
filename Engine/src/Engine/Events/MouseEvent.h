@@ -20,6 +20,9 @@ Technology is prohibited.
 
 namespace engine
 {
+    /********************************************************************************//*!
+     @brief     Implements a MOUSE Moved Event. 
+    *//*********************************************************************************/
     class MouseMovedEvent : public Event
     {
     public:
@@ -36,13 +39,15 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(MouseMoved)
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Mouse } | EVENT_CATEGORY::Input)
+        EVENT_CLASS_TYPE(MOUSEMOVED)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::MOUSE } | EVENT_CATEGORY::INPUT)
     private:
         float m_mouseX, m_mouseY;
     };
 
-
+    /********************************************************************************//*!
+     @brief     Implements a MOUSE Scrolled Event.
+    *//*********************************************************************************/
     class MouseScrolledEvent : public Event
     {
     public:
@@ -59,18 +64,21 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(MouseScrolled)
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Mouse } | EVENT_CATEGORY::Input)
+        EVENT_CLASS_TYPE(MOUSESCROLLED)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::MOUSE } | EVENT_CATEGORY::INPUT)
     private:
         float m_xOffset, m_yOffset;
     };
 
+    /********************************************************************************//*!
+     @brief     Implements a MOUSE Button Event.
+    *//*********************************************************************************/
     class MouseButtonEvent : public Event
     {
     public:
         MouseCode GetMouseButton() const { return m_Button; }
 
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Mouse } | EVENT_CATEGORY::Input | EVENT_CATEGORY::MouseButton)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::MOUSE } | EVENT_CATEGORY::INPUT | EVENT_CATEGORY::MOUSEBUTTON)
     protected:
         MouseButtonEvent(const MouseCode button)
             : m_Button(button) {}
@@ -78,7 +86,9 @@ namespace engine
         MouseCode m_Button;
     };
 
-
+    /********************************************************************************//*!
+     @brief     Implements a MOUSE Button Pressed Event.
+    *//*********************************************************************************/
     class MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
@@ -92,9 +102,12 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(MouseButtonPressed)
+        EVENT_CLASS_TYPE(MOUSEBUTTONPRESSED)
     };
 
+    /********************************************************************************//*!
+     @brief     Implements a MOUSE Button Released Event.
+    *//*********************************************************************************/
     class MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
@@ -108,6 +121,6 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(MouseButtonReleased)
+        EVENT_CLASS_TYPE(MOUSEBUTTONRELEASED)
     };
 }

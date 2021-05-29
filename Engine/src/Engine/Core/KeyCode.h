@@ -18,7 +18,7 @@ namespace engine
 {
     using KeyCode = int;
 
-    namespace Key
+    namespace key
     {
         enum : KeyCode
         {

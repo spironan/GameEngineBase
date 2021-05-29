@@ -28,9 +28,24 @@ namespace engine
         {
         }
 
+        /****************************************************************************//*!
+         @brief     Implicit conversion operator overload to implicitly use Timestep
+                    as a double
+        *//*****************************************************************************/
         operator double() const { return m_time; }
 
+        /****************************************************************************//*!
+         @brief     Retrieve the number of seconds the current TimeStep is equals to.
+
+         @return    Current Timestep in terms of seconds
+        *//*****************************************************************************/
         double GetSeconds() const { return m_time * 0.001; }
+        /****************************************************************************//*!
+         @brief     Retrieve the number of milliseconds the current 
+                    TimeStep is equals to.
+
+         @return    Current Timestep in terms of miliseconds
+        *//*****************************************************************************/
         double GetMilliSeconds() const { return m_time; }
 
     private:

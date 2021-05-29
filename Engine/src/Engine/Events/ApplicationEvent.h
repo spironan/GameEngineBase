@@ -18,6 +18,9 @@ Technology is prohibited.
 
 namespace engine
 {
+    /********************************************************************************//*!
+     @brief     Implements a Window Resize Event
+    *//*********************************************************************************/
     class WindowResizeEvent : public Event
     {
     public:
@@ -34,43 +37,53 @@ namespace engine
             return ss.str();
         }
 
-        EVENT_CLASS_TYPE(WindowResize)
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
+        EVENT_CLASS_TYPE(WINDOWRESIZE)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::APPLICATION })
 
     private:
         unsigned int m_width, m_height;
     };
 
+    /********************************************************************************//*!
+     @brief     Implements a Window Close Event
+    *//*********************************************************************************/
     class WindowCloseEvent : public Event
     {
     public:
         WindowCloseEvent() = default;
-        EVENT_CLASS_TYPE(WindowClose)
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
+        EVENT_CLASS_TYPE(WINDOWCLOSE)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::APPLICATION })
     };
 
+
+    /********************************************************************************//*!
+     @brief     Implements a Window Focus Event
+    *//*********************************************************************************/
     class WindowFocusEvent : public Event
     {
     public:
         WindowFocusEvent() = default;
-        EVENT_CLASS_TYPE(WindowFocus)
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
+        EVENT_CLASS_TYPE(WINDOWFOCUS)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::APPLICATION })
     };
 
+    /********************************************************************************//*!
+     @brief     Implements a Window Lose Focus Event
+    *//*********************************************************************************/
     class WindowLoseFocusEvent : public Event
     {
     public:
         WindowLoseFocusEvent() = default;
-        EVENT_CLASS_TYPE(WindowLoseFocus)
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
+        EVENT_CLASS_TYPE(WINDOWLOSEFOCUS)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::APPLICATION })
     };
 
     class WindowMovedEvent : public Event
     {
     public:
         WindowMovedEvent() = default;
-        EVENT_CLASS_TYPE(WindowMoved)
-        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::Application })
+        EVENT_CLASS_TYPE(WINDOWMOVED)
+        EVENT_CLASS_CATEGORY(utility::bitmask{ EVENT_CATEGORY::APPLICATION })
     };
 
 }

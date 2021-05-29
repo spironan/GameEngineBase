@@ -28,6 +28,7 @@ project "Sandbox"
         "%{wks.location}/Engine/vendor/mono/include/mono-2.0", --mono
         "%{wks.location}/SandBox/vendor/rpj", --rapidjson
         "%{wks.location}/Sandbox/vendor/gl3w",
+        "%{wks.location}/Sandbox/vendor/ImGui", --Dear ImGui
     }
 
     -- library diretories
@@ -79,7 +80,8 @@ project "Sandbox"
             {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_d.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
-        links{
+        links
+        {
             "rttr_core_d"
         }
         
@@ -93,7 +95,8 @@ project "Sandbox"
             {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
-        links{
+        links
+        {
             "rttr_core"
         }
         
@@ -107,7 +110,8 @@ project "Sandbox"
             {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core.dll ../bin/" .. outputdir .. "/Sandbox"}
         }
 
-        links{
+        links
+        {
             "rttr_core"
         }
         
