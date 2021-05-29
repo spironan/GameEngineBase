@@ -14,8 +14,10 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+#include <imgui.h>
 #include "Engine/Core/Layer.h"
 #include "Engine/Events/Event.h"
+#include <imgui_impl_sdl.h>
 
 namespace engine
 {
@@ -40,6 +42,8 @@ namespace engine
 
         void BlockEvents(bool block) { m_blockEvents = block; }
     private:
+		SDL_Window* window;
+		ImGuiIO io;
         bool m_blockEvents;
     };
 }
