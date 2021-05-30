@@ -22,8 +22,6 @@ Technology is prohibited.
 #include "Engine/Core/Base.h"
 #include "Engine/Core/Application.h"
 
-#include "Engine/Core/Input.h"
-
 #include "Platform/OpenGL/OpenGLContext.h"
 
 namespace engine
@@ -91,18 +89,12 @@ namespace engine
 
         // Set VSync Status
         SetVSync(true);
-
-        // Initialize Input System
-        Input::Init();
     }
 
     void WindowsWindow::Shutdown()
     {
         ENGINE_PROFILE_FUNCTION();
 
-        /*Delete Input Management here*/
-        Input::ShutDown();
-        
         /* delete the current context */
         delete m_context;
 
@@ -113,9 +105,6 @@ namespace engine
     void WindowsWindow::OnUpdate(Timestep dt)
     {
         ENGINE_PROFILE_FUNCTION();
-
-        /*Update Input Management here*/
-        Input::Update();
 
         //LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
         

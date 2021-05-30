@@ -40,14 +40,17 @@ namespace engine
 
         m_imGuiLayer = new ImGuiLayer();
         PushOverlay(m_imGuiLayer);
+
+        /*Initialize Input Management*/
+        Input::Init();
     }
 
     Application::~Application()
     {
         ENGINE_PROFILE_FUNCTION();
 
-        //delete Input::Instance();
-        //Input::Destroy();
+        /*Shutdown Input Management*/
+        Input::ShutDown();
 
         delete m_window;
     }
@@ -243,7 +246,10 @@ namespace engine
         while (m_running)
         {
             ENGINE_PROFILE_SCOPE("Runloop");
-            
+
+            /*Update Input Management here*/
+            Input::Update();
+
             // nasty opengl code here : see how i can abstract it away
             glClearColor(0.2f, 0.3f, 0.3f, 1);
             glClear(GL_COLOR_BUFFER_BIT);

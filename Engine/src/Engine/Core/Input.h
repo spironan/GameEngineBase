@@ -20,7 +20,7 @@ Technology is prohibited.
 namespace engine
 {
     // forward declaration
-    class WindowsWindow;
+    class Application;
 
     /****************************************************************************//*!
      @brief     Interface of the Engine's Input system that will be used by 
@@ -110,6 +110,6 @@ namespace engine
         static void Update();
         static void ShutDown();
 
-        friend class WindowsWindow;
+        friend class Application;
     };
 }
