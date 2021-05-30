@@ -53,6 +53,8 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Functions                                                                   */
         /*-----------------------------------------------------------------------------*/
+        virtual double CalcDeltaTime() = 0;
+
         virtual void OnUpdate(Timestep dt) = 0;
 
         /****************************************************************************//*!
@@ -87,5 +89,8 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
         virtual void SetVSync(bool enabled) = 0;
+
+    protected:
+        double m_lastFrameTime = 0;
     };
 }

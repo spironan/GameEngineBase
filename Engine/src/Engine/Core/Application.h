@@ -142,7 +142,6 @@ namespace engine
         Window* m_window;
         ImGuiLayer* m_imGuiLayer;
         LayerStack m_layerStack;
-        double m_lastFrameTime;
         
         static Application* s_instance;
         friend int ::main(int argc, char** argv);

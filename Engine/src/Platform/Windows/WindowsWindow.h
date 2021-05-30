@@ -20,7 +20,6 @@ Technology is prohibited.
 
 //forward declaration
 struct SDL_Window;
-struct SDL_Renderer;
 
 namespace engine
 {
@@ -44,6 +43,8 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Functions                                                                   */
         /*-----------------------------------------------------------------------------*/
+        double CalcDeltaTime() override;
+
         void OnUpdate(Timestep dt) override;
 
         /*-----------------------------------------------------------------------------*/

@@ -28,7 +28,6 @@ namespace engine
     Application::Application(const std::string& name, CommandLineArgs args)
         : m_commandLineArgs{ args }
         , m_running{ true }
-        , m_lastFrameTime { 0.0 }
     {
         ENGINE_PROFILE_FUNCTION();
 
@@ -255,12 +254,7 @@ namespace engine
             glClear(GL_COLOR_BUFFER_BIT);
 
             /*Calculate dt*/
-            // temporary solution : can be improved by encapsulating the 
-            // frame time get to use our own function call 
-            // rather then calling sdl here directly.
-            double time = static_cast<double>(SDL_GetPerformanceCounter());
-            Timestep dt { (time - m_lastFrameTime) * 1000.0 / SDL_GetPerformanceFrequency() };
-            m_lastFrameTime = time;
+            Timestep dt{ m_window->CalcDeltaTime() };
 
             // Layerstack update : layers gets drawn first followed by overlays
             // starting with the standard layers
