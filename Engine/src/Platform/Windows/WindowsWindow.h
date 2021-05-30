@@ -16,6 +16,7 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/Core/Window.h"
+#include "Engine/Renderer/GraphicsContext.h"
 
 //forward declaration
 struct SDL_Window;
@@ -51,6 +52,8 @@ namespace engine
         unsigned int GetWidth() const override { return m_data.Width; };
         unsigned int GetHeight() const override { return m_data.Height; };
         void* GetNativeWindow() const override { return m_window; };
+        void* GetNativeRenderer() const override { return m_renderer; };
+
         bool IsVSync() const override;
 
         /*-----------------------------------------------------------------------------*/
@@ -68,6 +71,7 @@ namespace engine
 
     private:
         SDL_Window* m_window;
+        GraphicsContext* m_context;
         SDL_Renderer* m_renderer;
 
     private:
@@ -80,7 +84,6 @@ namespace engine
             EventCallbackFn EventCallback;
         };
 
-    private:
         WindowData m_data;
     };
 }

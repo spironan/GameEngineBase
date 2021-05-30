@@ -23,6 +23,8 @@ Technology is prohibited.
 
 #include "Engine/Core/Input.h"
 
+#include "Platform/OpenGL/OpenGLContext.h"
+
 namespace engine
 {
     static bool s_SDLInitialized = false;
@@ -64,8 +66,23 @@ namespace engine
 
 
         ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
-        m_window = SDL_CreateWindow(m_data.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_data.Width, m_data.Height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+        SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+        m_window = SDL_CreateWindow(m_data.Title.c_str()
+                        ,SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED
+                        , m_data.Width, m_data.Height
+                        , SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
         ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
+        
+        // create opengl context
+        m_context = new OpenGLContext(m_window);
+        m_context->Init();
 
         // Set VSync Status
         SetVSync(true);
@@ -73,7 +90,7 @@ namespace engine
         // -1 means use whatever available card
         // SDL_RENDERER_ACCELERATED tells the system to use gpu if possible
         ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/);
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         ENGINE_ASSERT_MSG(m_renderer, "Failed to create SDL Rendere: {0}", SDL_GetError());
 
     }
