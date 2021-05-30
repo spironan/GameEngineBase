@@ -14,3 +14,5 @@ bin-int/
 */EngineProfile-Startup.json
 */EngineProfile-Runtime.json
 */EngineProfile-Shutdown.json
+
+*.ini
