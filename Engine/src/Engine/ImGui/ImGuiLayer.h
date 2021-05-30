@@ -39,6 +39,7 @@ namespace engine
         void End();
 
         void BlockEvents(bool block) { m_blockEvents = block; }
+
     private:
         bool m_blockEvents;
     };

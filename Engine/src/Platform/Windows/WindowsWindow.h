@@ -52,7 +52,7 @@ namespace engine
         unsigned int GetWidth() const override { return m_data.Width; };
         unsigned int GetHeight() const override { return m_data.Height; };
         void* GetNativeWindow() const override { return m_window; };
-        void* GetNativeRenderer() const override { return m_renderer; };
+        void* GetNativeRenderer() const override { return m_context; };
 
         bool IsVSync() const override;
 
@@ -72,7 +72,6 @@ namespace engine
     private:
         SDL_Window* m_window;
         GraphicsContext* m_context;
-        SDL_Renderer* m_renderer;
 
     private:
         struct WindowData

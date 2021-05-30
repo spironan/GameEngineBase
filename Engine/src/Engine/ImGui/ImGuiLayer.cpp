@@ -19,11 +19,9 @@ Technology is prohibited.
 #include "Engine/Core/Application.h"
 #include <sdl2/SDL.h>
 
-//#include <imgui.h>
-
-#include "../../Sandbox/vendor/ImGui/imgui.h"
-#include "../../Sandbox/vendor/ImGui/imgui_impl_sdl.h"
-#include "../../Sandbox/vendor/ImGui/imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <imgui_impl_sdl.h>
+#include <imgui_impl_opengl3.h>
 
 namespace engine
 {
@@ -72,8 +70,7 @@ namespace engine
 
         // Setup Platform/Renderer bindings
         ImGui_ImplSDL2_InitForOpenGL(window, renderer);
-        //ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init("#version 410");
+        ImGui_ImplOpenGL3_Init("#version 450");
 
     }
 
@@ -83,7 +80,6 @@ namespace engine
 
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplSDL2_Shutdown();
-        //ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
 
@@ -107,9 +103,7 @@ namespace engine
 #endif
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(window);
-        //ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        //ImGuizmo::BeginFrame();
     }
 
     void ImGuiLayer::End()
@@ -117,6 +111,8 @@ namespace engine
         ENGINE_PROFILE_FUNCTION();
 
         ImGuiIO& io = ImGui::GetIO();
+
+        //figure out what the below 2 lines do?
         Application& app = Application::Get();
         io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
@@ -126,10 +122,6 @@ namespace engine
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            /*GLFWwindow* backup_current_context = glfwGetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-            glfwMakeContextCurrent(backup_current_context);*/
             SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
             SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows();

@@ -12,10 +12,10 @@ project "Sandbox"
         "src/**.h",
         "src/**.cpp",
         -- temporary fix using gl3w
-        "%{wks.location}/Sandbox/vendor/gl3w/GL/**.h",
-        "%{wks.location}/Sandbox/vendor/gl3w/GL/**.c",
-        "%{wks.location}/Sandbox/vendor/ImGui/**.h",
-        "%{wks.location}/Sandbox/vendor/ImGui/**.cpp"
+        --"%{wks.location}/Sandbox/vendor/gl3w/GL/**.h",
+        --"%{wks.location}/Sandbox/vendor/gl3w/GL/**.c",
+        --"%{wks.location}/Sandbox/vendor/ImGui/**.h",
+        --"%{wks.location}/Sandbox/vendor/ImGui/**.cpp"
     }
 
     includedirs
@@ -26,9 +26,9 @@ project "Sandbox"
         "%{wks.location}/Engine/vendor/sdl2/include/sdl2",
         "%{wks.location}/Engine/vendor/rttr/include", --rttr
         "%{wks.location}/Engine/vendor/mono/include/mono-2.0", --mono
-        "%{wks.location}/SandBox/vendor/rpj", --rapidjson
-        "%{wks.location}/Sandbox/vendor/gl3w",
-        "%{wks.location}/Sandbox/vendor/ImGui", --Dear ImGui
+        "%{wks.location}/Engine/vendor/gl3w",
+        "%{wks.location}/Engine/vendor/ImGui", --Dear ImGui
+        "%{wks.location}/SandBox/vendor/rpj" --rapidjson
     }
 
     -- library diretories

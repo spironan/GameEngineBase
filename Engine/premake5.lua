@@ -17,7 +17,11 @@ project "Engine"
     files
     {
         "src/**.h",
-        "src/**.cpp"
+        "src/**.cpp",
+        "%{wks.location}/Engine/vendor/gl3w/GL/**.h",
+        "%{wks.location}/Engine/vendor/gl3w/GL/**.c",
+        "%{wks.location}/Engine/vendor/ImGui/**.h",
+        "%{wks.location}/Engine/vendor/ImGui/**.cpp"
     }
 
     -- Engine's defines 
@@ -32,6 +36,10 @@ project "Engine"
         "src",
         "vendor/spdlog/include",
         "vendor/sdl2/include",
+        "%{wks.location}/Engine/vendor/sdl2/include/sdl2",--for imgui
+        "%{wks.location}/Engine/vendor/rttr/include", --rttr
+        "%{wks.location}/Engine/vendor/gl3w",
+        "%{wks.location}/Engine/vendor/ImGui", --Dear ImGui
 
     }
 
@@ -39,8 +47,7 @@ project "Engine"
     libdirs 
     {
         "vendor/sdl2/lib/x64",
-        "vendor/rttr/lib",
-        "vendor/mono/lib"
+        "vendor/rttr/lib"
     }
 
     -- linking External libraries 
@@ -49,7 +56,8 @@ project "Engine"
     {
         "SDL2",
         "SDL2main",
-        "SDL2test"
+        "SDL2test",
+        "opengl32"
     }
     
     --Disable PCH beyond this point

@@ -19,6 +19,7 @@ Technology is prohibited.
 
 //temporary
 #include <sdl2/SDL.h>
+#include <GL/gl3w.h>
 
 namespace engine
 {
@@ -58,7 +59,7 @@ namespace engine
         {
             ENGINE_PROFILE_SCOPE("Application Debug");
             
-            #define BASIC_DEBUG_LOGS
+            //#define BASIC_DEBUG_LOGS
             #ifdef BASIC_DEBUG_LOGS
                     // Testing debug
                     bool pass = true;
@@ -79,7 +80,7 @@ namespace engine
                     LOG_ENGINE_CRITICAL("Critical Log!");
             #endif //BASIC_DEBUG_LOG
 
-            #define EVENTS_DEBUG_LOG
+            //#define EVENTS_DEBUG_LOG
             #ifdef  EVENTS_DEBUG_LOG
                     //Debug log for events
                     std::vector<engine::Event*> events;
@@ -242,6 +243,10 @@ namespace engine
         while (m_running)
         {
             ENGINE_PROFILE_SCOPE("Runloop");
+            
+            // nasty opengl code here : see how i can abstract it away
+            glClearColor(0.2f, 0.3f, 0.3f, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
 
             /*Calculate dt*/
             // temporary solution : can be improved by encapsulating the 
