@@ -36,6 +36,10 @@ public:
     {
     }
 
+    virtual void OnUpdate(engine::Timestep dt) override
+    {
+    }
+
     virtual void OnImGuiRender() override
     {
         m_editor.TestFunction();

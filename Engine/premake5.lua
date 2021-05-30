@@ -18,10 +18,10 @@ project "Engine"
     {
         "src/**.h",
         "src/**.cpp",
-        "%{wks.location}/Engine/vendor/gl3w/GL/**.h",
-        "%{wks.location}/Engine/vendor/gl3w/GL/**.c",
-        "%{wks.location}/Engine/vendor/ImGui/**.h",
-        "%{wks.location}/Engine/vendor/ImGui/**.cpp"
+        "vendor/gl3w/GL/**.h",
+        "vendor/gl3w/GL/**.c",
+        "vendor/ImGui/**.h",
+        "vendor/ImGui/**.cpp"
     }
 
     -- Engine's defines 
@@ -36,11 +36,10 @@ project "Engine"
         "src",
         "vendor/spdlog/include",
         "vendor/sdl2/include",
-        "%{wks.location}/Engine/vendor/sdl2/include/sdl2",--for imgui
+        --"%{wks.location}/Engine/vendor/sdl2/include/sdl2",--for imgui
         "%{wks.location}/Engine/vendor/rttr/include", --rttr
         "%{wks.location}/Engine/vendor/gl3w",
         "%{wks.location}/Engine/vendor/ImGui", --Dear ImGui
-
     }
 
     -- library diretories

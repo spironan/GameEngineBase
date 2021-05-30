@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "testclass.h"
 #include <rapidjson/ostreamwrapper.h>//for ostreamwrapper
 #include <rapidjson/prettywriter.h>//for prettywriter

@@ -15,8 +15,9 @@ Technology is prohibited.
 #include "pch.h"
 
 #include "Engine/ImGui/ImGuiLayer.h"
-
+#include "Engine/Renderer/GraphicsContext.h"
 #include "Engine/Core/Application.h"
+
 #include <sdl2/SDL.h>
 
 #include <imgui.h>
@@ -65,7 +66,7 @@ namespace engine
 
 #ifdef ENGINE_PLATFORM_WINDOWS
         SDL_Window* window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
-        SDL_Renderer* renderer = static_cast<SDL_Renderer*>(Application::Get().GetWindow().GetNativeRenderer());
+        GraphicsContext* renderer = static_cast<GraphicsContext*>(Application::Get().GetWindow().GetNativeRenderer());
 #endif
 
         // Setup Platform/Renderer bindings

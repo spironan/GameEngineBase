@@ -1,3 +1,4 @@
+//#include "pch.h"
 #include "Editor.h"
 
 #include "../ImGui/imgui.h"
@@ -9,6 +10,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/reader.h>
 #include "../../vendor/ImGui/imgui_internal.h"
+
+#include "Engine/Core/Input.h"
 
 /* static vars */
 static testclass rootnode;
@@ -28,13 +31,20 @@ Editor::Editor(const std::string& root) :m_rootPath{ root },m_currentPath{root}
 	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTHIRECHY_ACTIVE);
 	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTFOLDERVIEW_ACTIVE);
 	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE);
+
 }
 
 Editor::~Editor()
 {
 }
+
 void Editor::HotKeysUpdate()
 {
+	if(engine::Input::IsKeyPressed(engine::key::W))
+	{
+		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
+	}
+
 	if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::HIDE_INSPECTOR]))
 	{
 		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);

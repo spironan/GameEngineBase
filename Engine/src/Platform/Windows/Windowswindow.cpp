@@ -115,7 +115,11 @@ namespace engine
         ENGINE_PROFILE_FUNCTION();
 
         //LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
-        
+
+        //// nasty opengl code here : see how i can abstract it away
+        //glClearColor(0.2f, 0.3f, 0.3f, 1);
+        //glClear(GL_COLOR_BUFFER_BIT);
+
         //glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         
         //SDL_AddEventWatch(FunctionCallback, (void*)&m_data);

@@ -16,13 +16,17 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/Core/Window.h"
-#include "Engine/Renderer/GraphicsContext.h"
+
+//#include "Engine/Renderer/GraphicsContext.h"
 
 //forward declaration
 struct SDL_Window;
 
 namespace engine
 {
+    //forward declaration
+    class GraphicsContext;
+
     /********************************************************************************//*!
      @brief     Describes a Windows(Platform) specific windows that implements 
                 the generic window interface. 
