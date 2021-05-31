@@ -61,6 +61,10 @@ project "Engine"
     
     --Disable PCH beyond this point
     flags { "NoPCH" }
+	filter "files:vendor/**/**.cpp"
+		flags { "NoPCH" }
+	filter "files:vendor/**/**.c"
+		flags { "NoPCH" }
 
     filter "system:windows"
         cppdialect "C++17"
