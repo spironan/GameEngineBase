@@ -59,6 +59,7 @@ project "Sandbox"
         defines
         {
             --"ENGINE_PLATFORM_WINDOWS"
+            "_CRT_SECURE_NO_WARNINGS"
         }
         
         --enable this post build command for 64 bit system

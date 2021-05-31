@@ -2,6 +2,11 @@
 #include "testclass.h"
 #include <rapidjson/ostreamwrapper.h>//for ostreamwrapper
 #include <rapidjson/prettywriter.h>//for prettywriter
+
+#include "HeirarchyView.h"
+#include "InspectorView.h"
+#include "ProjectFolderView.h"
+#include "ProjectRootView.h"
 enum class GUIACTIVE_FLAGS:int
 {
 	INSPECTOR_ACTIVE = 1,
@@ -32,29 +37,36 @@ public:
 	void UpdateUI();
 	void TestFunction();
 private:
-	void ShowObject(testclass& tc);
-	void PathDir(std::filesystem::path& entry, std::string& path);
-	void ProjectFile(const std::string& path, std::string& selected_dir);
-	void PreviewFolder();
 
-	void SaveHirechy(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer);
-	void SaveObject(testclass& tc, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer);
 	void SaveData();
-	
 	void LoadData(const char* dir);
-	void ReadData();
 
-	void HierarchyPopUp();
-	void FileWindowPopUp();
+public:
+	static std::vector<testclass> s_testList;
+	static testclass s_rootnode;
+	static std::map<KEY_ACTIONS, unsigned int> s_hotkeymapping;
+
+
+
+	static testclass* s_FocusedObject;
+	
+
+	static std::string s_CurrentPath;
+	
+
 private:
 	int m_activeFlagGUI = 0;
-
 	testclass* m_focused = nullptr;
 	bool m_editing = false;//hirecrchy
 	bool m_dragging = false;//hirerchy
 
 	const std::string m_rootPath;
 	std::string m_currentPath;
-	std::vector<testclass> testList;
-	std::map<KEY_ACTIONS, unsigned int> m_hotkeymapping;
+	HeirarchyView m_heirarchy_view;
+	InspectorView m_inspector_view;
+	ProjectFolderView m_projectfolder_view;
+	ProjectRootView m_projectroot_view;
+
+
 };
+
