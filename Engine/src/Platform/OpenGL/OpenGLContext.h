@@ -14,7 +14,7 @@ namespace engine
 
         void Init() override;
         void SwapBuffers() override;
-
+        void InitImGui() override;
     private:
         SDL_Window* m_windowHandle;
     };

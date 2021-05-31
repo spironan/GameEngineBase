@@ -24,6 +24,8 @@ Technology is prohibited.
 
 #include "Platform/OpenGL/OpenGLContext.h"
 
+#include "Platform/Vulkan//VulkanContext.h"
+
 namespace engine
 {
     static bool s_SDLInitialized = false;
@@ -66,29 +68,34 @@ namespace engine
 
         ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
 
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-        SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+        //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+        //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
+        SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
+        window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_VULKAN | window_flags);
+       // window_flags= static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL |  window_flags);
         m_window = SDL_CreateWindow(m_data.Title.c_str()
                         , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED
                         , m_data.Width, m_data.Height
-                        , SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+                        , window_flags);
 
         ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
         
 
         ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
         // create opengl context
-        m_context = new OpenGLContext(m_window);
+        //m_context = new OpenGLContext(m_window);
+        m_context = new VulkanContext(m_window);
         m_context->Init();
 
         // Set VSync Status
-        SetVSync(true);
+        //SetVSync(true);
     }
 
     void WindowsWindow::Shutdown()

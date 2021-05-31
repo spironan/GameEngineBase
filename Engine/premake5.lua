@@ -39,14 +39,25 @@ project "Engine"
         --"%{wks.location}/Engine/vendor/sdl2/include/sdl2",--for imgui
         "%{wks.location}/Engine/vendor/rttr/include", --rttr
         "%{wks.location}/Engine/vendor/gl3w",
+        "%{wks.location}/Engine/vendor/glm", -- GL maths
         "%{wks.location}/Engine/vendor/ImGui", --Dear ImGui
+        "%{wks.location}/Engine/vendor/vkbootstrap", --Bootstrap
+        "%{wks.location}/Engine/vendor/tinyobjloader", --tiny obj
+        "%{wks.location}/Engine/vendor/vma", --Vulkan Memory Allocator
+        "%{wks.location}/Engine/vendor/stb_image", --simple image library
+		
+		"C:/VulkanSDK/1.2.154.1/Include" -- Vulkan is fun
     }
 
     -- library diretories
     libdirs 
     {
-        "vendor/sdl2/lib/x64",
-        "vendor/rttr/lib"
+        "vendor/sdl2/lib/x64",       
+        "vendor/rttr/lib",		
+		-- "vendor/tinyobjloader/lib" includes in release/debugs
+        -- "vendor/vkbootstrap/lib" includes in release/debugs
+		
+		"C:/VulkanSDK/1.2.154.1/Lib" -- Vulkan is fun
     }
 
     -- linking External libraries 
@@ -56,11 +67,13 @@ project "Engine"
         "SDL2",
         "SDL2main",
         "SDL2test",
-        "opengl32"
+        "opengl32",
+        "vulkan-1",
+		"vkbootstrap",
+		"tinyobjloader"
     }
     
     --Disable PCH beyond this point
-    flags { "NoPCH" }
 	filter "files:vendor/**/**.cpp"
 		flags { "NoPCH" }
 	filter "files:vendor/**/**.c"
@@ -79,12 +92,24 @@ project "Engine"
     filter "configurations:Debug"
         defines "ENGINE_DEBUG"
         symbols "On"
-
+		
+		-- library diretories
+		libdirs 
+		{
+			"vendor/vkbootstrap/lib/Debug",
+			"vendor/tinyobjloader/lib/Debug"
+		}
 
     filter "configurations:Release"
         defines "ENGINE_RELEASE"
         optimize "On"
-
+		
+		-- library diretories
+		libdirs 
+		{
+			"vendor/vkbootstrap/lib/Release",
+			"vendor/tinyobjloader/lib/Release"
+		}
 
     filter "configurations:Production"
         defines "ENGINE_PRODUCTION"

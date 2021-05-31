@@ -249,8 +249,8 @@ namespace engine
             ENGINE_PROFILE_SCOPE("Runloop");
 
             // nasty opengl code here : see how i can abstract it away
-            glClearColor(0.2f, 0.3f, 0.3f, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
+           //glClearColor(0.2f, 0.3f, 0.3f, 1);
+           //glClear(GL_COLOR_BUFFER_BIT);
 
             /*Calculate dt*/
             Timestep dt{ m_window->CalcDeltaTime() };

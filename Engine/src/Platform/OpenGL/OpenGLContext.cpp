@@ -42,4 +42,10 @@ namespace engine
         SDL_GL_SwapWindow(m_windowHandle);
     }
 
+    void OpenGLContext::InitImGui()
+    {
+        //ImGui_ImplSDL2_InitForOpenGL(m_window, renderer);
+        //ImGui_ImplOpenGL3_Init("#version 450");
+    }
+
 }

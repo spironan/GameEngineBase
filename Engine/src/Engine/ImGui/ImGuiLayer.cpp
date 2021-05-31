@@ -24,6 +24,8 @@ Technology is prohibited.
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_opengl3.h>
 
+#include <imgui_impl_vulkan.h>
+
 namespace engine
 {
     ImGuiLayer::ImGuiLayer()
@@ -68,10 +70,8 @@ namespace engine
         SDL_Window* window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
         GraphicsContext* renderer = static_cast<GraphicsContext*>(Application::Get().GetWindow().GetNativeRenderer());
 #endif
-
+        renderer->InitImGui();
         // Setup Platform/Renderer bindings
-        ImGui_ImplSDL2_InitForOpenGL(window, renderer);
-        ImGui_ImplOpenGL3_Init("#version 450");
 
     }
 
@@ -79,9 +79,10 @@ namespace engine
     {
         ENGINE_PROFILE_FUNCTION();
 
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplSDL2_Shutdown();
-        ImGui::DestroyContext();
+        //ImGui_ImplOpenGL3_Shutdown();
+        //ImGui_ImplSDL2_Shutdown();
+        //ImGui::DestroyContext();
+        ImGui_ImplVulkan_Shutdown();
     }
 
     void ImGuiLayer::OnEvent(Event& e)
@@ -102,8 +103,11 @@ namespace engine
         SDL_Window* window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
         SDL_Renderer* renderer = static_cast<SDL_Renderer*>(Application::Get().GetWindow().GetNativeRenderer());
 #endif
-        ImGui_ImplOpenGL3_NewFrame();
+        //ImGui_ImplOpenGL3_NewFrame();
+
+        ImGui_ImplVulkan_NewFrame();
         ImGui_ImplSDL2_NewFrame(window);
+        
         ImGui::NewFrame();
     }
 
@@ -119,15 +123,17 @@ namespace engine
 
         // Rendering
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        
+        // Vulkan will call internally
+        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-            SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+            //SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+            //SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
-            SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+            //SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
         }
     }
 
