@@ -18,7 +18,7 @@ namespace engine
 {
     using MouseCode = unsigned int;
 
-    namespace Mouse 
+    namespace mouse 
     {
         enum : MouseCode
         {

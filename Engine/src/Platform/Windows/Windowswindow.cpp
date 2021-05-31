@@ -4,8 +4,8 @@
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
 \date           May 15, 2021
-\brief          Describes a Windows(Platform) specific windows that implements 
-                the generic window interface. 
+\brief          Describes a Windows(Platform) specific windows that implements
+                the generic window interface.
                 Currently using SDL as the backend abstraction.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
@@ -16,12 +16,13 @@ Technology is prohibited.
 #include "pch.h"
 
 #include <sdl2/SDL.h>
+#include <GL/gl3w.h>
 
 #include "Platform/Windows/WindowsWindow.h"
 #include "Engine/Core/Base.h"
 #include "Engine/Core/Application.h"
 
-#include "Engine/Core/Input.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace engine
 {
@@ -64,16 +65,29 @@ namespace engine
 
 
         ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
-        m_window = SDL_CreateWindow(m_data.Title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_data.Width, m_data.Height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+        SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+        m_window = SDL_CreateWindow(m_data.Title.c_str()
+                        , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED
+                        , m_data.Width, m_data.Height
+                        , SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+
         ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
+        
 
-
-        // -1 means use whatever available card
-        // SDL_RENDERER_ACCELERATED tells the system to use gpu if possible
         ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        ENGINE_ASSERT_MSG(m_renderer, "Failed to create SDL Rendere: {0}", SDL_GetError());
+        // create opengl context
+        m_context = new OpenGLContext(m_window);
+        m_context->Init();
 
+        // Set VSync Status
         SetVSync(true);
     }
 
@@ -81,24 +95,32 @@ namespace engine
     {
         ENGINE_PROFILE_FUNCTION();
 
-        /*Delete Input Management here*/
-        delete Input::s_instance;
+        /* delete the current context */
+        delete m_context;
 
         SDL_DestroyWindow(m_window);
+        SDL_Quit();
     }
     
+    double WindowsWindow::CalcDeltaTime()
+    {
+        double time = static_cast<double>(SDL_GetPerformanceCounter());
+        double dt =  (time - m_lastFrameTime) * 1000.0 / SDL_GetPerformanceFrequency();
+        m_lastFrameTime = time;
+        return dt;
+    }
+
     void WindowsWindow::OnUpdate(Timestep dt)
     {
         ENGINE_PROFILE_FUNCTION();
 
-        /*Update Input Management here*/
-        Input::s_instance->Update();
-
         //LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
-        
-        //Clear color and clear color buffer bit equivalent
-        SDL_SetRenderDrawColor(m_renderer, 96, 128, 255, 255);
-        SDL_RenderClear(m_renderer);
+
+        //// nasty opengl code here : see how i can abstract it away
+        //glClearColor(0.2f, 0.3f, 0.3f, 1);
+        //glClear(GL_COLOR_BUFFER_BIT);
+
+        //glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
         
         //SDL_AddEventWatch(FunctionCallback, (void*)&m_data);
 
@@ -201,19 +223,16 @@ namespace engine
             }
         }
 
-        // render : must be called
-        SDL_RenderPresent(m_renderer);
+        // swap rendering buffers
+        m_context->SwapBuffers();
     }
 
     void WindowsWindow::SetVSync(bool enabled)
     {
         LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
 
-        enabled 
-            /*? SDL_GL_SetSwapInterval(1)
-            : SDL_GL_SetSwapInterval(0);*/
-            ? SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1") 
-            : SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+        //opengl specific : may want to abstract to opengl context
+        SDL_GL_SetSwapInterval(enabled);
 
         m_data.VSync = enabled;
     }

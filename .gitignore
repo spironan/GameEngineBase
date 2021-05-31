@@ -5,9 +5,14 @@ bin-int/
 
 # Files
 *.user
+*.*.filters
 
 #sln file
 *.sln
 
 #instrumentation JSON scripts in Sandbox
-Sandbox/*.json
+*/EngineProfile-Startup.json
+*/EngineProfile-Runtime.json
+*/EngineProfile-Shutdown.json
+
+*.ini

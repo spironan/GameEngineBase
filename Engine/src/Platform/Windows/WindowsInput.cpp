@@ -1,10 +1,10 @@
 /************************************************************************************//*!
-\file           WindowsInput.cpp
+\file           Input.cpp
 \project        INSERT PROJECT NAME
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
 \date           May 15, 2021
-\brief          Describes a Windows(Platform) specific input that implements 
+\brief          Describes a Windows(Platform) specific input that ements 
                 the generic Input interface. 
                 Currently using SDL as the backend abstraction.
 
@@ -13,40 +13,38 @@ Reproduction or disclosure of this file or its contents
 without the prior written consent of DigiPen Institute of
 Technology is prohibited.
 *//*************************************************************************************/
+
 #include "pch.h"
 #include <sdl2/SDL.h>
 
-#include "Platform/Windows/WindowsInput.h"
+#include "Engine/Core/Input.h"
 
 #include "Engine/Core/Application.h"
 
-
 namespace engine
 {
-    // Initialize input system as windows input
-    // may need to shift this to the appropriate platform window file 
-    // if more then one architecture is supported
-    Input* Input::s_instance = new WindowsInput();
+    // Windows Platform currently using SDL
+    // SDL Specific Input Requirements
+    int m_keyLength;
+    const Uint8* m_keyboardState;
+    Uint8* m_prevKeyboardState;
+    
+    Uint32 m_prevMouseState;
+    Uint32 m_mouseState;
 
-    WindowsInput::WindowsInput()
-        : m_prevMouseState { 0 }
-        , m_mouseState { 0 }
-        , m_mouseXPos { 0 }
-        , m_mouseYPos { 0 }
+    int m_mouseXPos;
+    int m_mouseYPos;
 
+    void Input::Init()
     {
+        m_prevMouseState = m_mouseState = m_mouseXPos = m_mouseYPos = 0;
+
         m_keyboardState = SDL_GetKeyboardState(&m_keyLength);
         m_prevKeyboardState = new Uint8[m_keyLength];
         memcpy(m_prevKeyboardState, m_keyboardState, m_keyLength);
     }
-    
-    WindowsInput::~WindowsInput()
-    {
-        delete[] m_prevKeyboardState;
-        m_prevKeyboardState = nullptr;
-    }
 
-    void WindowsInput::Update()
+    void Input::Update()
     {
         memcpy(m_prevKeyboardState, m_keyboardState, m_keyLength);
         m_prevMouseState = m_mouseState;
@@ -54,41 +52,48 @@ namespace engine
         m_mouseState = SDL_GetMouseState(&m_mouseXPos, &m_mouseYPos);
     }
 
-    bool WindowsInput::IsKeyDownImpl(const KeyCode keycode)
+    void Input::ShutDown()
+    {
+        delete[] m_prevKeyboardState;
+        m_prevKeyboardState = nullptr;
+    }
+
+
+    bool Input::IsKeyDown(const KeyCode keycode)
     {
         return m_keyboardState[keycode];
     }
 
-    bool WindowsInput::IsKeyPressedImpl(const KeyCode keycode)
+    bool Input::IsKeyPressed(const KeyCode keycode)
     {
         return !m_prevKeyboardState[keycode] && m_keyboardState[keycode];
     }
 
-    bool WindowsInput::IsKeyReleasedImpl(const KeyCode keycode)
+    bool Input::IsKeyReleased(const KeyCode keycode)
     {
         return m_prevKeyboardState[keycode] && !m_keyboardState[keycode];
     }
 
 
-    bool WindowsInput::IsMouseButtonDownImpl(const MouseCode button)
+    bool Input::IsMouseButtonDown(const MouseCode button)
     {
         Uint32 mask = 0;
 
         switch (button)
         {
-        case Mouse::ButtonLeft:
+        case mouse::ButtonLeft:
             mask = SDL_BUTTON_LMASK;
             break;
 
-        case Mouse::ButtonRight:
+        case mouse::ButtonRight:
             mask = SDL_BUTTON_RMASK;
             break;
 
-        case Mouse::ButtonMiddle:
+        case mouse::ButtonMiddle:
             mask = SDL_BUTTON_MMASK;
             break;
 
-        case Mouse::ButtonLast:
+        case mouse::ButtonLast:
             mask = SDL_BUTTON_X1MASK;
             break;
 
@@ -97,25 +102,25 @@ namespace engine
         return (m_mouseState & mask);
     }
 
-    bool WindowsInput::IsMouseButtonPressedImpl(const MouseCode button)
+    bool Input::IsMouseButtonPressed(const MouseCode button)
     {
         Uint32 mask = 0;
 
         switch (button)
         {
-        case Mouse::ButtonLeft:
+        case mouse::ButtonLeft:
             mask = SDL_BUTTON_LMASK;
             break;
 
-        case Mouse::ButtonRight:
+        case mouse::ButtonRight:
             mask = SDL_BUTTON_RMASK;
             break;
 
-        case Mouse::ButtonMiddle:
+        case mouse::ButtonMiddle:
             mask = SDL_BUTTON_MMASK;
             break;
 
-        case Mouse::ButtonLast:
+        case mouse::ButtonLast:
             mask = SDL_BUTTON_X1MASK;
             break;
         }
@@ -123,25 +128,25 @@ namespace engine
         return !(m_prevMouseState & mask) && (m_mouseState & mask);
     }
 
-    bool WindowsInput::IsMouseButtonReleasedImpl(const MouseCode button)
+    bool Input::IsMouseButtonReleased(const MouseCode button)
     {
         Uint32 mask = 0;
 
         switch (button)
         {
-        case Mouse::ButtonLeft:
+        case mouse::ButtonLeft:
             mask = SDL_BUTTON_LMASK;
             break;
 
-        case Mouse::ButtonRight:
+        case mouse::ButtonRight:
             mask = SDL_BUTTON_RMASK;
             break;
 
-        case Mouse::ButtonMiddle:
+        case mouse::ButtonMiddle:
             mask = SDL_BUTTON_MMASK;
             break;
 
-        case Mouse::ButtonLast:
+        case mouse::ButtonLast:
             mask = SDL_BUTTON_X1MASK;
             break;
         }
@@ -150,8 +155,7 @@ namespace engine
     }
 
 
-
-    std::pair<int, int> WindowsInput::GetMousePositionImpl()
+    std::pair<int, int> Input::GetMousePosition()
     {
         int x, y;
         SDL_GetMouseState(&x, &y);
@@ -159,12 +163,12 @@ namespace engine
         return { x, y };
     }
 
-    int WindowsInput::GetMouseXImpl()
+    int Input::GetMouseX()
     {
         return GetMousePosition().first;
     }
 
-    int WindowsInput::GetMouseYImpl()
+    int Input::GetMouseY()
     {
         return GetMousePosition().second;
     }

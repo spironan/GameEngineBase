@@ -17,33 +17,58 @@ Technology is prohibited.
 
 #include "Engine/Core/Window.h"
 
+//#include "Engine/Renderer/GraphicsContext.h"
+
 //forward declaration
 struct SDL_Window;
-struct SDL_Renderer;
 
 namespace engine
 {
+    //forward declaration
+    class GraphicsContext;
+
+    /********************************************************************************//*!
+     @brief     Describes a Windows(Platform) specific windows that implements 
+                the generic window interface. 
+                Currently using SDL as the backend abstraction.
+
+     @note      This class Should not be directly accessed but instead through the Window
+                class and its interface functions in application.
+    *//*********************************************************************************/
     class WindowsWindow final : public Window
     {
     public:
+        /*-----------------------------------------------------------------------------*/
+        /* Constructors and Destructors                                                */
+        /*-----------------------------------------------------------------------------*/
         WindowsWindow(const WindowProperties& props);
-
         virtual ~WindowsWindow();
+
+        /*-----------------------------------------------------------------------------*/
+        /* Functions                                                                   */
+        /*-----------------------------------------------------------------------------*/
+        double CalcDeltaTime() override;
 
         void OnUpdate(Timestep dt) override;
 
+        /*-----------------------------------------------------------------------------*/
+        /* Getters                                                                     */
+        /*-----------------------------------------------------------------------------*/
         unsigned int GetWidth() const override { return m_data.Width; };
         unsigned int GetHeight() const override { return m_data.Height; };
+        void* GetNativeWindow() const override { return m_window; };
+        void* GetNativeRenderer() const override { return m_context; };
 
+        bool IsVSync() const override;
+
+        /*-----------------------------------------------------------------------------*/
+        /* Setters                                                                     */
+        /*-----------------------------------------------------------------------------*/
         void SetEventCallback(const EventCallbackFn & callback) override 
         {
             m_data.EventCallback = callback;
         }
-
         void SetVSync(bool enabled) override;
-        bool IsVSync() const override;
-
-        void* GetNativeWindow() const override { return m_window; };
 
     private:
         void Init(const WindowProperties& properties);
@@ -51,10 +76,9 @@ namespace engine
 
     private:
         SDL_Window* m_window;
-        SDL_Renderer* m_renderer;
+        GraphicsContext* m_context;
 
-    public:
-        //expose this for now
+    private:
         struct WindowData
         {
             std::string Title;
@@ -64,7 +88,6 @@ namespace engine
             EventCallbackFn EventCallback;
         };
 
-    private:
         WindowData m_data;
     };
 }
