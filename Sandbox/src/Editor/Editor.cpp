@@ -449,7 +449,7 @@ void Editor::FileWindowPopUp()
 void Editor::TestFunction()
 {
 	//main banner
-	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+	//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
 	if(m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE))
 	{

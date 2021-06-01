@@ -17,8 +17,6 @@ Technology is prohibited.
 
 #include "Engine/Core/Window.h"
 
-//#include "Engine/Renderer/GraphicsContext.h"
-
 //forward declaration
 struct SDL_Window;
 

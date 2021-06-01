@@ -56,10 +56,10 @@ project "Sandbox"
         staticruntime "off"
         systemversion "latest"
 
-        defines
-        {
-            --"ENGINE_PLATFORM_WINDOWS"
-        }
+        -- defines
+        -- {
+        --     --"ENGINE_PLATFORM_WINDOWS"
+        -- }
         
         --enable this post build command for 64 bit system
         architecture "x86_64"
@@ -77,7 +77,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_d.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_d.dll ../bin/" .. outputdir .. "/Sandbox"},
         }
 
         links
