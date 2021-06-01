@@ -22,9 +22,11 @@ Technology is prohibited.
 #include "Engine/Core/Base.h"
 #include "Engine/Core/Application.h"
 
-#include "Platform/OpenGL/OpenGLContext.h"
-
-#include "Platform/Vulkan//VulkanContext.h"
+#if defined(GRAPHICS_CONTEXT_VULKAN)
+    #include "Platform/Vulkan/VulkanContext.h"
+#elif defined(GRAPHICS_CONTEXT_OPENGL)
+    #include "Platform/OpenGL/OpenGLContext.h"
+#endif
 
 namespace engine
 {
@@ -68,18 +70,22 @@ namespace engine
 
         ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
 
-        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
-        //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#ifdef GRAPHICS_CONTEXT_OPENGL
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-        //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-        //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-        //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
+        SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#endif
         SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
+#ifdef GRAPHICS_CONTEXT_VULKAN
         window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_VULKAN | window_flags);
-       // window_flags= static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL |  window_flags);
+#elif  defined(GRAPHICS_CONTEXT_OPENGL)
+        window_flags= static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL |  window_flags);
+#endif
         m_window = SDL_CreateWindow(m_data.Title.c_str()
                         , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED
                         , m_data.Width, m_data.Height
@@ -89,20 +95,23 @@ namespace engine
         
 
         ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
-        // create opengl context
-        //m_context = new OpenGLContext(m_window);
+        // create graphics context
+#ifdef GRAPHICS_CONTEXT_VULKAN
         m_context = new VulkanContext(m_window);
+#elif  defined(GRAPHICS_CONTEXT_OPENGL)
+        m_context = new OpenGLContext(m_window);
+#endif
         m_context->Init();
 
         // Set VSync Status
-        //SetVSync(true);
+        SetVSync(true);
     }
 
     void WindowsWindow::Shutdown()
     {
         ENGINE_PROFILE_FUNCTION();
 
-        /* delete the current context */
+        /* delete the current graphics context */
         delete m_context;
 
         SDL_DestroyWindow(m_window);
@@ -238,10 +247,7 @@ namespace engine
     {
         LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
 
-        //opengl specific : may want to abstract to opengl context
-        SDL_GL_SetSwapInterval(enabled);
-
-        m_data.VSync = enabled;
+        m_data.VSync = m_context->SetVSync(enabled);
     }
 
     bool WindowsWindow::IsVSync() const

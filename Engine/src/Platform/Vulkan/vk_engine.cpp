@@ -231,7 +231,7 @@ void VulkanEngine::init_imgui()
 	_mainDeletionQueue.push_function([=]()
 	{
 		vkDestroyDescriptorPool(_device, imguiPool, nullptr);
-		ImGui_ImplVulkan_Shutdown();
+		//ImGui_ImplVulkan_Shutdown();
 	});
 }
 

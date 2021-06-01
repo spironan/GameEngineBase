@@ -22,15 +22,16 @@ Technology is prohibited.
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
-#include <imgui_impl_opengl3.h>
-
-#include <imgui_impl_vulkan.h>
 
 namespace engine
 {
     ImGuiLayer::ImGuiLayer()
         : m_blockEvents { true }
-        , Layer("ImGuiLayer")
+        , Layer{ "ImGuiLayer" }
+#ifdef ENGINE_PLATFORM_WINDOWS
+        , m_window { static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow())  }
+#endif
+        , m_renderer{ static_cast<GraphicsContext*>(Application::Get().GetWindow().GetNativeRenderer()) }
     {
     }
 
@@ -66,12 +67,8 @@ namespace engine
         
         //SetDarkThemeColors();
 
-#ifdef ENGINE_PLATFORM_WINDOWS
-        SDL_Window* window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
-        GraphicsContext* renderer = static_cast<GraphicsContext*>(Application::Get().GetWindow().GetNativeRenderer());
-#endif
-        renderer->InitImGui();
         // Setup Platform/Renderer bindings
+        m_renderer->InitImGui();
 
     }
 
@@ -79,10 +76,17 @@ namespace engine
     {
         ENGINE_PROFILE_FUNCTION();
 
-        //ImGui_ImplOpenGL3_Shutdown();
-        //ImGui_ImplSDL2_Shutdown();
-        //ImGui::DestroyContext();
-        ImGui_ImplVulkan_Shutdown();
+//#ifdef GRAPHICS_CONTEXT_OPENGL
+//        ImGui_ImplOpenGL3_Shutdown();
+//        ImGui_ImplSDL2_Shutdown();
+//        ImGui::DestroyContext();
+//#elif defined(GRAPHICS_CONTEXT_VULKAN)
+//        ImGui_ImplVulkan_Shutdown();
+//#endif
+
+        m_renderer->OnImGuiShutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext();
     }
 
     void ImGuiLayer::OnEvent(Event& e)
@@ -99,15 +103,11 @@ namespace engine
     {
         ENGINE_PROFILE_FUNCTION();
 
-#ifdef ENGINE_PLATFORM_WINDOWS
-        SDL_Window* window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
-        SDL_Renderer* renderer = static_cast<SDL_Renderer*>(Application::Get().GetWindow().GetNativeRenderer());
-#endif
-        //ImGui_ImplOpenGL3_NewFrame();
+        m_renderer->OnImGuiBegin();
 
-        ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplSDL2_NewFrame(window);
-        
+#ifdef ENGINE_PLATFORM_WINDOWS
+        ImGui_ImplSDL2_NewFrame(m_window);
+#endif
         ImGui::NewFrame();
     }
 
@@ -115,26 +115,15 @@ namespace engine
     {
         ENGINE_PROFILE_FUNCTION();
 
-        ImGuiIO& io = ImGui::GetIO();
-
-        //figure out what the below 2 lines do?
+        ////figure out what the below 3 lines do?
+        /*ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
-        io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+        io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());*/
 
         // Rendering
         ImGui::Render();
         
-        // Vulkan will call internally
-        //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            //SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-            //SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-            //SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
-        }
+        m_renderer->OnImGuiEnd();
     }
 
 }

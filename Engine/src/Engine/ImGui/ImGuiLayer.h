@@ -17,9 +17,15 @@ Technology is prohibited.
 #include "Engine/Core/Layer.h"
 #include "Engine/Events/Event.h"
 
+//forward declaration
+struct SDL_Window;
+
 namespace engine
 {
-    class ImGuiLayer : public Layer
+    //forward declaration
+    class GraphicsContext;
+
+    class ImGuiLayer final : public Layer
     {
     public:
         /*-----------------------------------------------------------------------------*/
@@ -42,5 +48,7 @@ namespace engine
 
     private:
         bool m_blockEvents;
+        SDL_Window* m_window;
+        GraphicsContext* m_renderer;
     };
 }
