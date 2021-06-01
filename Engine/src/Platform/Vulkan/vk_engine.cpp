@@ -330,8 +330,15 @@ void VulkanEngine::init_swapchain()
 {
 	vkb::SwapchainBuilder swapchainBuilder{ _chosenGPU, _device, _surface };
 
+	// Select Surface Format
+	const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+	VkSurfaceFormatKHR format{};
+	format.colorSpace = requestSurfaceColorSpace;	// sRGB colour
+	format.format = VK_FORMAT_R8G8B8A8_UNORM;		// RGBA values
+
 	vkb::Swapchain vkbSwapchain = swapchainBuilder
-		.use_default_format_selection()
+		.set_desired_format(format) // get this format that matches ImGUI, generally should be okay
+		//.use_default_format_selection()
 		//use vsync present mode
 		.set_desired_present_mode(VK_PRESENT_MODE_FIFO_KHR) // TODO: Change to mailbox present mode
 		.set_desired_extent(_windowExtent.width, _windowExtent.height)
