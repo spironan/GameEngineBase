@@ -16,7 +16,7 @@ Technology is prohibited.
 
 namespace engine
 {
-    using MouseCode = unsigned int;
+    using MouseCode = int;
 
     namespace mouse 
     {
@@ -35,7 +35,7 @@ namespace engine
             ButtonLast      = Button7,
             ButtonLeft      = Button0,
             ButtonRight     = Button1,
-            ButtonMiddle    = Button2
+            ButtonMiddle    = Button2,
         };
 
     }

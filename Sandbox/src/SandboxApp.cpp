@@ -18,9 +18,8 @@ Technology is prohibited.
 
 #include <iostream>
 
-#include <SDL.h>
-
-#include <imgui.h>
+//#include <SDL.h>
+//#include <imgui.h>
 
 #include "Editor/Editor.h"
 
@@ -42,8 +41,8 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        //m_editor.TestFunction();
-        ImGui::ShowDemoWindow(&m_demo);
+        m_editor.TestFunction();
+        //ImGui::ShowDemoWindow(&m_demo);
     }
 };
 
@@ -82,61 +81,84 @@ public :
             }
         }
 
-
-        if (engine::Input::IsKeyDown(engine::key::W))
+        if (engine::Input::IsAnyMouseButtonDown())
         {
-            LOG_TRACE("key W down!");
-        }
-        if (engine::Input::IsKeyPressed(engine::key::W))
-        {
-            LOG_TRACE("key W pressed!");
-        }
-        if (engine::Input::IsKeyReleased(engine::key::W))
-        {
-            LOG_TRACE("key W released!");
+            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsDown())
+            {
+                LOG_TRACE("Mouse Button {0} Down", mousecode);
+            }
         }
 
-        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLeft))
+        if (engine::Input::IsAnyMouseButtonPressed())
         {
-            LOG_TRACE("mouse button Left is Down!");
-        }
-        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLeft))
-        {
-            LOG_TRACE("mouse button Left is Pressed!");
-        }
-        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLeft))
-        {
-            LOG_TRACE("mouse button Left is Released!");
+            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsPressed())
+            {
+                LOG_TRACE("Mouse Button {0} Pressed", mousecode);
+            }
         }
 
-        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonRight))
+        if (engine::Input::IsAnyMouseButtonReleased())
         {
-            LOG_TRACE("mouse button Right is Down!");
-        }
-        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonRight))
-        {
-            LOG_TRACE("mouse button Right is Pressed!");
-        }
-        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonRight))
-        {
-            LOG_TRACE("mouse button Right is Released!");
+            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsReleased())
+            {
+                LOG_TRACE("Mouse Button {0} Released", mousecode);
+            }
         }
 
+        //if (engine::Input::IsKeyDown(engine::key::W))
+        //{
+        //    LOG_TRACE("key W down!");
+        //}
+        //if (engine::Input::IsKeyPressed(engine::key::W))
+        //{
+        //    LOG_TRACE("key W pressed!");
+        //}
+        //if (engine::Input::IsKeyReleased(engine::key::W))
+        //{
+        //    LOG_TRACE("key W released!");
+        //}
 
-        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonMiddle))
-        {
-            LOG_TRACE("mouse button Middle is Down!");
-        }
-        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonMiddle))
-        {
-            LOG_TRACE("mouse button Middle is Pressed!");
-        }
-        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonMiddle))
-        {
-            LOG_TRACE("mouse button Middle is Released!");
-        }
+        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLeft))
+        //{
+        //    LOG_TRACE("mouse button Left is Down!");
+        //}
+        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLeft))
+        //{
+        //    LOG_TRACE("mouse button Left is Pressed!");
+        //}
+        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLeft))
+        //{
+        //    LOG_TRACE("mouse button Left is Released!");
+        //}
 
-        if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLast))
+        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonRight))
+        //{
+        //    LOG_TRACE("mouse button Right is Down!");
+        //}
+        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonRight))
+        //{
+        //    LOG_TRACE("mouse button Right is Pressed!");
+        //}
+        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonRight))
+        //{
+        //    LOG_TRACE("mouse button Right is Released!");
+        //}
+
+
+        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonMiddle))
+        //{
+        //    LOG_TRACE("mouse button Middle is Down!");
+        //}
+        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonMiddle))
+        //{
+        //    LOG_TRACE("mouse button Middle is Pressed!");
+        //}
+        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonMiddle))
+        //{
+        //    LOG_TRACE("mouse button Middle is Released!");
+        //}
+
+        /*if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLast))
         {
             LOG_TRACE("mouse button Last is Down!");
         }
@@ -147,7 +169,7 @@ public :
         if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLast))
         {
             LOG_TRACE("mouse button Last is Released!");
-        }
+        }*/
 
         //LOG_TRACE("{0}, {1}", engine::Input::GetMousePosition().first, engine::Input::GetMousePosition().second);
         //LOG_TRACE("{0}, {1}", engine::Input::GetMouseX(), engine::Input::GetMouseY());

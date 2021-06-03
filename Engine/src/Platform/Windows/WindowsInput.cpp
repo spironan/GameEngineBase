@@ -119,7 +119,7 @@ namespace engine
     std::vector<KeyCode> Input::GetKeysPressed()
     {
         std::vector<KeyCode> keys;
-
+        
         for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
         {
             if (IsKeyPressed(keycode)) keys.emplace_back(keycode);
@@ -131,7 +131,7 @@ namespace engine
     std::vector<KeyCode> Input::GetKeysReleased()
     {
         std::vector<KeyCode> keys;
-
+        
         for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
         {
             if (IsKeyReleased(keycode)) keys.emplace_back(keycode);
@@ -139,6 +139,7 @@ namespace engine
 
         return keys;
     }
+
 
     bool Input::IsMouseButtonDown(const MouseCode button)
     {
@@ -217,6 +218,74 @@ namespace engine
         }
 
         return (m_prevMouseState & mask) && !(m_mouseState & mask);
+    }
+
+    bool Input::IsAnyMouseButtonDown()
+    {
+        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        {
+            if (IsMouseButtonDown(mousecode)) return true;
+        }
+
+        return false;
+    }
+
+    bool Input::IsAnyMouseButtonPressed()
+    {
+        
+        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        {
+            if (IsMouseButtonPressed(mousecode)) return true;
+        }
+
+        return false;
+    }
+
+    bool Input::IsAnyMouseButtonReleased()
+    {
+
+        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        {
+            if (IsMouseButtonReleased(mousecode)) return true;
+        }
+
+        return false;
+    }
+
+    std::vector<MouseCode> Input::GetMouseButtonsDown()
+    {
+        std::vector<MouseCode> mouseButtons;
+
+        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        {
+            if (IsMouseButtonDown(mousecode)) mouseButtons.emplace_back(mousecode);
+        }
+
+        return mouseButtons;
+    }
+
+    std::vector<MouseCode> Input::GetMouseButtonsPressed()
+    {
+        std::vector<MouseCode> mouseButtons;
+
+        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        {
+            if (IsMouseButtonPressed(mousecode)) mouseButtons.emplace_back(mousecode);
+        }
+
+        return mouseButtons;
+    }
+
+    std::vector<MouseCode> Input::GetMouseButtonsReleased()
+    {
+        std::vector<MouseCode> mouseButtons;
+
+        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        {
+            if (IsMouseButtonReleased(mousecode)) mouseButtons.emplace_back(mousecode);
+        }
+
+        return mouseButtons;
     }
 
 

@@ -186,7 +186,7 @@ namespace engine
 
             case SDL_KEYDOWN:
             {
-                KeyPressedEvent keyPressEvent(event.key.keysym.sym, event.key.repeat ? 1 : 0);
+                KeyPressedEvent keyPressEvent( event.key.keysym.sym, event.key.repeat ? 1 : 0);
                 m_data.EventCallback(keyPressEvent);
 
                 break;
@@ -239,125 +239,6 @@ namespace engine
         // swap rendering buffers
         m_context->SwapBuffers();
     }
-
-    //void WindowsWindow::OnUpdate(Timestep dt)
-    //{
-    //    ENGINE_PROFILE_FUNCTION();
-
-    //    //LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
-
-    //    //// nasty opengl code here : see how i can abstract it away
-    //    //glClearColor(0.2f, 0.3f, 0.3f, 1);
-    //    //glClear(GL_COLOR_BUFFER_BIT);
-
-    //    //glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    //    
-    //    //SDL_AddEventWatch(FunctionCallback, (void*)&m_data);
-
-    //    SDL_Event event;
-    //    while (SDL_PollEvent(&event))
-    //    {
-    //        switch (event.type)
-    //        {
-    //        // WINDOWS EVENT
-    //        case SDL_WINDOWEVENT:
-    //        {
-    //            switch (event.window.event)
-    //            {
-    //                //Windows resize event
-    //                case SDL_WINDOWEVENT_RESIZED:
-    //                {
-    //                    m_data.Width = event.window.data1;
-    //                    m_data.Height = event.window.data2;
-
-    //                    WindowResizeEvent resizeEvent(m_data.Width, m_data.Height);
-    //                    m_data.EventCallback(resizeEvent);
-    //                    break;
-    //                }
-    //                //Windows close event
-    //                case SDL_WINDOWEVENT_CLOSE:
-    //                {
-    //                    WindowCloseEvent closeEvent;
-    //                    m_data.EventCallback(closeEvent);
-    //                    break;
-    //                }
-    //                case SDL_WINDOWEVENT_MAXIMIZED:
-    //                case SDL_WINDOWEVENT_FOCUS_GAINED:
-    //                {
-    //                    WindowFocusEvent windowFocusEvent;
-    //                    m_data.EventCallback(windowFocusEvent);
-    //                    break;
-    //                }
-    //                case SDL_WINDOWEVENT_MINIMIZED:
-    //                case SDL_WINDOWEVENT_FOCUS_LOST:
-    //                {
-    //                    WindowLoseFocusEvent windowLoseFocusEvent;
-    //                    m_data.EventCallback(windowLoseFocusEvent);
-    //                    break;
-    //                }
-    //                case SDL_WINDOWEVENT_MOVED:
-    //                {
-    //                    WindowMovedEvent windowMovedEvent;
-    //                    m_data.EventCallback(windowMovedEvent);
-    //                    break;
-    //                }
-    //            default:
-    //                break;
-    //            }
-
-    //            break;
-    //        }
-
-    //        case SDL_KEYDOWN:
-    //        {
-    //            KeyPressedEvent keyPressEvent(event.key.keysym.sym, event.key.repeat ? 1 : 0);
-    //            m_data.EventCallback(keyPressEvent);
-    //            
-    //            break;
-    //        }
-    //        case SDL_KEYUP:
-    //        {
-    //            KeyReleasedEvent keyPressEvent(event.key.keysym.sym);
-    //            m_data.EventCallback(keyPressEvent);
-    //            
-    //            break;
-    //        }
-    //        case SDL_MOUSEBUTTONUP:
-    //        {
-    //            MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.sym);
-    //            m_data.EventCallback(mouseButtonReleasedEvent);
-    //            
-    //            break;
-    //        }
-    //        case SDL_MOUSEBUTTONDOWN:
-    //        {
-    //            MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.sym);
-    //            m_data.EventCallback(mouseButtonPressedEvent);
-    //            
-    //            break;
-    //        }
-    //        case SDL_MOUSEWHEEL:
-    //        {
-    //            MouseScrolledEvent mouseScrolledEvent(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
-    //            m_data.EventCallback(mouseScrolledEvent);
-    //            
-    //            break;
-    //        }
-    //        case SDL_MOUSEMOTION:
-    //        {
-    //            MouseMovedEvent mouseMovedEvent(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
-    //            m_data.EventCallback(mouseMovedEvent);
-    //            
-    //            break;
-    //        }
-    //        default:
-    //            break;
-    //        }
-    //    }
-
-    //    // swap rendering buffers
-    //    m_context->SwapBuffers();
-    //}
 
     void WindowsWindow::SetVSync(bool enabled)
     {
