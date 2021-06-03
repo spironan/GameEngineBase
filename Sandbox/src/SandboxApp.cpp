@@ -42,7 +42,7 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        m_editor.TestFunction();
+        //m_editor.TestFunction();
         ImGui::ShowDemoWindow(&m_demo);
     }
 };
@@ -57,6 +57,31 @@ public :
     void OnUpdate(engine::Timestep dt) override
     {
         //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
+
+        if (engine::Input::IsAnyKeyDown())
+        {
+            for (engine::KeyCode key : engine::Input::GetKeysDown())
+            {
+                LOG_TRACE("Key {0} down", key);
+            }
+        }
+
+        if (engine::Input::IsAnyKeyPressed())
+        {
+            for (engine::KeyCode key : engine::Input::GetKeysPressed())
+            {
+                LOG_TRACE("Key {0} pressed", key);
+            }
+        }
+
+        if (engine::Input::IsAnyKeyReleased())
+        {
+            for (engine::KeyCode key : engine::Input::GetKeysReleased())
+            {
+                LOG_TRACE("Key {0} released", key);
+            }
+        }
+
 
         if (engine::Input::IsKeyDown(engine::key::W))
         {

@@ -73,7 +73,72 @@ namespace engine
     {
         return m_prevKeyboardState[keycode] && !m_keyboardState[keycode];
     }
+    
+    bool Input::IsAnyKeyDown()
+    {
+        for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
+        {
+            if (IsKeyDown(keycode)) return true;
+        }
 
+        return false;
+    }
+    
+    bool Input::IsAnyKeyPressed()
+    {
+        for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
+        {
+            if (IsKeyPressed(keycode)) return true;
+        }
+
+        return false;
+    }
+
+    bool Input::IsAnyKeyReleased()
+    {
+        for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
+        {
+            if (IsKeyReleased(keycode)) return true;
+        }
+
+        return false;
+    }
+
+    std::vector<KeyCode> Input::GetKeysDown()
+    {
+        std::vector<KeyCode> keys;
+        
+        for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
+        {
+            if (IsKeyDown(keycode)) keys.emplace_back(keycode);
+        }
+
+        return keys;
+    }
+
+    std::vector<KeyCode> Input::GetKeysPressed()
+    {
+        std::vector<KeyCode> keys;
+
+        for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
+        {
+            if (IsKeyPressed(keycode)) keys.emplace_back(keycode);
+        }
+
+        return keys;
+    }
+
+    std::vector<KeyCode> Input::GetKeysReleased()
+    {
+        std::vector<KeyCode> keys;
+
+        for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
+        {
+            if (IsKeyReleased(keycode)) keys.emplace_back(keycode);
+        }
+
+        return keys;
+    }
 
     bool Input::IsMouseButtonDown(const MouseCode button)
     {

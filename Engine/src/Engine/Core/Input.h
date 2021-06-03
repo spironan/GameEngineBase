@@ -59,6 +59,16 @@ namespace engine
         *//*****************************************************************************/
         static bool IsKeyReleased(KeyCode keycode);
 
+
+        static bool IsAnyKeyDown();
+        static bool IsAnyKeyPressed();
+        static bool IsAnyKeyReleased();
+
+        static std::vector<KeyCode> GetKeysDown();
+        static std::vector<KeyCode> GetKeysPressed();
+        static std::vector<KeyCode> GetKeysReleased();
+
+
         /****************************************************************************//*!
          @brief     Determine if a mouse button by the given mouse code is 
                     currently held down
