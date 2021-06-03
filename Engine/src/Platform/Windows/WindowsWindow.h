@@ -47,7 +47,10 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         double CalcDeltaTime() override;
 
-        void OnUpdate(Timestep dt) override;
+        void ProcessEvents() override;
+        void SwapBuffers() override;
+
+        //void OnUpdate(Timestep dt) override;
 
         /*-----------------------------------------------------------------------------*/
         /* Getters                                                                     */
