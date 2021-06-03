@@ -141,7 +141,7 @@ namespace engine
             INSERT          = 73, /**< insert on PC, help on some Mac keyboards (but does send code 73, not 117) */
             HOME            = 74,
             PAGEUP          = 75,
-            //DELETE          = 76,
+            DEL             = 76,/* DELETE <- writing this will conflict with some header defines*/
             END             = 77,
             PAGEDOWN        = 78,
             RIGHT           = 79,
