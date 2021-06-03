@@ -1,6 +1,7 @@
 #include "HeirarchyView.h"
-#include "Editor.h"
+#include "EditorObjectGroup.h"
 #include "testclass.h"//remove once the real structure is in
+#include "Editor.h"
 #include <imgui.h>
 void HeirarchyView::Show()
 {
@@ -39,7 +40,7 @@ void HeirarchyView::ListHeirarchy(testclass* obj)
 	ImGuiTreeNodeFlags flag = 0;
 
 	
-	if (Editor::s_FocusedObject == obj)
+	if (ObjectGroup::s_FocusedObject == obj)
 	{
 		flag = ImGuiTreeNodeFlags_Selected;
 
@@ -75,8 +76,7 @@ void HeirarchyView::ListHeirarchy(testclass* obj)
 	ImGui::PopID();
 
 	if (ImGui::IsItemClicked())
-		Editor::s_FocusedObject = obj;
-	Editor::s_FocusedObject = Editor::s_FocusedObject;
+		ObjectGroup::s_FocusedObject = obj;
 	//drop
 	if (ImGui::BeginDragDropTarget())
 	{
@@ -84,17 +84,17 @@ void HeirarchyView::ListHeirarchy(testclass* obj)
 		if (payload)
 		{
 			m_dragging = false;
-			Editor::s_FocusedObject->SetParent(obj);
+			ObjectGroup::s_FocusedObject->SetParent(obj);
 		}
 		ImGui::EndDragDropTarget();
 	}
 	//drag
-	if (Editor::s_FocusedObject && ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
+	if (ObjectGroup::s_FocusedObject && ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
 	{
 		// Set payload to carry the index of our item (could be anything)
 		m_dragging = true;
 		ImGui::SetDragDropPayload("HIERACHY_OBJ", nullptr, 0);
-		ImGui::Text("%s", Editor::s_FocusedObject->name.c_str());
+		ImGui::Text("%s", ObjectGroup::s_FocusedObject->name.c_str());
 		ImGui::EndDragDropSource();
 	}
 	//creating childs(recurse)

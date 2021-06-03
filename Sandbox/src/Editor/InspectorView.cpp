@@ -1,5 +1,5 @@
 #include "InspectorView.h"
-#include "Editor.h"
+#include "EditorObjectGroup.h"
 #include <imgui.h>
 #include <rttr/type>
 enum : int
@@ -19,16 +19,16 @@ InspectorView::InspectorView()
 }
 void InspectorView::Show()
 {
-	if (!Editor::s_FocusedObject)
+	if (!ObjectGroup::s_FocusedObject)
 		return;
 
 	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
 	ImGui::Begin("inspector");
 	{
-		ImGui::Text("Name :  %s", Editor::s_FocusedObject->name.c_str());
+		ImGui::Text("Name :  %s", ObjectGroup::s_FocusedObject->name.c_str());
 		//for(auto comp:components)
 		{
-			ReadComponents(Editor::s_FocusedObject->get_type());
+			ReadComponents(ObjectGroup::s_FocusedObject->get_type());
 		}
 	}
 	ImGui::End();
@@ -45,15 +45,15 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 		const rttr::type::type_id& id = element.get_type().get_id();
 		if (id == m_tracked_ids[INT])
 		{
-			int value = element.get_value(Editor::s_FocusedObject).get_value<int>();
+			int value = element.get_value(ObjectGroup::s_FocusedObject).get_value<int>();
 			ImGui::SliderInt(element.get_name().c_str(), &value, 0, 10);
-			element.set_value(Editor::s_FocusedObject, value);
+			element.set_value(ObjectGroup::s_FocusedObject, value);
 		}
 		else if (id == m_tracked_ids[FLOAT])
 		{
-			float value = element.get_value(Editor::s_FocusedObject).get_value<int>();
+			float value = element.get_value(ObjectGroup::s_FocusedObject).get_value<int>();
 			ImGui::SliderFloat(element.get_name().c_str(), &value, 0, 10);
-			element.set_value(Editor::s_FocusedObject, value);
+			element.set_value(ObjectGroup::s_FocusedObject, value);
 		}
 		
 	}

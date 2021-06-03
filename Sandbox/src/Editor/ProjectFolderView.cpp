@@ -1,7 +1,7 @@
 #include "ProjectFolderView.h"
 #include "Editor/Editor.h"
-
-
+#include "EditorFileGroup.h"
+#include "EditorObjectGroup.h"
 
 #include <imgui.h>
 #include <string>
@@ -33,7 +33,7 @@ void ProjectFolderView::ProjectView()
 	static int size_multiplier = 1;
 
 	//local variables
-	std::filesystem::directory_iterator dir_iter = std::filesystem::directory_iterator(Editor::s_CurrentPath);
+	std::filesystem::directory_iterator dir_iter = std::filesystem::directory_iterator(FileGroup::s_CurrentPath);
 
 	//when scrolled
 	float scroll_count = io.MouseWheel;
@@ -49,7 +49,7 @@ void ProjectFolderView::ProjectView()
 	
 	//show directory
 	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvailWidth(),30 }, true);
-	PathDir(std::filesystem::path(Editor::s_CurrentPath), Editor::s_CurrentPath);
+	PathDir(std::filesystem::path(FileGroup::s_CurrentPath), FileGroup::s_CurrentPath);
 	ImGui::EndChild();
 
 	//table calculation
@@ -75,7 +75,7 @@ void ProjectFolderView::ProjectView()
 		{
 			if (entry.is_directory())
 			{
-				Editor::s_CurrentPath = entry.path().generic_u8string().c_str();
+				FileGroup::s_CurrentPath = entry.path().generic_u8string().c_str();
 				ImGui::EndTable();
 				return;
 			}
@@ -99,7 +99,7 @@ void ProjectFolderView::ProjectView()
 			rapidjson::OStreamWrapper osw(stream);
 			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 			writer.StartObject();
-			SaveHeirarchy(Editor::s_FocusedObject, writer);
+			SaveHeirarchy(ObjectGroup::s_FocusedObject, writer);
 			writer.EndObject();
 		}
 		ImGui::EndDragDropTarget();

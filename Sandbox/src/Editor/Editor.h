@@ -46,14 +46,6 @@ public:
 	static testclass s_rootnode;
 	static std::map<KEY_ACTIONS, unsigned int> s_hotkeymapping;
 
-
-
-	static testclass* s_FocusedObject;
-	
-
-	static std::string s_CurrentPath;
-	
-
 private:
 	int m_activeFlagGUI = 0;
 	testclass* m_focused = nullptr;

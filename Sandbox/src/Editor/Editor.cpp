@@ -18,10 +18,6 @@ testclass Editor::s_rootnode;
 std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;
 std::vector<testclass> Editor::s_testList;
 
-
-testclass* Editor::s_FocusedObject = nullptr;
-std::string Editor::s_CurrentPath = "./";
-
 Editor::Editor(const std::string& root) :m_rootPath{ root },m_currentPath{root}
 {
 	s_testList.reserve(50);

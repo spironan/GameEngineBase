@@ -1,4 +1,5 @@
 #include "ProjectRootView.h"
+#include "EditorFileGroup.h"
 #include "Editor.h"
 #include <imgui.h>
 #include <rttr/type>
@@ -7,7 +8,7 @@ void ProjectRootView::Show()
 {
 	ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
 	ImGui::Begin("Project Dir");
-	ProjectView("./", Editor::s_CurrentPath);
+	ProjectView(FileGroup::s_rootPath, FileGroup::s_CurrentPath);
 
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
 		ImGui::OpenPopup("ProjectViewPopup");
@@ -16,23 +17,65 @@ void ProjectRootView::Show()
 	{
 		ProjectViewPopUp();
 		ImGui::EndPopup();
+		if (delete_popup)
+		{
+			delete_popup = false;
+			ImGui::OpenPopup("Delete?");
+		}
 	}
+	ProjectDeletePopUp_Modal();
 	ImGui::End();
+
+
 }
 
 void ProjectRootView::ProjectViewPopUp()
 {
 	if (ImGui::MenuItem("CreateFolder"))
 	{
-		std::filesystem::path p = std::filesystem::path((Editor::s_CurrentPath + "/newfolder").c_str());
+		std::filesystem::path p = std::filesystem::path((FileGroup::s_CurrentPath + "/newfolder").c_str());
 		std::filesystem::create_directory(p);
-		std::cout << (Editor::s_CurrentPath + "/newfolder") << std::endl;
+		std::cout << (FileGroup::s_CurrentPath + "/newfolder") << std::endl;
 	}
-	if (ImGui::MenuItem("Delete", 0, false, (Editor::s_CurrentPath != "./")))
+	if (ImGui::MenuItem("Delete", 0, false, (m_selectedpath != FileGroup::s_rootPath)))
 	{
-		//learn how to delete files properly
+		delete_popup = true;
 	}
 }
+
+void ProjectRootView::ProjectDeletePopUp_Modal()
+{	
+	ImGui::SetNextWindowPos(ImGui::GetWindowViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	
+	if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		std::filesystem::path p(m_selectedpath);
+		ImGui::Text("Do you want to delete : \"%s\" ?", p.filename().generic_u8string().c_str());
+		if (!std::filesystem::is_empty(p))
+			ImGui::TextColored({ 1,0,0,1 }, "* The File Selected Is Not Empty *");
+		ImGui::NewLine();
+		ImGui::Separator();
+		if (ImGui::Button("Yes", ImVec2{120,0}))
+		{
+			ImGui::CloseCurrentPopup();
+			FileGroup::s_CurrentPath = p.parent_path().generic_u8string();
+			if (std::filesystem::is_directory(p))
+				std::filesystem::remove_all(p);
+			else
+				std::filesystem::remove(p);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("No", ImVec2{120,0}))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+
+
+		ImGui::EndPopup();
+	}
+
+}
+
 
 
 
@@ -69,12 +112,14 @@ void ProjectRootView::ProjectView(const std::string& path, std::string& selected
 
 		enable = ImGui::TreeNodeEx(entry.path().filename().generic_u8string().c_str(), flag);
 
-		if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0))
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Right) || (ImGui::IsItemClicked(ImGuiMouseButton_Left)))
 		{
 			if (entry.is_directory())//for the previde module
 				selected_dir = entry.path().generic_u8string();
+
 			//to mark the item that is focused
 			m_selecteditem = entry.path().filename().generic_u8string();
+			m_selectedpath = entry.path().generic_u8string();
 			layer = curr;
 		}
 
