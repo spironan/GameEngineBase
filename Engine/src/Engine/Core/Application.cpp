@@ -258,6 +258,9 @@ namespace engine
             /*Update Input Management here*/
             Input::Update();
 
+            /* Process input events */
+            m_window->ProcessEvents();
+
             //whatever the renderer needs to call at the beggining if each frame e.g. clear color
             m_renderer->OnUpdateBegin();
 
@@ -284,7 +287,8 @@ namespace engine
             }
             m_imGuiLayer->End();
 
-            m_window->OnUpdate(dt);
+            m_window->SwapBuffers();
+            //m_window->OnUpdate(dt);
         }
     }
 
@@ -305,10 +309,10 @@ namespace engine
 
         for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it)
         {
+            (*it)->OnEvent(e);
+
             // if event is handled, stop propogating
             if (e.Handled) break;
-
-            (*it)->OnEvent(e);
         }
 
     }

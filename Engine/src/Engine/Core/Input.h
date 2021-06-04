@@ -59,6 +59,14 @@ namespace engine
         *//*****************************************************************************/
         static bool IsKeyReleased(KeyCode keycode);
 
+        static bool IsAnyKeyDown();
+        static bool IsAnyKeyPressed();
+        static bool IsAnyKeyReleased();
+
+        static std::vector<KeyCode> GetKeysDown();
+        static std::vector<KeyCode> GetKeysPressed();
+        static std::vector<KeyCode> GetKeysReleased();
+
         /****************************************************************************//*!
          @brief     Determine if a mouse button by the given mouse code is 
                     currently held down
@@ -82,6 +90,15 @@ namespace engine
          @return    Whether the mouse button is being released this frame.
         *//*****************************************************************************/
         static bool IsMouseButtonReleased(MouseCode button);
+
+        static bool IsAnyMouseButtonDown();
+        static bool IsAnyMouseButtonPressed();
+        static bool IsAnyMouseButtonReleased();
+
+        static std::vector<MouseCode> GetMouseButtonsDown();
+        static std::vector<MouseCode> GetMouseButtonsPressed();
+        static std::vector<MouseCode> GetMouseButtonsReleased();
+
 
         /****************************************************************************//*!
          @brief     Retrieve the current mouse position in screen coordinates

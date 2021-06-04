@@ -55,7 +55,9 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         virtual double CalcDeltaTime() = 0;
 
-        virtual void OnUpdate(Timestep dt) = 0;
+        virtual void ProcessEvents() = 0;
+        virtual void SwapBuffers() = 0;
+        //virtual void OnUpdate(Timestep dt) = 0;
 
         /****************************************************************************//*!
          @brief     Static function to create a Window of the current platform
