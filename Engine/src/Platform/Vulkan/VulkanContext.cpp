@@ -76,6 +76,7 @@ namespace engine
 
     void VulkanContext::OnImGuiShutdown()
     {
+        vkDeviceWaitIdle(vkEngine._device);
         ImGui_ImplVulkan_Shutdown();
     }
 
