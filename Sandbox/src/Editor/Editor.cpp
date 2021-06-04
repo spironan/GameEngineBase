@@ -40,10 +40,10 @@ Editor::~Editor()
 
 void Editor::HotKeysUpdate()
 {
-	if(engine::Input::IsKeyPressed(engine::key::W))
+	/*if(engine::Input::IsKeyPressed(engine::key::W))
 	{
 		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
-	}
+	}*/
 
 	if (ImGui::IsKeyPressed(m_hotkeymapping[KEY_ACTIONS::HIDE_INSPECTOR]))
 	{

@@ -69,20 +69,11 @@ namespace engine
 
         // Setup Platform/Renderer bindings
         m_renderer->InitImGui();
-
     }
 
     void ImGuiLayer::OnDetach()
     {
         ENGINE_PROFILE_FUNCTION();
-
-//#ifdef GRAPHICS_CONTEXT_OPENGL
-//        ImGui_ImplOpenGL3_Shutdown();
-//        ImGui_ImplSDL2_Shutdown();
-//        ImGui::DestroyContext();
-//#elif defined(GRAPHICS_CONTEXT_VULKAN)
-//        ImGui_ImplVulkan_Shutdown();
-//#endif
 
         m_renderer->OnImGuiShutdown();
         ImGui_ImplSDL2_Shutdown();
@@ -93,9 +84,14 @@ namespace engine
     {
         if (m_blockEvents)
         {
-            /*ImGuiIO& io = ImGui::GetIO();
-            e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-            e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;*/
+            ImGuiIO& io = ImGui::GetIO();
+            e.Handled |= e.IsInCategory(EVENT_CATEGORY::MOUSE) & io.WantCaptureMouse;
+            e.Handled |= e.IsInCategory(EVENT_CATEGORY::KEYBOARD) & io.WantCaptureKeyboard;
+
+            if (e.GetEventType() == engine::EVENT_TYPE::MOUSESCROLLED)
+            {
+                io.MouseWheel = static_cast<engine::MouseScrolledEvent&>(e).GetY();
+            }
         }
     }
 
@@ -108,6 +104,7 @@ namespace engine
 #ifdef ENGINE_PLATFORM_WINDOWS
         ImGui_ImplSDL2_NewFrame(m_window);
 #endif
+
         ImGui::NewFrame();
     }
 
