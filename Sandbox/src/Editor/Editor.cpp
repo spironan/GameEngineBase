@@ -14,9 +14,12 @@
 #include "Engine/Core/Input.h"
 
 /* static vars */
-testclass Editor::s_rootnode;
-std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;
-std::vector<testclass> Editor::s_testList;
+testclass Editor::s_rootnode;//will be removed once ecs done
+std::vector<testclass> Editor::s_testList;//will be removed once ecs done
+std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
+
+//for copy and pasting
+std::pair<std::string, std::shared_ptr<void*>> Editor::s_copyPayload = {"",nullptr};
 
 Editor::Editor(const std::string& root) :m_rootPath{ root },m_currentPath{root}
 {
@@ -149,6 +152,6 @@ void Editor::TestFunction()
 	{
 		m_projectfolder_view.Show();
 	}
-
+	m_logging_view.Show();
 	HotKeysUpdate();
 }

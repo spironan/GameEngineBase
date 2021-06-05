@@ -2,11 +2,12 @@
 #include "testclass.h"
 #include <rapidjson/ostreamwrapper.h>//for ostreamwrapper
 #include <rapidjson/prettywriter.h>//for prettywriter
-
+#include <utility>
 #include "HeirarchyView.h"
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
 #include "ProjectRootView.h"
+#include "LoggingView.h"
 enum class GUIACTIVE_FLAGS:int
 {
 	INSPECTOR_ACTIVE = 1,
@@ -42,10 +43,12 @@ private:
 	void LoadData(const char* dir);
 
 public:
-	static std::vector<testclass> s_testList;
 	static testclass s_rootnode;
+	static std::vector<testclass> s_testList;
 	static std::map<KEY_ACTIONS, unsigned int> s_hotkeymapping;
 
+	//for copy and pasting 
+	static std::pair<std::string, std::shared_ptr<void*>> s_copyPayload;
 private:
 	int m_activeFlagGUI = 0;
 	testclass* m_focused = nullptr;
@@ -58,7 +61,7 @@ private:
 	InspectorView m_inspector_view;
 	ProjectFolderView m_projectfolder_view;
 	ProjectRootView m_projectroot_view;
-
+	LoggingView m_logging_view;
 
 };
 

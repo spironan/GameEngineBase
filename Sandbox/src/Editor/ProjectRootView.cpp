@@ -4,6 +4,12 @@
 #include <imgui.h>
 #include <rttr/type>
 #include <filesystem>
+
+#include <shlobj.h>
+#include <shlwapi.h>
+#include <objbase.h>
+#include <shellapi.h>
+
 void ProjectRootView::Show()
 {
 	ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
@@ -31,15 +37,59 @@ void ProjectRootView::Show()
 
 void ProjectRootView::ProjectViewPopUp()
 {
+	bool item_selected = (m_selectedpath != FileGroup::s_rootPath);
 	if (ImGui::MenuItem("CreateFolder"))
 	{
 		std::filesystem::path p = std::filesystem::path((FileGroup::s_CurrentPath + "/newfolder").c_str());
 		std::filesystem::create_directory(p);
 		std::cout << (FileGroup::s_CurrentPath + "/newfolder") << std::endl;
 	}
-	if (ImGui::MenuItem("Delete", 0, false, (m_selectedpath != FileGroup::s_rootPath)))
+	if (ImGui::MenuItem("Delete", 0, false, item_selected))
 	{
 		delete_popup = true;
+	}
+#ifdef ENGINE_PLATFORM_WINDOWS
+	ImGui::Separator();
+	if (ImGui::MenuItem("Open File Location"))
+	{
+		std::filesystem::path p{ m_selectedpath };
+		ShellExecuteA(NULL, "explore", p.parent_path().generic_u8string().c_str(), NULL, NULL, SW_SHOWNORMAL);
+	}
+#endif // ENGINE_PLATFORM_WINDOWS
+	ImGui::Separator();
+	if (ImGui::MenuItem("Copy"))
+	{
+		Editor::s_copyPayload.first = "FILE";
+		Editor::s_copyPayload.second.reset();
+		Editor::s_copyPayload.second = std::make_shared<void*>(&m_selectedpath);
+	}
+	if (ImGui::MenuItem("Paste"))
+	{
+		if (Editor::s_copyPayload.first == "FILE")
+		{
+			std::filesystem::path p(*(static_cast<std::string*>(*Editor::s_copyPayload.second.get())));
+			Editor::s_copyPayload.second.reset();
+
+			std::filesystem::path selected_path{ m_selectedpath };
+			std::string targetlocation_name;
+
+			if (std::filesystem::is_directory(selected_path))
+				targetlocation_name = m_selectedpath + "/copy" + p.filename().u8string();
+			else
+				targetlocation_name = selected_path.parent_path().u8string() + "/copy" + p.filename().u8string();
+
+			if (std::filesystem::is_directory(p))
+			{
+				//copying the whole directory still requires work
+				//std::filesystem::copy(p, targetlocation_name,
+				//					  std::filesystem::copy_options::recursive |
+				//					  std::filesystem::copy_options::overwrite_existing);
+			}
+			else
+			{
+				std::filesystem::copy(p, targetlocation_name);
+			}
+		}
 	}
 }
 
@@ -69,8 +119,6 @@ void ProjectRootView::ProjectDeletePopUp_Modal()
 		{
 			ImGui::CloseCurrentPopup();
 		}
-
-
 		ImGui::EndPopup();
 	}
 

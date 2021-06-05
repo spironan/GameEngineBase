@@ -58,7 +58,7 @@ project "Sandbox"
 
         defines
         {
-            --"ENGINE_PLATFORM_WINDOWS"
+            "ENGINE_PLATFORM_WINDOWS",
             "_CRT_SECURE_NO_WARNINGS"
         }
         
