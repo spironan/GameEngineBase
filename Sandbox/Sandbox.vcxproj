@@ -164,7 +164,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core_d.dll\ (xcopy /Q /E /Y /
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -219,7 +219,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -277,7 +277,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -303,11 +303,25 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Editor\LoggingView.h" />
     <ClInclude Include="src\Editor\Editor.h" />
+    <ClInclude Include="src\Editor\EditorFileGroup.h" />
+    <ClInclude Include="src\Editor\EditorObjectGroup.h" />
+    <ClInclude Include="src\Editor\HeirarchyView.h" />
+    <ClInclude Include="src\Editor\InspectorView.h" />
+    <ClInclude Include="src\Editor\ProjectFolderView.h" />
+    <ClInclude Include="src\Editor\ProjectRootView.h" />
     <ClInclude Include="src\testclass.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor\LoggingView.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />
+    <ClCompile Include="src\Editor\EditorFileGroup.cpp" />
+    <ClCompile Include="src\Editor\EditorObjectGroup.cpp" />
+    <ClCompile Include="src\Editor\HeirarchyView.cpp" />
+    <ClCompile Include="src\Editor\InspectorView.cpp" />
+    <ClCompile Include="src\Editor\ProjectFolderView.cpp" />
+    <ClCompile Include="src\Editor\ProjectRootView.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\testclass.cpp" />
   </ItemGroup>
