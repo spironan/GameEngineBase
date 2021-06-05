@@ -10,7 +10,7 @@ void LoggingView::Show()
 	ImGui::End();
 }
 
-void LoggingView::AddLoggingMsg(char* fmt, ...)
+void LoggingView::AddLoggingMsg(const char* fmt, ...)
 {
 	char buf[1024];
 	va_list vargs;

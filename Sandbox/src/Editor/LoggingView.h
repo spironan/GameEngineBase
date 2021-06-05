@@ -9,7 +9,7 @@ public:
 
 	void Show();
 
-	static void AddLoggingMsg(char* fmt, ...);
+	static void AddLoggingMsg(const char* fmt, ...);
 	static std::deque<std::string> s_messages;
 };
 
