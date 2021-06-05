@@ -17,8 +17,7 @@ Technology is prohibited.
 
 #include "Engine/Core/Input.h"
 
-//temporary
-#include <GL/gl3w.h>
+#include "Engine/Renderer/GraphicsContext.h"
 
 namespace engine
 {
@@ -35,6 +34,8 @@ namespace engine
         m_window = Window::Create(WindowProperties{ name });
         //Binds window callback to call Application::OnEvent
         m_window->SetEventCallback(ENGINE_BIND_EVENT_FN(Application::OnEvent));
+        //Retrieve renderer from window
+        m_renderer = static_cast<GraphicsContext*>(m_window->GetNativeRenderer());
 
         m_imGuiLayer = new ImGuiLayer();
         PushOverlay(m_imGuiLayer);
@@ -49,6 +50,9 @@ namespace engine
 
         /*Shutdown Input Management*/
         Input::ShutDown();
+
+        m_layerStack.PopOverlay(m_imGuiLayer);
+        delete m_imGuiLayer;
 
         delete m_window;
     }
@@ -248,12 +252,17 @@ namespace engine
         {
             ENGINE_PROFILE_SCOPE("Runloop");
 
-            // nasty opengl code here : see how i can abstract it away
-            glClearColor(0.2f, 0.3f, 0.3f, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
-
             /*Calculate dt*/
             Timestep dt{ m_window->CalcDeltaTime() };
+
+            /*Update Input Management here*/
+            Input::Update();
+
+            /* Process input events */
+            m_window->ProcessEvents();
+
+            //whatever the renderer needs to call at the beggining if each frame e.g. clear color
+            m_renderer->OnUpdateBegin();
 
             // Layerstack update : layers gets drawn first followed by overlays
             // starting with the standard layers
@@ -265,6 +274,7 @@ namespace engine
                     layer->OnUpdate(dt);
                 }
             }
+
             // followed by imgui updates
             m_imGuiLayer->Begin();
             {
@@ -277,10 +287,8 @@ namespace engine
             }
             m_imGuiLayer->End();
 
-            /*Update Input Management here*/
-            Input::Update();
-
-            m_window->OnUpdate(dt);
+            m_window->SwapBuffers();
+            //m_window->OnUpdate(dt);
         }
     }
 
@@ -301,10 +309,10 @@ namespace engine
 
         for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it)
         {
+            (*it)->OnEvent(e);
+
             // if event is handled, stop propogating
             if (e.Handled) break;
-
-            (*it)->OnEvent(e);
         }
 
     }
@@ -321,7 +329,7 @@ namespace engine
     {
         ENGINE_PROFILE_FUNCTION();
 
-        m_layerStack.PushLayer(overlay);
+        m_layerStack.PushOverlay(overlay);
         overlay->OnAttach();
     }
 

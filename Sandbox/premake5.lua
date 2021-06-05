@@ -50,10 +50,12 @@ project "Sandbox"
         "mono-2.0-sgen",
         "MonoPosixHelper"
     }
+
     defines
     {
         "_CRT_SECURE_NO_WARNINGS"
     }
+
     filter "system:windows"
         cppdialect "C++17"
         staticruntime "off"
@@ -80,7 +82,7 @@ project "Sandbox"
         architecture "x86_64"
         postbuildcommands
         {
-            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_d.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/rttr/dll/rttr_core_d.dll ../bin/" .. outputdir .. "/Sandbox"},
         }
 
         links

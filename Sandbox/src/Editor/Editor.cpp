@@ -45,10 +45,10 @@ Editor::~Editor()
 
 void Editor::HotKeysUpdate()
 {
-	if(engine::Input::IsKeyPressed(engine::key::W))
+	/*if(engine::Input::IsKeyPressed(engine::key::W))
 	{
 		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
-	}
+	}*/
 
 	if (ImGui::IsKeyPressed(s_hotkeymapping[KEY_ACTIONS::HIDE_INSPECTOR]))
 	{
@@ -130,7 +130,7 @@ void Editor::LoadData(const char* dir)
 void Editor::TestFunction()
 {
 	//main banner
-	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+	//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
 	if(m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE))
 	{

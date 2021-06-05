@@ -140,6 +140,7 @@ namespace engine
         bool m_running;
         CommandLineArgs m_commandLineArgs;
         Window* m_window;
+        GraphicsContext* m_renderer;
         ImGuiLayer* m_imGuiLayer;
         LayerStack m_layerStack;
         

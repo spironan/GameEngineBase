@@ -10,12 +10,19 @@ workspace "GameEngineBase"
     
     architecture "x86_64"
     startproject "Sandbox" -- set startup project
+    toolset "v142"      -- toolset v142 = visual studio 2019
 
     configurations
     {
         "Debug",
         "Release",
         "Production"
+    }
+
+    platforms
+    {
+        "OpenGL",
+        "Vulkan"
     }
 
     flags
@@ -25,7 +32,7 @@ workspace "GameEngineBase"
     }
 
 -- where the files are output to
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+outputdir = "%{cfg.buildcfg}-%{cfg.platform}-%{cfg.system}-%{cfg.architecture}"
 
 --group "Dependencies"
 --    include "vendor/premake"

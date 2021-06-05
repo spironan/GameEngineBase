@@ -22,7 +22,11 @@ Technology is prohibited.
 #include "Engine/Core/Base.h"
 #include "Engine/Core/Application.h"
 
-#include "Platform/OpenGL/OpenGLContext.h"
+#if defined(GRAPHICS_CONTEXT_VULKAN)
+    #include "Platform/Vulkan/VulkanContext.h"
+#elif defined(GRAPHICS_CONTEXT_OPENGL)
+    #include "Platform/OpenGL/OpenGLContext.h"
+#endif
 
 namespace engine
 {
@@ -66,6 +70,7 @@ namespace engine
 
         ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
 
+#ifdef GRAPHICS_CONTEXT_OPENGL
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -73,18 +78,29 @@ namespace engine
         SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#endif
+        SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
+#ifdef GRAPHICS_CONTEXT_VULKAN
+        window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_VULKAN | window_flags);
+#elif  defined(GRAPHICS_CONTEXT_OPENGL)
+        window_flags= static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL |  window_flags);
+#endif
         m_window = SDL_CreateWindow(m_data.Title.c_str()
                         , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED
                         , m_data.Width, m_data.Height
-                        , SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+                        , window_flags);
 
         ENGINE_ASSERT_MSG(m_window, "Failed to create SDL Window: {0}", SDL_GetError());
         
 
         ENGINE_PROFILE_SCOPE("SDL_CreateRenderer");
-        // create opengl context
+        // create graphics context
+#ifdef GRAPHICS_CONTEXT_VULKAN
+        m_context = new VulkanContext(m_window);
+#elif  defined(GRAPHICS_CONTEXT_OPENGL)
         m_context = new OpenGLContext(m_window);
+#endif
         m_context->Init();
 
         // Set VSync Status
@@ -95,7 +111,7 @@ namespace engine
     {
         ENGINE_PROFILE_FUNCTION();
 
-        /* delete the current context */
+        /* delete the current graphics context */
         delete m_context;
 
         SDL_DestroyWindow(m_window);
@@ -110,67 +126,57 @@ namespace engine
         return dt;
     }
 
-    void WindowsWindow::OnUpdate(Timestep dt)
+    void WindowsWindow::ProcessEvents()
     {
         ENGINE_PROFILE_FUNCTION();
-
-        //LOG_ENGINE_TRACE("Delta Time : {0}s ({1}ms) ", dt.GetSeconds(), dt.GetMilliSeconds());
-
-        //// nasty opengl code here : see how i can abstract it away
-        //glClearColor(0.2f, 0.3f, 0.3f, 1);
-        //glClear(GL_COLOR_BUFFER_BIT);
-
-        //glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-        
-        //SDL_AddEventWatch(FunctionCallback, (void*)&m_data);
 
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
             {
-            // WINDOWS EVENT
+                // WINDOWS EVENT
             case SDL_WINDOWEVENT:
             {
                 switch (event.window.event)
                 {
                     //Windows resize event
-                    case SDL_WINDOWEVENT_RESIZED:
-                    {
-                        m_data.Width = event.window.data1;
-                        m_data.Height = event.window.data2;
+                case SDL_WINDOWEVENT_RESIZED:
+                {
+                    m_data.Width = event.window.data1;
+                    m_data.Height = event.window.data2;
 
-                        WindowResizeEvent resizeEvent(m_data.Width, m_data.Height);
-                        m_data.EventCallback(resizeEvent);
-                        break;
-                    }
-                    //Windows close event
-                    case SDL_WINDOWEVENT_CLOSE:
-                    {
-                        WindowCloseEvent closeEvent;
-                        m_data.EventCallback(closeEvent);
-                        break;
-                    }
-                    case SDL_WINDOWEVENT_MAXIMIZED:
-                    case SDL_WINDOWEVENT_FOCUS_GAINED:
-                    {
-                        WindowFocusEvent windowFocusEvent;
-                        m_data.EventCallback(windowFocusEvent);
-                        break;
-                    }
-                    case SDL_WINDOWEVENT_MINIMIZED:
-                    case SDL_WINDOWEVENT_FOCUS_LOST:
-                    {
-                        WindowLoseFocusEvent windowLoseFocusEvent;
-                        m_data.EventCallback(windowLoseFocusEvent);
-                        break;
-                    }
-                    case SDL_WINDOWEVENT_MOVED:
-                    {
-                        WindowMovedEvent windowMovedEvent;
-                        m_data.EventCallback(windowMovedEvent);
-                        break;
-                    }
+                    WindowResizeEvent resizeEvent(m_data.Width, m_data.Height);
+                    m_data.EventCallback(resizeEvent);
+                    break;
+                }
+                //Windows close event
+                case SDL_WINDOWEVENT_CLOSE:
+                {
+                    WindowCloseEvent closeEvent;
+                    m_data.EventCallback(closeEvent);
+                    break;
+                }
+                case SDL_WINDOWEVENT_MAXIMIZED:
+                case SDL_WINDOWEVENT_FOCUS_GAINED:
+                {
+                    WindowFocusEvent windowFocusEvent;
+                    m_data.EventCallback(windowFocusEvent);
+                    break;
+                }
+                case SDL_WINDOWEVENT_MINIMIZED:
+                case SDL_WINDOWEVENT_FOCUS_LOST:
+                {
+                    WindowLoseFocusEvent windowLoseFocusEvent;
+                    m_data.EventCallback(windowLoseFocusEvent);
+                    break;
+                }
+                case SDL_WINDOWEVENT_MOVED:
+                {
+                    WindowMovedEvent windowMovedEvent;
+                    m_data.EventCallback(windowMovedEvent);
+                    break;
+                }
                 default:
                     break;
                 }
@@ -180,48 +186,55 @@ namespace engine
 
             case SDL_KEYDOWN:
             {
-                KeyPressedEvent keyPressEvent(event.key.keysym.sym, event.key.repeat ? 1 : 0);
+                KeyPressedEvent keyPressEvent( event.key.keysym.sym, event.key.repeat ? 1 : 0);
                 m_data.EventCallback(keyPressEvent);
-            }
-                break;
 
+                break;
+            }
             case SDL_KEYUP:
             {
                 KeyReleasedEvent keyPressEvent(event.key.keysym.sym);
                 m_data.EventCallback(keyPressEvent);
-            }
-                break;
 
+                break;
+            }
             case SDL_MOUSEBUTTONUP:
             {
                 MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.sym);
                 m_data.EventCallback(mouseButtonReleasedEvent);
-            }
-                break;
 
+                break;
+            }
             case SDL_MOUSEBUTTONDOWN:
             {
                 MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.sym);
                 m_data.EventCallback(mouseButtonPressedEvent);
-            }
+
                 break;
+            }
             case SDL_MOUSEWHEEL:
             {
                 MouseScrolledEvent mouseScrolledEvent(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
                 m_data.EventCallback(mouseScrolledEvent);
-            }
+
                 break;
+            }
             case SDL_MOUSEMOTION:
             {
                 MouseMovedEvent mouseMovedEvent(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
                 m_data.EventCallback(mouseMovedEvent);
-            }
-                break;
 
+                break;
+            }
             default:
                 break;
             }
         }
+    }
+
+    void WindowsWindow::SwapBuffers()
+    {
+        ENGINE_PROFILE_FUNCTION();
 
         // swap rendering buffers
         m_context->SwapBuffers();
@@ -231,10 +244,7 @@ namespace engine
     {
         LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
 
-        //opengl specific : may want to abstract to opengl context
-        SDL_GL_SetSwapInterval(enabled);
-
-        m_data.VSync = enabled;
+        m_data.VSync = m_context->SetVSync(enabled);
     }
 
     bool WindowsWindow::IsVSync() const
