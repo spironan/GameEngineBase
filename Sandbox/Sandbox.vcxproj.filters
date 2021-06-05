@@ -9,13 +9,51 @@
     <ClInclude Include="src\Editor\Editor.h">
       <Filter>Editor</Filter>
     </ClInclude>
+    <ClInclude Include="src\Editor\EditorFileGroup.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\EditorObjectGroup.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\HeirarchyView.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\InspectorView.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\ProjectFolderView.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor\ProjectRootView.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
     <ClInclude Include="src\testclass.h" />
+    <ClInclude Include="src\Editor\LoggingView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
+    <ClCompile Include="src\Editor\EditorFileGroup.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor\EditorObjectGroup.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor\HeirarchyView.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor\InspectorView.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor\ProjectFolderView.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor\ProjectRootView.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\testclass.cpp" />
+    <ClCompile Include="src\Editor\LoggingView.cpp" />
   </ItemGroup>
 </Project>
