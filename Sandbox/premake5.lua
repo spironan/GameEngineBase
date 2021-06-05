@@ -50,7 +50,10 @@ project "Sandbox"
         "mono-2.0-sgen",
         "MonoPosixHelper"
     }
-
+    defines
+    {
+        "_CRT_SECURE_NO_WARNINGS"
+    }
     filter "system:windows"
         cppdialect "C++17"
         staticruntime "off"
@@ -58,8 +61,7 @@ project "Sandbox"
 
         defines
         {
-            "ENGINE_PLATFORM_WINDOWS",
-            "_CRT_SECURE_NO_WARNINGS"
+            "ENGINE_PLATFORM_WINDOWS"
         }
         
         --enable this post build command for 64 bit system
