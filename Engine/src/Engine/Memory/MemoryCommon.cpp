@@ -1,3 +1,17 @@
+/*****************************************************************//**
+\file   MemoryCommon.cpp
+\author Lim Guan Hui, l.guanhui , 2000552
+\email  l.guanhui@digipen.edu
+\date   5/6/2021
+\brief  
+This file contains definitions for the global new operator overloads
+defined in the header.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #include "pch.h"
 #include "MemoryCommon.h"
 #include "Engine/Core/Base.h"
