@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "StackAllocator.h"
-
-StackAllocator::StackAllocator()
-	: m_top(0)
-{
-}
+#include "Engine/Core/Base.h"
 
 StackAllocator::StackAllocator(const Size stackSize)
 	: m_top(0), m_totalSize(stackSize) {
@@ -14,12 +10,12 @@ StackAllocator::StackAllocator(const Size stackSize)
 	//std::cout << "marker:" << GetMarker() << "\n";
 }
 
-void StackAllocator::Init(Size stackSize, void* starting_address)
-{
-	m_totalSize = stackSize;
-	m_bottom = starting_address;
-	m_bottomAddress = reinterpret_cast<PtrInt>(m_bottom);
-}
+//void StackAllocator::Init(Size stackSize, void* starting_address)
+//{
+//	m_totalSize = stackSize;
+//	m_bottom = starting_address;
+//	m_bottomAddress = reinterpret_cast<PtrInt>(m_bottom);
+//}
 
 
 StackAllocator::~StackAllocator() {
@@ -27,7 +23,7 @@ StackAllocator::~StackAllocator() {
 }
 
 void* StackAllocator::Alloc(const Size size, const U8 alignment) {
-	bool valid = alignment >= 8 && alignment <= 128 &&
+	const bool valid = alignment >= 8 && alignment <= 128 &&
 		(alignment & (alignment - 1)) == 0;  // power of 2
 	if (valid == false)
 		throw std::invalid_argument{"alignment not satisfied"};
@@ -45,7 +41,6 @@ void* StackAllocator::Alloc(const Size size, const U8 alignment) {
 	}
 
 	m_top = newTop;
-
 	return reinterpret_cast<void*>(alignedAddress);
 }
 

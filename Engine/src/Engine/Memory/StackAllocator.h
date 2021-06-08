@@ -1,5 +1,6 @@
 #pragma once
-#include <iostream>
+#include <cstddef>
+#include <cstdint>
 class StackAllocator {
 public:
 	using Size = std::size_t;
@@ -9,9 +10,9 @@ public:
 	using PtrDiff = std::ptrdiff_t;
 
 
-	StackAllocator();
-	explicit StackAllocator(Size stackSize);
-	void Init(Size stackSize, void* starting_address);
+	StackAllocator() = delete;
+	explicit StackAllocator(const Size stackSize);
+	//void Init(Size stackSize, void* starting_address);
 	~StackAllocator();
 
 	/**
