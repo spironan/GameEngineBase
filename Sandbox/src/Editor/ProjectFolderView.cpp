@@ -12,6 +12,9 @@
 
 void ProjectFolderView::Show()
 {
+
+	ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
+
 	ImGui::Begin("Project Folder");
 	ProjectView();
 	ImGui::End();
