@@ -16,6 +16,7 @@
 /* static vars */
 testclass Editor::s_rootnode;//will be removed once ecs done
 std::vector<testclass> Editor::s_testList;//will be removed once ecs done
+
 std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 
 //for copy and pasting
@@ -130,8 +131,9 @@ void Editor::LoadData(const char* dir)
 void Editor::TestFunction()
 {
 	//main banner
-	//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
+	ImGui::ShowDemoWindow();
 	if(m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE))
 	{
 		m_inspector_view.Show();
