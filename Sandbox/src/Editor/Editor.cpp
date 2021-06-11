@@ -22,7 +22,7 @@ std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 //for copy and pasting
 std::pair<std::string, std::shared_ptr<void*>> Editor::s_copyPayload = {"",nullptr};
 
-Editor::Editor(const std::string& root) :m_rootPath{ root },m_currentPath{root}
+Editor::Editor(const std::string& root)
 {
 	s_testList.reserve(50);
 

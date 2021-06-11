@@ -8,6 +8,9 @@ public:
 
 	static std::string s_CurrentPath;
 	static std::string s_rootPath;
+	static std::string s_hoveredPath;
+
+	static void ProjectViewPopUp();
 private:
 
 };

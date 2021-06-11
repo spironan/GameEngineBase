@@ -57,7 +57,7 @@ void ProjectFolderView::ProjectView()
 
 	//table calculation
 	float row = ImGui::GetContentRegionAvailWidth() / (padding + imgsize);
-	if (ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)//when changing tabs this will be set to false
+	if (row < 1|| ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)//when changing tabs this will be set to false
 		return;
 	ImGui::TableNextColumn();//push 1 column first
 	for (std::filesystem::directory_entry entry : dir_iter)
@@ -86,6 +86,7 @@ void ProjectFolderView::ProjectView()
 			else if (entry.path().has_extension())
 			{
 				std::string a = entry.path().generic_u8string().c_str();
+				//TODO remove this in place of a better code
 				std::system(a.substr(2).c_str());//substr can be removed one we have a proper filepath
 			}
 		}
@@ -97,7 +98,6 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-
 			std::ofstream stream("prefab");
 			rapidjson::OStreamWrapper osw(stream);
 			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);

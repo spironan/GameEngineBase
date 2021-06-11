@@ -15,9 +15,12 @@ void ProjectRootView::Show()
 	ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
 	ImGui::Begin("Project Dir");
 	ProjectView(FileGroup::s_rootPath, FileGroup::s_CurrentPath);
-
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
+	{
+		if (ImGui::IsAnyItemHovered() == false)
+			FileGroup::s_hoveredPath = FileGroup::s_rootPath;
 		ImGui::OpenPopup("ProjectViewPopup");
+	}
 
 	if (ImGui::BeginPopup("ProjectViewPopup"))
 	{
@@ -37,7 +40,7 @@ void ProjectRootView::Show()
 
 void ProjectRootView::ProjectViewPopUp()
 {
-	bool item_selected = (m_selectedpath != FileGroup::s_rootPath);
+	bool item_selected = (FileGroup::s_hoveredPath != FileGroup::s_rootPath);
 	if (ImGui::MenuItem("CreateFolder"))
 	{
 		std::filesystem::path p = std::filesystem::path((FileGroup::s_CurrentPath + "/newfolder").c_str());
@@ -91,6 +94,10 @@ void ProjectRootView::ProjectViewPopUp()
 			}
 		}
 	}
+	if (ImGui::MenuItem("Rename"))
+	{
+		m_rename_item = true;
+	}
 }
 
 void ProjectRootView::ProjectDeletePopUp_Modal()
@@ -124,6 +131,19 @@ void ProjectRootView::ProjectDeletePopUp_Modal()
 
 }
 
+void ProjectRootView::RenameCallback()
+{
+	if (m_rename_item)
+	{
+		ImGui::SetKeyboardFocusHere();
+		if (ImGui::InputText("rename", m_nameBuffer, sizeof(m_nameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			//rename file
+			m_rename_item = false;
+		}
+	}
+}
+
 
 
 
@@ -155,7 +175,15 @@ void ProjectRootView::ProjectView(const std::string& path, std::string& selected
 		if (layer == curr)
 		{
 			if (entry.path().filename().generic_u8string() == m_selecteditem)
+			{
 				flag |= ImGuiTreeNodeFlags_Selected;
+				for (size_t iter = 0; iter < m_runOnSelected.size(); ++iter)
+				{
+					(this->*m_runOnSelected[iter])();
+				}
+					
+			}
+
 		}
 
 		enable = ImGui::TreeNodeEx(entry.path().filename().generic_u8string().c_str(), flag);
@@ -169,6 +197,10 @@ void ProjectRootView::ProjectView(const std::string& path, std::string& selected
 			m_selecteditem = entry.path().filename().generic_u8string();
 			m_selectedpath = entry.path().generic_u8string();
 			layer = curr;
+		}
+		if (ImGui::IsItemHovered())
+		{
+			FileGroup::s_hoveredPath = entry.path().u8string();
 		}
 
 		if (enable && entry.is_directory())
