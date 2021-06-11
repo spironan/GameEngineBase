@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "Platform/Vulkan/vk_mesh.h"
+#include "Engine/Platform/Vulkan/vk_mesh.h"
 
 #include <tiny_obj_loader.h>
 #include <iostream>

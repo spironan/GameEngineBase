@@ -25,6 +25,6 @@ Technology is prohibited.
 #include "Engine/Core/Timestep.h"
 
 // -- entry point
-#include "Engine/Core/EntryPoint.h"
+#include "Engine/EntryPoint.h"
 
 #include "Engine/Core/Input.h"

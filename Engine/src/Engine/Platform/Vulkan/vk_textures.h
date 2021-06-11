@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Platform/Vulkan/vk_types.h"
-#include "Platform/Vulkan/vk_engine.h"
+#include "Engine/Platform/Vulkan/vk_types.h"
+#include "Engine/Platform/Vulkan/vk_engine.h"
 
 namespace vkutil
 {

@@ -14,7 +14,7 @@ Technology is prohibited.
 #pragma once
 
 #include <string>
-#include "Engine/Events/Event.h"
+#include "Engine/Core/Events/Event.h"
 #include "Engine/Core/Timestep.h"
 
 namespace engine
@@ -24,18 +24,20 @@ namespace engine
     *//*********************************************************************************/
     struct WindowProperties
     {
-        std::string Title;
-        unsigned int Width;
-        unsigned int Height;
+        std::string Title = "Core Engine";
+        unsigned int Width = 1600;
+        unsigned int Height = 900;
+        bool Fullscreen = false;
+        bool VSync = true;
 
-        /****************************************************************************//*!
-         @brief     Default constructor determining the title, width and height.
-        *//*****************************************************************************/
-        WindowProperties(const std::string& title = "Core Engine",
-            unsigned int width = 1600, unsigned int height = 900)
-            : Title(title), Width(width), Height(height)
-        {
-        }
+        ///****************************************************************************//*!
+        // @brief     Default constructor determining the title, width and height.
+        //*//*****************************************************************************/
+        //WindowProperties(const std::string& title = "Core Engine",
+        //    unsigned int width = 1600, unsigned int height = 900)
+        //    : Title(title), Width(width), Height(height)
+        //{
+        //}
     };
 
     /********************************************************************************//*!
@@ -45,6 +47,7 @@ namespace engine
     {
     public:
         using EventCallbackFn = std::function<void(Event&)>;
+
         /*-----------------------------------------------------------------------------*/
         /* Constructors and Destructors                                                */
         /*-----------------------------------------------------------------------------*/
@@ -59,6 +62,9 @@ namespace engine
         virtual void SwapBuffers() = 0;
         //virtual void OnUpdate(Timestep dt) = 0;
 
+        virtual void Maximize() = 0;
+        virtual void Minimize() = 0;
+
         /****************************************************************************//*!
          @brief     Static function to create a Window of the current platform
 
@@ -72,6 +78,8 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         virtual unsigned int GetWidth() const = 0;
         virtual unsigned int GetHeight() const = 0;
+        virtual std::pair<unsigned int, unsigned int> GetSize() const = 0;
+        virtual std::pair<int, int> GetWindowPos() const = 0;
         /****************************************************************************//*!
          @brief     Retrieve the Native Window class of the backend system.
                     Currently uses SDL_Window thus static cast it to SDL_Window*
@@ -82,7 +90,7 @@ namespace engine
         *//*****************************************************************************/
         virtual void* GetNativeWindow() const = 0;
 
-        virtual void* GetNativeRenderer() const = 0;
+        virtual void* GetRenderingContext() const = 0;
 
         virtual bool IsVSync() const = 0;
 
@@ -91,6 +99,7 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
         virtual void SetVSync(bool enabled) = 0;
+        virtual void SetTitle(const std::string& title) = 0;
 
     protected:
         double m_lastFrameTime = 0;

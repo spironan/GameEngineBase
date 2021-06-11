@@ -63,7 +63,7 @@
     <ClInclude Include="src\Engine\Core\Base.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Core\EntryPoint.h">
+    <ClInclude Include="src\Engine\EntryPoint.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\Input.h">
@@ -96,16 +96,16 @@
     <ClInclude Include="src\Engine\Debug\Instrumentor.h">
       <Filter>src\Engine\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Events\ApplicationEvent.h">
+    <ClInclude Include="src\Engine\Core\Events\ApplicationEvent.h">
       <Filter>src\Engine\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Events\Event.h">
+    <ClInclude Include="src\Engine\Core\Events\Event.h">
       <Filter>src\Engine\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Events\KeyEvent.h">
+    <ClInclude Include="src\Engine\Core\Events\KeyEvent.h">
       <Filter>src\Engine\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Events\MouseEvent.h">
+    <ClInclude Include="src\Engine\Core\Events\MouseEvent.h">
       <Filter>src\Engine\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\ImGui\ImGuiLayer.h">
@@ -114,28 +114,28 @@
     <ClInclude Include="src\Engine\Renderer\GraphicsContext.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+    <ClInclude Include="src\Engine\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\VulkanContext.h">
+    <ClInclude Include="src\Engine\Platform\Vulkan\VulkanContext.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\vk_engine.h">
+    <ClInclude Include="src\Engine\Platform\Vulkan\vk_engine.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\vk_initializers.h">
+    <ClInclude Include="src\Engine\Platform\Vulkan\vk_initializers.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\vk_mesh.h">
+    <ClInclude Include="src\Engine\Platform\Vulkan\vk_mesh.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\vk_textures.h">
+    <ClInclude Include="src\Engine\Platform\Vulkan\vk_textures.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Vulkan\vk_types.h">
+    <ClInclude Include="src\Engine\Platform\Vulkan\vk_types.h">
       <Filter>src\Platform\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+    <ClInclude Include="src\Engine\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Utility\Bitmask.h">
@@ -200,28 +200,28 @@
     <ClCompile Include="src\Engine\ImGui\ImGuiLayer.cpp">
       <Filter>src\Engine\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+    <ClCompile Include="src\Engine\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp">
+    <ClCompile Include="src\Engine\Platform\Vulkan\VulkanContext.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\vk_engine.cpp">
+    <ClCompile Include="src\Engine\Platform\Vulkan\vk_engine.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\vk_initializers.cpp">
+    <ClCompile Include="src\Engine\Platform\Vulkan\vk_initializers.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\vk_mesh.cpp">
+    <ClCompile Include="src\Engine\Platform\Vulkan\vk_mesh.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Vulkan\vk_textures.cpp">
+    <ClCompile Include="src\Engine\Platform\Vulkan\vk_textures.cpp">
       <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+    <ClCompile Include="src\Engine\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Windows\Windowswindow.cpp">
+    <ClCompile Include="src\Engine\Platform\Windows\Windowswindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp">

@@ -31,7 +31,7 @@ namespace engine
 #ifdef ENGINE_PLATFORM_WINDOWS
         , m_window { static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow())  }
 #endif
-        , m_renderer{ static_cast<GraphicsContext*>(Application::Get().GetWindow().GetNativeRenderer()) }
+        , m_renderer{ static_cast<GraphicsContext*>(Application::Get().GetWindow().GetRenderingContext()) }
     {
     }
 
