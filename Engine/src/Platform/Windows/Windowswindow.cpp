@@ -28,6 +28,9 @@ Technology is prohibited.
     #include "Platform/OpenGL/OpenGLContext.h"
 #endif
 
+#include <imgui_impl_sdl.h>
+#include <imgui.h>
+
 namespace engine
 {
     static bool s_SDLInitialized = false;
@@ -133,6 +136,8 @@ namespace engine
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            // this should only run if there's imgui on
+            ImGui_ImplSDL2_ProcessEvent(&event);
             switch (event.type)
             {
                 // WINDOWS EVENT
@@ -186,28 +191,28 @@ namespace engine
 
             case SDL_KEYDOWN:
             {
-                KeyPressedEvent keyPressEvent( event.key.keysym.sym, event.key.repeat ? 1 : 0);
+                KeyPressedEvent keyPressEvent( event.key.keysym.scancode, event.key.repeat ? 1 : 0);
                 m_data.EventCallback(keyPressEvent);
 
                 break;
             }
             case SDL_KEYUP:
             {
-                KeyReleasedEvent keyPressEvent(event.key.keysym.sym);
+                KeyReleasedEvent keyPressEvent(event.key.keysym.scancode);
                 m_data.EventCallback(keyPressEvent);
 
                 break;
             }
             case SDL_MOUSEBUTTONUP:
             {
-                MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.sym);
+                MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.scancode);
                 m_data.EventCallback(mouseButtonReleasedEvent);
 
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
             {
-                MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.sym);
+                MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.scancode);
                 m_data.EventCallback(mouseButtonPressedEvent);
 
                 break;
