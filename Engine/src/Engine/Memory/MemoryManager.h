@@ -1,58 +1,110 @@
+/*****************************************************************//**
+\file   MemoryManager.h
+\author Lim Guan Hui, l.guanhui , 2000552
+\email  l.guanhui@digipen.edu
+\date   7/6/2021
+\brief  
+This file contains a memory manager used to handle allocation and 
+deallocation of memory. 
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #pragma once
 #include <cstddef>
+#include <utility>
 #include "StackAllocator.h"
 #include "PoolAllocator.h"
-class MemoryManager
-{
-	using SA = StackAllocator;
-	using PA = PoolAllocator;
-	using Size = std::size_t;
-public:
-	static const Size BYTE;
-	static const Size KB;
-	static const Size MB;
-	static const Size GB;
-public:
-	MemoryManager() = delete;
-	MemoryManager(Size mem_size, Size stack_size, Size pool_chunk_size);
-	~MemoryManager();
 
+namespace engine
+{
+
+	class MemoryManager
+	{
+		using SA = StackAllocator;
+		using PA = PoolAllocator;
+		using Size = std::size_t;
+	public:
+		static const Size BYTE;
+		static const Size KB;
+		static const Size MB;
+		static const Size GB;
+	public:
+		MemoryManager();
+		~MemoryManager();
+
+		//available functions
+		template <typename type, typename... args>
+		static type* NewOnStack(args&&...);
+
+
+		//not to be used yet
+		template<typename type, typename... args>
+		type* Allocate(args... argList);
+		template<typename type>
+		type* AllocateArray(std::size_t num);
+
+		template<typename type, typename... args>
+		type* AllocatePersistent(args... argList);
+
+		void Clear();
+	private:
+		static MemoryManager* GetInstance();
+
+		static MemoryManager* instance;
+		SA m_persistentAllocator;
+		//PA m_poolAlloc;
+		std::size_t m_total_size;
+	};
+
+
+	/*************************************************
+	* Definitions
+	**************************************************/
+	/*****************************************************************//**
+	 * @brief Use this to request memory that is meant to be used throughout
+	 * the duration of the program. Memory is automatically deallocated
+	 * upon program termination.
+	 *
+	 * @param ...argList
+	 * arguements to be used to initialise the 'type'
+	 * this template function is specialised for. It runs the constructor
+	 * with the arguments specified
+	 *
+	 * @return
+	 * pointer to the object created of templated 'type'
+	*********************************************************************/
+	template <typename type, typename... args>
+	type* MemoryManager::NewOnStack(args&&... arguementList)
+	{
+		return GetInstance()->m_persistentAllocator.New<type>(
+			std::forward<args>(arguementList)...);
+	}
+	/**
+	 * not to be used for now.
+	 */
 	template<typename type, typename... args>
-	type* Allocate(args... argList);
+	type* MemoryManager::Allocate(args... arguementList)
+	{
+		return m_poolAlloc.Get();
+	}
+	/**
+	 * not to be used for now.
+	 */
 	template<typename type>
-	type* AllocateArray(std::size_t num);
-
+	type* MemoryManager::AllocateArray(std::size_t num)
+	{
+		return NULL;
+	}
+	/**
+	 * not to be used for now.
+	 */
 	template<typename type, typename... args>
-	type* AllocatePersistent(args... argList);
+	type* MemoryManager::AllocatePersistent(args... argList)
+	{
+		return m_persistentAlloc.New<type>(argList);
+	}
 
-	void Clear();
-private:
-	static MemoryManager* GetInstance();
-	static MemoryManager* instance;
-	SA m_stackAlloc;
-	PA m_poolAlloc;
-	std::size_t m_total_size;
-	SA m_persistentAlloc;
-};
-
-
-/*************************************************
-* Definitions
-**************************************************/
-template<typename type, typename... args>
-inline type* MemoryManager::Allocate(args... argList)
-{
-	return m_poolAlloc.Get();
-}
-
-template<typename type>
-inline type* MemoryManager::AllocateArray(std::size_t num)
-{
-	return NULL;
-}
-
-template<typename type, typename... args>
-inline type* MemoryManager::AllocatePersistent(args... argList)
-{
-	return m_persistentAlloc.New<type>(argList);
 }

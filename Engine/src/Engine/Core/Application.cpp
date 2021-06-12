@@ -37,7 +37,8 @@ namespace engine
         //Retrieve renderer from window
         m_renderer = static_cast<GraphicsContext*>(m_window->GetNativeRenderer());
 
-        m_imGuiLayer = new ImGuiLayer();
+        //m_imGuiLayer = new ImGuiLayer();
+        m_imGuiLayer = MemoryManager::NewOnStack<ImGuiLayer>();
         PushOverlay(m_imGuiLayer);
 
         /*Initialize Input Management*/
@@ -52,9 +53,10 @@ namespace engine
         Input::ShutDown();
 
         m_layerStack.PopOverlay(m_imGuiLayer);
-        delete m_imGuiLayer;
+        //delete m_imGuiLayer;
+        m_imGuiLayer->~ImGuiLayer();
 
-        delete m_window;
+        m_window->~Window();
     }
 
     void Application::Run()

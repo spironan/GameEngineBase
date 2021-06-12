@@ -22,8 +22,9 @@ namespace engine
     Window* Window::Create(const WindowProperties& properties)
     {
     #ifdef ENGINE_PLATFORM_WINDOWS
-        return new WindowsWindow{ properties };
-    #else
+        //return new WindowsWindow{ properties };
+        return MemoryManager::NewOnStack<WindowsWindow>(properties);
+#else
         ENGINE_ASSERT_MSG(false, "Unsupported platform!");
         return nullptr;
     #endif
