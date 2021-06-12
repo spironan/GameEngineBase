@@ -21,6 +21,9 @@
     <ClInclude Include="src\Editor\InspectorView.h">
       <Filter>Editor</Filter>
     </ClInclude>
+    <ClInclude Include="src\Editor\LoggingView.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
     <ClInclude Include="src\Editor\ProjectFolderView.h">
       <Filter>Editor</Filter>
     </ClInclude>
@@ -28,7 +31,6 @@
       <Filter>Editor</Filter>
     </ClInclude>
     <ClInclude Include="src\testclass.h" />
-    <ClInclude Include="src\Editor\LoggingView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp">
@@ -46,6 +48,9 @@
     <ClCompile Include="src\Editor\InspectorView.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
+    <ClCompile Include="src\Editor\LoggingView.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
     <ClCompile Include="src\Editor\ProjectFolderView.cpp">
       <Filter>Editor</Filter>
     </ClCompile>
@@ -54,6 +59,5 @@
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\testclass.cpp" />
-    <ClCompile Include="src\Editor\LoggingView.cpp" />
   </ItemGroup>
 </Project>

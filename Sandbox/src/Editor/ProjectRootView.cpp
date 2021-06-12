@@ -51,14 +51,14 @@ void ProjectRootView::ProjectViewPopUp()
 	{
 		delete_popup = true;
 	}
-#ifdef ENGINE_PLATFORM_WINDOWS
+#ifdef SANDBOX_PLATFORM_WINDOWS
 	ImGui::Separator();
 	if (ImGui::MenuItem("Open File Location"))
 	{
 		std::filesystem::path p{ m_selectedpath };
 		ShellExecuteA(NULL, "explore", p.parent_path().generic_u8string().c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}
-#endif // ENGINE_PLATFORM_WINDOWS
+#endif // SANDBOX_PLATFORM_WINDOWS
 	ImGui::Separator();
 	if (ImGui::MenuItem("Copy"))
 	{

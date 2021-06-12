@@ -1,7 +1,7 @@
 #pragma once
 #include <deque>
 #include <string>
-#include <varargs.h>
+//#include <varargs.h>
 #include <stdio.h>
 class LoggingView
 {
