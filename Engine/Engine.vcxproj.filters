@@ -10,29 +10,29 @@
     <Filter Include="src\Engine\Core">
       <UniqueIdentifier>{AA407579-16CC-E23D-1FDD-65328BE73E3E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core\Events">
+      <UniqueIdentifier>{4E493AC8-3A43-631A-23B0-F92A0F49C986}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Debug">
       <UniqueIdentifier>{08B129A8-F4A9-48FA-1DDC-2D7F09342806}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Engine\Events">
-      <UniqueIdentifier>{B624EAB0-223B-E846-6BB2-7368D707B9CE}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Engine\ImGui">
       <UniqueIdentifier>{BC1B88A8-A814-A7FA-D146-8C7FBD9E8606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Platform">
+      <UniqueIdentifier>{A63124B0-1293-01BE-9B00-48700761387D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine\Platform\OpenGL">
+      <UniqueIdentifier>{1AC46F4E-06D4-1B1F-6F8D-803D5BBC0AB8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine\Platform\Vulkan">
+      <UniqueIdentifier>{6628225F-5238-CE2F-BBF1-324EA720BDC8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine\Platform\Windows">
+      <UniqueIdentifier>{E0218474-4C2F-B25A-D515-AE4541227E11}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Renderer">
       <UniqueIdentifier>{F838018B-649A-DE98-ED07-254B59681558}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Platform">
-      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Platform\OpenGL">
-      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Platform\Vulkan">
-      <UniqueIdentifier>{81084748-ED69-2456-76D7-6A08E2375B15}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Platform\Windows">
-      <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Utility">
       <UniqueIdentifier>{70464FB2-DCFB-C7A7-65F0-C17ED1A4BEAB}</UniqueIdentifier>
@@ -63,8 +63,17 @@
     <ClInclude Include="src\Engine\Core\Base.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\EntryPoint.h">
-      <Filter>src\Engine\Core</Filter>
+    <ClInclude Include="src\Engine\Core\Events\ApplicationEvent.h">
+      <Filter>src\Engine\Core\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Events\Event.h">
+      <Filter>src\Engine\Core\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Events\KeyEvent.h">
+      <Filter>src\Engine\Core\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Events\MouseEvent.h">
+      <Filter>src\Engine\Core\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Core\Input.h">
       <Filter>src\Engine\Core</Filter>
@@ -96,47 +105,38 @@
     <ClInclude Include="src\Engine\Debug\Instrumentor.h">
       <Filter>src\Engine\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Core\Events\ApplicationEvent.h">
-      <Filter>src\Engine\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\Events\Event.h">
-      <Filter>src\Engine\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\Events\KeyEvent.h">
-      <Filter>src\Engine\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine\Core\Events\MouseEvent.h">
-      <Filter>src\Engine\Events</Filter>
+    <ClInclude Include="src\Engine\EntryPoint.h">
+      <Filter>src\Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\ImGui\ImGuiLayer.h">
       <Filter>src\Engine\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Renderer\GraphicsContext.h">
-      <Filter>src\Engine\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\Platform\OpenGL\OpenGLContext.h">
-      <Filter>src\Platform\OpenGL</Filter>
+      <Filter>src\Engine\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Platform\Vulkan\VulkanContext.h">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_engine.h">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_initializers.h">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_mesh.h">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_textures.h">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_types.h">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Platform\Windows\WindowsWindow.h">
-      <Filter>src\Platform\Windows</Filter>
+      <Filter>src\Engine\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\GraphicsContext.h">
+      <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Utility\Bitmask.h">
       <Filter>src\Utility</Filter>
@@ -201,28 +201,28 @@
       <Filter>src\Engine\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\OpenGL\OpenGLContext.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
+      <Filter>src\Engine\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\Vulkan\VulkanContext.cpp">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\Vulkan\vk_engine.cpp">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\Vulkan\vk_initializers.cpp">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\Vulkan\vk_mesh.cpp">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\Vulkan\vk_textures.cpp">
-      <Filter>src\Platform\Vulkan</Filter>
+      <Filter>src\Engine\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\Windows\WindowsInput.cpp">
-      <Filter>src\Platform\Windows</Filter>
+      <Filter>src\Engine\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Platform\Windows\Windowswindow.cpp">
-      <Filter>src\Platform\Windows</Filter>
+      <Filter>src\Engine\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp">
       <Filter>src</Filter>
@@ -257,5 +257,10 @@
     <ClCompile Include="vendor\gl3w\GL\gl3w.c">
       <Filter>vendor\gl3w\GL</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Engine\Platform\Windows\Windowswindow.cpp~HEAD">
+      <Filter>src\Engine\Platform\Windows</Filter>
+    </None>
   </ItemGroup>
 </Project>

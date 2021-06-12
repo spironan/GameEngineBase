@@ -61,17 +61,17 @@ namespace engine
 
     bool Input::IsKeyDown(const KeyCode keycode)
     {
-        return m_keyboardState[keycode];
+        return m_keyboardState[static_cast<int>(keycode)];
     }
 
     bool Input::IsKeyPressed(const KeyCode keycode)
     {
-        return !m_prevKeyboardState[keycode] && m_keyboardState[keycode];
+        return !m_prevKeyboardState[static_cast<int>(keycode)] && m_keyboardState[static_cast<int>(keycode)];
     }
 
     bool Input::IsKeyReleased(const KeyCode keycode)
     {
-        return m_prevKeyboardState[keycode] && !m_keyboardState[keycode];
+        return m_prevKeyboardState[static_cast<int>(keycode)] && !m_keyboardState[static_cast<int>(keycode)];
     }
     
     bool Input::IsAnyKeyDown()
