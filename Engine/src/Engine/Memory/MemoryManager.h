@@ -17,6 +17,7 @@ Technology is prohibited.
 #include <utility>
 #include "StackAllocator.h"
 #include "PoolAllocator.h"
+#include "BufferAllocator.h"
 
 namespace engine
 {
@@ -26,6 +27,7 @@ namespace engine
 		using SA = StackAllocator;
 		using PA = PoolAllocator;
 		using Size = std::size_t;
+		using U8 = uint8_t;
 	public:
 		static const Size BYTE;
 		static const Size KB;
@@ -36,8 +38,30 @@ namespace engine
 		~MemoryManager();
 
 		//available functions
+		/*****************************************************************//**
+		 * @brief Use this to request memory that is meant to be used throughout
+		 * the duration of the program. Memory is automatically deallocated
+		 * upon program termination.
+		 *
+		 * @param ...argList
+		 * arguements to be used to initialise the 'type'
+		 * this template function is specialised for. It runs the constructor
+		 * with the arguments specified
+		 *
+		 * @return
+		 * pointer to the object created of templated 'type'
+		*********************************************************************/
 		template <typename type, typename... args>
 		static type* NewOnStack(args&&...);
+
+		/*****************************************************************//**
+		 * @brief Creates a new BufferAllocator object for use.
+		 * 
+		 * @param size maximum size of memory usable by this BufferAllocator
+		 * @param alignment memory alignment used for this BufferAllocator
+		 * @return BufferAllocator object created
+		*********************************************************************/
+		static BufferAllocator NewBufferAllocator(Size size, U8 const alignment = 16);
 
 
 		//not to be used yet
@@ -57,25 +81,13 @@ namespace engine
 		SA m_persistentAllocator;
 		//PA m_poolAlloc;
 		std::size_t m_total_size;
+
 	};
 
 
 	/*************************************************
 	* Definitions
 	**************************************************/
-	/*****************************************************************//**
-	 * @brief Use this to request memory that is meant to be used throughout
-	 * the duration of the program. Memory is automatically deallocated
-	 * upon program termination.
-	 *
-	 * @param ...argList
-	 * arguements to be used to initialise the 'type'
-	 * this template function is specialised for. It runs the constructor
-	 * with the arguments specified
-	 *
-	 * @return
-	 * pointer to the object created of templated 'type'
-	*********************************************************************/
 	template <typename type, typename... args>
 	type* MemoryManager::NewOnStack(args&&... arguementList)
 	{

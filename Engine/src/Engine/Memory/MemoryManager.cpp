@@ -34,6 +34,13 @@ namespace engine
 		std::cout << "MemoryManager destroyed" << std::endl;
 	}
 
+	BufferAllocator MemoryManager::NewBufferAllocator(Size size, U8 const alignment)
+	{
+		void* mem = static_cast<void*>(GetInstance()->m_persistentAllocator.NewArr<char>(size, alignment));
+		BufferAllocator temp(size, mem);
+		return temp;
+	}
+
 	void MemoryManager::Clear()
 	{
 	}

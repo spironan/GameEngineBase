@@ -1,3 +1,16 @@
+/*****************************************************************//**
+\file   BufferAllocator.h
+\author Lim Guan Hui, l.guanhui , 2000552
+\email  l.guanhui@digipen.edu
+\date   12/6/2021
+\brief  
+This file contains a single buffered allocator
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #pragma once
 #include <cstddef>
 #include <cstdint>
@@ -5,7 +18,7 @@
 namespace engine
 {
 
-	class StackAllocator {
+	class BufferAllocator {
 	public:
 		using Size = std::size_t;
 		using Marker = std::size_t;
@@ -14,10 +27,9 @@ namespace engine
 		using PtrDiff = std::ptrdiff_t;
 
 
-		StackAllocator() = delete;
-		explicit StackAllocator(const Size stackSize);
-		//void Init(Size stackSize, void* starting_address);
-		~StackAllocator();
+		BufferAllocator() = delete;
+		~BufferAllocator();
+		BufferAllocator(const BufferAllocator&) = default;
 
 		/**
 			* \brief Grab properly aligned memory from the stack allocator. You probably
@@ -55,7 +67,11 @@ namespace engine
 			* \brief Clear the whole stack allocator to its bottom. All memory will be
 			* available for new allocations again
 			*/
-		void Clear() { m_top = 0; }
+		void Clear() 
+		{
+			m_top = 0;
+			std::memset(m_bottom, 0, m_totalSize);
+		}
 
 		/**
 			* \brief Get the current marker position
@@ -70,18 +86,24 @@ namespace engine
 		Size m_totalSize;
 		void* m_bottom;
 		PtrInt m_bottomAddress;
+
+		explicit BufferAllocator(const Size stackSize, void* data);
+
+
+		friend class MemoryManager;
 	};
 
 	template <typename T, typename... args>
-	T* StackAllocator::New(args... argList) {
-		void* mem = Alloc(sizeof(T), StackAllocator::ALIGNMENT);
-		//std::cout << "marker:" << GetMarker() << "\n";
+	T* BufferAllocator::New(args... argList) {
+		void* mem = Alloc(sizeof(T), BufferAllocator::ALIGNMENT);
+		if (!mem) return nullptr;
 		return new (mem) T(argList...);
 	}
 
 	template <typename T>
-	T* StackAllocator::NewArr(Size length, const U8 alignment = StackAllocator::ALIGNMENT) {
+	T* BufferAllocator::NewArr(Size length, const U8 alignment = BufferAllocator::ALIGNMENT) {
 		void* alloc = Alloc(sizeof(T) * length, alignment);
+		if (!alloc) return nullptr;
 		char* allocAddress = static_cast<char*>(alloc);
 		for (int i = 0; i < length; ++i) new (allocAddress + i * sizeof(T)) T;
 		return static_cast<T*>(alloc);
