@@ -17,6 +17,8 @@ Technology is prohibited.
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/ostream_sink.h>
+#include <spdlog/sinks/dup_filter_sink.h>
 #pragma warning(pop)
 
 namespace engine
@@ -24,6 +26,7 @@ namespace engine
     //static defines
     std::shared_ptr<spdlog::logger> Log::s_coreLogger;
     std::shared_ptr<spdlog::logger> Log::s_clientLogger;
+    std::ostringstream Log::oss;
 
     void Log::Init()
     {
@@ -32,6 +35,7 @@ namespace engine
         // %n	== Name of Logger
         // %v%$ == Log Message
         spdlog::set_pattern("%^ [%T] %n: %v%$");
+        
         // Creates a multi-threaded, Colored std out console
         s_coreLogger = spdlog::stdout_color_mt("ENGINE");
         // Set logging level to trace : lowest level therefore traces everything
@@ -41,7 +45,24 @@ namespace engine
         s_clientLogger = spdlog::stdout_color_mt("CLIENT");
         // Set logging level to trace : lowest level therefore traces everything
         s_clientLogger->set_level(spdlog::level::trace);
+
+        /*auto dup_filter_sink = std::make_shared<spdlog::sinks::dup_filter_sink_mt>(std::chrono::seconds(1));
+        s_coreLogger->sinks().push_back(dup_filter_sink);
+        s_clientLogger->sinks().push_back(dup_filter_sink);*/
+
+        // this can be broken down so that it takes in user defined oss.
+        // create the ostream sink
+        auto ostream_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+        // link them to both loggers
+        s_coreLogger->sinks().push_back(ostream_sink);
+        s_clientLogger->sinks().push_back(ostream_sink);
+
+        //spdlog::flush_every(std::chrono::seconds(3));
     }
 
+    std::ostringstream& Log::GetOstreamOutput()
+    {
+        return oss;
+    }
 
 }
