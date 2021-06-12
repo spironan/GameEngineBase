@@ -4,7 +4,7 @@
 #include <imgui_internal.h>
 #include <filesystem>
 
-std::string FileGroup::s_rootPath = "C:/Users/User/Desktop/New folder (3)";
+std::string FileGroup::s_rootPath = "./";
 std::string FileGroup::s_CurrentPath = s_rootPath;
 std::string FileGroup::s_hoveredPath = s_rootPath;
 std::string FileGroup::s_selectedpath;//path with the itemname
