@@ -21,6 +21,7 @@ namespace engine
         void OnImGuiEnd() override;
         void OnImGuiShutdown() override;
 
+        void SetWindowResized() override;
         bool SetVSync(bool enable) override;
     private:
         SDL_Window* m_windowHandle;

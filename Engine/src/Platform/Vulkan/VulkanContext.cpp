@@ -86,4 +86,9 @@ namespace engine
         return false;
     }
 
+    void VulkanContext::SetWindowResized()
+    {
+        vkEngine.SetWindowResized();
+    }
+
 }
