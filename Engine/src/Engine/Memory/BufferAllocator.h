@@ -32,7 +32,7 @@ namespace engine
 		BufferAllocator(const BufferAllocator&) = default;
 
 		/**
-			* \brief Grab properly aligned memory from the stack allocator. You probably
+			* \brief Grab properly aligned memory from the buffer allocator. You probably
 			* want to `GetMarker()` before calling this if you want to free to that
 			* marker
 			*
@@ -44,7 +44,7 @@ namespace engine
 		void* Alloc(Size size, U8 alignment);
 
 		/**
-			* \brief Create a new object on the stack allocator. The constructor is
+			* \brief Create a new object on the buffer allocator. The constructor is
 			* automatically called. The memory is 16 aligned by default. If you are using
 			* this, you probably need to call the destructor on your own.
 			* \tparam T type of object you want to create
@@ -58,13 +58,13 @@ namespace engine
 		T* NewArr(Size length, U8 alignment);
 
 		/**
-			* \brief Free the stack allocator to a specific marker
+			* \brief Free the buffer allocator to a specific marker
 			* \param marker Marker to free to
 			*/
 		void FreeToMarker(const Marker marker) { m_top = marker; }
 
 		/**
-			* \brief Clear the whole stack allocator to its bottom. All memory will be
+			* \brief Clear the whole buffer allocator to its bottom. All memory will be
 			* available for new allocations again
 			*/
 		void Clear() 
