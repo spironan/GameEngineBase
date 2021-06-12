@@ -308,6 +308,7 @@
     <ClInclude Include="src\Engine\Events\KeyEvent.h" />
     <ClInclude Include="src\Engine\Events\MouseEvent.h" />
     <ClInclude Include="src\Engine\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Engine\Memory\BufferAllocator.h" />
     <ClInclude Include="src\Engine\Memory\MemoryCommon.h" />
     <ClInclude Include="src\Engine\Memory\MemoryManager.h" />
     <ClInclude Include="src\Engine\Memory\PoolAllocator.h" />
@@ -343,6 +344,7 @@
     <ClCompile Include="src\Engine\Core\Log.cpp" />
     <ClCompile Include="src\Engine\Core\Window.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Engine\Memory\BufferAllocator.cpp" />
     <ClCompile Include="src\Engine\Memory\MemoryCommon.cpp" />
     <ClCompile Include="src\Engine\Memory\MemoryManager.cpp" />
     <ClCompile Include="src\Engine\Memory\PoolAllocator.cpp" />
