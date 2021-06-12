@@ -61,10 +61,11 @@ project "Sandbox"
         staticruntime "off"
         systemversion "latest"
 
-        -- defines
-        -- {
-        --     "ENGINE_PLATFORM_WINDOWS"
-        -- }
+        defines
+        {
+            --"ENGINE_PLATFORM_WINDOWS"
+            "SANDBOX_PLATFORM_WINDOWS"
+        }
         
         --enable this post build command for 64 bit system
         architecture "x86_64"

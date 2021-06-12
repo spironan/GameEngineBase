@@ -35,7 +35,7 @@ namespace engine
         //Binds window callback to call Application::OnEvent
         m_window->SetEventCallback(ENGINE_BIND_EVENT_FN(Application::OnEvent));
         //Retrieve renderer from window
-        m_renderer = static_cast<GraphicsContext*>(m_window->GetNativeRenderer());
+        m_renderer = static_cast<GraphicsContext*>(m_window->GetRenderingContext());
 
         //m_imGuiLayer = new ImGuiLayer();
         m_imGuiLayer = MemoryManager::NewOnStack<ImGuiLayer>();

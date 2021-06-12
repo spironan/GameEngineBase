@@ -31,7 +31,7 @@ namespace engine
 #ifdef ENGINE_PLATFORM_WINDOWS
         , m_window { static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow())  }
 #endif
-        , m_renderer{ static_cast<GraphicsContext*>(Application::Get().GetWindow().GetNativeRenderer()) }
+        , m_renderer{ static_cast<GraphicsContext*>(Application::Get().GetWindow().GetRenderingContext()) }
     {
     }
 
@@ -80,20 +80,58 @@ namespace engine
         ImGui::DestroyContext();
     }
 
-    void ImGuiLayer::OnEvent(Event& e)
-    {
-        if (m_blockEvents)
-        {
-            ImGuiIO& io = ImGui::GetIO();
-            e.Handled |= e.IsInCategory(EVENT_CATEGORY::MOUSE) & io.WantCaptureMouse;
-            e.Handled |= e.IsInCategory(EVENT_CATEGORY::KEYBOARD) & io.WantCaptureKeyboard;
+    //void ImGuiLayer::OnEvent(Event& e)
+    //{
+    //    if (m_blockEvents)
+    //    {
+    //        ImGuiIO& io = ImGui::GetIO();
+    //        e.Handled |= e.IsInCategory(EVENT_CATEGORY::MOUSE) & io.WantCaptureMouse;
+    //        e.Handled |= e.IsInCategory(EVENT_CATEGORY::KEYBOARD) & io.WantCaptureKeyboard;
 
-            if (e.GetEventType() == engine::EVENT_TYPE::MOUSESCROLLED)
-            {
-                io.MouseWheel = static_cast<engine::MouseScrolledEvent&>(e).GetY();
-            }
-        }
-    }
+    //        //int key = event->key.keysym.scancode;
+    //        switch (e.GetEventType())
+    //        {
+    //            case engine::EVENT_TYPE::KEYPRESSED:
+    //            case engine::EVENT_TYPE::KEYTYPED:
+    //            {
+    //                int key = static_cast<engine::KeyPressedEvent&>(e).GetKeyCode();
+    //                io.KeysDown[key] = 1;
+    //                //AddInputCharacter(key);
+    //                /*if (key != 0)
+    //                    io.InputQueueCharacters.push_back(key <= IM_UNICODE_CODEPOINT_MAX ? (ImWchar)key : IM_UNICODE_CODEPOINT_INVALID);*/
+    //                //io.InputQueueCharacters[key] = 1;
+    //            }
+    //            break;
+    //            case engine::EVENT_TYPE::KEYRELEASED:
+    //            {
+    //                int key = static_cast<engine::KeyPressedEvent&>(e).GetKeyCode();
+    //                io.KeysDown[key] = 0;
+    //            }
+    //            break;
+    //            case engine::EVENT_TYPE::MOUSESCROLLED:
+    //            {
+    //                io.MouseWheel = static_cast<engine::MouseScrolledEvent&>(e).GetY();
+    //            }
+    //            break;
+
+    //        }
+
+    //        //if ( == )
+    //        //{
+
+    //        //    //IM_ASSERT(key >= 0 && key < IM_ARRAYSIZE(io.KeysDown));
+    //        //    /*io.KeysDown[key] = (event->type == SDL_KEYDOWN);
+    //        //    io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+    //        //    io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+    //        //    io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);*/
+    //        //}
+
+    //        /*if (e.GetEventType() == engine::EVENT_TYPE::MOUSESCROLLED)
+    //        {
+    //            io.MouseWheel = static_cast<engine::MouseScrolledEvent&>(e).GetY();
+    //        }*/
+    //    }
+    //}
 
     void ImGuiLayer::Begin()
     {

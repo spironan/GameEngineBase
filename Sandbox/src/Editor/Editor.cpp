@@ -1,27 +1,29 @@
 //#include "pch.h"
 #include "Editor.h"
+#include "EditorFileGroup.h"
 
-#include "../ImGui/imgui.h"
 #include <filesystem>
 
+#include <imgui.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/document.h>
 #include <rapidjson/reader.h>
-#include "../../vendor/ImGui/imgui_internal.h"
+
 
 #include "Engine/Core/Input.h"
 
 /* static vars */
 testclass Editor::s_rootnode;//will be removed once ecs done
 std::vector<testclass> Editor::s_testList;//will be removed once ecs done
+
 std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 
 //for copy and pasting
 std::pair<std::string, std::shared_ptr<void*>> Editor::s_copyPayload = {"",nullptr};
 
-Editor::Editor(const std::string& root) :m_rootPath{ root },m_currentPath{root}
+Editor::Editor(const std::string& root)
 {
 	s_testList.reserve(50);
 
@@ -130,8 +132,9 @@ void Editor::LoadData(const char* dir)
 void Editor::TestFunction()
 {
 	//main banner
-	//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
+	ImGui::ShowDemoWindow();
 	if(m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE))
 	{
 		m_inspector_view.Show();
@@ -152,6 +155,7 @@ void Editor::TestFunction()
 	{
 		m_projectfolder_view.Show();
 	}
+	FileGroup::ProjectViewPopUp();
 	m_logging_view.Show();
 	HotKeysUpdate();
 }

@@ -3,6 +3,7 @@
 #include <rapidjson/ostreamwrapper.h>
 #include <filesystem>
 #include <string>
+#include <vector>
 class testclass;
 class ProjectFolderView
 {
@@ -14,6 +15,9 @@ private:
 	void SaveHeirarchy(testclass* , rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& );
 	void SaveObject(testclass*, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>&);
 	void PathDir(std::filesystem::path&, std::string&);
+
+private:
+	
 
 };
 
