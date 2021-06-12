@@ -1,15 +1,16 @@
 //#include "pch.h"
 #include "Editor.h"
+#include "EditorFileGroup.h"
 
-#include "../ImGui/imgui.h"
 #include <filesystem>
 
+#include <imgui.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/document.h>
 #include <rapidjson/reader.h>
-#include "../../vendor/ImGui/imgui_internal.h"
+
 
 #include "Engine/Core/Input.h"
 
@@ -154,6 +155,7 @@ void Editor::TestFunction()
 	{
 		m_projectfolder_view.Show();
 	}
+	FileGroup::ProjectViewPopUp();
 	m_logging_view.Show();
 	HotKeysUpdate();
 }
