@@ -292,7 +292,10 @@
     <ClInclude Include="src\Engine\Core\Application.h" />
     <ClInclude Include="src\Engine\Core\Assert.h" />
     <ClInclude Include="src\Engine\Core\Base.h" />
-    <ClInclude Include="src\Engine\EntryPoint.h" />
+    <ClInclude Include="src\Engine\Core\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\Engine\Core\Events\Event.h" />
+    <ClInclude Include="src\Engine\Core\Events\KeyEvent.h" />
+    <ClInclude Include="src\Engine\Core\Events\MouseEvent.h" />
     <ClInclude Include="src\Engine\Core\Input.h" />
     <ClInclude Include="src\Engine\Core\KeyCode.h" />
     <ClInclude Include="src\Engine\Core\Layer.h" />
@@ -303,12 +306,8 @@
     <ClInclude Include="src\Engine\Core\Timestep.h" />
     <ClInclude Include="src\Engine\Core\Window.h" />
     <ClInclude Include="src\Engine\Debug\Instrumentor.h" />
-    <ClInclude Include="src\Engine\Core\Events\ApplicationEvent.h" />
-    <ClInclude Include="src\Engine\Core\Events\Event.h" />
-    <ClInclude Include="src\Engine\Core\Events\KeyEvent.h" />
-    <ClInclude Include="src\Engine\Core\Events\MouseEvent.h" />
+    <ClInclude Include="src\Engine\EntryPoint.h" />
     <ClInclude Include="src\Engine\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Engine\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Engine\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Engine\Platform\Vulkan\VulkanContext.h" />
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_engine.h" />
@@ -317,6 +316,7 @@
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_textures.h" />
     <ClInclude Include="src\Engine\Platform\Vulkan\vk_types.h" />
     <ClInclude Include="src\Engine\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="src\Engine\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Utility\Bitmask.h" />
     <ClInclude Include="src\Utility\SingletonTemplate.h" />
     <ClInclude Include="src\pch.h" />
@@ -380,6 +380,9 @@
     <ClCompile Include="vendor\gl3w\GL\gl3w.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Engine\Platform\Windows\Windowswindow.cpp~HEAD" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

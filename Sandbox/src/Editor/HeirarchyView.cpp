@@ -7,7 +7,7 @@ void HeirarchyView::Show()
 {
 	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });//only works when undocked
 	ImGui::Begin("Hierarchy");
-
+	
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
 		ImGui::OpenPopup("HeirarchyViewPopUp");
 

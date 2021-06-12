@@ -2,7 +2,7 @@
 #include "testclass.h"
 #include <rapidjson/ostreamwrapper.h>//for ostreamwrapper
 #include <rapidjson/prettywriter.h>//for prettywriter
-#include <utility>
+//#include <utility>
 #include "HeirarchyView.h"
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
@@ -51,12 +51,7 @@ public:
 	static std::pair<std::string, std::shared_ptr<void*>> s_copyPayload;
 private:
 	int m_activeFlagGUI = 0;
-	testclass* m_focused = nullptr;
-	bool m_editing = false;//hirecrchy
-	bool m_dragging = false;//hirerchy
 
-	const std::string m_rootPath;
-	std::string m_currentPath;
 	HeirarchyView m_heirarchy_view;
 	InspectorView m_inspector_view;
 	ProjectFolderView m_projectfolder_view;
