@@ -57,6 +57,12 @@ public :
     {
         //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
 
+        // New way to do check keys.
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_0))
+        {
+            LOG_TRACE("key 0 Pressed ");
+        }
+
         if (engine::Input::IsAnyKeyDown())
         {
             for (engine::KeyCode key : engine::Input::GetKeysDown())

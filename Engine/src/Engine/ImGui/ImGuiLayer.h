@@ -15,7 +15,7 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/Core/Layer.h"
-#include "Engine/Events/Event.h"
+#include "Engine/Core/Events/Event.h"
 
 //forward declaration
 struct SDL_Window;
@@ -39,7 +39,7 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         void OnAttach() override;
         void OnDetach() override;
-        void OnEvent(Event& e) override;
+        //void OnEvent(Event& e) override;
 
         void Begin();
         void End();

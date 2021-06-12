@@ -12,9 +12,17 @@
 
 void ProjectFolderView::Show()
 {
+
 	ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
+
 	ImGui::Begin("Project Folder");
 	ProjectView();
+	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
+	{
+		if (ImGui::IsAnyItemHovered() == false)
+			FileGroup::s_hoveredPath = FileGroup::s_rootPath;
+		ImGui::OpenPopup(FileGroup::s_projectviewid);
+	}
 	ImGui::End();
 }
 
@@ -35,7 +43,7 @@ void ProjectFolderView::ProjectView()
 
 	//local variables
 	std::filesystem::directory_iterator dir_iter = std::filesystem::directory_iterator(FileGroup::s_CurrentPath);
-
+	bool selected = false;
 	//when scrolled
 	float scroll_count = io.MouseWheel;
 	if (io.KeyCtrl && (scroll_count))
@@ -55,37 +63,51 @@ void ProjectFolderView::ProjectView()
 
 	//table calculation
 	float row = ImGui::GetContentRegionAvailWidth() / (padding + imgsize);
-	if (ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)//when changing tabs this will be set to false
+	if (row < 1|| ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)//when changing tabs this will be set to false
 		return;
 	ImGui::TableNextColumn();//push 1 column first
 	for (std::filesystem::directory_entry entry : dir_iter)
 	{
 		ImGui::BeginGroup();//start
+		
 		//change this would be changed once rendering is integrated
 		if (entry.path().filename().has_extension() == false)
-			ImGui::ImageButton(atlas->TexID, { imgsize, imgsize }, { 0,0 }, { 0.125,1 });
+			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize }, { 0,0 }, { 0.125,1 });
 		else
-			ImGui::ImageButton(atlas->TexID, { imgsize, imgsize });
+			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize });
+
 		//text of the filename
+
 		ImGui::TextWrapped(entry.path().filename().generic_u8string().c_str());
 		ImGui::EndGroup();//end
 		ImGui::TableNextColumn();//item done
 
 		//interactions of item
-		if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
+		if (ImGui::IsItemHovered())
 		{
-			if (entry.is_directory())
+			if (ImGui::IsMouseDoubleClicked(0))
 			{
-				FileGroup::s_CurrentPath = entry.path().generic_u8string().c_str();
-				ImGui::EndTable();
-				return;
+				if (entry.is_directory())
+				{
+					FileGroup::s_CurrentPath = entry.path().generic_u8string().c_str();
+					ImGui::EndTable();
+					return;
+				}
+				//can open c# file here
+				else if (entry.path().has_extension())
+				{
+					std::string a = entry.path().generic_u8string().c_str();
+					//TODO remove this in place of a better code
+					//std::system(a.substr(2).c_str());//substr can be removed one we have a proper filepath
+				}
 			}
-			//can open c# file here
-			else if (entry.path().has_extension())
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{
-				std::string a = entry.path().generic_u8string().c_str();
-				std::system(a.substr(2).c_str());//substr can be removed one we have a proper filepath
+				FileGroup::s_selectedItemPosition = ImGui::GetMousePos();
+				FileGroup::s_selectedpath = entry.path().u8string();
+				FileGroup::s_selecteditem = entry.path().filename().u8string();
 			}
+			FileGroup::s_hoveredPath = entry.path().u8string();
 		}
 	}
 	ImGui::EndTable();
@@ -95,7 +117,6 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-
 			std::ofstream stream("prefab");
 			rapidjson::OStreamWrapper osw(stream);
 			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);

@@ -18,15 +18,18 @@ Technology is prohibited.
 #include <sdl2/SDL.h>
 #include <GL/gl3w.h>
 
-#include "Platform/Windows/WindowsWindow.h"
+#include "Engine/Platform/Windows/WindowsWindow.h"
 #include "Engine/Core/Base.h"
 #include "Engine/Core/Application.h"
 
 #if defined(GRAPHICS_CONTEXT_VULKAN)
-    #include "Platform/Vulkan/VulkanContext.h"
+    #include "Engine/Platform/Vulkan/VulkanContext.h"
 #elif defined(GRAPHICS_CONTEXT_OPENGL)
-    #include "Platform/OpenGL/OpenGLContext.h"
+    #include "Engine/Platform/OpenGL/OpenGLContext.h"
 #endif
+
+#include <imgui_impl_sdl.h>
+#include <imgui.h>
 
 namespace engine
 {
@@ -67,7 +70,6 @@ namespace engine
             s_SDLInitialized = true;
         }
 
-
         ENGINE_PROFILE_SCOPE("SDL_CreateWindows");
 
 #ifdef GRAPHICS_CONTEXT_OPENGL
@@ -102,9 +104,9 @@ namespace engine
         m_context = new OpenGLContext(m_window);
 #endif
         m_context->Init();
-
+        
         // Set VSync Status
-        SetVSync(true);
+        SetVSync(properties.VSync);
     }
 
     void WindowsWindow::Shutdown()
@@ -133,6 +135,8 @@ namespace engine
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            // this should only run if there's imgui on
+            ImGui_ImplSDL2_ProcessEvent(&event);
             switch (event.type)
             {
                 // WINDOWS EVENT
@@ -186,28 +190,28 @@ namespace engine
 
             case SDL_KEYDOWN:
             {
-                KeyPressedEvent keyPressEvent( event.key.keysym.sym, event.key.repeat ? 1 : 0);
+                KeyPressedEvent keyPressEvent((KeyCode)event.key.keysym.scancode, event.key.repeat ? 1 : 0);
                 m_data.EventCallback(keyPressEvent);
 
                 break;
             }
             case SDL_KEYUP:
             {
-                KeyReleasedEvent keyPressEvent(event.key.keysym.sym);
+                KeyReleasedEvent keyPressEvent((KeyCode)event.key.keysym.scancode);
                 m_data.EventCallback(keyPressEvent);
 
                 break;
             }
             case SDL_MOUSEBUTTONUP:
             {
-                MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.sym);
+                MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.scancode);
                 m_data.EventCallback(mouseButtonReleasedEvent);
 
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
             {
-                MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.sym);
+                MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.scancode);
                 m_data.EventCallback(mouseButtonPressedEvent);
 
                 break;
@@ -240,6 +244,16 @@ namespace engine
         m_context->SwapBuffers();
     }
 
+    void WindowsWindow::Maximize()
+    {
+        SDL_MaximizeWindow(m_window);
+    }
+
+    void WindowsWindow::Minimize()
+    {
+        SDL_MinimizeWindow(m_window);
+    }
+
     void WindowsWindow::SetVSync(bool enabled)
     {
         LOG_ENGINE_INFO("Set Vsync : {0}", enabled);
@@ -247,8 +261,22 @@ namespace engine
         m_data.VSync = m_context->SetVSync(enabled);
     }
 
+    void WindowsWindow::SetTitle(const std::string& title)
+    {
+        m_data.Title = title;
+        SDL_SetWindowTitle(m_window, m_data.Title.c_str());
+    }
+
+    std::pair<int, int> WindowsWindow::GetWindowPos() const
+    {
+        int x, y;
+        SDL_GetWindowPosition(m_window, &x, &y);
+        return { x, y };
+    }
+
     bool WindowsWindow::IsVSync() const
     {
         return m_data.VSync;
     }
+
 }
