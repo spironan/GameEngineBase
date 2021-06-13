@@ -84,7 +84,6 @@ namespace engine
     private:
         SDL_Window* m_window;
         GraphicsContext* m_context;
-
     private:
         struct WindowData
         {

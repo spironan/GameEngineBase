@@ -84,7 +84,7 @@ namespace engine
         SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 #ifdef GRAPHICS_CONTEXT_VULKAN
-        window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_VULKAN | window_flags);
+        window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_VULKAN | window_flags| SDL_WINDOW_RESIZABLE);
 #elif  defined(GRAPHICS_CONTEXT_OPENGL)
         window_flags= static_cast<SDL_WindowFlags>(SDL_WINDOW_OPENGL |  window_flags);
 #endif
@@ -152,6 +152,8 @@ namespace engine
 
                     WindowResizeEvent resizeEvent(m_data.Width, m_data.Height);
                     m_data.EventCallback(resizeEvent);
+
+                    m_context->SetWindowResized();
                     break;
                 }
                 //Windows close event
