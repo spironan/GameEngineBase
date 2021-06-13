@@ -16,7 +16,7 @@ namespace engine
         virtual void OnImGuiEnd() = 0;
         virtual void OnImGuiShutdown() = 0;
 
-        virtual void SetWindowResized() = 0;
+        virtual void SetWindowResized() {};
         virtual bool SetVSync(bool enable) = 0;
     };
 }

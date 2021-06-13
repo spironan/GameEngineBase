@@ -331,6 +331,7 @@
     <ClInclude Include="vendor\ImGui\imgui_impl_sdl.h" />
     <ClInclude Include="vendor\ImGui\imgui_impl_vulkan.h" />
     <ClInclude Include="vendor\ImGui\imgui_internal.h" />
+    <ClInclude Include="vendor\ImGui\imgui_stdlib.h" />
     <ClInclude Include="vendor\ImGui\imstb_rectpack.h" />
     <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
     <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
@@ -349,14 +350,6 @@
     <ClCompile Include="src\Engine\Memory\MemoryManager.cpp" />
     <ClCompile Include="src\Engine\Memory\PoolAllocator.cpp" />
     <ClCompile Include="src\Engine\Memory\StackAllocator.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_engine.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_initializers.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_mesh.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_textures.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
-    <ClCompile Include="src\Platform\Windows\Windowswindow.cpp" />
     <ClCompile Include="src\Engine\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Engine\Platform\Vulkan\VulkanContext.cpp" />
     <ClCompile Include="src\Engine\Platform\Vulkan\vk_engine.cpp" />
@@ -386,6 +379,9 @@
     <ClCompile Include="vendor\ImGui\imgui_impl_vulkan.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_stdlib.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="vendor\ImGui\imgui_tables.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -398,9 +394,6 @@
     <ClCompile Include="vendor\gl3w\GL\gl3w.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Engine\Platform\Windows\Windowswindow.cpp~HEAD" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

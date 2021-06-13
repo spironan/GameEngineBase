@@ -138,7 +138,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SANDBOX_PLATFORM_WINDOWS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -164,7 +164,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core_d.dll\ (xcopy /Q /E /Y /
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SANDBOX_PLATFORM_WINDOWS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -190,7 +190,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core_d.dll\ (xcopy /Q /E /Y /
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SANDBOX_PLATFORM_WINDOWS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -219,7 +219,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SANDBOX_PLATFORM_WINDOWS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -248,7 +248,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SANDBOX_PLATFORM_WINDOWS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -277,7 +277,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SANDBOX_PLATFORM_WINDOWS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include\sdl2;..\Engine\vendor\rttr\include;..\Engine\vendor\mono\include\mono-2.0;..\Engine\vendor\gl3w;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
