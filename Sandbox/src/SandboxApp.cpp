@@ -215,5 +215,6 @@ public:
 
 engine::Application* engine::CreateApplication(engine::CommandLineArgs args)
 {
-    return new Sandbox{ args };
+    
+    return OONEW Sandbox{ args };
 }
