@@ -296,6 +296,7 @@
     <ClInclude Include="src\Engine\Core\Events\Event.h" />
     <ClInclude Include="src\Engine\Core\Events\KeyEvent.h" />
     <ClInclude Include="src\Engine\Core\Events\MouseEvent.h" />
+    <ClInclude Include="src\Utility\Hash.h" />
     <ClInclude Include="src\Engine\Core\Input.h" />
     <ClInclude Include="src\Engine\Core\KeyCode.h" />
     <ClInclude Include="src\Engine\Core\Layer.h" />
@@ -340,6 +341,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Core\Application.cpp" />
+    <ClCompile Include="src\Utility\Hash.cpp" />
     <ClCompile Include="src\Engine\Core\Layer.cpp" />
     <ClCompile Include="src\Engine\Core\LayerStack.cpp" />
     <ClCompile Include="src\Engine\Core\Log.cpp" />
