@@ -5,6 +5,7 @@
 #include "Engine/Platform/OpenGL/OpenGLContext.h"
 
 #include <GL/gl3w.h>
+#include <GL/gl3w.h>
 #include <sdl2/SDL.h>
 
 #include <imgui_impl_sdl.h>

@@ -34,10 +34,12 @@ workspace "GameEngineBase"
 -- where the files are output to
 outputdir = "%{cfg.buildcfg}-%{cfg.platform}-%{cfg.system}-%{cfg.architecture}"
 
---group "Dependencies"
+group "Dependencies"
 --    include "vendor/premake"
 --    include "Engine/vendor/sdl2"
---group ""
+include "Engine/vendor/gl3w"
+include "Engine/vendor/ImGui"
+group ""
 
 include "Engine"
 include "Sandbox"
