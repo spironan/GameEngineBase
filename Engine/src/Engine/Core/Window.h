@@ -29,15 +29,6 @@ namespace engine
         unsigned int Height = 900;
         bool Fullscreen = false;
         bool VSync = true;
-
-        ///****************************************************************************//*!
-        // @brief     Default constructor determining the title, width and height.
-        //*//*****************************************************************************/
-        //WindowProperties(const std::string& title = "Core Engine",
-        //    unsigned int width = 1600, unsigned int height = 900)
-        //    : Title(title), Width(width), Height(height)
-        //{
-        //}
     };
 
     /********************************************************************************//*!

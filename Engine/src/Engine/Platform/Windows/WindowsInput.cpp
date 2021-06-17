@@ -1,5 +1,5 @@
 /************************************************************************************//*!
-\file           Input.cpp
+\file           WindowsInput.cpp
 \project        INSERT PROJECT NAME
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
