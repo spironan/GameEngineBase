@@ -45,7 +45,7 @@ namespace engine
         const std::string& GetName() const { return m_debugName; }
 
         /*-----------------------------------------------------------------------------*/
-        /* Functions                                                                   */
+        /* Abstract Functions                                                          */
         /*-----------------------------------------------------------------------------*/
         virtual void OnAttach() {}
         virtual void OnDetach() {}

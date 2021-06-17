@@ -18,17 +18,13 @@ project "Engine"
         flags { "NoPCH" }
     filter "files:vendor/**/**.c"
         flags { "NoPCH" }
-    filter {}
+    filter {}   -- resets the filter
 
     -- Engine's files
     files
     {
         "src/**.h",
         "src/**.cpp",
-        "vendor/gl3w/GL/**.h",
-        "vendor/gl3w/GL/**.c",
-        "vendor/ImGui/**.h",
-        "vendor/ImGui/**.cpp"
     }
 
     -- Engine's defines 
@@ -41,39 +37,39 @@ project "Engine"
     includedirs
     {
         "src",
-        "vendor/spdlog/include",
-        "vendor/sdl2/include",
-        --"%{wks.location}/Engine/vendor/sdl2/include/sdl2",--for imgui
-        "%{wks.location}/Engine/vendor/rttr/include", --rttr
-        "%{wks.location}/Engine/vendor/gl3w",
-        "%{wks.location}/Engine/vendor/glm", -- GL maths
-        "%{wks.location}/Engine/vendor/ImGui", --Dear ImGui
-        "%{wks.location}/Engine/vendor/vkbootstrap", --Bootstrap
-        "%{wks.location}/Engine/vendor/tinyobjloader", --tiny obj
-        "%{wks.location}/Engine/vendor/vma", --Vulkan Memory Allocator
-        "%{wks.location}/Engine/vendor/stb_image", --simple image library
-        "$(VULKAN_SDK)/Include" -- vulkan SDK
+        "%{IncludeDir.spdlog}",
+        "%{IncludeDir.SDL}",
+        "%{IncludeDir.rttr}",
+        "%{IncludeDir.gl3w}",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.vkbootstrap}",
+        "%{IncludeDir.tinyobjloader}",
+        "%{IncludeDir.vma}",
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.VulkanSDK}",
     }
 
     -- library diretories
     libdirs 
     {
-        "vendor/sdl2/lib/x64",       
-        "vendor/rttr/lib",
-        -- "vendor/tinyobjloader/lib" includes in release/debugs
-        -- "vendor/vkbootstrap/lib" includes in release/debugs
-        "$(VULKAN_SDK)/lib" -- vulkan SDK
+        "%{LibraryDir.SDL}",
+        --"%{LibraryDir.rttr}",
+        --"%{LibraryDir.VulkanSDK}",
     }
 
     -- linking External libraries 
     -- NOTE: do not put their extensions.
     links
     {
+        "gl3w",
+        "ImGui",
         "SDL2",
         "SDL2main",
         "SDL2test",
         "opengl32",
-        "vulkan-1",
+        --"vulkan-1",
+        "%{Library.Vulkan}",
         "vkbootstrap",
         "tinyobjloader"
     }
@@ -116,10 +112,10 @@ project "Engine"
         staticruntime "off"
         systemversion "latest"
 
-        -- defines
-        -- {
-        --     --"ENGINE_PLATFORM_WINDOWS"
-        -- }
+        defines
+        {
+            "ENGINE_PLATFORM_WINDOWS"
+        }
 
     filter "configurations:Debug"
         defines "ENGINE_DEBUG"
@@ -132,8 +128,11 @@ project "Engine"
         -- library diretories
         libdirs 
         {
-            "vendor/vkbootstrap/lib/Debug",
-            "vendor/tinyobjloader/lib/Debug"
+            "%{LibraryDir.tinyobjloader}/Debug",
+            "%{LibraryDir.vkbootstrap}/Debug",
+            
+            --"vendor/vkbootstrap/lib/Debug",
+            --"vendor/tinyobjloader/lib/Debug"
         }
         
 
@@ -147,10 +146,19 @@ project "Engine"
         -- library diretories
         libdirs 
         {
-            "vendor/vkbootstrap/lib/Release",
-            "vendor/tinyobjloader/lib/Release"
+            "%{LibraryDir.tinyobjloader}/Release",
+            "%{LibraryDir.vkbootstrap}/Release",
+
+            --"vendor/vkbootstrap/lib/Release",
+            --"vendor/tinyobjloader/lib/Release"
         }
 
     filter "configurations:Production"
         defines "ENGINE_PRODUCTION"
         optimize "On"
+        
+        libdirs 
+        {
+            "%{LibraryDir.tinyobjloader}/Release",
+            "%{LibraryDir.vkbootstrap}/Release",
+        }

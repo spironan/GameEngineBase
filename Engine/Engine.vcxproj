@@ -133,8 +133,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_OPENGL;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_OPENGL;ENGINE_PLATFORM_WINDOWS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;E:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -147,8 +147,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\rttr\lib;$(VULKAN_SDK)\lib;vendor\vkbootstrap\lib\Debug;vendor\tinyobjloader\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;E:\VulkanSDK\1.2.170.0\Lib\vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\tinyobjloader\lib\Debug;vendor\vkbootstrap\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Vulkan|x64'">
@@ -156,8 +156,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_VULKAN;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_VULKAN;ENGINE_PLATFORM_WINDOWS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;E:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -170,8 +170,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\rttr\lib;$(VULKAN_SDK)\lib;vendor\vkbootstrap\lib\Debug;vendor\tinyobjloader\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;E:\VulkanSDK\1.2.170.0\Lib\vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\tinyobjloader\lib\Debug;vendor\vkbootstrap\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>call assets/shaders/compileShaders.bat</Command>
@@ -182,8 +182,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_OPENGL;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_OPENGL;ENGINE_PLATFORM_WINDOWS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;E:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -199,8 +199,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\rttr\lib;$(VULKAN_SDK)\lib;vendor\vkbootstrap\lib\Release;vendor\tinyobjloader\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;E:\VulkanSDK\1.2.170.0\Lib\vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\tinyobjloader\lib\Release;vendor\vkbootstrap\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Vulkan|x64'">
@@ -208,8 +208,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_VULKAN;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_VULKAN;ENGINE_PLATFORM_WINDOWS;ENGINE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;E:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -225,8 +225,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\rttr\lib;$(VULKAN_SDK)\lib;vendor\vkbootstrap\lib\Release;vendor\tinyobjloader\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;E:\VulkanSDK\1.2.170.0\Lib\vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\tinyobjloader\lib\Release;vendor\vkbootstrap\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>call assets/shaders/compileShaders.bat</Command>
@@ -237,8 +237,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_OPENGL;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_OPENGL;ENGINE_PLATFORM_WINDOWS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;E:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -254,8 +254,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\rttr\lib;$(VULKAN_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;E:\VulkanSDK\1.2.170.0\Lib\vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\tinyobjloader\lib\Release;vendor\vkbootstrap\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production Vulkan|x64'">
@@ -263,8 +263,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_VULKAN;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;$(VULKAN_SDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GRAPHICS_CONTEXT_VULKAN;ENGINE_PLATFORM_WINDOWS;ENGINE_PRODUCTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\sdl2\include;vendor\rttr\include;vendor\gl3w;vendor\glm;vendor\ImGui;vendor\vkbootstrap;vendor\tinyobjloader;vendor\vma;vendor\stb_image;E:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -280,8 +280,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\rttr\lib;$(VULKAN_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;E:\VulkanSDK\1.2.170.0\Lib\vulkan-1.lib;vkbootstrap.lib;tinyobjloader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sdl2\lib\x64;vendor\tinyobjloader\lib\Release;vendor\vkbootstrap\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>call assets/shaders/compileShaders.bat</Command>
@@ -323,19 +323,9 @@
     <ClInclude Include="src\Engine\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Engine\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Utility\Bitmask.h" />
+    <ClInclude Include="src\Utility\Hash.h" />
     <ClInclude Include="src\Utility\SingletonTemplate.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="vendor\ImGui\imconfig.h" />
-    <ClInclude Include="vendor\ImGui\imgui.h" />
-    <ClInclude Include="vendor\ImGui\imgui_impl_opengl3.h" />
-    <ClInclude Include="vendor\ImGui\imgui_impl_sdl.h" />
-    <ClInclude Include="vendor\ImGui\imgui_impl_vulkan.h" />
-    <ClInclude Include="vendor\ImGui\imgui_internal.h" />
-    <ClInclude Include="vendor\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
-    <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
-    <ClInclude Include="vendor\gl3w\GL\gl3w.h" />
-    <ClInclude Include="vendor\gl3w\GL\glcorearb.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Core\Application.cpp" />
@@ -349,14 +339,6 @@
     <ClCompile Include="src\Engine\Memory\MemoryManager.cpp" />
     <ClCompile Include="src\Engine\Memory\PoolAllocator.cpp" />
     <ClCompile Include="src\Engine\Memory\StackAllocator.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_engine.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_initializers.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_mesh.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\vk_textures.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
-    <ClCompile Include="src\Platform\Windows\Windowswindow.cpp" />
     <ClCompile Include="src\Engine\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Engine\Platform\Vulkan\VulkanContext.cpp" />
     <ClCompile Include="src\Engine\Platform\Vulkan\vk_engine.cpp" />
@@ -365,42 +347,18 @@
     <ClCompile Include="src\Engine\Platform\Vulkan\vk_textures.cpp" />
     <ClCompile Include="src\Engine\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Engine\Platform\Windows\Windowswindow.cpp" />
+    <ClCompile Include="src\Utility\Hash.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_demo.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_draw.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_impl_opengl3.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_impl_sdl.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_impl_vulkan.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_tables.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\main.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="vendor\gl3w\GL\gl3w.c">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Engine\Platform\Windows\Windowswindow.cpp~HEAD" />
+    <ProjectReference Include="vendor\gl3w\GL3W.vcxproj">
+      <Project>{A248857C-8E7F-860D-376C-6C102382020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\ImGui\ImGui.vcxproj">
+      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

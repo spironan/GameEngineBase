@@ -204,14 +204,14 @@ namespace engine
             }
             case SDL_MOUSEBUTTONUP:
             {
-                MouseButtonReleasedEvent mouseButtonReleasedEvent(event.key.keysym.scancode);
+                MouseButtonReleasedEvent mouseButtonReleasedEvent((MouseCode)event.key.keysym.scancode);
                 m_data.EventCallback(mouseButtonReleasedEvent);
 
                 break;
             }
             case SDL_MOUSEBUTTONDOWN:
             {
-                MouseButtonPressedEvent mouseButtonPressedEvent(event.key.keysym.scancode);
+                MouseButtonPressedEvent mouseButtonPressedEvent((MouseCode)event.key.keysym.scancode);
                 m_data.EventCallback(mouseButtonPressedEvent);
 
                 break;
