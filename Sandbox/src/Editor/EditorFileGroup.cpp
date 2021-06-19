@@ -1,3 +1,15 @@
+/*****************************************************************//**
+ * \file   EditorFileGroup.cpp
+ * \brief  Contains the popup that is shared between both root view
+ *		   and folderview
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #include "EditorFileGroup.h"
 #include "Editor.h"
 
@@ -19,7 +31,12 @@ bool FileGroup::s_delete_popup = false;//flag for deleting modal popup
 bool FileGroup::s_rename_item = false;
 
 
-
+/**
+ * \brief this code will be activated when right clicking inside the 
+ *			folder view or rootview windows
+ * \note  This function should not be called by anyone other than
+ *		  the main display function
+ */
 void FileGroup::ProjectViewPopUp()
 {
 

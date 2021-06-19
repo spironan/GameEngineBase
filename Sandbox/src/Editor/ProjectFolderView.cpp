@@ -1,3 +1,11 @@
+/*****************************************************************//**
+ * \file   ProjectFolderView.cpp
+ * \brief  Display and contains all the interations in ProjectFolderView
+ *		   window.
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+ *********************************************************************/
 #include "ProjectFolderView.h"
 #include "Editor/Editor.h"
 #include "EditorFileGroup.h"
@@ -9,7 +17,11 @@
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
 
-
+/**
+ * \brief
+ *		main function to display the Project Folder window.
+ * 
+ */
 void ProjectFolderView::Show()
 {
 

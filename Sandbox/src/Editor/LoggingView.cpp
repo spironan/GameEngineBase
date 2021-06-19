@@ -1,6 +1,19 @@
-#include "LoggingView.h"
-#include <imgui.h>
+/*****************************************************************//**
+ * \file   LoggingView.cpp
+ * \brief  Logs the console outputs into a window
+ *		   Logs the console output from scripts
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 
+#include "LoggingView.h"
+
+#include <imgui.h>
 #include <sstream>
 #include <iostream>
 

@@ -1,8 +1,21 @@
+/*****************************************************************//**
+ * \file   Editor.h
+ * \brief  contains all the editor widgets and controls which to 
+ *		   display
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+ * 
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #pragma once
 #include "testclass.h"
 #include <rapidjson/ostreamwrapper.h>//for ostreamwrapper
 #include <rapidjson/prettywriter.h>//for prettywriter
-//#include <utility>
+
 #include "HeirarchyView.h"
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
@@ -35,8 +48,7 @@ public:
 	void SetGUIInactive(GUIACTIVE_FLAGS flag) { m_activeFlagGUI ^= static_cast<int>(flag); }
 
 	void HotKeysUpdate();
-	void UpdateUI();
-	void TestFunction();
+	void ShowAllWidgets();
 private:
 
 	void SaveData();

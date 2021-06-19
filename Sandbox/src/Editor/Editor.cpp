@@ -1,6 +1,14 @@
-//#include "pch.h"
-#include "Editor.h"
-#include "EditorFileGroup.h"
+/*****************************************************************//**
+ * \file   Editor.cpp
+ * \brief  the implementation of all the 
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 
 #include <filesystem>
 
@@ -11,7 +19,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/reader.h>
 
-
+#include "Editor.h"
+#include "EditorFileGroup.h"
 #include "Engine/Core/Input.h"
 
 /* static vars */
@@ -69,10 +78,6 @@ void Editor::HotKeysUpdate()
 		SetGUIInactive(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE);
 	}
 }
-void Editor::UpdateUI()
-{
-}
-
 void Editor::SaveData()
 {
 	std::vector<rttr::property> list = rttr::type::get<testclass>().get_properties();
@@ -129,7 +134,11 @@ void Editor::LoadData(const char* dir)
 	}
 }
 
-void Editor::TestFunction()
+/**
+ * /brief
+ *		this is the main function to update the widgets
+ */
+void Editor::ShowAllWidgets()
 {
 	//main banner
 	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
@@ -145,7 +154,6 @@ void Editor::TestFunction()
 		m_heirarchy_view.Show();
 	}
 
-
 	if (m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE))
 	{
 		m_projectroot_view.Show();
@@ -155,6 +163,7 @@ void Editor::TestFunction()
 	{
 		m_projectfolder_view.Show();
 	}
+
 	FileGroup::ProjectViewPopUp();
 	m_logging_view.Show();
 	HotKeysUpdate();
