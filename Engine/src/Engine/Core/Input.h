@@ -25,6 +25,9 @@ namespace engine
     /****************************************************************************//*!
      @brief     Interface of the Engine's Input system that will be used by 
                 by the client.
+     
+     @note      Check out KeyCode and MouseCode for more information on supported
+                keys.
     *//*****************************************************************************/
     class Input
     {
@@ -58,13 +61,48 @@ namespace engine
          @return    Whether the key is Released this frame.
         *//*****************************************************************************/
         static bool IsKeyReleased(KeyCode keycode);
+        /****************************************************************************//*!
+         @brief     Determine if any supported key is currently held down
 
+         @note      This function will return true even when keypressed is true too.
+
+         @return    Whether any key is pressed down
+        *//*****************************************************************************/
         static bool IsAnyKeyDown();
-        static bool IsAnyKeyPressed();
-        static bool IsAnyKeyReleased();
+        /****************************************************************************//*!
+         @brief     Determine if any supported key has been triggered within
+                    this frame.
 
+         @return    Whether any key is triggered this frame
+        *//*****************************************************************************/
+        static bool IsAnyKeyPressed();
+        /****************************************************************************//*!
+         @brief     Determine if any supported key by the given keycode has 
+                    been triggered within this frame.
+
+         @note      KeyRelease returns true once when a key that was pressed is released.
+
+         @return    Whether any key is Released this frame.
+        *//*****************************************************************************/
+        static bool IsAnyKeyReleased();
+        /****************************************************************************//*!
+         @brief     Retrieve a vector of supported keys that are currently pressed down.
+
+         @return    Returns a vector to all supported keys that is released 
+        *//*****************************************************************************/
         static std::vector<KeyCode> GetKeysDown();
+        /****************************************************************************//*!
+         @brief     Retrieve a vector of supported keys that are currently pressed.
+
+         @return    Returns a vector to all supported keys that is pressed down this 
+                    frame
+        *//*****************************************************************************/
         static std::vector<KeyCode> GetKeysPressed();
+        /****************************************************************************//*!
+         @brief     Retrieve a vector of supported keys that are currently released.
+
+         @return    Returns a vector of supported keys that is released this frame.
+        *//*****************************************************************************/
         static std::vector<KeyCode> GetKeysReleased();
 
         /****************************************************************************//*!
@@ -90,13 +128,48 @@ namespace engine
          @return    Whether the mouse button is being released this frame.
         *//*****************************************************************************/
         static bool IsMouseButtonReleased(MouseCode button);
+        /****************************************************************************//*!
+         @brief     Determine if any supported mouse button is currently held down
 
+         @note      This function will return true even when mousepressed is true too.
+
+         @return    Whether any supported mouse button is currently down.
+        *//*****************************************************************************/
         static bool IsAnyMouseButtonDown();
-        static bool IsAnyMouseButtonPressed();
-        static bool IsAnyMouseButtonReleased();
+        /****************************************************************************//*!
+         @brief     Determine if any supported mouse button is has 
+                    been triggered this frame.
 
+         @return    Whether any supported mouse button has been clicked this frame.
+        *//*****************************************************************************/
+        static bool IsAnyMouseButtonPressed();
+        /****************************************************************************//*!
+         @brief     Determine if any supported mouse button is has
+                    been triggered this frame.
+
+         @return    Whether any supported mouse button has been clicked this frame.
+        *//*****************************************************************************/
+        static bool IsAnyMouseButtonReleased();
+        /****************************************************************************//*!
+         @brief     Retrieve all supported mouse button that is currently held down
+
+         @return    Return a vector to all supported mouse buttons that are currently
+                    held down.
+        *//*****************************************************************************/
         static std::vector<MouseCode> GetMouseButtonsDown();
+        /****************************************************************************//*!
+         @brief     Retrieve all supported mouse button that is pressed this frame
+
+         @return    Return a vector to all supported mouse buttons that is currently
+                    pressed this frame.
+        *//*****************************************************************************/
         static std::vector<MouseCode> GetMouseButtonsPressed();
+        /****************************************************************************//*!
+         @brief     Retrieve all supported mouse button that is are released this frame
+
+         @return    Return a vector to all supported mouse buttons that are released
+                    this frame.
+        *//*****************************************************************************/
         static std::vector<MouseCode> GetMouseButtonsReleased();
 
 

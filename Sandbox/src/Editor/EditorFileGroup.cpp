@@ -16,6 +16,8 @@ Technology is prohibited.
 #include <imgui_internal.h>
 #include <filesystem>
 
+#include <windows.h>
+
 std::string FileGroup::s_rootPath = "./";
 std::string FileGroup::s_CurrentPath = s_rootPath;
 std::string FileGroup::s_hoveredPath = s_rootPath;
@@ -76,7 +78,7 @@ void FileGroup::ProjectViewPopUpOptions()
 	ImGui::Separator();
 	if (ImGui::MenuItem("Open File Location"))
 	{
-		std::filesystem::path p{ m_selectedpath };
+		std::filesystem::path p{ s_selectedpath };
 		ShellExecuteA(NULL, "explore", p.parent_path().generic_u8string().c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}
 #endif // ENGINE_PLATFORM_WINDOWS

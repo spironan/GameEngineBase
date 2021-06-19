@@ -1,5 +1,5 @@
 /************************************************************************************//*!
-\file           Input.cpp
+\file           WindowsInput.cpp
 \project        INSERT PROJECT NAME
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
@@ -147,19 +147,19 @@ namespace engine
 
         switch (button)
         {
-        case mouse::ButtonLeft:
+        case Mouse::ButtonLeft:
             mask = SDL_BUTTON_LMASK;
             break;
 
-        case mouse::ButtonRight:
+        case Mouse::ButtonRight:
             mask = SDL_BUTTON_RMASK;
             break;
 
-        case mouse::ButtonMiddle:
+        case Mouse::ButtonMiddle:
             mask = SDL_BUTTON_MMASK;
             break;
 
-        case mouse::ButtonLast:
+        case Mouse::ButtonLast:
             mask = SDL_BUTTON_X1MASK;
             break;
 
@@ -174,19 +174,19 @@ namespace engine
 
         switch (button)
         {
-        case mouse::ButtonLeft:
+        case Mouse::ButtonLeft:
             mask = SDL_BUTTON_LMASK;
             break;
 
-        case mouse::ButtonRight:
+        case Mouse::ButtonRight:
             mask = SDL_BUTTON_RMASK;
             break;
 
-        case mouse::ButtonMiddle:
+        case Mouse::ButtonMiddle:
             mask = SDL_BUTTON_MMASK;
             break;
 
-        case mouse::ButtonLast:
+        case Mouse::ButtonLast:
             mask = SDL_BUTTON_X1MASK;
             break;
         }
@@ -200,19 +200,19 @@ namespace engine
 
         switch (button)
         {
-        case mouse::ButtonLeft:
+        case Mouse::ButtonLeft:
             mask = SDL_BUTTON_LMASK;
             break;
 
-        case mouse::ButtonRight:
+        case Mouse::ButtonRight:
             mask = SDL_BUTTON_RMASK;
             break;
 
-        case mouse::ButtonMiddle:
+        case Mouse::ButtonMiddle:
             mask = SDL_BUTTON_MMASK;
             break;
 
-        case mouse::ButtonLast:
+        case Mouse::ButtonLast:
             mask = SDL_BUTTON_X1MASK;
             break;
         }
@@ -222,7 +222,7 @@ namespace engine
 
     bool Input::IsAnyMouseButtonDown()
     {
-        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
             if (IsMouseButtonDown(mousecode)) return true;
         }
@@ -233,7 +233,7 @@ namespace engine
     bool Input::IsAnyMouseButtonPressed()
     {
         
-        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
             if (IsMouseButtonPressed(mousecode)) return true;
         }
@@ -244,7 +244,7 @@ namespace engine
     bool Input::IsAnyMouseButtonReleased()
     {
 
-        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
             if (IsMouseButtonReleased(mousecode)) return true;
         }
@@ -256,7 +256,7 @@ namespace engine
     {
         std::vector<MouseCode> mouseButtons;
 
-        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
             if (IsMouseButtonDown(mousecode)) mouseButtons.emplace_back(mousecode);
         }
@@ -268,7 +268,7 @@ namespace engine
     {
         std::vector<MouseCode> mouseButtons;
 
-        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
             if (IsMouseButtonPressed(mousecode)) mouseButtons.emplace_back(mousecode);
         }
@@ -280,7 +280,7 @@ namespace engine
     {
         std::vector<MouseCode> mouseButtons;
 
-        for (MouseCode mousecode{ 0 }; mousecode <= mouse::ButtonLast; ++mousecode)
+        for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
             if (IsMouseButtonReleased(mousecode)) mouseButtons.emplace_back(mousecode);
         }

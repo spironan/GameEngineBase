@@ -23,6 +23,10 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+//#ifdef ENGINE_PLATFORM_WINDOWS
+//#include <Windows.h>
+//#endif
+
 // Utility files
 #include "Utility/Bitmask.h"
 

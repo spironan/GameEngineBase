@@ -16,27 +16,44 @@ Technology is prohibited.
 
 namespace engine
 {
-    using MouseCode = int;
-
-    namespace mouse 
+    typedef enum class MouseCode
     {
-        enum : MouseCode
-        {
-            // from glfw3.h
-            Button0         = 0,
-            Button1         = 1,
-            Button2         = 2,
-            Button3         = 3,
-            Button4         = 4,
-            Button5         = 5,
-            Button6         = 6,
-            Button7         = 7,
+        // from glfw3.h
+        Button0         = 0,
+        Button1         = 1,
+        Button2         = 2,
+        Button3         = 3,
+        Button4         = 4,
+        Button5         = 5,
+        Button6         = 6,
+        Button7         = 7,
 
-            ButtonLast      = Button7,
-            ButtonLeft      = Button0,
-            ButtonRight     = Button1,
-            ButtonMiddle    = Button2,
-        };
+        ButtonLast      = Button7,
+        ButtonLeft      = Button0,
+        ButtonRight     = Button1,
+        ButtonMiddle    = Button2,
+    } Mouse;
 
+    inline std::ostream& operator<<(std::ostream& os, MouseCode mouseCode)
+    {
+        os << static_cast<int>(mouseCode);
+        return os;
     }
+
+    inline MouseCode& operator++(MouseCode& mouseCode)
+    {
+        mouseCode = static_cast<MouseCode>(static_cast<int>(mouseCode) + 1);
+        return mouseCode;
+    }
+
+    inline bool operator<(MouseCode mouseCode, int val)
+    {
+        return static_cast<int>(mouseCode) < val;
+    }
+
 }
+
+// Mouse CODES
+#define ENGINE_MOUSE_BUTTON_LEFT    ::engine::Mouse::ButtonLeft
+#define ENGINE_MOUSE_BUTTON_RIGHT   ::engine::Mouse::ButtonRight
+#define ENGINE_MOUSE_BUTTON_MIDDLE  ::engine::Mouse::ButtonMiddle

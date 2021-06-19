@@ -56,7 +56,7 @@ namespace engine
         D9              = 38,
         D0              = 39,
             
-        RETURN          = 40,
+        ENTER           = 40,
         ESCAPE          = 41,
         BACKSPACE       = 42,
         TAB             = 43,
@@ -194,12 +194,12 @@ namespace engine
 
 // From SDL keycodes
 
-//#define ENGINE_KEY_SPACE           ::engine::Key::Space
-//#define ENGINE_KEY_APOSTROPHE      ::engine::Key::Apostrophe    /* ' */
-//#define ENGINE_KEY_COMMA           ::engine::Key::Comma         /* , */
-//#define ENGINE_KEY_MINUS           ::engine::Key::Minus         /* - */
-//#define ENGINE_KEY_PERIOD          ::engine::Key::Period        /* . */
-//#define ENGINE_KEY_SLASH           ::engine::Key::Slash         /* / */
+#define ENGINE_KEY_SPACE           ::engine::Key::SPACE
+#define ENGINE_KEY_APOSTROPHE      ::engine::Key::APOSTROPHE    /* ' */
+#define ENGINE_KEY_COMMA           ::engine::Key::COMMA         /* , */
+#define ENGINE_KEY_MINUS           ::engine::Key::MINUS         /* - */
+#define ENGINE_KEY_PERIOD          ::engine::Key::PERIOD        /* . */
+#define ENGINE_KEY_SLASH           ::engine::Key::SLASH         /* / */
 #define ENGINE_KEY_0               ::engine::Key::D0
 #define ENGINE_KEY_1               ::engine::Key::D1
 #define ENGINE_KEY_2               ::engine::Key::D2
@@ -210,8 +210,8 @@ namespace engine
 #define ENGINE_KEY_7               ::engine::Key::D7
 #define ENGINE_KEY_8               ::engine::Key::D8
 #define ENGINE_KEY_9               ::engine::Key::D9
-//#define ENGINE_KEY_SEMICOLON       ::engine::Key::Semicolon     /* ; */
-//#define ENGINE_KEY_EQUAL           ::engine::Key::Equal         /* = */
+#define ENGINE_KEY_SEMICOLON       ::engine::Key::SEMICOLON     /* ; */
+#define ENGINE_KEY_EQUAL           ::engine::Key::EQUALS        /* = */
 #define ENGINE_KEY_A               ::engine::Key::A
 #define ENGINE_KEY_B               ::engine::Key::B
 #define ENGINE_KEY_C               ::engine::Key::C
@@ -238,33 +238,33 @@ namespace engine
 #define ENGINE_KEY_X               ::engine::Key::X
 #define ENGINE_KEY_Y               ::engine::Key::Y
 #define ENGINE_KEY_Z               ::engine::Key::Z
-//#define ENGINE_KEY_LEFT_BRACKET    ::engine::Key::LeftBracket   /* [ */
-//#define ENGINE_KEY_BACKSLASH       ::engine::Key::Backslash     /* \ */
-//#define ENGINE_KEY_RIGHT_BRACKET   ::engine::Key::RightBracket  /* ] */
-//#define ENGINE_KEY_GRAVE_ACCENT    ::engine::Key::GraveAccent   /* ` */
-//#define ENGINE_KEY_WORLD_1         ::engine::Key::World1        /* non-US #1 */
-//#define ENGINE_KEY_WORLD_2         ::engine::Key::World2        /* non-US #2 */
+#define ENGINE_KEY_LEFT_BRACKET    ::engine::Key::LEFTBRACKET   /* [ */
+#define ENGINE_KEY_BACKSLASH       ::engine::Key::BACKSLASH     /* \ */
+#define ENGINE_KEY_RIGHT_BRACKET   ::engine::Key::RIGHTBRACKET  /* ] */
+#define ENGINE_KEY_GRAVE_ACCENT    ::engine::Key::GRAVE         /* ` */
+//#define ENGINE_KEY_WORLD_1         ::engine::Key::WORLD1        /* non-US #1 */
+//#define ENGINE_KEY_WORLD_2         ::engine::Key::WORLD2        /* non-US #2 */
 
 /* Function keys */
-//#define ENGINE_KEY_ESCAPE          ::engine::Key::Escape
-//#define ENGINE_KEY_ENTER           ::engine::Key::Enter
-//#define ENGINE_KEY_TAB             ::engine::Key::Tab
-//#define ENGINE_KEY_BACKSPACE       ::engine::Key::Backspace
-//#define ENGINE_KEY_INSERT          ::engine::Key::Insert
-//#define ENGINE_KEY_DELETE          ::engine::Key::Delete
-//#define ENGINE_KEY_RIGHT           ::engine::Key::Right
-//#define ENGINE_KEY_LEFT            ::engine::Key::Left
-//#define ENGINE_KEY_DOWN            ::engine::Key::Down
-//#define ENGINE_KEY_UP              ::engine::Key::Up
-//#define ENGINE_KEY_PAGE_UP         ::engine::Key::PageUp
-//#define ENGINE_KEY_PAGE_DOWN       ::engine::Key::PageDown
-//#define ENGINE_KEY_HOME            ::engine::Key::Home
-//#define ENGINE_KEY_END             ::engine::Key::End
-//#define ENGINE_KEY_CAPS_LOCK       ::engine::Key::CapsLock
-//#define ENGINE_KEY_SCROLL_LOCK     ::engine::Key::ScrollLock
-//#define ENGINE_KEY_NUM_LOCK        ::engine::Key::NumLock
-//#define ENGINE_KEY_PRINT_SCREEN    ::engine::Key::PrintScreen
-//#define ENGINE_KEY_PAUSE           ::engine::Key::Pause
+#define ENGINE_KEY_ESCAPE          ::engine::Key::ESCAPE
+#define ENGINE_KEY_ENTER           ::engine::Key::ENTER
+#define ENGINE_KEY_TAB             ::engine::Key::TAB
+#define ENGINE_KEY_BACKSPACE       ::engine::Key::BACKSPACE
+#define ENGINE_KEY_INSERT          ::engine::Key::INSERT
+#define ENGINE_KEY_DELETE          ::engine::Key::DEL
+#define ENGINE_KEY_RIGHT           ::engine::Key::RIGHT
+#define ENGINE_KEY_LEFT            ::engine::Key::LEFT
+#define ENGINE_KEY_DOWN            ::engine::Key::DOWN
+#define ENGINE_KEY_UP              ::engine::Key::UP
+#define ENGINE_KEY_PAGE_UP         ::engine::Key::PAGEUP
+#define ENGINE_KEY_PAGE_DOWN       ::engine::Key::PAGEDOWN
+#define ENGINE_KEY_HOME            ::engine::Key::HOME
+#define ENGINE_KEY_END             ::engine::Key::END
+#define ENGINE_KEY_CAPS_LOCK       ::engine::Key::CAPSLOCK
+#define ENGINE_KEY_SCROLL_LOCK     ::engine::Key::SCROLLLOCK
+#define ENGINE_KEY_NUM_LOCK        ::engine::Key::NUMLOCKCLEAR
+#define ENGINE_KEY_PRINT_SCREEN    ::engine::Key::PRINTSCREEN
+#define ENGINE_KEY_PAUSE           ::engine::Key::PAUSE
 #define ENGINE_KEY_F1              ::engine::Key::F1
 #define ENGINE_KEY_F2              ::engine::Key::F2
 #define ENGINE_KEY_F3              ::engine::Key::F3
@@ -302,20 +302,20 @@ namespace engine
 #define ENGINE_KEY_KP_7            ::engine::Key::KP_7
 #define ENGINE_KEY_KP_8            ::engine::Key::KP_8
 #define ENGINE_KEY_KP_9            ::engine::Key::KP_9
-//#define ENGINE_KEY_KP_DECIMAL      ::engine::Key::KPDecimal
-//#define ENGINE_KEY_KP_DIVIDE       ::engine::Key::KPDivide
-//#define ENGINE_KEY_KP_MULTIPLY     ::engine::Key::KPMultiply
-//#define ENGINE_KEY_KP_SUBTRACT     ::engine::Key::KPSubtract
-//#define ENGINE_KEY_KP_ADD          ::engine::Key::KPAdd
-//#define ENGINE_KEY_KP_ENTER        ::engine::Key::KPEnter
-//#define ENGINE_KEY_KP_EQUAL        ::engine::Key::KPEqual
+#define ENGINE_KEY_KP_PERIOD       ::engine::Key::KP_PERIOD
+#define ENGINE_KEY_KP_DIVIDE       ::engine::Key::KP_DIVIDE
+#define ENGINE_KEY_KP_MULTIPLY     ::engine::Key::KP_MULTIPLY
+#define ENGINE_KEY_KP_MINUS        ::engine::Key::KP_MINUS
+#define ENGINE_KEY_KP_PLUS         ::engine::Key::KP_PLUS
+#define ENGINE_KEY_KP_ENTER        ::engine::Key::KP_ENTER
+//#define ENGINE_KEY_KP_EQUAL        ::engine::Key::KP_EQUALS
 
-//#define ENGINE_KEY_LEFT_SHIFT      ::engine::Key::LeftShift
-//#define ENGINE_KEY_LEFT_CONTROL    ::engine::Key::LeftControl
-//#define ENGINE_KEY_LEFT_ALT        ::engine::Key::LeftAlt
-//#define ENGINE_KEY_LEFT_SUPER      ::engine::Key::LeftSuper
-//#define ENGINE_KEY_RIGHT_SHIFT     ::engine::Key::RightShift
-//#define ENGINE_KEY_RIGHT_CONTROL   ::engine::Key::RightControl
-//#define ENGINE_KEY_RIGHT_ALT       ::engine::Key::RightAlt
-//#define ENGINE_KEY_RIGHT_SUPER     ::engine::Key::RightSuper
-//#define ENGINE_KEY_MENU            ::engine::Key::Menu
+#define ENGINE_KEY_LEFT_SHIFT      ::engine::Key::LSHIFT
+#define ENGINE_KEY_LEFT_CONTROL    ::engine::Key::LCTRL
+#define ENGINE_KEY_LEFT_ALT        ::engine::Key::LALT
+#define ENGINE_KEY_LEFT_SUPER      ::engine::Key::LGUI
+#define ENGINE_KEY_RIGHT_SHIFT     ::engine::Key::RSHIFT
+#define ENGINE_KEY_RIGHT_CONTROL   ::engine::Key::RCTRL
+#define ENGINE_KEY_RIGHT_ALT       ::engine::Key::RALT
+#define ENGINE_KEY_RIGHT_SUPER     ::engine::Key::RGUI
+//#define ENGINE_KEY_MENU            ::engine::Key::MENU

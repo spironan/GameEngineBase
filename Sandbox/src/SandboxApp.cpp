@@ -18,9 +18,6 @@ Technology is prohibited.
 
 #include <iostream>
 
-//#include <SDL.h>
-//#include <imgui.h>
-
 #include "Editor/Editor.h"
 
 class EditorLayer : public engine::Layer
@@ -215,6 +212,5 @@ public:
 
 engine::Application* engine::CreateApplication(engine::CommandLineArgs args)
 {
-    
     return OONEW Sandbox{ args };
 }
