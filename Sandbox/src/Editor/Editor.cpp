@@ -31,10 +31,9 @@ std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 
 //for copy and pasting
 std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
-engine::BufferAllocator Editor::s_bufferAllocator;
+engine::BufferAllocator Editor::s_bufferAllocator(engine::MemoryManager::NewBufferAllocator(128, 8));
 Editor::Editor(const std::string& root)
 {	
-	s_bufferAllocator = (engine::MemoryManager::NewBufferAllocator(128, 8));
 
 	s_testList.reserve(50);
 

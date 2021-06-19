@@ -86,15 +86,15 @@ void FileGroup::ProjectViewPopUpOptions()
 	if (ImGui::MenuItem("Copy"))
 	{
 		Editor::s_copyPayload.first = "FILE";
-		Editor::s_copyPayload.second = Editor::s_bufferAllocator.New<std::string>(FileGroup::s_selectedpath);
+		Editor::s_copyPayload.second = Editor::s_bufferAllocator.New<char*>(FileGroup::s_selectedpath.data());
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
 		if (Editor::s_copyPayload.first == "FILE")
 		{
 			//get the payload
-			
-			std::filesystem::path p(*static_cast<std::string*>(Editor::s_copyPayload.second));
+			std::string temp = *static_cast<char**>(Editor::s_copyPayload.second);
+			std::filesystem::path p(temp);
 			Editor::s_bufferAllocator.Clear();
 
 			std::filesystem::path selected_path{ FileGroup::s_selectedpath };

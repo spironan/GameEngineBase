@@ -29,10 +29,12 @@ void LoggingView::Show()
 	std::ostringstream& oss = ::engine::Log::GetOstreamOutput();
 	if (oss.tellp() != 0)
 	{
-		std::string temp;
-		
+		s_messages.emplace_back(oss.str());
+		oss.str("");//empty string
+		oss.clear();//clear error flags
 	}
-	ImGui::Text(m_logList.c_str());
+	for(std::string& str:s_messages)
+		ImGui::Text(str.c_str());
 
 	ImGui::End();
 }
