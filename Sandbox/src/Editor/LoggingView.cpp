@@ -25,17 +25,45 @@ std::deque<std::string> LoggingView::s_messages;
 
 void LoggingView::Show()
 {
-	ImGui::Begin("Logger");
+	
+	ImGui::Begin("Logger",0,ImGuiWindowFlags_MenuBar);
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::MenuItem("Clear"))
+		{
+			s_messages.resize(0);
+		}
+		if (ImGui::MenuItem("Pause"))
+		{
+			m_paused = !m_paused;
+			::engine::Log::GetOstreamOutput().str("");//clear the log
+		}
+		ImGui::EndMenuBar();
+	}
+
+	//draw ui here
+	for(int i = static_cast<int>(s_messages.size()) - 1 ; i > 0; --i)
+		ImGui::Text(s_messages[i].c_str());
+	//if paused do not process string
+	if (m_paused)
+	{
+		ImGui::End();
+		return;
+	}
+	//process string here
 	std::ostringstream& oss = ::engine::Log::GetOstreamOutput();
 	if (oss.tellp() != 0)
 	{
-		s_messages.emplace_back(oss.str());
+		if (s_messages.size() > 250)
+		{
+			s_messages.resize(200);
+		}
+		ImGui::SetScrollY(ImGui::GetScrollMaxY());
+		s_messages.emplace_front(oss.str());
 		oss.str("");//empty string
 		oss.clear();//clear error flags
 	}
-	for(std::string& str:s_messages)
-		ImGui::Text(str.c_str());
-
+	
 	ImGui::End();
 }
 
