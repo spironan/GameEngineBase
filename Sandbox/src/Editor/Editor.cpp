@@ -22,7 +22,7 @@ Technology is prohibited.
 #include "Editor.h"
 #include "EditorFileGroup.h"
 #include "Engine/Core/Input.h"
-
+#include "Engine/Memory/MemoryManager.h"
 /* static vars */
 testclass Editor::s_rootnode;//will be removed once ecs done
 std::vector<testclass> Editor::s_testList;//will be removed once ecs done
@@ -30,10 +30,12 @@ std::vector<testclass> Editor::s_testList;//will be removed once ecs done
 std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 
 //for copy and pasting
-std::pair<std::string, std::shared_ptr<void*>> Editor::s_copyPayload = {"",nullptr};
-
+std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
+engine::BufferAllocator Editor::s_bufferAllocator;
 Editor::Editor(const std::string& root)
-{
+{	
+	s_bufferAllocator = (engine::MemoryManager::NewBufferAllocator(128, 8));
+
 	s_testList.reserve(50);
 
 	s_hotkeymapping[KEY_ACTIONS::RENAME_ITEM] = 59;//f2
@@ -52,6 +54,7 @@ Editor::Editor(const std::string& root)
 
 Editor::~Editor()
 {
+	//need to delete memory block of s_bufferAllocator
 }
 
 void Editor::HotKeysUpdate()

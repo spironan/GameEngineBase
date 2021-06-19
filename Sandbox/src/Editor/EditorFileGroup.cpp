@@ -18,7 +18,7 @@ Technology is prohibited.
 
 #include <windows.h>
 
-std::string FileGroup::s_rootPath = "./";
+std::string FileGroup::s_rootPath = "C:/Users/User/Desktop/New folder (3)";
 std::string FileGroup::s_CurrentPath = s_rootPath;
 std::string FileGroup::s_hoveredPath = s_rootPath;
 std::string FileGroup::s_selectedpath;//path with the itemname
@@ -86,16 +86,16 @@ void FileGroup::ProjectViewPopUpOptions()
 	if (ImGui::MenuItem("Copy"))
 	{
 		Editor::s_copyPayload.first = "FILE";
-		Editor::s_copyPayload.second.reset();
-		Editor::s_copyPayload.second = std::make_shared<void*>(&FileGroup::s_selectedpath);
+		Editor::s_copyPayload.second = Editor::s_bufferAllocator.New<std::string>(FileGroup::s_selectedpath);
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
 		if (Editor::s_copyPayload.first == "FILE")
 		{
 			//get the payload
-			std::filesystem::path p(*(static_cast<std::string*>(*Editor::s_copyPayload.second.get())));
-			Editor::s_copyPayload.second.reset();
+			
+			std::filesystem::path p(*static_cast<std::string*>(Editor::s_copyPayload.second));
+			Editor::s_bufferAllocator.Clear();
 
 			std::filesystem::path selected_path{ FileGroup::s_selectedpath };
 			std::string targetlocation_name;

@@ -22,7 +22,8 @@ public:
 
 	static void AddLoggingMsg(const char* fmt, ...);
 	static std::deque<std::string> s_messages;
-
+private:
+	std::string m_logList = "";
 };
 
 

@@ -26,13 +26,15 @@ std::deque<std::string> LoggingView::s_messages;
 void LoggingView::Show()
 {
 	ImGui::Begin("Logger");
-	ImGui::Text(::engine::Log::GetOstreamOutput().str().c_str());
-	/*for (std::string& s : s_messages)
-		ImGui::Text(s.c_str());*/
+	std::ostringstream& oss = ::engine::Log::GetOstreamOutput();
+	if (oss.tellp() != 0)
+	{
+		std::string temp;
+		
+	}
+	ImGui::Text(m_logList.c_str());
+
 	ImGui::End();
-	/* uncomment for a temp solution which clears the ostream every frame.
-	::engine::Log::oss.str("")
-	::engine::Log::oss.clear(); */
 }
 
 //this is now unused

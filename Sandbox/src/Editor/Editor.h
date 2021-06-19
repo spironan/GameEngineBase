@@ -21,6 +21,9 @@ Technology is prohibited.
 #include "ProjectFolderView.h"
 #include "ProjectRootView.h"
 #include "LoggingView.h"
+
+#include "Engine/Memory/BufferAllocator.h"
+
 enum class GUIACTIVE_FLAGS:int
 {
 	INSPECTOR_ACTIVE = 1,
@@ -60,7 +63,8 @@ public:
 	static std::map<KEY_ACTIONS, unsigned int> s_hotkeymapping;
 
 	//for copy and pasting 
-	static std::pair<std::string, std::shared_ptr<void*>> s_copyPayload;
+	static std::pair<std::string, void* > s_copyPayload;
+	static engine::BufferAllocator s_bufferAllocator;
 private:
 	int m_activeFlagGUI = 0;
 

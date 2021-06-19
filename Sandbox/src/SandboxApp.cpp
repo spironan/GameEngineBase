@@ -38,7 +38,7 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        m_editor.TestFunction();
+        m_editor.ShowAllWidgets();
         //ImGui::ShowDemoWindow(&m_demo);
     }
 };
