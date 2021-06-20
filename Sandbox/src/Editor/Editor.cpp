@@ -23,15 +23,20 @@ Technology is prohibited.
 #include "EditorFileGroup.h"
 #include "Engine/Core/Input.h"
 #include "Engine/Memory/MemoryManager.h"
+#include "LoggingView.h"
 /* static vars */
+
 testclass Editor::s_rootnode;//will be removed once ecs done
 std::vector<testclass> Editor::s_testList;//will be removed once ecs done
 
 std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 
+std::deque <std::function<void(void*)>> Editor::s_actionDeque;
+std::deque <void*>						Editor::s_actionDequeData;
+
 //for copy and pasting
 std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
-engine::BufferAllocator Editor::s_bufferAllocator(engine::MemoryManager::NewBufferAllocator(128, 8));
+engine::BufferAllocator Editor::s_payloadBufferAllocator(engine::MemoryManager::NewBufferAllocator(128, 8));
 Editor::Editor(const std::string& root)
 {	
 
@@ -54,6 +59,11 @@ Editor::Editor(const std::string& root)
 Editor::~Editor()
 {
 	//need to delete memory block of s_bufferAllocator
+	while (!s_actionDequeData.empty())
+	{
+		delete (*s_actionDequeData.rbegin());
+		s_actionDequeData.pop_back();
+	}
 }
 
 void Editor::HotKeysUpdate()
@@ -80,6 +90,25 @@ void Editor::HotKeysUpdate()
 		SetGUIInactive(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE);
 	}
 }
+
+//action deque
+/**
+ * \brief
+ *		is a helper function to storing the previous state of the item before editing
+ *		deleting of data is handled by editor no need to delete in fnc
+ * \param fnc 
+ *		this is the function pointer of the function 
+ *		please do not bind the function before this !!!!!! i will bind it for u
+ * \param data
+ *		any kind of data that is use by the function (this will be used for binding)
+ */
+void Editor::AddNewAction(std::function<void(void*)> fnc, void* data)
+{
+	Editor::s_actionDequeData.emplace_back(data);
+	Editor::s_actionDeque.emplace_back(std::bind(fnc, static_cast<void*>(data)));
+}
+
+
 void Editor::SaveData()
 {
 	std::vector<rttr::property> list = rttr::type::get<testclass>().get_properties();
@@ -166,7 +195,18 @@ void Editor::ShowAllWidgets()
 		m_projectfolder_view.Show();
 	}
 
+	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
+	{
+		if (s_actionDeque.size())
+		{
+			(*s_actionDeque.rbegin())(nullptr);
+			delete (*s_actionDequeData.rbegin());//clear the used data
+			s_actionDeque.pop_back();
+			s_actionDequeData.pop_back();
+		}
+	}
 	FileGroup::ProjectViewPopUp();
 	m_logging_view.Show();
 	HotKeysUpdate();
 }
+

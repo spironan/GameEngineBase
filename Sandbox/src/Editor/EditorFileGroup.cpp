@@ -74,19 +74,19 @@ void FileGroup::ProjectViewPopUpOptions()
 	{
 		FileGroup::s_delete_popup = true;
 	}
-#ifdef ENGINE_PLATFORM_WINDOWS
+#ifdef SANDBOX_PLATFORM_WINDOWS
 	ImGui::Separator();
 	if (ImGui::MenuItem("Open File Location"))
 	{
 		std::filesystem::path p{ s_selectedpath };
 		ShellExecuteA(NULL, "explore", p.parent_path().generic_u8string().c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}
-#endif // ENGINE_PLATFORM_WINDOWS
+#endif // SANDBOX_PLATFORM_WINDOWS
 	ImGui::Separator();
 	if (ImGui::MenuItem("Copy"))
 	{
 		Editor::s_copyPayload.first = "FILE";
-		Editor::s_copyPayload.second = Editor::s_bufferAllocator.New<char*>(FileGroup::s_selectedpath.data());
+		Editor::s_copyPayload.second = Editor::s_payloadBufferAllocator.New<char*>(FileGroup::s_selectedpath.data());
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
@@ -95,7 +95,7 @@ void FileGroup::ProjectViewPopUpOptions()
 			//get the payload
 			std::string temp = *static_cast<char**>(Editor::s_copyPayload.second);
 			std::filesystem::path p(temp);
-			Editor::s_bufferAllocator.Clear();
+			Editor::s_payloadBufferAllocator.Clear();
 
 			std::filesystem::path selected_path{ FileGroup::s_selectedpath };
 			std::string targetlocation_name;
@@ -156,16 +156,35 @@ void FileGroup::DeletePopUp()
 void FileGroup::RenamePopUp()
 {
 	ImGui::SetNextWindowPos(FileGroup::s_selectedItemPosition);
+	
 	if (ImGui::BeginPopupModal("Rename", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration))
 	{
 		if (ImGui::InputText("##RenameObject", FileGroup::s_nameBuffer, sizeof(FileGroup::s_nameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			//rename item code here
-			ImGui::CloseCurrentPopup();
+			std::filesystem::path p{ FileGroup::s_hoveredPath };
+			std::string changeName = (p.parent_path().u8string() + "/" + FileGroup::s_nameBuffer + p.extension().u8string());
+
+			if (std::filesystem::exists(changeName) == false)//if is unique name then rename file else dont accept
+			{
+				std::filesystem::rename(p, changeName);
+				FileGroup::s_nameBuffer[0] = '\0';//clear the buffer
+				ImGui::CloseCurrentPopup();
+			}
+			else
+			{
+
+#ifdef SANDBOX_PLATFORM_WINDOWS
+				MessageBeep(0x00000030L);//Windows Exclamation sound.
+#endif // SANDBOX_PLATFORM_WINDOWS
+			}
 		}
 		ImGui::SetKeyboardFocusHere();
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+		{
+			FileGroup::s_nameBuffer[0] = '\0';//clear the buffer
 			ImGui::CloseCurrentPopup();
+		}
 		ImGui::EndPopup();
 	}
 }

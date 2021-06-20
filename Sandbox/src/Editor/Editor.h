@@ -15,6 +15,9 @@ Technology is prohibited.
 #include "testclass.h"
 #include <rapidjson/ostreamwrapper.h>//for ostreamwrapper
 #include <rapidjson/prettywriter.h>//for prettywriter
+#include <functional>//std::function
+#include <stack>//std::stack
+#include <imgui.h>
 
 #include "HeirarchyView.h"
 #include "InspectorView.h"
@@ -52,20 +55,35 @@ public:
 
 	void HotKeysUpdate();
 	void ShowAllWidgets();
+
+
+	//action deque
+	/**
+	 * this is a helper function to storing the previous state of the item before editing
+	 */
+	static void AddNewAction(std::function<void(void*)> fnc, void* data);
 private:
 
+	//the 2 functions will be moved out of this class
 	void SaveData();
 	void LoadData(const char* dir);
 
 public:
+
 	static testclass s_rootnode;
 	static std::vector<testclass> s_testList;
 	static std::map<KEY_ACTIONS, unsigned int> s_hotkeymapping;
 
 	//for copy and pasting 
 	static std::pair<std::string, void* > s_copyPayload;
-	static engine::BufferAllocator s_bufferAllocator;
+	static engine::BufferAllocator s_payloadBufferAllocator;
 private:
+	//action deque
+	static std::deque < void*> s_actionDequeData;
+	static std::deque < std::function<void(void*)> > s_actionDeque;
+	
+private:
+
 	int m_activeFlagGUI = 0;
 
 	HeirarchyView m_heirarchy_view;
