@@ -32,10 +32,16 @@ void InspectorView::Show()
 	}
 	ImGui::End();
 }
-
+/**
+ * \brief function used for changing the data (ElementData)
+ * 
+ * \param data
+ *			ElementData only
+ */
 void InspectorView::SetElementData(void* data)
 {
 	ElementData* eD = static_cast<ElementData*>(data);
+	ObjectGroup::s_FocusedObject = eD->item;
 	eD->prop.set_value(eD->item, eD->data);
 }
 
