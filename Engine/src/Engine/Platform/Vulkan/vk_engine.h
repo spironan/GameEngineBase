@@ -175,6 +175,7 @@ public:
 
 	bool _isInitialized{ false };
 	int _frameNumber {0};
+	uint32_t _currentImageIndex{0};
 
 	VmaAllocator _allocator; // VMA library allocator
 	DeletionQueue _mainDeletionQueue;
@@ -243,8 +244,13 @@ public:
 	//draw loop
 	void RenderFrame();
 
+	void PresentFrame();
+
 	//run main loop
 	void run();
+
+	// reacreate swapchain
+	void RecreateSwapchain();
 
 	//create materials and add it to the map
 	Material *create_material(VkPipeline pipeline, VkPipelineLayout layout, const std::string &name);
