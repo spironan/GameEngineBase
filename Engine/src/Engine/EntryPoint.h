@@ -25,12 +25,12 @@ extern engine::Application* engine::CreateApplication(engine::CommandLineArgs ar
 int main(int argc, char** argv)
 {
     // Memory Leak Checker in Debug builds
-#ifdef ENGINE_DEBUG
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
-    // Uncomment to cause a break on allocation for debugging
-    //_CrtSetBreakAlloc(/*Allocation Number here*/);
-#endif
+    #ifdef ENGINE_DEBUG
+        _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+        _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+        // Uncomment to cause a break on allocation for debugging
+        //_CrtSetBreakAlloc(/*Allocation Number here*/);
+    #endif
 
     // Initialize logging system
     engine::Log::Init();

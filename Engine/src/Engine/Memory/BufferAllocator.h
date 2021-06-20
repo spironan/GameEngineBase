@@ -63,6 +63,13 @@ namespace engine
 			*/
 		void FreeToMarker(const Marker marker) { m_top = marker; }
 
+		void FreeToPtr(const PtrInt ptr) 
+		{ 
+			Marker marker = ptr - m_bottomAddress;
+			if (marker > m_totalSize || marker > m_top)
+				return;
+			m_top = marker; 
+		}
 		/**
 			* \brief Clear the whole buffer allocator to its bottom. All memory will be
 			* available for new allocations again

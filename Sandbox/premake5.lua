@@ -11,33 +11,29 @@ project "Sandbox"
     {
         "src/**.h",
         "src/**.cpp",
-        -- temporary fix using gl3w
-        --"%{wks.location}/Sandbox/vendor/gl3w/GL/**.h",
-        --"%{wks.location}/Sandbox/vendor/gl3w/GL/**.c",
-        --"%{wks.location}/Sandbox/vendor/ImGui/**.h",
-        --"%{wks.location}/Sandbox/vendor/ImGui/**.cpp"
     }
 
     includedirs
     {
         "src",
         "%{wks.location}/Engine/src",
-        "%{wks.location}/Engine/vendor/spdlog/include",
-        "%{wks.location}/Engine/vendor/sdl2/include/sdl2",
-        "%{wks.location}/Engine/vendor/rttr/include", --rttr
-        "%{wks.location}/Engine/vendor/mono/include/mono-2.0", --mono
-        "%{wks.location}/Engine/vendor/gl3w",
-        "%{wks.location}/Engine/vendor/ImGui", --Dear ImGui
-        "%{wks.location}/SandBox/vendor/rpj" --rapidjson
+
+        "%{IncludeDir.spdlog}",
+        "%{IncludeDir.SDL}",
+        "%{IncludeDir.rttr}",
+        --"%{IncludeDir.mono}",
+        --"%{IncludeDir.gl3w}",
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.rapidjson}",
+
     }
 
     -- library diretories
     libdirs 
-    {
-        "%{wks.location}/Engine/vendor/sdl2/lib/x64",
-        "%{wks.location}/Engine/vendor/rttr/lib",
-        "%{wks.location}/Engine/vendor/mono/lib"
-
+    {        
+        "%{LibraryDir.SDL}",
+        "%{LibraryDir.rttr}",
+        "%{LibraryDir.mono}",
     }
 
     links
@@ -63,8 +59,8 @@ project "Sandbox"
 
         defines
         {
-            --"ENGINE_PLATFORM_WINDOWS"
-            "SANDBOX_PLATFORM_WINDOWS"
+            "ENGINE_PLATFORM_WINDOWS",
+            "SANDBOX_PLATFORM_WINDOWS",
         }
         
         --enable this post build command for 64 bit system

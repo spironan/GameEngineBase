@@ -15,7 +15,7 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/Memory/MemoryCommon.h"
-#include "Engine/Core/PlatformDetection.h"
+//#include "Engine/Core/PlatformDetection.h"
 
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Assert.h"
