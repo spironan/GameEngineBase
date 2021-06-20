@@ -37,9 +37,9 @@ std::deque <void*>						Editor::s_actionDequeData;
 //for copy and pasting
 std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
 engine::BufferAllocator Editor::s_payloadBufferAllocator(engine::MemoryManager::NewBufferAllocator(128, 8));
+engine::BufferAllocator Editor::s_actionBufferAllocator(engine::MemoryManager::NewBufferAllocator(2048,8));//2kb
 Editor::Editor(const std::string& root)
 {	
-
 	s_testList.reserve(50);
 
 	s_hotkeymapping[KEY_ACTIONS::RENAME_ITEM] = 59;//f2
@@ -59,11 +59,6 @@ Editor::Editor(const std::string& root)
 Editor::~Editor()
 {
 	//need to delete memory block of s_bufferAllocator
-	while (!s_actionDequeData.empty())
-	{
-		delete (*s_actionDequeData.rbegin());
-		s_actionDequeData.pop_back();
-	}
 }
 
 void Editor::HotKeysUpdate()
@@ -200,10 +195,16 @@ void Editor::ShowAllWidgets()
 		if (s_actionDeque.size())
 		{
 			(*s_actionDeque.rbegin())(nullptr);
-			delete (*s_actionDequeData.rbegin());//clear the used data
+			s_actionBufferAllocator.FreeToPtr((engine::BufferAllocator::PtrInt)(*s_actionDequeData.rbegin()));//clear the used data
 			s_actionDeque.pop_back();
 			s_actionDequeData.pop_back();
 		}
+	}
+	if (s_actionBufferAllocator.GetRemainingSize() < 50)
+	{
+		s_actionDeque.clear();
+		s_actionDequeData.clear();
+		s_actionBufferAllocator.Clear();
 	}
 	FileGroup::ProjectViewPopUp();
 	m_logging_view.Show();

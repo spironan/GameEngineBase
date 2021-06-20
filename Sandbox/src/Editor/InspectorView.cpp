@@ -57,7 +57,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 			}
 			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			{
-				ElementData* data = new ElementData(ObjectGroup::s_FocusedObject, element, value);
+				ElementData* data = Editor::s_actionBufferAllocator.New<ElementData>(ObjectGroup::s_FocusedObject, element, value);
 				Editor::AddNewAction(SetElementData, data);
 			}
 		}
@@ -70,7 +70,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 			}
 			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			{
-				ElementData* data = new ElementData(ObjectGroup::s_FocusedObject, element, value);
+				ElementData* data = Editor::s_actionBufferAllocator.New<ElementData>(ObjectGroup::s_FocusedObject, element, value);
 				Editor::AddNewAction(SetElementData, data);
 			}
 		}

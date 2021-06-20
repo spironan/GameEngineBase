@@ -77,6 +77,7 @@ public:
 	//for copy and pasting 
 	static std::pair<std::string, void* > s_copyPayload;
 	static engine::BufferAllocator s_payloadBufferAllocator;
+	static engine::BufferAllocator s_actionBufferAllocator;
 private:
 	//action deque
 	static std::deque < void*> s_actionDequeData;
