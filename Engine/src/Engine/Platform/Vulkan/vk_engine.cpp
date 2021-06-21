@@ -24,7 +24,7 @@
 
 #define SECOND_IN_NANOSECONDS 1000000000
 
-#if DEBUG
+#ifdef _DEBUG
 constexpr bool bUseValidationLayers = true;
 #else
 constexpr bool bUseValidationLayers = false;
@@ -1430,11 +1430,12 @@ void VulkanEngine::RecreateSwapchain()
 {
 	get_window_extent();
 	// this checks if window is minimized
-	while (_windowExtent.width == 0 || _windowExtent.height == 0)
+	while ((SDL_GetWindowFlags(_window)&SDL_WINDOW_MINIMIZED) == SDL_WINDOW_MINIMIZED)
 	{
 		get_window_extent();
 		SDL_WaitEvent(NULL);
 	}
+
 	//wait until nothing is using it
 	vkDeviceWaitIdle(_device);
 
