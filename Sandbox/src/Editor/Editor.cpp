@@ -36,7 +36,8 @@ std::deque <void*>						Editor::s_actionDequeData;
 
 //for copy and pasting
 std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
-engine::BufferAllocator Editor::s_payloadBufferAllocator(engine::MemoryManager::NewBufferAllocator(128, 8));
+
+engine::BufferAllocator Editor::s_payloadBufferAllocator(engine::MemoryManager::NewBufferAllocator(2048, 8));
 engine::BufferAllocator Editor::s_actionBufferAllocator(engine::MemoryManager::NewBufferAllocator(2048,8));//2kb
 Editor::Editor(const std::string& root)
 {	
@@ -189,7 +190,7 @@ void Editor::ShowAllWidgets()
 	{
 		m_projectfolder_view.Show();
 	}
-
+	m_warning_view.Show();
 	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
 	{
 		if (s_actionDeque.size())
@@ -198,6 +199,10 @@ void Editor::ShowAllWidgets()
 			s_actionBufferAllocator.FreeToPtr((engine::BufferAllocator::PtrInt)(*s_actionDequeData.rbegin()));//clear the used data
 			s_actionDeque.pop_back();
 			s_actionDequeData.pop_back();
+		}
+		else
+		{
+			WarningView::DisplayWarning("There is no history queued");
 		}
 	}
 	if (s_actionBufferAllocator.GetRemainingSize() < 50)

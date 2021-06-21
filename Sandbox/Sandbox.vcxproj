@@ -312,6 +312,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClInclude Include="src\Editor\ProjectFolderView.h" />
     <ClInclude Include="src\Editor\ProjectRootView.h" />
     <ClInclude Include="src\testclass.h" />
+    <ClInclude Include="src\Editor\WarningView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Editor\Editor.cpp" />
@@ -324,6 +325,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClCompile Include="src\Editor\ProjectRootView.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\testclass.cpp" />
+    <ClCompile Include="src\Editor\WarningView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">

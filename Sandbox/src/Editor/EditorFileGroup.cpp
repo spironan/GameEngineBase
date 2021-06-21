@@ -18,7 +18,7 @@ Technology is prohibited.
 
 #include <windows.h>
 
-std::string FileGroup::s_rootPath = "./";
+std::string FileGroup::s_rootPath = "C:/Users/User/Desktop/New folder (3)/";
 std::string FileGroup::s_CurrentPath = s_rootPath;
 std::string FileGroup::s_hoveredPath = s_rootPath;
 std::string FileGroup::s_selectedpath;//path with the itemname
@@ -85,28 +85,36 @@ void FileGroup::ProjectViewPopUpOptions()
 	ImGui::Separator();
 	if (ImGui::MenuItem("Copy"))
 	{
+		Editor::s_payloadBufferAllocator.Clear();//clear before use
 		Editor::s_copyPayload.first = "FILE";
-		Editor::s_copyPayload.second = Editor::s_payloadBufferAllocator.New<char*>(FileGroup::s_selectedpath.data());
+		//+1 due to '\0'
+		Editor::s_copyPayload.second = Editor::s_payloadBufferAllocator.NewArr<char>(FileGroup::s_selectedpath.size() + 1,engine::BufferAllocator::ALIGNMENT);
+		sprintf_s(static_cast<char*>(Editor::s_copyPayload.second), FileGroup::s_selectedpath.size()+1,FileGroup::s_selectedpath.data());
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
 		if (Editor::s_copyPayload.first == "FILE")
 		{
 			//get the payload
-			std::string temp = *static_cast<char**>(Editor::s_copyPayload.second);
-			std::filesystem::path p(temp);
-			Editor::s_payloadBufferAllocator.Clear();
+			std::filesystem::path p((static_cast<char*>(Editor::s_copyPayload.second)));
 
 			std::filesystem::path selected_path{ FileGroup::s_selectedpath };
 			std::string targetlocation_name;
-
+			
 			//changing the file name
-			if (std::filesystem::is_directory(selected_path))
-				targetlocation_name = FileGroup::s_selectedpath + "/copy" + p.filename().u8string();
-			else
-				targetlocation_name = selected_path.parent_path().u8string() + "/copy" + p.filename().u8string();
 
-			if (std::filesystem::is_directory(p))
+			targetlocation_name = selected_path.parent_path().u8string() + "/" + p.stem().u8string() + " - copy";
+
+			//iteratively look for a new file name(might get expensive when there is more than a certain amount of files)
+			std::string newfile_name = targetlocation_name + p.extension().u8string();
+			int counter = 0;
+			while (std::filesystem::exists(newfile_name))
+			{
+				++counter;
+				newfile_name = targetlocation_name +" (" + std::to_string(counter) +") " + p.extension().u8string();
+			}
+
+			if (std::filesystem::is_directory(p) && !std::filesystem::is_empty(p))
 			{
 				//copying the whole directory still requires work
 				//std::filesystem::copy(p, targetlocation_name,
@@ -115,7 +123,7 @@ void FileGroup::ProjectViewPopUpOptions()
 			}
 			else
 			{
-				std::filesystem::copy(p, targetlocation_name);
+				std::filesystem::copy(p, newfile_name);
 			}
 		}
 	}
