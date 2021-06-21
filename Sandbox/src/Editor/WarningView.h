@@ -3,6 +3,8 @@
 class WarningView
 {
 public:
+	void Show();
+public:
 	/**
 	 * \brief allow the user to display a warning message on the cursor
 	 * 
@@ -11,7 +13,6 @@ public:
 	 */
 	static void DisplayWarning(const std::string& str);
 
-	void Show();
 private:
 	static int s_counter;
 	static const int s_max_counter;

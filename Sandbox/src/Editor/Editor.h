@@ -58,11 +58,7 @@ public:
 	void ShowAllWidgets();
 
 
-	//action deque
-	/**
-	 * this is a helper function to storing the previous state of the item before editing
-	 */
-	static void AddNewAction(std::function<void(void*)> fnc, void* data);
+
 private:
 
 	//the 2 functions will be moved out of this class
@@ -78,11 +74,7 @@ public:
 	//for copy and pasting 
 	static std::pair<std::string, void* > s_copyPayload;
 	static engine::BufferAllocator s_payloadBufferAllocator;
-	static engine::BufferAllocator s_actionBufferAllocator;
-private:
-	//action deque
-	static std::deque < void*> s_actionDequeData;
-	static std::deque < std::function<void(void*)> > s_actionDeque;
+
 	
 private:
 

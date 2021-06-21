@@ -23,7 +23,9 @@ Technology is prohibited.
 #include "EditorFileGroup.h"
 #include "Engine/Core/Input.h"
 #include "Engine/Memory/MemoryManager.h"
-#include "LoggingView.h"
+
+
+#include "EditorActionStack.h"
 /* static vars */
 
 testclass Editor::s_rootnode;//will be removed once ecs done
@@ -31,14 +33,13 @@ std::vector<testclass> Editor::s_testList;//will be removed once ecs done
 
 std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 
-std::deque <std::function<void(void*)>> Editor::s_actionDeque;
-std::deque <void*>						Editor::s_actionDequeData;
+
 
 //for copy and pasting
 std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
 
 engine::BufferAllocator Editor::s_payloadBufferAllocator(engine::MemoryManager::NewBufferAllocator(2048, 8));
-engine::BufferAllocator Editor::s_actionBufferAllocator(engine::MemoryManager::NewBufferAllocator(2048,8));//2kb
+
 Editor::Editor(const std::string& root)
 {	
 	s_testList.reserve(50);
@@ -87,22 +88,7 @@ void Editor::HotKeysUpdate()
 	}
 }
 
-//action deque
-/**
- * \brief
- *		is a helper function to storing the previous state of the item before editing
- *		deleting of data is handled by editor no need to delete in fnc
- * \param fnc 
- *		this is the function pointer of the function 
- *		please do not bind the function before this !!!!!! i will bind it for u
- * \param data
- *		any kind of data that is use by the function (this will be used for binding)
- */
-void Editor::AddNewAction(std::function<void(void*)> fnc, void* data)
-{
-	Editor::s_actionDequeData.emplace_back(data);
-	Editor::s_actionDeque.emplace_back(std::bind(fnc, static_cast<void*>(data)));
-}
+
 
 
 void Editor::SaveData()
@@ -190,27 +176,9 @@ void Editor::ShowAllWidgets()
 	{
 		m_projectfolder_view.Show();
 	}
+	ActionStack::UpdateStack();
 	m_warning_view.Show();
-	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
-	{
-		if (s_actionDeque.size())
-		{
-			(*s_actionDeque.rbegin())(nullptr);
-			s_actionBufferAllocator.FreeToPtr((engine::BufferAllocator::PtrInt)(*s_actionDequeData.rbegin()));//clear the used data
-			s_actionDeque.pop_back();
-			s_actionDequeData.pop_back();
-		}
-		else
-		{
-			WarningView::DisplayWarning("There is no history queued");
-		}
-	}
-	if (s_actionBufferAllocator.GetRemainingSize() < 50)
-	{
-		s_actionDeque.clear();
-		s_actionDequeData.clear();
-		s_actionBufferAllocator.Clear();
-	}
+
 	FileGroup::ProjectViewPopUp();
 	m_logging_view.Show();
 	HotKeysUpdate();

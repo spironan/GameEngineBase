@@ -303,6 +303,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Editor\EditorActionStack.h" />
     <ClInclude Include="src\Editor\Editor.h" />
     <ClInclude Include="src\Editor\EditorFileGroup.h" />
     <ClInclude Include="src\Editor\EditorObjectGroup.h" />
@@ -315,6 +316,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClInclude Include="src\Editor\WarningView.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor\EditorActionStack.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Editor\EditorFileGroup.cpp" />
     <ClCompile Include="src\Editor\EditorObjectGroup.cpp" />
