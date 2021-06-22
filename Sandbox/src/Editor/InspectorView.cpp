@@ -5,6 +5,8 @@
 
 #include <imgui.h>
 #include <rttr/type>
+
+#include <iostream>
 enum : int
 {
 	INT,
@@ -51,16 +53,17 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 	std::vector<rttr::property> types = _type.get_properties();
 
 	ImGui::BeginChild(_type.get_name().c_str(), { 0,types.size() * 21.0f }, true);
-	rttr::variant tracked_value;
+	rttr::variant current_value;
+
 	for (const rttr::property& element : types)
 	{
-		tracked_value.clear();
+		current_value.clear();
 		const rttr::type::type_id id = element.get_type().get_id();
 		if (id == m_tracked_ids[INT])
 		{
 			int value = element.get_value(ObjectGroup::s_FocusedObject).get_value<int>();
-			tracked_value = value;
-			if (ImGui::DragInt(element.get_name().c_str(), &value) )
+			current_value = value;
+			if (ImGui::DragInt(element.get_name().c_str(), &value))
 			{
 				element.set_value(ObjectGroup::s_FocusedObject, value);
 			}
@@ -68,7 +71,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 		else if (id == m_tracked_ids[FLOAT])
 		{
 			float value = element.get_value(ObjectGroup::s_FocusedObject).get_value<float>();
-			tracked_value = value;
+			current_value = value;
 			if (ImGui::DragFloat(element.get_name().c_str(), &value))
 			{
 				element.set_value(ObjectGroup::s_FocusedObject, value);
@@ -77,8 +80,15 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 		{
-			ElementData* data = ActionStack::AllocateInBuffer(ElementData{ ObjectGroup::s_FocusedObject, element, tracked_value });
+			//undo stack
+			ElementData* data = ActionStack::AllocateInBuffer(ElementData{ ObjectGroup::s_FocusedObject, element, current_value });
 			ActionStack::AddNewAction(SetElementData, data);
+		}
+		if(ImGui::IsItemFocused() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		{
+			//redo stack
+			ElementData* data = ActionStack::AllocateInBuffer(ElementData{ ObjectGroup::s_FocusedObject, element, current_value });
+			ActionStack::AppendRedoData(data);
 		}
 		
 	}

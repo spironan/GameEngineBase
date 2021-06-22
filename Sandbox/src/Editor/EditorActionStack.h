@@ -1,56 +1,74 @@
 #pragma once
 #include <deque>
 #include <functional>
+#include <iterator>//std::distance
 
 #include "Engine/Memory/BufferAllocator.h"
 
 class ActionStack
 {
 public:
-	ActionStack() { s_dequeIter = s_actionDeque.begin(); s_dequeDataIter = s_actionDequeData.begin(); }
+	ActionStack() { s_actionSwapIter = s_actionDeque.begin(); }
 
 	static void UpdateStack();
-
 
 	/**
 	* this is a helper function to storing the previous state of the item before editing
 	*/
 	static void AddNewAction(std::function<void(void*)> fnc, void* data);
-
+	static void AddNewAction(std::function<void(void*)> fnc, void* data, void* redoData);
+	static void AppendRedoData(void* data);
 	template<typename T>
 	static T* AllocateInBuffer(const T&);
+
+private:
+	static void UndoStep();
+	static void RedoStep();
 public:
 private:
+	struct ActionCommand
+	{
+		std::function<void(void*)> fnc;
+		void* data;
+		void* redoData;
+	};
 	//action deque
-	static int s_currentBuffer;
-	static std::deque<void*>::iterator s_dequeDataIter;
-	static std::deque<std::function<void(void*)>>::iterator s_dequeIter;
-	static engine::BufferAllocator s_actionBufferAllocator[2];
-	static std::deque <void*> s_actionDequeData;
-	static std::deque <std::function<void(void*)>> s_actionDeque;
+	static size_t s_currentBuffer;
+	static size_t s_undoCount;
+
+
+
+	static size_t s_maxHistoryStored;
+
+	static std::deque<ActionCommand>::iterator s_actionSwapIter;
+
+
+	static std::deque <ActionCommand> s_actionDeque;
 };
 
 template<typename T>
 T* ActionStack::AllocateInBuffer(const T& item)
 {
-	T* ptr;
-	if ( (s_actionBufferAllocator[s_currentBuffer].GetRemainingSize() - sizeof(T)) <= 0)
+	//allocating after undoing will clear whatever is infront
+	while (s_undoCount)
 	{
-		s_currentBuffer != s_currentBuffer;//swap buffer between 0 and 1
-		s_actionBufferAllocator[s_currentBuffer].Clear();//clear the other buffer before using
-
-		//clear data
-
-		s_actionDequeData.erase(s_actionDequeData.begin(), s_dequeDataIter);//clear the dequedata
-		s_actionDeque.erase(s_actionDeque.begin(), s_dequeIter);//clear the deque
-		
-		s_dequeDataIter = s_actionDequeData.begin() + (s_actionDequeData.size() - 1);
-		s_dequeIter = s_actionDeque.begin() + (s_actionDeque.size() - 1);
-		//
-		ptr = s_actionBufferAllocator[s_currentBuffer].New<T>(item);
+		ActionCommand& ac = s_actionDeque.back();
+		delete ac.data;
+		delete ac.redoData;
+		s_actionDeque.pop_back();
+		--s_undoCount;
 	}
-	else
-		ptr = s_actionBufferAllocator[s_currentBuffer].New<T>(item);
-
+	//resize when too big
+	if (s_actionDeque.size() > s_maxHistoryStored)
+	{
+		for (size_t i = s_maxHistoryStored / 2; i > 0; --i)
+		{
+			ActionCommand& ac = s_actionDeque.front();
+			delete ac.data;
+			delete ac.redoData;
+			s_actionDeque.pop_front();
+		}
+	}
+	T* ptr = new T(item);
 	return ptr;
 }
