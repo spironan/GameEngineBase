@@ -38,13 +38,7 @@ private:
 	//action deque
 	static size_t s_currentBuffer;
 	static size_t s_undoCount;
-
-
-
 	static size_t s_maxHistoryStored;
-
-	static std::deque<ActionCommand>::iterator s_actionSwapIter;
-
 
 	static std::deque <ActionCommand> s_actionDeque;
 };

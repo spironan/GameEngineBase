@@ -12,13 +12,10 @@
 /*containers*/
 std::deque <ActionStack::ActionCommand>				ActionStack::s_actionDeque;
 
-
 /*buffer vars*/
 size_t ActionStack::s_currentBuffer = 0;
 size_t ActionStack::s_undoCount = 0;
 size_t ActionStack::s_maxHistoryStored = 200;
-/*iters*/
-std::deque<ActionStack::ActionCommand>::iterator ActionStack::s_actionSwapIter;
 
 
 ActionStack::~ActionStack()
