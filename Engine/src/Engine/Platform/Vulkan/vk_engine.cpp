@@ -24,7 +24,11 @@
 
 #define SECOND_IN_NANOSECONDS 1000000000
 
+#ifdef _DEBUG
 constexpr bool bUseValidationLayers = true;
+#else
+constexpr bool bUseValidationLayers = false;
+#endif
 
 namespace
 {
@@ -329,15 +333,6 @@ void VulkanEngine::init_scene()
 
 void VulkanEngine::init_swapchain(VkSwapchainKHR oldSwapchain)
 {
-	get_window_extent();
-	while (_windowExtent.width == 0 || _windowExtent.height == 0)
-	{
-		get_window_extent();
-		SDL_WaitEvent(NULL);
-	}
-
-	//wait until nothing is using it
-	vkDeviceWaitIdle(_device);
 
 	vkb::SwapchainBuilder swapchainBuilder{ _chosenGPU, _device, _surface };
 
@@ -357,15 +352,15 @@ void VulkanEngine::init_swapchain(VkSwapchainKHR oldSwapchain)
 		.build()
 		.value();
 
-	if (oldSwapchain)
+	if (_isInitialized)
 	{
-		vkDestroySwapchainKHR(_device, oldSwapchain, nullptr);
 		vkDestroyImageView(_device, _depthImageView, nullptr);
 		vmaDestroyImage(_allocator, _depthImage._image, _depthImage._allocation);
 		for (size_t i = 0; i < _swapchainImageViews.size(); i++)
 		{
 		vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
 		}
+		vkDestroySwapchainKHR(_device, oldSwapchain, nullptr);
 	};
 
 	//store swapchain and its related images
@@ -655,7 +650,7 @@ void VulkanEngine::init_descriptors()
 
 	VkDescriptorPoolCreateInfo pool_info{};
 	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	pool_info.flags = 0;
+	pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT; // Allows for individually freeing from pools
 	pool_info.maxSets = 10;
 	pool_info.poolSizeCount = static_cast<uint32_t>(sizes.size());
 	pool_info.pPoolSizes = sizes.data();
@@ -809,6 +804,8 @@ void VulkanEngine::init_pipelines()
 		//destroy the layout that they are using
 		vkDestroyPipelineLayout(_device, get_material("defaultmesh")->pipelineLayout, nullptr);
 		vkDestroyPipelineLayout(_device, get_material("texturedmesh")->pipelineLayout, nullptr);
+
+		vkFreeDescriptorSets(_device, _descriptorPool, 1, &get_material("texturedmesh")->textureSet);
 	}
 
 	// compile colored triangle modules
@@ -1282,19 +1279,19 @@ void VulkanEngine::RenderFrame()
 {
 	// wait until GPU has finished rendering last frame, timeout of 1 second
 	VK_CHECK(vkWaitForFences(_device, 1, &get_current_frame()._renderFence, true, SECOND_IN_NANOSECONDS));
+	
+	// Request image from swapchain, 1 second timeout;
+	VkResult res = vkAcquireNextImageKHR(_device, _swapchain, SECOND_IN_NANOSECONDS, get_current_frame()._presentSemaphore, nullptr, &_currentImageIndex);
+	if (res == VK_ERROR_OUT_OF_DATE_KHR )
+	{
+		// error we cannot render until we fix the swapchain!
+		_recreateSwapchain = true;
+		return;		
+	}
 	VK_CHECK(vkResetFences(_device, 1, &get_current_frame()._renderFence));
 
 	// now that we are sure that the commands finished executing, we can safely reset the command buffer to begin recording again.
 	VK_CHECK(vkResetCommandBuffer(get_current_frame()._mainCommandBuffer, 0));
-
-	// Request image from swapchain, 1 second timeout;
-	uint32_t swapchainImageIndex;
-	VkResult res = vkAcquireNextImageKHR(_device, _swapchain, SECOND_IN_NANOSECONDS, get_current_frame()._presentSemaphore, nullptr, &swapchainImageIndex);
-	if (res == VK_SUBOPTIMAL_KHR || res == VK_ERROR_OUT_OF_DATE_KHR || _windowResized == true)
-	{
-		_recreateSwapchain = true;
-		
-	}
 	
 	VkCommandBuffer cmd = get_current_frame()._mainCommandBuffer;
 
@@ -1314,7 +1311,7 @@ void VulkanEngine::RenderFrame()
 
 	// start the main render pass
 	// we will use the clear color from above, and frame buffer of the index the swapchain gave us
-	VkRenderPassBeginInfo rpInfo = vkinit::renderpass_begin_info(_renderPass,_windowExtent,_framebuffers[swapchainImageIndex]);	
+	VkRenderPassBeginInfo rpInfo = vkinit::renderpass_begin_info(_renderPass,_windowExtent,_framebuffers[_currentImageIndex]);
 	
 	rpInfo.clearValueCount = 2;
 	VkClearValue clearValues[]{ clearValue, depthClear };
@@ -1354,6 +1351,10 @@ void VulkanEngine::RenderFrame()
 	// _renderFence will now block until graphics command finishes execution
 	VK_CHECK(vkQueueSubmit(_graphicsQueue, 1, &submit, get_current_frame()._renderFence));
 
+}
+
+void VulkanEngine::PresentFrame()
+{
 	// this will put the image we just rendered into the visible window
 	// we want to wait on the _renderSemaphore for that.
 	// as it's necessary that drawing commands have finished before the imageis displayed to the user
@@ -1365,18 +1366,15 @@ void VulkanEngine::RenderFrame()
 	presentInfo.pWaitSemaphores = &get_current_frame()._renderSemaphore;
 	presentInfo.waitSemaphoreCount = 1;
 
-	presentInfo.pImageIndices = &swapchainImageIndex;
-	res = vkQueuePresentKHR(_graphicsQueue, &presentInfo);
+	presentInfo.pImageIndices = &_currentImageIndex;
+	VkResult res = vkQueuePresentKHR(_graphicsQueue, &presentInfo);
 	if (res == VK_SUBOPTIMAL_KHR || res == VK_ERROR_OUT_OF_DATE_KHR || _windowResized == true)
 	{
 		_recreateSwapchain = true;
-		return;
 	}
 
 	// increase number of frames drawn
 	++_frameNumber;
-
-
 }
 
 void VulkanEngine::run()
@@ -1426,6 +1424,34 @@ void VulkanEngine::run()
 		}
 
 	}
+}
+
+void VulkanEngine::RecreateSwapchain()
+{
+	get_window_extent();
+	// this checks if window is minimized
+	while ((SDL_GetWindowFlags(_window)&SDL_WINDOW_MINIMIZED) == SDL_WINDOW_MINIMIZED)
+	{
+		get_window_extent();
+		SDL_WaitEvent(NULL);
+	}
+
+	//wait until nothing is using it
+	vkDeviceWaitIdle(_device);
+
+	_windowResized = false;
+	_recreateSwapchain = false;
+
+	init_swapchain(_swapchain);
+	init_default_renderpass();
+	init_framebuffers();
+	init_pipelines();
+
+	// This is actually horrible. Pending material system to save my life
+	// TODO: implement a material system to handle pipeline changing without having to re-bind objects
+	_renderables.clear();
+	init_scene();
+
 }
 
 VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)

@@ -67,7 +67,7 @@ bool Mesh::load_from_obj(const char *filename)
     std::string err;
 
     //load the OBJ file
-    tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename, "C:\\Users\\J.Kong\\Desktop\\vkGuide\\vulkan-guide\\assets");
+    tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filename);
     //make sure to output the warnings to the console, in case there are issues with the file
     if (!warn.empty())
     {
