@@ -176,11 +176,12 @@ void Editor::ShowAllWidgets()
 	{
 		m_projectfolder_view.Show();
 	}
-	ActionStack::UpdateStack();
-	m_warning_view.Show();
 
+	ActionStack::UpdateStack();
 	FileGroup::ProjectViewPopUp();
+
 	m_logging_view.Show();
+	m_warning_view.Show();
 	HotKeysUpdate();
 }
 

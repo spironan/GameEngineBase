@@ -6,12 +6,12 @@
 #include <imgui.h>
 #include <rttr/type>
 
-#include <iostream>
+#include <string>
 enum : int
 {
 	INT,
 	FLOAT,
-	CHAR,
+	STRING,
 	BOOL
 };
 
@@ -19,7 +19,7 @@ InspectorView::InspectorView()
 {
 	m_tracked_ids.emplace_back(rttr::type::get<int>().get_id());
 	m_tracked_ids.emplace_back(rttr::type::get<float>().get_id());
-	m_tracked_ids.emplace_back(rttr::type::get<char>().get_id());
+	m_tracked_ids.emplace_back(rttr::type::get<std::string>().get_id());
 	m_tracked_ids.emplace_back(rttr::type::get<bool>().get_id());
 }
 void InspectorView::Show()
@@ -47,12 +47,27 @@ void InspectorView::SetElementData(void* data)
 	ObjectGroup::s_FocusedObject = eD->item;
 	eD->prop.set_value(eD->item, eD->data);
 }
+/**
+ * \brief 
+ *		function for cleaning the data assigned
+ *		some data structures might be too complex
+ *		that just doing a delete on a void* will not work
+ * 
+ * \param data
+ *		the function is to clean up the data
+ */
+void InspectorView::DeleteElementData(void* data)
+{
+	ElementData* eD = static_cast<ElementData*>(data);
+	eD->data.clear();//there might be occasions where the variant only stores a pointer to it
+	delete eD;
+}
 
 void InspectorView::ReadComponents(const rttr::type& _type)
 {
 	std::vector<rttr::property> types = _type.get_properties();
 
-	ImGui::BeginChild(_type.get_name().c_str(), { 0,types.size() * 21.0f }, true);
+	ImGui::BeginChild(_type.get_name().c_str(), { 0,types.size() * 30.0f }, true);
 	rttr::variant current_value;
 
 	for (const rttr::property& element : types)
@@ -66,6 +81,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 			if (ImGui::DragInt(element.get_name().c_str(), &value))
 			{
 				element.set_value(ObjectGroup::s_FocusedObject, value);
+
 			}
 		}
 		else if (id == m_tracked_ids[FLOAT])
@@ -77,18 +93,39 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 				element.set_value(ObjectGroup::s_FocusedObject, value);
 			}
 		}
-
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+		else if (id == m_tracked_ids[STRING])
 		{
-			//undo stack
-			ElementData* data = ActionStack::AllocateInBuffer(ElementData{ ObjectGroup::s_FocusedObject, element, current_value });
-			ActionStack::AddNewAction(SetElementData, data);
+			std::string value = element.get_value(ObjectGroup::s_FocusedObject).get_value<std::string>();
+			current_value = value;
+			
+			if (ImGui::InputText(element.get_name().c_str(),value.data(),100,ImGuiInputTextFlags_EnterReturnsTrue| ImGuiInputTextFlags_NoUndoRedo))
+			{
+				element.set_value(ObjectGroup::s_FocusedObject, value);
+				current_value = value;
+			}
 		}
-		if(ImGui::IsItemFocused() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		//undo and redo instructions
 		{
-			//redo stack
-			ElementData* data = ActionStack::AllocateInBuffer(ElementData{ ObjectGroup::s_FocusedObject, element, current_value });
-			ActionStack::AppendRedoData(data);
+			static ElementData undo = ElementData(nullptr, element, 0);
+			static ElementData redo = ElementData(nullptr, element, 0);
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+			{
+				//undo stack
+				undo.item = ObjectGroup::s_FocusedObject;
+				undo.prop = element;
+				undo.data.clear();
+				undo.data = current_value;
+			}
+			if(ImGui::IsItemDeactivatedAfterEdit())
+			{
+				//redo stack
+				std::cout << "deactivated after edit\n";
+				redo.item = ObjectGroup::s_FocusedObject;
+				redo.prop = element;
+				redo.data.clear();
+				redo.data = current_value;
+				ActionStack::AddNewAction(SetElementData,undo,redo,DeleteElementData);
+			}
 		}
 		
 	}

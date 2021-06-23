@@ -8,18 +8,20 @@
 class ActionStack
 {
 public:
-	ActionStack() { s_actionSwapIter = s_actionDeque.begin(); }
+	ActionStack() {}
+	~ActionStack();
 
 	static void UpdateStack();
 
-	/**
-	* this is a helper function to storing the previous state of the item before editing
-	*/
-	static void AddNewAction(std::function<void(void*)> fnc, void* data);
-	static void AddNewAction(std::function<void(void*)> fnc, void* data, void* redoData);
-	static void AppendRedoData(void* data);
 	template<typename T>
 	static T* AllocateInBuffer(const T&);
+
+
+	static void DefaultCleanUpFunction(void* data) { delete data; }
+
+	template <typename T>
+	static void AddNewAction(std::function<void(void*)> fnc, T& data, T& redoData, std::function<void(void*)> cleanup = DefaultCleanUpFunction);
+
 
 private:
 	static void UndoStep();
@@ -29,6 +31,7 @@ private:
 	struct ActionCommand
 	{
 		std::function<void(void*)> fnc;
+		std::function<void(void*)> cleanup;
 		void* data;
 		void* redoData;
 	};
@@ -50,11 +53,12 @@ template<typename T>
 T* ActionStack::AllocateInBuffer(const T& item)
 {
 	//allocating after undoing will clear whatever is infront
+	std::cout << sizeof(T) << std::endl;
 	while (s_undoCount)
 	{
 		ActionCommand& ac = s_actionDeque.back();
-		delete ac.data;
-		delete ac.redoData;
+		ac.cleanup(ac.data);
+		ac.cleanup(ac.redoData);
 		s_actionDeque.pop_back();
 		--s_undoCount;
 	}
@@ -64,11 +68,33 @@ T* ActionStack::AllocateInBuffer(const T& item)
 		for (size_t i = s_maxHistoryStored / 2; i > 0; --i)
 		{
 			ActionCommand& ac = s_actionDeque.front();
-			delete ac.data;
-			delete ac.redoData;
+			ac.cleanup(ac.data);
+			ac.cleanup(ac.redoData);
 			s_actionDeque.pop_front();
 		}
 	}
 	T* ptr = new T(item);
 	return ptr;
+}
+/**
+ * \brief
+ *		is a helper function to storing the previous state of the item before editing
+ *		deleting of data is handled by editor no need to delete in fnc
+ * \param fnc
+ *		this is the function pointer of the function
+ *		please do not bind the function before this !!!!!!
+ * \param data
+ *		any kind of data that is use by the function(do not allocate on heap)
+ *		the function allocates it for u
+ * \param redoData
+ *		any kind of data that is use by the function(does the opp of data)
+ *		(do not allocate on heap)
+ *		the function allocates it for u
+ */
+template <typename T>
+void ActionStack::AddNewAction(std::function<void(void*)> fnc, T& undoData, T& redoData, std::function<void(void*)> cleanup)
+{
+	void* undo = AllocateInBuffer(undoData);
+	void* redo = AllocateInBuffer(redoData);
+	ActionStack::s_actionDeque.emplace_back(ActionCommand{ fnc,cleanup, undo,redo });
 }

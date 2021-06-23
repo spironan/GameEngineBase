@@ -13,6 +13,9 @@ public:
 	InspectorView();
 	void Show();
 	static void SetElementData(void*);
+	static void DeleteElementData(void*);
+private:
+
 	struct ElementData
 	{
 	public:
@@ -21,7 +24,6 @@ public:
 		rttr::property prop;
 		rttr::variant data;
 	};
-private:
 	void ReadComponents(const rttr::type&);
 	std::vector <rttr::type::type_id> m_tracked_ids;
 };
