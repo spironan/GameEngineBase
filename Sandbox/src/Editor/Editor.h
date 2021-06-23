@@ -18,14 +18,15 @@ Technology is prohibited.
 #include <functional>//std::function
 #include <stack>//std::stack
 #include <imgui.h>
-
+//widgets
 #include "HeirarchyView.h"
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
 #include "ProjectRootView.h"
 #include "LoggingView.h"
 #include "WarningView.h"
-#include "EditorActionStack.h"
+
+#include "ActionStack/EditorActionStack.h"
 #include "Engine/Memory/BufferAllocator.h"
 
 enum class GUIACTIVE_FLAGS:int

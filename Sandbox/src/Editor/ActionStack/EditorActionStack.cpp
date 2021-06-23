@@ -3,14 +3,14 @@
 #include "Engine/Core/KeyCode.h"
 //sandbox
 #include "EditorActionStack.h"
-#include "WarningView.h"
+#include "../WarningView.h"
 //global
 #include <imgui.h>
 #include <iterator>//std::distance
 //static vars
 
 /*containers*/
-std::deque <ActionStack::ActionCommand>				ActionStack::s_actionDeque;
+std::deque <ActionBehaviour*>				ActionStack::s_actionDeque;
 
 /*buffer vars*/
 size_t ActionStack::s_currentBuffer = 0;
@@ -20,10 +20,9 @@ size_t ActionStack::s_maxHistoryStored = 200;
 
 ActionStack::~ActionStack()
 {
-	for (ActionCommand& ac : s_actionDeque)
+	for (ActionBehaviour* ac : s_actionDeque)
 	{
-		ac.cleanup(ac.data);
-		ac.cleanup(ac.redoData);
+		delete ac;
 	}
 }
 void ActionStack::UpdateStack()
@@ -46,8 +45,8 @@ void ActionStack::UndoStep()
 		return;
 	}
 	++s_undoCount;
-	ActionCommand& ac = *(s_actionDeque.begin() + (s_actionDeque.size() - s_undoCount));
-	ac.fnc(ac.data);
+	ActionBehaviour* ab = *(s_actionDeque.begin() + (s_actionDeque.size() - s_undoCount));
+	ab->undo();
 }
 void ActionStack::RedoStep()
 {
@@ -56,10 +55,32 @@ void ActionStack::RedoStep()
 		WarningView::DisplayWarning("You have reach the most recent action");
 		return;
 	}
-	ActionCommand& ac = *(s_actionDeque.begin() + (s_actionDeque.size() - s_undoCount));
-	ac.fnc(ac.redoData);
+	ActionBehaviour* ab = *(s_actionDeque.begin() + (s_actionDeque.size() - s_undoCount));
+	ab->redo();
 	--s_undoCount;
 }
 
+void ActionStack::AllocateInBuffer(ActionBehaviour* item)
+{
+	//allocating after undoing will clear whatever is infront
+	while (s_undoCount)
+	{
+		ActionBehaviour* ab = s_actionDeque.back();
+		delete ab;
+		s_actionDeque.pop_back();
+		--s_undoCount;
+	}
+	//resize when too big
+	if (s_actionDeque.size() > s_maxHistoryStored)
+	{
+		for (size_t i = s_maxHistoryStored / 2; i > 0; --i)
+		{
+			ActionBehaviour* ab = s_actionDeque.front();
+			delete ab;
+			s_actionDeque.pop_front();
+		}
+	}
+	s_actionDeque.emplace_back(item);
+}
 
 

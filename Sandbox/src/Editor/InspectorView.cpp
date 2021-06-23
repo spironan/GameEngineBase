@@ -1,8 +1,8 @@
 #include "InspectorView.h"
 #include "EditorObjectGroup.h"
 #include "Editor.h"
-#include "EditorActionStack.h"
-
+#include "ActionStack/EditorActionStack.h"
+#include "ActionStack/InspectorActionBehaviour.h"
 #include <imgui.h>
 #include <rttr/type>
 
@@ -34,33 +34,6 @@ void InspectorView::Show()
 		ReadComponents(ObjectGroup::s_FocusedObject->get_type());
 	}
 	ImGui::End();
-}
-/**
- * \brief function used for changing the data (ElementData)
- * 
- * \param data
- *			ElementData only
- */
-void InspectorView::SetElementData(void* data)
-{
-	ElementData* eD = static_cast<ElementData*>(data);
-	ObjectGroup::s_FocusedObject = eD->item;
-	eD->prop.set_value(eD->item, eD->data);
-}
-/**
- * \brief 
- *		function for cleaning the data assigned
- *		some data structures might be too complex
- *		that just doing a delete on a void* will not work
- * 
- * \param data
- *		the function is to clean up the data
- */
-void InspectorView::DeleteElementData(void* data)
-{
-	ElementData* eD = static_cast<ElementData*>(data);
-	eD->data.clear();//there might be occasions where the variant only stores a pointer to it
-	delete eD;
 }
 
 void InspectorView::ReadComponents(const rttr::type& _type)
@@ -106,25 +79,19 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 		}
 		//undo and redo instructions
 		{
-			static ElementData undo = ElementData(nullptr, element, 0);
-			static ElementData redo = ElementData(nullptr, element, 0);
+			static rttr::variant undo;
+			static rttr::variant redo;
 			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			{
-				//undo stack
-				undo.item = ObjectGroup::s_FocusedObject;
-				undo.prop = element;
-				undo.data.clear();
-				undo.data = current_value;
+				undo.clear();
+				undo = current_value;
 			}
 			if(ImGui::IsItemDeactivatedAfterEdit())
 			{
 				//redo stack
-				std::cout << "deactivated after edit\n";
-				redo.item = ObjectGroup::s_FocusedObject;
-				redo.prop = element;
-				redo.data.clear();
-				redo.data = current_value;
-				ActionStack::AddNewAction(SetElementData,undo,redo,DeleteElementData);
+				redo.clear();
+				redo = current_value;
+				ActionStack::AllocateInBuffer(new InspectorActionBehaviour{ ObjectGroup::s_FocusedObject, element, undo, redo });
 			}
 		}
 		

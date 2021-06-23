@@ -25,7 +25,7 @@ Technology is prohibited.
 #include "Engine/Memory/MemoryManager.h"
 
 
-#include "EditorActionStack.h"
+
 /* static vars */
 
 testclass Editor::s_rootnode;//will be removed once ecs done
