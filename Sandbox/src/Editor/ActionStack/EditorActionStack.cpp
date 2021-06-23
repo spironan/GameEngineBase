@@ -28,13 +28,26 @@ ActionStack::~ActionStack()
 void ActionStack::UpdateStack()
 {
 	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
-	{
 		UndoStep();
-	}
 	if (ImGui::IsKeyPressed((int)engine::KeyCode::Y) && ImGui::GetIO().KeyCtrl)
-	{
 		RedoStep();
+	ImGui::Begin("Action Stack");
+	size_t undoned_idx = s_actionDeque.size() - s_undoCount;
+	for (size_t i = 0 ; i < s_actionDeque.size() ; ++i)
+	{
+		if (i >= undoned_idx)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 });
+			ImGui::TextWrapped(s_actionDeque[i]->m_description.c_str());
+			ImGui::PopStyleColor();
+		}
+		else
+			ImGui::TextWrapped(s_actionDeque[i]->m_description.c_str());
+		ImGui::Separator();
 	}
+	if(!s_undoCount)//if undo count is 0
+		ImGui::SetScrollY(ImGui::GetScrollMaxY());
+	ImGui::End();
 }
 
 void ActionStack::UndoStep()

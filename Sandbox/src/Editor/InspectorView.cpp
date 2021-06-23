@@ -91,7 +91,8 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 				//redo stack
 				redo.clear();
 				redo = current_value;
-				ActionStack::AllocateInBuffer(new InspectorActionBehaviour{ ObjectGroup::s_FocusedObject, element, undo, redo });
+				std::string temp = "Change value of element: " + element.get_name() + " of " + ObjectGroup::s_FocusedObject->name;
+				ActionStack::AllocateInBuffer(new InspectorActionBehaviour{temp, ObjectGroup::s_FocusedObject, element, undo, redo });
 			}
 		}
 		

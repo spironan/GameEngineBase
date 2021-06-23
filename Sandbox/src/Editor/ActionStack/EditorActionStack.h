@@ -11,7 +11,7 @@ public:
 	ActionStack() {}
 	~ActionStack();
 
-	static void UpdateStack();
+	void UpdateStack();
 
 	static void AllocateInBuffer(ActionBehaviour* item);
 
