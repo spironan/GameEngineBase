@@ -1,3 +1,14 @@
+/*****************************************************************//**
+ * \file   ProjectRootView.cpp
+ * \brief  Display the selected folders from project root view
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #include "ProjectRootView.h"
 #include "EditorFileGroup.h"
 #include "Editor.h"
@@ -10,6 +21,14 @@
 #include <objbase.h>
 #include <shellapi.h>
 
+/**
+ * \brief
+ *		display the project root view
+ *		project root view shows only folders(directories)
+ *	this function contains code for:
+ *		showing the root view window
+ *		triggering the popup when right clicking
+ */
 void ProjectRootView::Show()
 {
 	ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });

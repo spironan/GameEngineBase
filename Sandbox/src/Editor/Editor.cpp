@@ -1,6 +1,14 @@
-//#include "pch.h"
-#include "Editor.h"
-#include "EditorFileGroup.h"
+/*****************************************************************//**
+ * \file   Editor.cpp
+ * \brief  the implementation of all the 
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 
 #include <filesystem>
 
@@ -11,20 +19,29 @@
 #include <rapidjson/document.h>
 #include <rapidjson/reader.h>
 
-
+#include "Editor.h"
+#include "EditorFileGroup.h"
 #include "Engine/Core/Input.h"
+#include "Engine/Memory/MemoryManager.h"
+
+
 
 /* static vars */
+
 testclass Editor::s_rootnode;//will be removed once ecs done
 std::vector<testclass> Editor::s_testList;//will be removed once ecs done
 
 std::map<KEY_ACTIONS, unsigned int> Editor::s_hotkeymapping;//will be shifted
 
+
+
 //for copy and pasting
-std::pair<std::string, std::shared_ptr<void*>> Editor::s_copyPayload = {"",nullptr};
+std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
+
+engine::BufferAllocator Editor::s_payloadBufferAllocator(engine::MemoryManager::NewBufferAllocator(2048, 8));
 
 Editor::Editor(const std::string& root)
-{
+{	
 	s_testList.reserve(50);
 
 	s_hotkeymapping[KEY_ACTIONS::RENAME_ITEM] = 59;//f2
@@ -43,6 +60,7 @@ Editor::Editor(const std::string& root)
 
 Editor::~Editor()
 {
+	//need to delete memory block of s_bufferAllocator
 }
 
 void Editor::HotKeysUpdate()
@@ -69,9 +87,9 @@ void Editor::HotKeysUpdate()
 		SetGUIInactive(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE);
 	}
 }
-void Editor::UpdateUI()
-{
-}
+
+
+
 
 void Editor::SaveData()
 {
@@ -129,7 +147,11 @@ void Editor::LoadData(const char* dir)
 	}
 }
 
-void Editor::TestFunction()
+/**
+ * /brief
+ *		this is the main function to update the widgets
+ */
+void Editor::ShowAllWidgets()
 {
 	//main banner
 	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
@@ -145,7 +167,6 @@ void Editor::TestFunction()
 		m_heirarchy_view.Show();
 	}
 
-
 	if (m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE))
 	{
 		m_projectroot_view.Show();
@@ -155,7 +176,12 @@ void Editor::TestFunction()
 	{
 		m_projectfolder_view.Show();
 	}
+
+	ActionStack::UpdateStack();
 	FileGroup::ProjectViewPopUp();
+
 	m_logging_view.Show();
+	m_warning_view.Show();
 	HotKeysUpdate();
 }
+
