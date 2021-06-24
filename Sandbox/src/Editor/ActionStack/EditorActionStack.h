@@ -17,6 +17,7 @@ public:
 private:
 	static void UndoStep();
 	static void RedoStep();
+	static void ClearAll();
 public:
 private:
 	//action deque

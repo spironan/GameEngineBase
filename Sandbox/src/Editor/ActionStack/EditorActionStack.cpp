@@ -19,10 +19,7 @@ size_t ActionStack::s_maxHistoryStored = 200;
 
 ActionStack::~ActionStack()
 {
-	for (ActionBehaviour* ac : s_actionDeque)
-	{
-		delete ac;
-	}
+	ClearAll();
 }
 void ActionStack::UpdateStack()
 {
@@ -32,9 +29,11 @@ void ActionStack::UpdateStack()
 		RedoStep();
 	if (ImGui::Begin("Action Stack"))
 	{
+		ImGui::BeginChild("##ActionStackChild", { 0,ImGui::GetWindowHeight() * 0.8f }, true);
 		size_t undoned_idx = s_actionDeque.size() - s_undoCount;
-		for (size_t i = 0 ; i < s_actionDeque.size() ; ++i)
+		for (size_t i = 0; i < s_actionDeque.size(); ++i)
 		{
+			ImGui::Separator();
 			if (i >= undoned_idx)
 			{
 				ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 });
@@ -45,9 +44,16 @@ void ActionStack::UpdateStack()
 				ImGui::TextWrapped(s_actionDeque[i]->m_description.c_str());
 			ImGui::Separator();
 		}
-	
-		if(!s_undoCount && !ImGui::IsWindowHovered())//if undo count is 0
+
+		if (!s_undoCount && !ImGui::IsWindowHovered())//if undo count is 0
 			ImGui::SetScrollHereY();
+		ImGui::EndChild();
+
+		if (ImGui::Button("Undo Action")) UndoStep();
+		ImGui::SameLine();
+		if (ImGui::Button("Redo Action")) RedoStep();
+		ImGui::NewLine();
+		if (ImGui::Button("Clear History")) ClearAll();
 	}
 	ImGui::End();
 }
@@ -73,6 +79,16 @@ void ActionStack::RedoStep()
 	ActionBehaviour* ab = *(s_actionDeque.begin() + (s_actionDeque.size() - s_undoCount));
 	ab->redo();
 	--s_undoCount;
+}
+
+void ActionStack::ClearAll()
+{
+	for (ActionBehaviour* ac : s_actionDeque)
+	{
+		delete ac;
+	}
+	s_actionDeque.clear();
+	s_undoCount = 0;
 }
 
 void ActionStack::AllocateInBuffer(ActionBehaviour* item)
