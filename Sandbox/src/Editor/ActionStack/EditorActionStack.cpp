@@ -8,7 +8,6 @@
 #include <imgui.h>
 #include <iterator>//std::distance
 //static vars
-
 /*containers*/
 std::deque <ActionBehaviour*>				ActionStack::s_actionDeque;
 
