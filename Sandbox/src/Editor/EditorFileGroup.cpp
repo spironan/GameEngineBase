@@ -177,6 +177,13 @@ void FileGroup::RenamePopUp()
 			{
 				std::filesystem::rename(p, changeName);
 				FileGroup::s_nameBuffer[0] = '\0';//clear the buffer
+
+				//if the path is invalid change it to the new path
+				if (!std::filesystem::exists(FileGroup::s_selectedpath))
+					s_selectedpath = changeName;
+				if (!std::filesystem::exists(FileGroup::s_CurrentPath))
+					s_CurrentPath = changeName;
+				FileGroup::s_hoveredPath = changeName;
 				ImGui::CloseCurrentPopup();
 			}
 			else
