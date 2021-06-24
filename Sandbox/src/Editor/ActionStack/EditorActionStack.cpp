@@ -31,22 +31,25 @@ void ActionStack::UpdateStack()
 		UndoStep();
 	if (ImGui::IsKeyPressed((int)engine::KeyCode::Y) && ImGui::GetIO().KeyCtrl)
 		RedoStep();
-	ImGui::Begin("Action Stack");
-	size_t undoned_idx = s_actionDeque.size() - s_undoCount;
-	for (size_t i = 0 ; i < s_actionDeque.size() ; ++i)
+	if (ImGui::Begin("Action Stack"))
 	{
-		if (i >= undoned_idx)
+		size_t undoned_idx = s_actionDeque.size() - s_undoCount;
+		for (size_t i = 0 ; i < s_actionDeque.size() ; ++i)
 		{
-			ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 });
-			ImGui::TextWrapped(s_actionDeque[i]->m_description.c_str());
-			ImGui::PopStyleColor();
+			if (i >= undoned_idx)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 });
+				ImGui::TextWrapped(s_actionDeque[i]->m_description.c_str());
+				ImGui::PopStyleColor();
+			}
+			else
+				ImGui::TextWrapped(s_actionDeque[i]->m_description.c_str());
+			ImGui::Separator();
 		}
-		else
-			ImGui::TextWrapped(s_actionDeque[i]->m_description.c_str());
-		ImGui::Separator();
+	
+		if(!s_undoCount && !ImGui::IsWindowHovered())//if undo count is 0
+			ImGui::SetScrollHereY();
 	}
-	if(!s_undoCount)//if undo count is 0
-		ImGui::SetScrollY(ImGui::GetScrollMaxY());
 	ImGui::End();
 }
 
