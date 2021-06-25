@@ -7,8 +7,8 @@
 class InspectorActionBehaviour : public ActionBehaviour
 {
 public:
-	InspectorActionBehaviour(testclass* tc,const rttr::property& p, rttr::variant& _undo,rttr::variant& _redo) 
-		:ActionBehaviour{}, item(tc), prop(p), undoData(_undo),redoData(_redo) {}
+	InspectorActionBehaviour(const std::string& str,testclass* tc,const rttr::property& p, rttr::variant& _undo,rttr::variant& _redo) 
+		:ActionBehaviour{str}, item(tc), prop(p), undoData(_undo),redoData(_redo) {}
 	virtual ~InspectorActionBehaviour()override;
 	void undo()override;
 	void redo()override;

@@ -12,6 +12,7 @@ public:
     float f2;
     int uid;
     std::string name = "obj";
+	std::string somestring = "abc";
     testclass* parent = nullptr;
     std::vector<testclass*>childs;
 

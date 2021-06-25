@@ -3,7 +3,6 @@
 #include <functional>
 #include <iterator>//std::distance
 
-#include "Engine/Memory/BufferAllocator.h"
 #include "ActionBehaviour.h"
 class ActionStack
 {
@@ -11,13 +10,14 @@ public:
 	ActionStack() {}
 	~ActionStack();
 
-	static void UpdateStack();
+	void UpdateStack();
 
 	static void AllocateInBuffer(ActionBehaviour* item);
 
 private:
 	static void UndoStep();
 	static void RedoStep();
+	static void ClearAll();
 public:
 private:
 	//action deque
@@ -26,6 +26,7 @@ private:
 	static size_t s_maxHistoryStored;
 
 	static std::deque <ActionBehaviour*> s_actionDeque;
+
 };
 
 

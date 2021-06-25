@@ -177,7 +177,7 @@ void Editor::ShowAllWidgets()
 		m_projectfolder_view.Show();
 	}
 
-	ActionStack::UpdateStack();
+	m_action_stack.UpdateStack();
 	FileGroup::ProjectViewPopUp();
 
 	m_logging_view.Show();

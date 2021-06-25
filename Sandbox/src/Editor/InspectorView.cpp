@@ -68,11 +68,13 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 		}
 		else if (id == m_tracked_ids[STRING])
 		{
+			static char buf[100];
 			std::string value = element.get_value(ObjectGroup::s_FocusedObject).get_value<std::string>();
 			current_value = value;
-			
-			if (ImGui::InputText(element.get_name().c_str(),value.data(),100,ImGuiInputTextFlags_EnterReturnsTrue| ImGuiInputTextFlags_NoUndoRedo))
+			strcpy(buf, value.data());
+			if (ImGui::InputText(element.get_name().c_str(),buf,100,ImGuiInputTextFlags_EnterReturnsTrue| ImGuiInputTextFlags_NoUndoRedo))
 			{
+				value = buf;
 				element.set_value(ObjectGroup::s_FocusedObject, value);
 				current_value = value;
 			}
@@ -91,7 +93,8 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 				//redo stack
 				redo.clear();
 				redo = current_value;
-				ActionStack::AllocateInBuffer(new InspectorActionBehaviour{ ObjectGroup::s_FocusedObject, element, undo, redo });
+				std::string temp = "Change value of element: " + element.get_name() + " of " + ObjectGroup::s_FocusedObject->name;
+				ActionStack::AllocateInBuffer(new InspectorActionBehaviour{temp, ObjectGroup::s_FocusedObject, element, undo, redo });
 			}
 		}
 		
