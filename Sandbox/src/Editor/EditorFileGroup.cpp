@@ -1,3 +1,15 @@
+/*****************************************************************//**
+ * \file   EditorFileGroup.cpp
+ * \brief  Contains the popup that is shared between both root view
+ *		   and folderview
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #include "EditorFileGroup.h"
 #include "Editor.h"
 
@@ -21,7 +33,12 @@ bool FileGroup::s_delete_popup = false;//flag for deleting modal popup
 bool FileGroup::s_rename_item = false;
 
 
-
+/**
+ * \brief this code will be activated when right clicking inside the 
+ *			folder view or rootview windows
+ * \note  This function should not be called by anyone other than
+ *		  the main display function
+ */
 void FileGroup::ProjectViewPopUp()
 {
 
@@ -57,39 +74,47 @@ void FileGroup::ProjectViewPopUpOptions()
 	{
 		FileGroup::s_delete_popup = true;
 	}
-#ifdef ENGINE_PLATFORM_WINDOWS
+#ifdef SANDBOX_PLATFORM_WINDOWS
 	ImGui::Separator();
 	if (ImGui::MenuItem("Open File Location"))
 	{
 		std::filesystem::path p{ s_selectedpath };
 		ShellExecuteA(NULL, "explore", p.parent_path().generic_u8string().c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}
-#endif // ENGINE_PLATFORM_WINDOWS
+#endif // SANDBOX_PLATFORM_WINDOWS
 	ImGui::Separator();
 	if (ImGui::MenuItem("Copy"))
 	{
+		Editor::s_payloadBufferAllocator.Clear();//clear before use
 		Editor::s_copyPayload.first = "FILE";
-		Editor::s_copyPayload.second.reset();
-		Editor::s_copyPayload.second = std::make_shared<void*>(&FileGroup::s_selectedpath);
+		//+1 due to '\0'
+		Editor::s_copyPayload.second = Editor::s_payloadBufferAllocator.NewArr<char>(FileGroup::s_selectedpath.size() + 1,engine::BufferAllocator::ALIGNMENT);
+		sprintf_s(static_cast<char*>(Editor::s_copyPayload.second), FileGroup::s_selectedpath.size()+1,FileGroup::s_selectedpath.data());
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
 		if (Editor::s_copyPayload.first == "FILE")
 		{
 			//get the payload
-			std::filesystem::path p(*(static_cast<std::string*>(*Editor::s_copyPayload.second.get())));
-			Editor::s_copyPayload.second.reset();
+			std::filesystem::path p((static_cast<char*>(Editor::s_copyPayload.second)));
 
 			std::filesystem::path selected_path{ FileGroup::s_selectedpath };
 			std::string targetlocation_name;
-
+			
 			//changing the file name
-			if (std::filesystem::is_directory(selected_path))
-				targetlocation_name = FileGroup::s_selectedpath + "/copy" + p.filename().u8string();
-			else
-				targetlocation_name = selected_path.parent_path().u8string() + "/copy" + p.filename().u8string();
 
-			if (std::filesystem::is_directory(p))
+			targetlocation_name = selected_path.parent_path().u8string() + "/" + p.stem().u8string() + " - copy";
+
+			//iteratively look for a new file name(might get expensive when there is more than a certain amount of files)
+			std::string newfile_name = targetlocation_name + p.extension().u8string();
+			int counter = 0;
+			while (std::filesystem::exists(newfile_name))
+			{
+				++counter;
+				newfile_name = targetlocation_name +" (" + std::to_string(counter) +") " + p.extension().u8string();
+			}
+
+			if (std::filesystem::is_directory(p) && !std::filesystem::is_empty(p))
 			{
 				//copying the whole directory still requires work
 				//std::filesystem::copy(p, targetlocation_name,
@@ -98,7 +123,7 @@ void FileGroup::ProjectViewPopUpOptions()
 			}
 			else
 			{
-				std::filesystem::copy(p, targetlocation_name);
+				std::filesystem::copy(p, newfile_name);
 			}
 		}
 	}
@@ -139,16 +164,42 @@ void FileGroup::DeletePopUp()
 void FileGroup::RenamePopUp()
 {
 	ImGui::SetNextWindowPos(FileGroup::s_selectedItemPosition);
+	
 	if (ImGui::BeginPopupModal("Rename", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration))
 	{
 		if (ImGui::InputText("##RenameObject", FileGroup::s_nameBuffer, sizeof(FileGroup::s_nameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			//rename item code here
-			ImGui::CloseCurrentPopup();
+			std::filesystem::path p{ FileGroup::s_hoveredPath };
+			std::string changeName = (p.parent_path().u8string() + "/" + FileGroup::s_nameBuffer + p.extension().u8string());
+
+			if (std::filesystem::exists(changeName) == false)//if is unique name then rename file else dont accept
+			{
+				std::filesystem::rename(p, changeName);
+				FileGroup::s_nameBuffer[0] = '\0';//clear the buffer
+
+				//if the path is invalid change it to the new path
+				if (!std::filesystem::exists(FileGroup::s_selectedpath))
+					s_selectedpath = changeName;
+				if (!std::filesystem::exists(FileGroup::s_CurrentPath))
+					s_CurrentPath = changeName;
+				FileGroup::s_hoveredPath = changeName;
+				ImGui::CloseCurrentPopup();
+			}
+			else
+			{
+
+#ifdef SANDBOX_PLATFORM_WINDOWS
+				MessageBeep(0x00000030L);//Windows Exclamation sound.
+#endif // SANDBOX_PLATFORM_WINDOWS
+			}
 		}
 		ImGui::SetKeyboardFocusHere();
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+		{
+			FileGroup::s_nameBuffer[0] = '\0';//clear the buffer
 			ImGui::CloseCurrentPopup();
+		}
 		ImGui::EndPopup();
 	}
 }

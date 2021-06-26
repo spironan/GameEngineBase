@@ -1,3 +1,10 @@
+/*****************************************************************//**
+ * \file   ProjectRootView.h
+ * \brief  Display the path of all the folders
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+ *********************************************************************/
 #pragma once
 #include <string>
 #include <vector>
@@ -8,9 +15,6 @@ public:
 	void Show();
 private:
 	void ProjectView(const std::string& path, std::string& selected_dir);
-	void ProjectViewPopUp();
-	void ProjectDeletePopUp_Modal();
-	void RenamePopUp();
 private:
 	
 

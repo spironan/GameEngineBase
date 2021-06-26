@@ -1,6 +1,19 @@
-#include "LoggingView.h"
-#include <imgui.h>
+/*****************************************************************//**
+ * \file   LoggingView.cpp
+ * \brief  Logs the console outputs into a window
+ *		   Logs the console output from scripts
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 
+#include "LoggingView.h"
+
+#include <imgui.h>
 #include <sstream>
 #include <iostream>
 
@@ -12,14 +25,46 @@ std::deque<std::string> LoggingView::s_messages;
 
 void LoggingView::Show()
 {
-	ImGui::Begin("Logger");
-	ImGui::Text(::engine::Log::GetOstreamOutput().str().c_str());
-	/*for (std::string& s : s_messages)
-		ImGui::Text(s.c_str());*/
+	
+	ImGui::Begin("Logger",0,ImGuiWindowFlags_MenuBar);
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::MenuItem("Clear"))
+		{
+			s_messages.resize(0);
+		}
+		if (ImGui::MenuItem("Pause"))
+		{
+			m_paused = !m_paused;
+			::engine::Log::GetOstreamOutput().str("");//clear the log
+		}
+		ImGui::EndMenuBar();
+	}
+
+	//draw ui here
+	for(int i = static_cast<int>(s_messages.size()) - 1 ; i > 0; --i)
+		ImGui::Text(s_messages[i].c_str());
+	//if paused do not process string
+	if (m_paused)
+	{
+		ImGui::End();
+		return;
+	}
+	//process string here
+	std::ostringstream& oss = ::engine::Log::GetOstreamOutput();
+	if (oss.tellp() != 0)
+	{
+		if (s_messages.size() > 250)
+		{
+			s_messages.resize(200);
+		}
+		ImGui::SetScrollY(ImGui::GetScrollMaxY());
+		s_messages.emplace_front(oss.str());
+		oss.str("");//empty string
+		oss.clear();//clear error flags
+	}
+	
 	ImGui::End();
-	/* uncomment for a temp solution which clears the ostream every frame.
-	::engine::Log::oss.str("")
-	::engine::Log::oss.clear(); */
 }
 
 //this is now unused

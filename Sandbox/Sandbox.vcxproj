@@ -303,6 +303,9 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Editor\ActionStack\ActionBehaviour.h" />
+    <ClInclude Include="src\Editor\ActionStack\EditorActionStack.h" />
+    <ClInclude Include="src\Editor\ActionStack\InspectorActionBehaviour.h" />
     <ClInclude Include="src\Editor\Editor.h" />
     <ClInclude Include="src\Editor\EditorFileGroup.h" />
     <ClInclude Include="src\Editor\EditorObjectGroup.h" />
@@ -311,9 +314,13 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClInclude Include="src\Editor\LoggingView.h" />
     <ClInclude Include="src\Editor\ProjectFolderView.h" />
     <ClInclude Include="src\Editor\ProjectRootView.h" />
+    <ClInclude Include="src\Editor\WarningView.h" />
     <ClInclude Include="src\testclass.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Editor\ActionStack\ActionBehaviour.cpp" />
+    <ClCompile Include="src\Editor\ActionStack\EditorActionStack.cpp" />
+    <ClCompile Include="src\Editor\ActionStack\InspectorActionBehaviour.cpp" />
     <ClCompile Include="src\Editor\Editor.cpp" />
     <ClCompile Include="src\Editor\EditorFileGroup.cpp" />
     <ClCompile Include="src\Editor\EditorObjectGroup.cpp" />
@@ -322,6 +329,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core.dll\ (xcopy /Q /E /Y /I 
     <ClCompile Include="src\Editor\LoggingView.cpp" />
     <ClCompile Include="src\Editor\ProjectFolderView.cpp" />
     <ClCompile Include="src\Editor\ProjectRootView.cpp" />
+    <ClCompile Include="src\Editor\WarningView.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
     <ClCompile Include="src\testclass.cpp" />
   </ItemGroup>
