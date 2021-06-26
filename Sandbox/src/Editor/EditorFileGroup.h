@@ -41,6 +41,8 @@ private:
 	static void ProjectViewPopUpOptions();
 	static void RenamePopUp();
 	static void DeletePopUp();
+	static void CopyItem();
+	static void PasteItem();
 private:
 
 };

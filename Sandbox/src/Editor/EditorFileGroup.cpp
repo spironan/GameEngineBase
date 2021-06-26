@@ -41,7 +41,6 @@ bool FileGroup::s_rename_item = false;
  */
 void FileGroup::ProjectViewPopUp()
 {
-
 	if (ImGui::BeginPopupEx(FileGroup::s_projectviewid, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings))
 	{
 		ProjectViewPopUpOptions();
@@ -66,9 +65,15 @@ void FileGroup::ProjectViewPopUpOptions()
 	bool item_selected = (FileGroup::s_hoveredPath != FileGroup::s_rootPath);
 	if (ImGui::MenuItem("CreateFolder"))
 	{
-		std::filesystem::path p = std::filesystem::path((FileGroup::s_CurrentPath + "/newfolder").c_str());
-		std::filesystem::create_directory(p);
-		std::cout << (FileGroup::s_CurrentPath + "/newfolder") << std::endl;
+		std::string fileTemp = (FileGroup::s_CurrentPath + "/Newfolder");
+		std::string current = fileTemp;
+		int count = 0;
+		while (std::filesystem::exists(current))
+		{
+			++count;
+			current = fileTemp + " (" + std::to_string(count) + ")";
+		}
+		std::filesystem::create_directory(current);
 	}
 	if (ImGui::MenuItem("Delete", 0, false, item_selected))
 	{
@@ -85,47 +90,11 @@ void FileGroup::ProjectViewPopUpOptions()
 	ImGui::Separator();
 	if (ImGui::MenuItem("Copy"))
 	{
-		Editor::s_payloadBufferAllocator.Clear();//clear before use
-		Editor::s_copyPayload.first = "FILE";
-		//+1 due to '\0'
-		Editor::s_copyPayload.second = Editor::s_payloadBufferAllocator.NewArr<char>(FileGroup::s_selectedpath.size() + 1,engine::BufferAllocator::ALIGNMENT);
-		sprintf_s(static_cast<char*>(Editor::s_copyPayload.second), FileGroup::s_selectedpath.size()+1,FileGroup::s_selectedpath.data());
+		FileGroup::CopyItem();
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
-		if (Editor::s_copyPayload.first == "FILE")
-		{
-			//get the payload
-			std::filesystem::path p((static_cast<char*>(Editor::s_copyPayload.second)));
-
-			std::filesystem::path selected_path{ FileGroup::s_selectedpath };
-			std::string targetlocation_name;
-			
-			//changing the file name
-
-			targetlocation_name = selected_path.parent_path().u8string() + "/" + p.stem().u8string() + " - copy";
-
-			//iteratively look for a new file name(might get expensive when there is more than a certain amount of files)
-			std::string newfile_name = targetlocation_name + p.extension().u8string();
-			int counter = 0;
-			while (std::filesystem::exists(newfile_name))
-			{
-				++counter;
-				newfile_name = targetlocation_name +" (" + std::to_string(counter) +") " + p.extension().u8string();
-			}
-
-			if (std::filesystem::is_directory(p) && !std::filesystem::is_empty(p))
-			{
-				//copying the whole directory still requires work
-				//std::filesystem::copy(p, targetlocation_name,
-				//					  std::filesystem::copy_options::recursive |
-				//					  std::filesystem::copy_options::overwrite_existing);
-			}
-			else
-			{
-				std::filesystem::copy(p, newfile_name);
-			}
-		}
+		FileGroup::PasteItem();
 	}
 	if (ImGui::MenuItem("Rename"))
 	{
@@ -203,4 +172,48 @@ void FileGroup::RenamePopUp()
 		ImGui::EndPopup();
 	}
 }
+void FileGroup::CopyItem()
+{
+	Editor::s_payloadBufferAllocator.Clear();//clear before use
+	Editor::s_copyPayload.first = "FILE";
+	//+1 due to '\0'
+	Editor::s_copyPayload.second = Editor::s_payloadBufferAllocator.NewArr<char>(FileGroup::s_selectedpath.size() + 1, engine::BufferAllocator::ALIGNMENT);
+	sprintf_s(static_cast<char*>(Editor::s_copyPayload.second), FileGroup::s_selectedpath.size() + 1, FileGroup::s_selectedpath.data());
 
+}
+void FileGroup::PasteItem()
+{
+	if (Editor::s_copyPayload.first == "FILE")
+	{
+		//get the payload
+		std::filesystem::path p((static_cast<char*>(Editor::s_copyPayload.second)));
+
+		std::filesystem::path selected_path{ FileGroup::s_selectedpath };
+		std::string targetlocation_name;
+
+		//changing the file name
+
+		targetlocation_name = selected_path.parent_path().u8string() + "/" + p.stem().u8string() + " - copy";
+
+		//iteratively look for a new file name(might get expensive when there is more than a certain amount of files)
+		std::string newfile_name = targetlocation_name + p.extension().u8string();
+		int counter = 0;
+		while (std::filesystem::exists(newfile_name))
+		{
+			++counter;
+			newfile_name = targetlocation_name + " (" + std::to_string(counter) + ") " + p.extension().u8string();
+		}
+
+		if (std::filesystem::is_directory(p) && !std::filesystem::is_empty(p))
+		{
+			//copying the whole directory still requires work
+			//std::filesystem::copy(p, targetlocation_name,
+			//					  std::filesystem::copy_options::recursive |
+			//					  std::filesystem::copy_options::overwrite_existing);
+		}
+		else
+		{
+			std::filesystem::copy(p, newfile_name);
+		}
+	}
+}

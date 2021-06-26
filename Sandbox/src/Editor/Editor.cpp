@@ -133,6 +133,7 @@ void Editor::LoadData(const char* dir)
 	for (auto it = doc.MemberBegin(); it != doc.MemberEnd(); ++it)
 	{
 		std::cout << (*it).name.GetString() << std::endl;
+		
 		rapidjson::GenericArray arr = it->value.GetArray();
 		for (rapidjson::SizeType i = 0; i < arr.Size(); ++i)
 		{
