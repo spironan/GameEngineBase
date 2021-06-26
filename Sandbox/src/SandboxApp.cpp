@@ -135,7 +135,6 @@ public:
 		}
 
         auto mDelta = engine::Input::GetMouseDelta();
-        LOG_ENGINE_INFO("{0} , {1}", mDelta.first, mDelta.second);
         if (mDelta.first | mDelta.second)
         {
             cam.update_mouse_relative(mDelta.first, mDelta.second);
