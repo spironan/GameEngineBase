@@ -22,6 +22,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "Engine/Debug/cvars.h"
+
 #define SECOND_IN_NANOSECONDS 1000000000
 
 #ifdef _DEBUG
@@ -84,16 +86,16 @@ void VulkanEngine::load_images()
 {
 	Texture lostEmpire;
 
-	vkutil::load_image_from_file(*this, "../Engine/assets/model/lost_empire-RGBA.png", lostEmpire.image);
+	//vkutil::load_image_from_file(*this, "../Engine/assets/model/lost_empire-RGBA.png", lostEmpire.image);
 
-	VkImageViewCreateInfo imageInfo = vkinit::imageview_create_info(VK_FORMAT_R8G8B8A8_SRGB, lostEmpire.image._image,
-																	VK_IMAGE_ASPECT_COLOR_BIT);
+	//VkImageViewCreateInfo imageInfo = vkinit::imageview_create_info(VK_FORMAT_R8G8B8A8_SRGB, lostEmpire.image._image,
+	//																VK_IMAGE_ASPECT_COLOR_BIT);
 
-	vkCreateImageView(_device, &imageInfo, nullptr, &lostEmpire.imageView);
-	_loadedTextures["empire_diffuse"] = lostEmpire;
+	//vkCreateImageView(_device, &imageInfo, nullptr, &lostEmpire.imageView);
+	//_loadedTextures["empire_diffuse"] = lostEmpire;
 	_mainDeletionQueue.push_function([=]() 
 	{
-		vkDestroyImageView(_device, lostEmpire.imageView, nullptr);
+		//vkDestroyImageView(_device, lostEmpire.imageView, nullptr);
 	});
 
 }
@@ -101,7 +103,7 @@ void VulkanEngine::load_images()
 void VulkanEngine::init_vulkan()
 {
 	vkb::InstanceBuilder builder;
-	
+
 	//make the vulkan instance with basic debug features
 	auto inst_ret = builder.set_app_name("Example Vulkan Application")
 		.request_validation_layers(bUseValidationLayers) // TODO: Enable for debug only
@@ -119,12 +121,16 @@ void VulkanEngine::init_vulkan()
 	// Get the surface of the window we opened with SDL
 	SDL_Vulkan_CreateSurface(_window, _instance, &_surface);
 
+	VkPhysicalDeviceFeatures reqFeatures{};
+	reqFeatures.fillModeNonSolid = true;
+
 	// use vkboostrap to select a GPU.
 	// We want a GPU that can write to the SDL surfae and supports vulkan 1.1
 	vkb::PhysicalDeviceSelector selector{ vkb_inst };
 	vkb::PhysicalDevice physicalDevice = selector
 		.set_minimum_version(1, 1)
 		.set_surface(_surface)
+		.set_required_features(reqFeatures)
 		.select()
 		.value();
 
@@ -239,6 +245,23 @@ void VulkanEngine::init_imgui()
 	});
 }
 
+void VulkanEngine::RenderCVAR()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Debug"))
+		{
+			if (ImGui::BeginMenu("CVAR"))
+			{
+				CVarSystem::Get()->DrawImguiEditor();
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
 AllocatedBuffer VulkanEngine::create_buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage)
 {
 	VkBufferCreateInfo bufferInfo{};
@@ -271,14 +294,6 @@ void VulkanEngine::init_scene()
 
 	_renderables.push_back(monkey);
 
-	RenderObject map;
-	map.mesh = get_mesh("empire");
-	map.material = get_material("texturedmesh");
-	map.transformMatrix = glm::translate(glm::vec3{ 5.f, -10.f, 0.f });
-
-	_renderables.push_back(map);
-
-
 	for (int x = -20; x <= 20; x++)
 	{
 		for (int y = -20; y <= 20; y++)
@@ -294,7 +309,7 @@ void VulkanEngine::init_scene()
 		}
 	}
 
-	Material *texturedMat = get_material("texturedmesh");
+	Material *texturedMat = get_material("wireframemesh");
 
 //allcote the descriptor set for single-texture to use on the material
 	VkDescriptorSetAllocateInfo allocInfo{};
@@ -800,12 +815,12 @@ void VulkanEngine::init_pipelines()
 	{
 		//destroy the pipelines we have created
 		vkDestroyPipeline(_device, get_material("defaultmesh")->pipeline, nullptr);
-		vkDestroyPipeline(_device, get_material("texturedmesh")->pipeline, nullptr);
+		vkDestroyPipeline(_device, get_material("wireframemesh")->pipeline, nullptr);
 		//destroy the layout that they are using
 		vkDestroyPipelineLayout(_device, get_material("defaultmesh")->pipelineLayout, nullptr);
-		vkDestroyPipelineLayout(_device, get_material("texturedmesh")->pipelineLayout, nullptr);
+		vkDestroyPipelineLayout(_device, get_material("wireframemesh")->pipelineLayout, nullptr);
 
-		vkFreeDescriptorSets(_device, _descriptorPool, 1, &get_material("texturedmesh")->textureSet);
+		vkFreeDescriptorSets(_device, _descriptorPool, 1, &get_material("wireframemesh")->textureSet);
 	}
 
 	// compile colored triangle modules
@@ -871,7 +886,10 @@ void VulkanEngine::init_pipelines()
 	mesh_pipeline_layout_info.pSetLayouts = setLayouts;
 
 	VkPipelineLayout meshPipeLayout;
-	VK_CHECK(vkCreatePipelineLayout(_device, &mesh_pipeline_layout_info, nullptr, &meshPipeLayout));
+	VK_CHECK(vkCreatePipelineLayout(_device, &mesh_pipeline_layout_info, nullptr, &meshPipeLayout)); 
+	VkPipelineLayout wireframePipeLayout;
+	VK_CHECK(vkCreatePipelineLayout(_device, &mesh_pipeline_layout_info, nullptr, &wireframePipeLayout));
+
 
 	//create pipline for textured mesh, which has 3 descriptor sets
 	// we start from the normal mesh layout
@@ -933,7 +951,15 @@ void VulkanEngine::init_pipelines()
 
 	VkPipeline meshPipeline = pipelineBuilder.build_pipeline(_device, _renderPass);
 
+
+	pipelineBuilder._rasterizer.polygonMode = VK_POLYGON_MODE_LINE;
+	pipelineBuilder._rasterizer.lineWidth = 1.0f;
+	VkPipeline wirePipeline = pipelineBuilder.build_pipeline(_device, _renderPass);
+
 	create_material(meshPipeline, meshPipeLayout, "defaultmesh");
+	create_material(wirePipeline, wireframePipeLayout, "wireframemesh");
+
+	pipelineBuilder._rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 
 
 	// Create pipeline for textured drawing
@@ -945,6 +971,7 @@ void VulkanEngine::init_pipelines()
 		vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, texturedMeshShader));
 
 	// connect the new pipeline layout to the pipeline builder
+	//pipelineBuilder._pipelineLayout = texturedPipeLayout;
 	pipelineBuilder._pipelineLayout = texturedPipeLayout;
 	VkPipeline texPipeline = pipelineBuilder.build_pipeline(_device, _renderPass);
 	create_material(texPipeline, texturedPipeLayout, "texturedmesh");
@@ -1015,19 +1042,15 @@ void VulkanEngine::load_meshes()
 	Mesh monkeyMesh{};
 	monkeyMesh.load_from_obj("../Engine/assets/model/monkey_smooth.obj");
 							
-	Mesh lostEmpire{};		
-	lostEmpire.load_from_obj("../Engine/assets/model/lost_empire.obj");
 
 	// make sure all meshes are sent to the gpu
 	upload_mesh(triMesh);
 	upload_mesh(monkeyMesh);
-	upload_mesh(lostEmpire);
 
 	//note that we are copying them.
 	// eventually we  will delete the hardcoded _monkey and _triangle meshes.
 	_meshes["monkey"] = monkeyMesh;
 	_meshes["triangle"] = triMesh;
-	_meshes["empire"] = lostEmpire;
 
 }
 
@@ -1139,20 +1162,28 @@ Mesh *VulkanEngine::get_mesh(const std::string &name)
 
 void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int count)
 {
-	// make a model view matrix for rendering the object
-	//camera view
-	glm::vec3 camPos = { 0.0f,-6.0f,-10.0f };
 
-	glm::mat4 view = glm::translate(glm::mat4{ 1.0f }, camPos);
-	//camera projection
-	glm::mat4 projection = glm::perspective(glm::radians(70.0f), static_cast<float>(_windowExtent.width / _windowExtent.height), 0.1f, 200.0f);
-	projection[1][1] *= -1.0f; // can consider flipping viewport instead of this
+	//// make a model view matrix for rendering the object
+	////camera view
+	//glm::vec3 camPos = { 0.0f,-6.0f,-10.0f };
 
+	//glm::mat4 view = glm::translate(glm::mat4{ 1.0f }, camPos);
+	////camera projection
+	//glm::mat4 projection = glm::perspective(glm::radians(70.0f), static_cast<float>(_windowExtent.width / _windowExtent.height), 0.1f, 200.0f);
+	//projection[1][1] *= -1.0f; // can consider flipping viewport instead of this
+
+	////fill a GPU camera struct
+	//GPUCameraData camData;
+	//camData.projection = projection;
+	//camData.view = view;
+	//camData.viewproj = projection * view;
+
+	_camera.update_cameraExtent(_windowExtent);
 	//fill a GPU camera struct
 	GPUCameraData camData;
-	camData.projection = projection;
-	camData.view = view;
-	camData.viewproj = projection * view;
+	camData.projection = _camera.get_projection_matrix();
+	camData.view = _camera.get_view_matrix();
+	camData.viewproj = camData.projection * camData.view;
 
 	//copy it to buffer
 	void *data;
@@ -1184,6 +1215,7 @@ void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int co
 
 	vmaUnmapMemory(_allocator, get_current_frame().objectBuffer._allocation);
 
+	Material* wireframeMat = get_material("wireframemesh");
 	Mesh *lastMesh = nullptr;
 	Material *lastMaterial = nullptr;
 
@@ -1192,7 +1224,7 @@ void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int co
 		RenderObject &object = first[i];
 
 		//only bind the pipeline if it doesnt match with the already bound one
-		if (object.material != lastMaterial)
+		if ((object.material != lastMaterial) && (!CVAR_wireframe.Get()))
 		{
 			vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, object.material->pipeline);
 			lastMaterial = object.material;
@@ -1216,11 +1248,35 @@ void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int co
 			}
 		}
 
+		if ((lastMaterial != wireframeMat) && (CVAR_wireframe.Get()))
+		{
+			vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, wireframeMat->pipeline);
+			lastMaterial = wireframeMat;
+
+			//offset for our scene buffer
+			uint32_t uniform_offset = static_cast<uint32_t>(pad_uniform_buffer_size(sizeof(GPUSceneData)) * frameIndex);
+
+			//bind the descriptor set when changing pipeline
+			vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, wireframeMat->pipelineLayout,
+									0, 1, &get_current_frame().globalDescriptor, 1, &uniform_offset);
+
+			//object data descriptor
+			vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, wireframeMat->pipelineLayout,
+									1, 1, &get_current_frame().objectDescriptor, 0, nullptr);
+		}
+
 		MeshPushConstants constants;
 		constants.render_matrix = object.transformMatrix;
 
 		//upload the mesh to GPU via push constants
-		vkCmdPushConstants(cmd, object.material->pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+		if (CVAR_wireframe.Get())
+		{
+			vkCmdPushConstants(cmd, wireframeMat->pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+		}
+		else
+		{
+			vkCmdPushConstants(cmd, object.material->pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+		}
 
 		//only bind the mesh if its a different one from last bind
 		if (object.mesh != lastMesh)
@@ -1300,10 +1356,13 @@ void VulkanEngine::RenderFrame()
 
 	VK_CHECK(vkBeginCommandBuffer(cmd, &cmdBegInfo));
 
-	// make clear colour from frame number. this will flash with a 120*pi frame period;
+	// make clear colour from frame number. this will flash with a 240*pi frame period;
 	VkClearValue clearValue{};
-	float flash = abs(sin(_frameNumber / 120.0f));
-	clearValue.color = { 0.0f,0.0f,flash,1.0f };
+	float flash = abs(sin(_frameNumber / 240.0f));
+	//colour 48, 10, 36
+	glm::vec3 ubuntu={ 48.0f,10.0f,36.0f };
+	ubuntu *= flash / 255.0f;
+	clearValue.color = { ubuntu.r,ubuntu.g,ubuntu.b, 1.0f };
 
 	//clear depth at 1
 	VkClearValue depthClear{};
@@ -1420,7 +1479,7 @@ void VulkanEngine::run()
 			_windowResized = false;
 			_recreateSwapchain = false;
 			init_swapchain(_swapchain);
-			init_default_renderpass();
+			//init_default_renderpass();
 			init_framebuffers();
 			init_pipelines();
 			for (size_t i = 0; i < FRAME_OVERLAP; i++)

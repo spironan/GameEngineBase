@@ -165,7 +165,7 @@ IF EXIST $(SolutionDir)Engine\vendor\rttr\dll\rttr_core_d.dll\ (xcopy /Q /E /Y /
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENGINE_PLATFORM_WINDOWS;SANDBOX_PLATFORM_WINDOWS;ENGINE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;..\Engine\vendor\rttr\include;..\Engine\vendor\ImGui;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Engine\src;..\Engine\vendor\spdlog\include;..\Engine\vendor\sdl2\include;..\Engine\vendor\rttr\include;..\Engine\vendor\ImGui;%VULKAN_SDK%\include;vendor\rpj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>

@@ -15,13 +15,15 @@
 #include <functional>
 #include <unordered_map>
 
-#include <glm/mat4x4.hpp>
+#include <../vendor/glm/glm/mat4x4.hpp>
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_vulkan.h"
 
 #include <sdl2/SDL.h>
+
+#include "Engine/Renderer/DebugCamera.h"
 
 constexpr unsigned int FRAME_OVERLAP = 2;
 
@@ -151,9 +153,13 @@ struct GPUObjectData
 };
 
 
+
+
 class VulkanEngine {
 public:
 	VulkanEngine() = default;
+	AutoCVar_Int CVAR_wireframe{ "Engine.ToggleWireframe", "wireframe toggling", 0, CVarFlags::EditCheckbox };
+	DebugCamera _camera;
 
 	void SetWindow(SDL_Window *window) {
 		_window={ window };
@@ -269,6 +275,11 @@ public:
 	void load_images();
 
 	void init_imgui();
+
+	void RenderCVAR();
+
+	DebugCamera* getCam() { return &_camera; }
+
 private: 
 
 	void init_vulkan();
@@ -299,6 +310,7 @@ private:
 		SDL_GetWindowSize(_window, &w, &h);
 		_windowExtent.width = w; _windowExtent.height = h;
 	}
+
 
 	//loads a shader module from a spir-v file. Returns false if it errors
 	bool load_shader_module(const char *filePath, VkShaderModule *outShaderModule);

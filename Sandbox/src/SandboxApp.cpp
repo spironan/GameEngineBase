@@ -20,6 +20,9 @@ Technology is prohibited.
 
 #include "Editor/Editor.h"
 
+#include "Engine/Platform/Vulkan/VulkanContext.h"
+#include "Engine/Debug/cvars.h"
+
 class EditorLayer : public engine::Layer
 {
 private:
@@ -40,6 +43,109 @@ public:
     {
         m_editor.ShowAllWidgets();
         //ImGui::ShowDemoWindow(&m_demo);
+    }
+};
+
+class SceneCamera : public engine::Layer
+{
+private:
+
+public:
+
+    SceneCamera() : Layer{ "SceneCamera" }
+    {
+    }
+
+    virtual void OnUpdate(engine::Timestep dt) override
+    {
+        engine::VulkanContext* x =  reinterpret_cast<engine::VulkanContext*>(engine::Application::Get().GetWindow().GetRenderingContext());
+        DebugCamera& cam = *x->getRenderer()->getCam();
+        //cam.CVAR_ortho.Set(true);
+        if (engine::Input::IsMouseButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
+		{
+			cam.enable_movement(false);
+		}
+
+		if (engine::Input::IsMouseButtonReleased(ENGINE_MOUSE_BUTTON_RIGHT))
+		{
+			cam.enable_movement(true);
+		}
+
+
+		if (engine::Input::IsKeyDown(ENGINE_KEY_W) || engine::Input::IsKeyDown(ENGINE_KEY_UP))
+		{
+			cam.move_fowards();
+		}
+		else if (engine::Input::IsKeyReleased(ENGINE_KEY_W) || engine::Input::IsKeyReleased(ENGINE_KEY_UP))
+		{
+			cam.move_fowards(false);
+		}
+
+		if (engine::Input::IsKeyDown(ENGINE_KEY_S) || engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
+		{
+			cam.move_backwards();
+		}
+		else if (engine::Input::IsKeyReleased(ENGINE_KEY_S) || engine::Input::IsKeyReleased(ENGINE_KEY_DOWN))
+		{
+			cam.move_backwards(false);
+		}
+
+		if (engine::Input::IsKeyDown(ENGINE_KEY_A) || engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
+		{
+			cam.move_left();
+		}
+		else if (engine::Input::IsKeyReleased(ENGINE_KEY_A) || engine::Input::IsKeyReleased(ENGINE_KEY_LEFT))
+		{
+			cam.move_left(false);
+		}
+
+		if (engine::Input::IsKeyDown(ENGINE_KEY_D) || engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
+		{
+			cam.move_right();
+		}
+		else if (engine::Input::IsKeyReleased(ENGINE_KEY_D) || engine::Input::IsKeyReleased(ENGINE_KEY_RIGHT))
+		{
+			cam.move_right(false);
+		}
+
+		if (engine::Input::IsKeyDown(ENGINE_KEY_Q))
+		{
+			cam.move_down();
+		}
+		else if (engine::Input::IsKeyReleased(ENGINE_KEY_Q))
+		{
+			cam.move_down(false);
+		}
+		if (engine::Input::IsKeyDown(ENGINE_KEY_E))
+		{
+			cam.move_up();
+		}
+
+		else if (engine::Input::IsKeyReleased(ENGINE_KEY_E))
+		{
+			cam.move_up(false);
+		}
+		if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT_SHIFT))
+		{
+			cam.slow_camera(true);
+		}
+		else if (engine::Input::IsKeyReleased(ENGINE_KEY_LEFT_SHIFT))
+		{
+			cam.slow_camera(false);
+		}
+
+        auto mDelta = engine::Input::GetMouseDelta();
+		if (mDelta.first | mDelta.second)
+		{			
+			cam.update_mouse_relative(mDelta.first, mDelta.second);
+		}
+
+        cam.update_camera(dt);
+    }
+
+    virtual void OnImGuiRender() override
+    {
+        CVarSystem::Get()->DrawImguiEditor();
     }
 };
 
@@ -205,6 +311,7 @@ public:
         //debug layer
         PushLayer(new ExampleLayer());
         PushOverlay(new EditorLayer());
+        PushOverlay(new SceneCamera());
         // one actual layer - gameplay logic
         // one ui layer - game ui
         // one imgui layer - imgui stuff

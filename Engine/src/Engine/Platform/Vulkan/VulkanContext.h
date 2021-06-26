@@ -16,6 +16,7 @@ Technology is prohibited.
 
 #include "Engine/Renderer/GraphicsContext.h"
 
+#include "vk_engine.h"
 struct SDL_Window;
 
 namespace engine
@@ -37,7 +38,13 @@ namespace engine
 
         void SetWindowResized() override;
         bool SetVSync(bool enable) override;
+
+        VulkanEngine* getRenderer()
+        {
+            return &vkEngine;
+        }
     private:
         SDL_Window* m_windowHandle;
+        static VulkanEngine vkEngine;
     };
 }

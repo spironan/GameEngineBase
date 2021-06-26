@@ -24,10 +24,16 @@ namespace utility
      @brief Contains a utility hashing class that stores the various hashing algorithms
             currently only supports fnv-1a hash.
     *//*********************************************************************************/
-    class Hash
+    struct StringHash
     {
     public:
 
+        constexpr size_t const_strlen(const char* s)
+        {
+            size_t size = 0;
+            while (s[size]) { size++; };
+            return size;
+        }
         /****************************************************************************//*!
          @brief Implementations the FNV-1a hashing algorithm.
                 The fnv-1a implementation provides better avalanche characteristics
@@ -38,7 +44,43 @@ namespace utility
 
          @return returns the hashed fnv-1a output.
         *//*****************************************************************************/
-        static uint32_t GenerateFNV1aHash(const char* str);
-        static uint32_t GenerateFNV1aHash(const std::string& string);
+        constexpr uint32_t GenerateFNV1aHash(const char* str)
+        {
+            // Also C++ does not like static constexpr
+            constexpr uint32_t FNV_PRIME = 16777619u;
+            constexpr uint32_t OFFSET_BASIS = 2166136261u;
+
+            const size_t length = const_strlen(str) + 1;
+            uint32_t hash = OFFSET_BASIS;
+            for (size_t i = 0; i < length; ++i)
+            {
+                hash ^= *str++;
+                hash *= FNV_PRIME;
+            }
+            return hash;
+        }
+        constexpr uint32_t GenerateFNV1aHash(const std::string& string)
+        {
+            return GenerateFNV1aHash(string.c_str());
+        }
+
+        
+
+        uint32_t computedHash;
+
+        constexpr StringHash(uint32_t hash) noexcept : computedHash(hash) {}
+
+        constexpr StringHash(const char* s) noexcept : computedHash(0)
+        {
+            computedHash = GenerateFNV1aHash(s);
+        }
+        constexpr StringHash(std::string_view s)noexcept : computedHash(0)
+        {
+            computedHash = GenerateFNV1aHash(s.data());
+        }
+        StringHash(const StringHash& other) = default;
+
+        constexpr operator uint32_t()noexcept { return computedHash; }
     };
+
 }}
