@@ -174,11 +174,21 @@ namespace engine
 
 
         /****************************************************************************//*!
-         @brief     Retrieve the current mouse position in screen coordinates
+         @brief     Retrieve the current mouse position in screen coordinates 
+                    (top left 0,0)
 
          @return    a pair containing the x and y position of the mouse
         *//*****************************************************************************/
         static std::pair<int, int> GetMousePosition();
+        
+        /****************************************************************************//*!
+         @brief     Retrieve the change in mouse position in the current frame 
+                    in screen coordinates (top left 0,0)
+
+         @return    a pair containing the x and y delta position of the mouse
+        *//*****************************************************************************/
+        static std::pair<int, int> GetMouseDelta();
+
         /****************************************************************************//*!
          @brief     Retrieve the current X-axis mouse position in screen coordinates
 
