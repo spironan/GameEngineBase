@@ -10,6 +10,8 @@ Reproduction or disclosure of this file or its contents
 without the prior written consent of DigiPen Institute of
 Technology is prohibited.
  *********************************************************************/
+#include "Engine/Core/KeyCode.h"
+
 #include "EditorFileGroup.h"
 #include "Editor.h"
 
@@ -23,10 +25,11 @@ std::string FileGroup::s_CurrentPath = s_rootPath;
 std::string FileGroup::s_hoveredPath = s_rootPath;
 std::string FileGroup::s_selectedpath;//path with the itemname
 std::string FileGroup::s_selecteditem;//itemname only
-ImVec2 FileGroup::s_selectedItemPosition;//vec2
+ImVec2 FileGroup::s_targetItemPosition;//vec2
 char FileGroup::s_nameBuffer[128] = "";//for renaming items
 
-ImGuiID FileGroup::s_projectviewid = 100;
+const ImGuiID FileGroup::s_projectviewid = 100;
+const ImGuiID FileGroup::s_renamefolderid = 101;
 
 bool FileGroup::s_delete_popup = false;//flag for deleting modal popup
 
@@ -50,14 +53,32 @@ void FileGroup::ProjectViewPopUp()
 			FileGroup::s_delete_popup = false;
 			ImGui::OpenPopup("Delete?");
 		}
-		if (FileGroup::s_rename_item)
-		{
-			FileGroup::s_rename_item = false;
-			ImGui::OpenPopup("Rename");
-		}
 	}
 	DeletePopUp();
 	RenamePopUp();
+}
+/**
+ * \brief 
+ *	the file is used for widgets which handles filesystem
+ *	 - shortcut used are ctrl + c and ctrl + v
+ */
+void FileGroup::KeyshortCuts()
+{
+	if (ImGui::IsWindowHovered())
+	{
+		if (ImGui::GetIO().KeyCtrl)
+		{
+			if (ImGui::IsKeyPressed(static_cast<int>(engine::KeyCode::C)))
+				FileGroup::CopyItem();
+			else if (ImGui::IsKeyPressed(static_cast<int>(engine::KeyCode::V)))
+				FileGroup::PasteItem();
+		}
+		if (ImGui::IsKeyPressed(static_cast<int>(engine::KeyCode::F2)) && FileGroup::s_selectedpath != FileGroup::s_rootPath)
+		{
+			s_targetItemPosition = ImGui::GetMousePos();
+			ImGui::OpenPopupEx(s_renamefolderid);
+		}
+	}
 }
 
 void FileGroup::ProjectViewPopUpOptions()
@@ -98,7 +119,7 @@ void FileGroup::ProjectViewPopUpOptions()
 	}
 	if (ImGui::MenuItem("Rename"))
 	{
-		FileGroup::s_rename_item = true;
+		ImGui::OpenPopupEx(s_renamefolderid);
 	}
 }
 
@@ -132,9 +153,9 @@ void FileGroup::DeletePopUp()
 }
 void FileGroup::RenamePopUp()
 {
-	ImGui::SetNextWindowPos(FileGroup::s_selectedItemPosition);
+	ImGui::SetNextWindowPos(FileGroup::s_targetItemPosition);
 	
-	if (ImGui::BeginPopupModal("Rename", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration))
+	if (ImGui::BeginPopupEx(s_renamefolderid, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration))
 	{
 		if (ImGui::InputText("##RenameObject", FileGroup::s_nameBuffer, sizeof(FileGroup::s_nameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
 		{
@@ -157,7 +178,7 @@ void FileGroup::RenamePopUp()
 			}
 			else
 			{
-
+				WarningView::DisplayWarning(WarningView::DisplayType::DISPLAY_ERROR, "Invalid Name");
 #ifdef SANDBOX_PLATFORM_WINDOWS
 				MessageBeep(0x00000030L);//Windows Exclamation sound.
 #endif // SANDBOX_PLATFORM_WINDOWS
@@ -179,7 +200,7 @@ void FileGroup::CopyItem()
 	//+1 due to '\0'
 	Editor::s_copyPayload.second = Editor::s_payloadBufferAllocator.NewArr<char>(FileGroup::s_selectedpath.size() + 1, engine::BufferAllocator::ALIGNMENT);
 	sprintf_s(static_cast<char*>(Editor::s_copyPayload.second), FileGroup::s_selectedpath.size() + 1, FileGroup::s_selectedpath.data());
-
+	
 }
 void FileGroup::PasteItem()
 {

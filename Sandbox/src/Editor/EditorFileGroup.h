@@ -25,10 +25,11 @@ public:
 	static std::string s_hoveredPath;
 	static std::string s_selectedpath;//path with the itemname
 	static std::string s_selecteditem;//itemname only
-	static ImVec2 s_selectedItemPosition;//vec2
+	static ImVec2 s_targetItemPosition;//vec2
 	static char s_nameBuffer[128];//for renaming items
 
-	static ImGuiID s_projectviewid;
+	static const ImGuiID s_projectviewid;
+	static const ImGuiID s_renamefolderid;
 
 	static bool s_delete_popup;//flag for deleting modal popup
 
@@ -36,7 +37,7 @@ public:
 public:
 
 	static void ProjectViewPopUp();
-
+	static void KeyshortCuts();
 private:
 	static void ProjectViewPopUpOptions();
 	static void RenamePopUp();

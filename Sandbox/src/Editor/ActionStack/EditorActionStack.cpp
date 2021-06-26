@@ -62,7 +62,7 @@ void ActionStack::UndoStep()
 {
 	if (s_actionDeque.size() <= s_undoCount)
 	{
-		WarningView::DisplayWarning("End of Undo Stack");
+		WarningView::DisplayWarning(WarningView::DisplayType::DISPLAY_WARNING,"End of Undo Stack");
 		return;
 	}
 	++s_undoCount;
@@ -73,7 +73,7 @@ void ActionStack::RedoStep()
 {
 	if (s_undoCount == 0)
 	{
-		WarningView::DisplayWarning("You have reach the most recent action");
+		WarningView::DisplayWarning(WarningView::DisplayType::DISPLAY_WARNING,"You have reach the most recent action");
 		return;
 	}
 	ActionBehaviour* ab = *(s_actionDeque.begin() + (s_actionDeque.size() - s_undoCount));

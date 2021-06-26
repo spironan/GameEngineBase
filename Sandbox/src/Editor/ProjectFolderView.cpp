@@ -35,6 +35,7 @@ void ProjectFolderView::Show()
 			FileGroup::s_hoveredPath = FileGroup::s_rootPath;
 		ImGui::OpenPopup(FileGroup::s_projectviewid);
 	}
+	FileGroup::KeyshortCuts();
 	ImGui::End();
 }
 
@@ -115,7 +116,7 @@ void ProjectFolderView::ProjectView()
 			}
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{
-				FileGroup::s_selectedItemPosition = ImGui::GetMousePos();
+				FileGroup::s_targetItemPosition = ImGui::GetMousePos();
 				FileGroup::s_selectedpath = entry.path().u8string();
 				FileGroup::s_selecteditem = entry.path().filename().u8string();
 			}

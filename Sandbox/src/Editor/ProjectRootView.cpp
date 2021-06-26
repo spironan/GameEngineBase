@@ -40,6 +40,7 @@ void ProjectRootView::Show()
 			FileGroup::s_hoveredPath = FileGroup::s_rootPath;
 		ImGui::OpenPopup(FileGroup::s_projectviewid);
 	}
+	FileGroup::KeyshortCuts();
 	ImGui::End();
 }
 
@@ -88,7 +89,7 @@ void ProjectRootView::ProjectView(const std::string& path, std::string& selected
 			//to mark the item that is focused
 			FileGroup::s_selecteditem = entry.path().filename().generic_u8string();
 			FileGroup::s_selectedpath = entry.path().generic_u8string();
-			FileGroup::s_selectedItemPosition = ImGui::GetMousePos();
+			FileGroup::s_targetItemPosition = ImGui::GetMousePos();
 
 			layer = curr;
 		}
