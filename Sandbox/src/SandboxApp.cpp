@@ -135,12 +135,14 @@ public:
 		}
 
         auto mDelta = engine::Input::GetMouseDelta();
-		if (mDelta.first | mDelta.second)
-		{			
-			cam.update_mouse_relative(mDelta.first, mDelta.second);
-		}
+        LOG_ENGINE_INFO("{0} , {1}", mDelta.first, mDelta.second);
+        if (mDelta.first | mDelta.second)
+        {
+            cam.update_mouse_relative(mDelta.first, mDelta.second);
+        }	
 
-        cam.update_camera(dt);
+        cam.update_camera(dt);    
+       
     }
 
     virtual void OnImGuiRender() override
@@ -159,8 +161,9 @@ public :
     void OnUpdate(engine::Timestep dt) override
     {
         //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
-        std::pair<int, int> pos = engine::Input::GetMouseDelta();
-        LOG_INFO("{0}, {1}", pos.first , pos.second);
+        // Commenting this out for now until engine::Input::GetMouseDelta() no longer consumes the information
+        //std::pair<int, int> pos = engine::Input::GetMouseDelta();
+        //LOG_INFO("{0}, {1}", pos.first , pos.second);
         
         // New way to do check keys.
         if (engine::Input::IsKeyPressed(ENGINE_KEY_0))
