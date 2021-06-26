@@ -10,7 +10,8 @@ RTTR_REGISTRATION
 registration::class_<testclass>("test_class")
         .constructor<int>()
         .property("i1", &testclass::i1)
-        .property("i2", &testclass::i2)
+        .property("f2", &testclass::f2)
         .property("uid", &testclass::uid)
-        .property("name", &testclass::name);
+        .property("name", &testclass::name)
+		.property("somestring", &testclass::somestring);
 }

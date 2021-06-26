@@ -1,13 +1,34 @@
+/*****************************************************************//**
+ * \file   Editor.h
+ * \brief  contains all the editor widgets and controls which to 
+ *		   display
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+ * 
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #pragma once
 #include "testclass.h"
 #include <rapidjson/ostreamwrapper.h>//for ostreamwrapper
 #include <rapidjson/prettywriter.h>//for prettywriter
-//#include <utility>
+#include <functional>//std::function
+#include <stack>//std::stack
+#include <imgui.h>
+//widgets
 #include "HeirarchyView.h"
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
 #include "ProjectRootView.h"
 #include "LoggingView.h"
+#include "WarningView.h"
+
+#include "ActionStack/EditorActionStack.h"
+#include "Engine/Memory/BufferAllocator.h"
+
 enum class GUIACTIVE_FLAGS:int
 {
 	INSPECTOR_ACTIVE = 1,
@@ -35,21 +56,29 @@ public:
 	void SetGUIInactive(GUIACTIVE_FLAGS flag) { m_activeFlagGUI ^= static_cast<int>(flag); }
 
 	void HotKeysUpdate();
-	void UpdateUI();
-	void TestFunction();
+	void ShowAllWidgets();
+
+
+
 private:
 
+	//the 2 functions will be moved out of this class
 	void SaveData();
 	void LoadData(const char* dir);
 
 public:
+
 	static testclass s_rootnode;
 	static std::vector<testclass> s_testList;
 	static std::map<KEY_ACTIONS, unsigned int> s_hotkeymapping;
 
 	//for copy and pasting 
-	static std::pair<std::string, std::shared_ptr<void*>> s_copyPayload;
+	static std::pair<std::string, void* > s_copyPayload;
+	static engine::BufferAllocator s_payloadBufferAllocator;
+
+	
 private:
+
 	int m_activeFlagGUI = 0;
 
 	HeirarchyView m_heirarchy_view;
@@ -57,6 +86,8 @@ private:
 	ProjectFolderView m_projectfolder_view;
 	ProjectRootView m_projectroot_view;
 	LoggingView m_logging_view;
+	WarningView m_warning_view;
 
+	ActionStack m_action_stack;
 };
 

@@ -1,8 +1,28 @@
+/*****************************************************************//**
+ * \file   HeirarchyView.cpp
+ * \brief  Display the hierachy of the list of nodes
+ *		   And allow interations with them.
+ *		   
+ * 
+ * \author Leong Jun Xiang (junxiang.leong)
+ * \date   June 2021
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+ *********************************************************************/
 #include "HeirarchyView.h"
 #include "EditorObjectGroup.h"
 #include "testclass.h"//remove once the real structure is in
 #include "Editor.h"
+
 #include <imgui.h>
+
+/**
+ * \brief The main function to displaying the Hierarchy window
+ *			-contains the function for the interaction of the nodes
+ * 
+ */
 void HeirarchyView::Show()
 {
 	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });//only works when undocked

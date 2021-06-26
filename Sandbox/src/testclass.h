@@ -4,14 +4,15 @@
 class testclass
 {
 public:
-    testclass(int v = 20) :i1{ v }, i2{ v + 1 } { id += 1; uid = id; }
-    testclass(const testclass& c) :i1{ c.i1 }, i2{ c.i2 }, name{ c.name }, parent{ c.parent }, childs{ c.childs }, uid{ c.uid } {}
+    testclass(int v = 20) :i1{ v }, f2{float( v + 1) } { id += 1; uid = id; }
+    testclass(const testclass& c) :i1{ c.i1 }, f2{ c.f2 }, name{ c.name }, parent{ c.parent }, childs{ c.childs }, uid{ c.uid } {}
 public:
     static int id;
     int i1;
-    int i2;
+    float f2;
     int uid;
     std::string name = "obj";
+	std::string somestring = "abc";
     testclass* parent = nullptr;
     std::vector<testclass*>childs;
 

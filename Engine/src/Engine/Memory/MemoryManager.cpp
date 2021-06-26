@@ -10,7 +10,6 @@ namespace engine
 	const MemoryManager::Size MemoryManager::GB = 1024 * MB;
 
 	MemoryManager* MemoryManager::instance;
-	static MemoryManager g_instance;
 
 	MemoryManager::MemoryManager() :
 		m_persistentAllocator(2 * MemoryManager::GB),
@@ -48,7 +47,7 @@ namespace engine
 	MemoryManager* MemoryManager::GetInstance()
 	{
 		//ENGINE_ASSERT_MSG(instance, "MemoryManager instance is not created, please initialize it before use.");
-
+		static MemoryManager g_instance;
 		if (instance == nullptr)
 		{
 			std::cout << "MemoryManager instance is not created, please initialize it before use." << std::endl;

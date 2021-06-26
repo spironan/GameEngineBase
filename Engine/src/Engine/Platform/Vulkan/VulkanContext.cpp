@@ -57,12 +57,20 @@ namespace engine
 
     void VulkanContext::OnUpdateBegin()
     {
-        //empty for now
+        
     }
 
     void VulkanContext::SwapBuffers()
     {
-        vkEngine.RenderFrame();
+		vkEngine.RenderFrame();
+		if (!vkEngine._recreateSwapchain)
+		{
+			vkEngine.PresentFrame();
+		}
+		if (vkEngine._recreateSwapchain)
+		{
+			vkEngine.RecreateSwapchain();
+		}
     }
 
     void VulkanContext::InitImGui()
