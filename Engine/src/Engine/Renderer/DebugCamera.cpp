@@ -117,7 +117,7 @@ void DebugCamera::update_camera(float deltaSeconds)
 
 	velocity = inputAxis.x * forward + inputAxis.y * right + inputAxis.z * up;
 
-	velocity *= (b_Ortho?m_cameraSpeed*0.5f:m_cameraSpeed) * deltaSeconds;
+	velocity *= (b_Ortho?m_cameraSpeed*2.0f:m_cameraSpeed) * deltaSeconds;
 
 	CVAR_CamPos.Set(CVAR_CamPos.Get()+ velocity);
 	

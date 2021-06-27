@@ -19,7 +19,7 @@ struct DebugCamera
 
 	glm::vec3 velocity{};
 	glm::vec3 inputAxis{};
-	float m_cameraSpeed{ 5.0f };
+	float m_cameraSpeed{ 1000.0f };
 
 	//void moveCamera();
 
