@@ -14,6 +14,8 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+#include <ostream>
+
 namespace engine
 {
     typedef enum class KeyCode
