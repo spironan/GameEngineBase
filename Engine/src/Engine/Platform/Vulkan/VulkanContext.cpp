@@ -18,11 +18,10 @@ Technology is prohibited.
 
 #include "Engine/Platform/Vulkan/VulkanContext.h"
 
-#include "vk_engine.h"
 
 namespace engine
 {
-    static VulkanEngine vkEngine;
+    VulkanEngine VulkanContext::vkEngine;
 
     VulkanContext::VulkanContext(SDL_Window* window)
         : m_windowHandle(window)
