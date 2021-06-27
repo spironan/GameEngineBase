@@ -25,6 +25,8 @@ project "Sandbox"
         --"%{IncludeDir.gl3w}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.rapidjson}",
+		
+		"%{IncludeDir.VulkanSDK}", -- Temporary until the rendering can standalone
 
     }
 

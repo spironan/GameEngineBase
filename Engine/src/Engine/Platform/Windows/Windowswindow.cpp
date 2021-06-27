@@ -123,7 +123,7 @@ namespace engine
     double WindowsWindow::CalcDeltaTime()
     {
         double time = static_cast<double>(SDL_GetPerformanceCounter());
-        double dt =  (time - m_lastFrameTime) * 1000.0 / SDL_GetPerformanceFrequency();
+        double dt =  (time - m_lastFrameTime) / SDL_GetPerformanceFrequency();
         m_lastFrameTime = time;
         return dt;
     }

@@ -3,7 +3,8 @@
 
 #pragma once
 
-#include <vk_mem_alloc.h>
+#include <../vendor/vma/vk_mem_alloc.h>
+//#include <vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
 struct AllocatedBuffer

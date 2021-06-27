@@ -14,6 +14,8 @@ project "ImGui"
         "imgui.cpp",
         "imgui_draw.cpp",
         "imgui_internal.h",
+		"imgui_stdlib.h",
+		"imgui_stdlib.cpp",
         "imgui_widgets.cpp",
         "imstb_rectpack.h",
         "imstb_textedit.h",

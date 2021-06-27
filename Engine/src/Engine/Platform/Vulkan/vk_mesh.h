@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Engine/Platform/Vulkan/vk_types.h"
-#include <glm/vec3.hpp>
-#include <glm/vec2.hpp>
+#include <../vendor/glm/glm/vec3.hpp>
+#include <../vendor/glm/glm/vec2.hpp>
 
 #include <vector>
 
