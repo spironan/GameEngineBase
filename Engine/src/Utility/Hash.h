@@ -27,8 +27,9 @@ namespace utility
     struct StringHash
     {
     public:
+        using size_type = uint32_t;
 
-        constexpr size_t const_strlen(const char* s)
+        constexpr static size_t const_strlen(const char* s)
         {
             size_t size = 0;
             while (s[size]) { size++; };
@@ -44,14 +45,14 @@ namespace utility
 
          @return returns the hashed fnv-1a output.
         *//*****************************************************************************/
-        constexpr uint32_t GenerateFNV1aHash(const char* str)
+        constexpr static size_type  GenerateFNV1aHash(const char* str)
         {
             // Also C++ does not like static constexpr
-            constexpr uint32_t FNV_PRIME = 16777619u;
-            constexpr uint32_t OFFSET_BASIS = 2166136261u;
+            constexpr size_type FNV_PRIME = 16777619u;
+            constexpr size_type OFFSET_BASIS = 2166136261u;
 
             const size_t length = const_strlen(str) + 1;
-            uint32_t hash = OFFSET_BASIS;
+            size_type hash = OFFSET_BASIS;
             for (size_t i = 0; i < length; ++i)
             {
                 hash ^= *str++;
@@ -59,16 +60,16 @@ namespace utility
             }
             return hash;
         }
-        constexpr uint32_t GenerateFNV1aHash(const std::string& string)
+        constexpr static size_type GenerateFNV1aHash(const std::string& string)
         {
             return GenerateFNV1aHash(string.c_str());
         }
 
         
 
-        uint32_t computedHash;
+        size_type computedHash;
 
-        constexpr StringHash(uint32_t hash) noexcept : computedHash(hash) {}
+        constexpr StringHash(size_type hash) noexcept : computedHash(hash) {}
 
         constexpr StringHash(const char* s) noexcept : computedHash(0)
         {
@@ -80,7 +81,7 @@ namespace utility
         }
         StringHash(const StringHash& other) = default;
 
-        constexpr operator uint32_t()noexcept { return computedHash; }
+        constexpr operator size_type()noexcept { return computedHash; }
     };
 
 }}
