@@ -293,10 +293,16 @@ namespace engine
     {
         int x, y;
         SDL_GetMouseState(&x, &y);
-
         return { x, y };
     }
 
+    std::pair<int, int> Input::GetMouseDelta()
+    {
+        int x, y;
+        SDL_GetRelativeMouseState(&x, &y);
+        return { x, y };   // invert y so that you get bottom left as 0,0 instead of top left as 0,0 (default is window space)
+    }
+    
     int Input::GetMouseX()
     {
         return GetMousePosition().first;

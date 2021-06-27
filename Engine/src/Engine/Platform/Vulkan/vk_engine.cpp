@@ -1320,6 +1320,12 @@ void VulkanEngine::RenderFrame()
 
 	vkCmdBeginRenderPass(cmd, &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+	VkViewport viewport = { 0, 0, float(_windowExtent.width), float(_windowExtent.height), 0, 1 };
+	VkRect2D scissor = { {0, 0}, {uint32_t(_windowExtent.width), uint32_t(_windowExtent.height)} };
+
+	vkCmdSetViewport(cmd, 0, 1, &viewport);
+	vkCmdSetScissor(cmd, 0, 1, &scissor);
+
 	// [-- rendering commands --]
 	draw_objects(cmd, _renderables.data(), static_cast<int>(_renderables.size()));
 	// [-- end rendering commands --]
@@ -1443,15 +1449,7 @@ void VulkanEngine::RecreateSwapchain()
 	_recreateSwapchain = false;
 
 	init_swapchain(_swapchain);
-	init_default_renderpass();
 	init_framebuffers();
-	init_pipelines();
-
-	// This is actually horrible. Pending material system to save my life
-	// TODO: implement a material system to handle pipeline changing without having to re-bind objects
-	_renderables.clear();
-	init_scene();
-
 }
 
 VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)
@@ -1484,6 +1482,15 @@ VkPipeline PipelineBuilder::build_pipeline(VkDevice device, VkRenderPass pass)
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.pNext = nullptr;
 
+	VkDynamicState dynamicStates[] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+
+	VkPipelineDynamicStateCreateInfo dynamicInfo{};
+	dynamicInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicInfo.pNext = nullptr;
+	dynamicInfo.dynamicStateCount = sizeof(dynamicStates) / sizeof(dynamicStates[0]);
+	dynamicInfo.pDynamicStates = dynamicStates;
+
+	pipelineInfo.pDynamicState = &dynamicInfo;
 	pipelineInfo.stageCount = static_cast<uint32_t>(_shaderStages.size());
 	pipelineInfo.pStages = _shaderStages.data();
 	pipelineInfo.pVertexInputState = &_vertexInputInfo;

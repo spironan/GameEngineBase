@@ -53,7 +53,9 @@ public :
     void OnUpdate(engine::Timestep dt) override
     {
         //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
-
+        std::pair<int, int> pos = engine::Input::GetMouseDelta();
+        LOG_INFO("{0}, {1}", pos.first , pos.second);
+        
         // New way to do check keys.
         if (engine::Input::IsKeyPressed(ENGINE_KEY_0))
         {
@@ -181,6 +183,10 @@ public :
     void OnEvent(engine::Event& e) override
     {
         //LOG_TRACE("{0}", e);
+        /*if (e.GetEventType() == engine::EVENT_TYPE::MOUSEMOVED)
+        {
+            LOG_TRACE("{0}", e);
+        }*/
     }
 };
 
