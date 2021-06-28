@@ -155,6 +155,7 @@ void Editor::LoadData(const char* dir)
 void Editor::ShowAllWidgets()
 {
 	//main banner
+	
 	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	ImGui::ShowDemoWindow();
