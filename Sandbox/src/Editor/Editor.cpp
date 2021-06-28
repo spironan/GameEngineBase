@@ -24,7 +24,7 @@ Technology is prohibited.
 #include "Engine/Core/Input.h"
 #include "Engine/Memory/MemoryManager.h"
 
-
+#include "imgui_internal.h"
 
 /* static vars */
 
@@ -65,11 +65,8 @@ Editor::~Editor()
 
 void Editor::HotKeysUpdate()
 {
-	/*if(engine::Input::IsKeyPressed(engine::key::W))
-	{
-		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
-	}*/
-
+	if(ImGui::GetActiveID())
+		return;
 	if (ImGui::IsKeyPressed(s_hotkeymapping[KEY_ACTIONS::HIDE_INSPECTOR]))
 	{
 		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
