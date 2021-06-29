@@ -211,13 +211,13 @@ glm::mat4 DebugCamera::get_projection_matrix()
 		float ar = static_cast<float>(_windowExtent.width)/ static_cast<float>(_windowExtent.height);	
 		float height = CVAR_orthoHeight.GetFloat();
 		glm::mat4 pro = glm::ortho(-ar*height, ar*height, -height, height,CVAR_Depth.Get().x, CVAR_Depth.Get().y);
-			pro[1][1] *= -1;
+			//pro[1][1] *= -1;
 			return pro;
 	}
 	else
 	{
 		glm::mat4 pro = glm::perspective(glm::radians(CVAR_fov.Get().x), static_cast<float>(_windowExtent.width) / _windowExtent.height, CVAR_fov.Get().y, CVAR_fov.Get().z);
-		pro[1][1] *= -1;
+		//pro[1][1] *= -1;
 		return pro;
 	}
 }

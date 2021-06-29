@@ -1379,7 +1379,7 @@ void VulkanEngine::RenderFrame()
 
 	vkCmdBeginRenderPass(cmd, &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-	VkViewport viewport = { 0, 0, float(_windowExtent.width), float(_windowExtent.height), 0, 1 };
+	VkViewport viewport = { 0,float(_windowExtent.height), float(_windowExtent.width), -float(_windowExtent.height), 0, 1 };
 	VkRect2D scissor = { {0, 0}, {uint32_t(_windowExtent.width), uint32_t(_windowExtent.height)} };
 
 	vkCmdSetViewport(cmd, 0, 1, &viewport);
