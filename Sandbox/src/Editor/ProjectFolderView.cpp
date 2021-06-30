@@ -39,6 +39,8 @@ void ProjectFolderView::Show()
 	ImGui::End();
 }
 
+
+
 void ProjectFolderView::ProjectView()
 {
 	//remove this once integrated to the rendering system
@@ -70,19 +72,25 @@ void ProjectFolderView::ProjectView()
 	}
 	
 	//show directory
-	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvailWidth(),30 }, true);
+	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvail().x,30 }, true);
 	PathDir(std::filesystem::path(FileGroup::s_CurrentPath), FileGroup::s_CurrentPath);
 	ImGui::EndChild();
+	//search bar
+	SearchFilter();
+
 
 	//table calculation
 	float row = ImGui::GetContentRegionAvailWidth() / (padding + imgsize);
 	if (row < 1|| ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)//when changing tabs this will be set to false
 		return;
 	ImGui::TableNextColumn();//push 1 column first
-	for (std::filesystem::directory_entry entry : dir_iter)
+	for (auto& entry : dir_iter)
 	{
+		//filter search
+		if (m_filtering && entry.path().filename().u8string().find(m_filter) == std::string::npos)
+			continue;
+
 		ImGui::BeginGroup();//start
-		
 		//change this would be changed once rendering is integrated
 		if (entry.path().filename().has_extension() == false)
 			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize }, { 0,0 }, { 0.125,1 });
@@ -90,7 +98,6 @@ void ProjectFolderView::ProjectView()
 			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize });
 
 		//text of the filename
-
 		ImGui::TextWrapped(entry.path().filename().generic_u8string().c_str());
 		ImGui::EndGroup();//end
 		ImGui::TableNextColumn();//item done
@@ -114,7 +121,7 @@ void ProjectFolderView::ProjectView()
 					//std::system(a.substr(2).c_str());//substr can be removed one we have a proper filepath
 				}
 			}
-			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{
 				FileGroup::s_targetItemPosition = ImGui::GetMousePos();
 				FileGroup::s_selectedpath = entry.path().u8string();
@@ -149,7 +156,6 @@ void ProjectFolderView::SaveHeirarchy(testclass* object, rapidjson::PrettyWriter
 		SaveHeirarchy(object->childs[i], writer);
 	}
 }
-
 void ProjectFolderView::SaveObject(testclass* object, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
 	std::vector<rttr::property> list = rttr::type::get<testclass>().get_properties();
@@ -195,4 +201,22 @@ void ProjectFolderView::PathDir(std::filesystem::path& entry, std::string& path)
 	}
 	if (selected)
 		path = entry.generic_u8string().c_str();
+}
+
+void ProjectFolderView::SearchFilter()
+{
+	static char buffer[100];
+
+	ImGui::BeginChild("Search", { ImGui::GetContentRegionAvail().x,30});
+	if (ImGui::InputText("##Filter", buffer, sizeof(buffer),ImGuiInputTextFlags_AutoSelectAll))
+	{
+		m_filtering = true;
+		m_filter = buffer;
+	}
+	if (ImGui::IsItemActivated())
+		WarningView::DisplayWarning(WarningView::DISPLAY_LOG, "**Note** : Case-Sensitive Search");
+	if (buffer[0] == '\0')//if the user empty the buffer
+		m_filtering = false;
+	ImGui::EndChild();
+
 }

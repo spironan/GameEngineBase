@@ -20,7 +20,7 @@ Technology is prohibited.
 
 #include <windows.h>
 
-std::string FileGroup::s_rootPath = "./";
+const std::string FileGroup::s_rootPath = "./";
 std::string FileGroup::s_CurrentPath = s_rootPath;
 std::string FileGroup::s_hoveredPath = s_rootPath;
 std::string FileGroup::s_selectedpath;//path with the itemname
@@ -35,6 +35,8 @@ bool FileGroup::s_delete_popup = false;//flag for deleting modal popup
 
 bool FileGroup::s_rename_item = false;
 
+//archived
+//std::vector<std::string> FileGroup::s_currentfolderview;
 
 /**
  * \brief this code will be activated when right clicking inside the 
@@ -81,6 +83,20 @@ void FileGroup::KeyshortCuts()
 	}
 }
 
+///**
+//* \brief
+//* after setting current path call this function to preload all the filenames
+//* so as to reduce the need to reiterate all the items
+//* this function is required to be call everytime there are changes made to the file
+//*/
+//void FileGroup::LoadFolderItems()
+//{
+//	s_currentfolderview.clear();
+//	for (auto& entry : std::filesystem::directory_iterator(FileGroup::s_CurrentPath))
+//	{
+//		s_currentfolderview.emplace_back(entry.path().filename().u8string());
+//	}
+//}
 void FileGroup::ProjectViewPopUpOptions()
 {
 	bool item_selected = (FileGroup::s_hoveredPath != FileGroup::s_rootPath);
