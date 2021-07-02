@@ -37,6 +37,8 @@ void ProjectFolderView::Show()
 	}
 	FileGroup::KeyshortCuts();
 	ImGui::End();
+
+
 }
 
 
@@ -70,19 +72,22 @@ void ProjectFolderView::ProjectView()
 		padding = max_padding / size_multiplier;//determin the padding when scrolled
 		imgsize = max_imgsize / size_multiplier;
 	}
+	//table calculation
+	float row = ImGui::GetContentRegionAvailWidth() / (padding + imgsize);
+	if (row < 1)//when changing tabs this will be set to false
+		return;
 	
-	//show directory
-	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvail().x,30 }, true);
+	//show directory (recursive function)
+	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvail().x ,30 }, true);
 	PathDir(std::filesystem::path(FileGroup::s_CurrentPath), FileGroup::s_CurrentPath);
 	ImGui::EndChild();
 	//search bar
 	SearchFilter();
 
-
-	//table calculation
-	float row = ImGui::GetContentRegionAvailWidth() / (padding + imgsize);
-	if (row < 1|| ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)//when changing tabs this will be set to false
+	//if begin table fails return
+	if (ImGui::BeginTable("preview_table", static_cast<int>(row)) == false)
 		return;
+
 	ImGui::TableNextColumn();//push 1 column first
 	for (auto& entry : dir_iter)
 	{
@@ -207,7 +212,7 @@ void ProjectFolderView::SearchFilter()
 {
 	static char buffer[100];
 
-	ImGui::BeginChild("Search", { ImGui::GetContentRegionAvail().x,30});
+	ImGui::BeginChild("Search", { ImGui::GetContentRegionAvail().x * 0.4f,30});
 	if (ImGui::InputText("##Filter", buffer, sizeof(buffer),ImGuiInputTextFlags_AutoSelectAll))
 	{
 		m_filtering = true;

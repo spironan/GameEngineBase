@@ -175,6 +175,7 @@ void Editor::ShowAllWidgets()
 	{
 		m_projectfolder_view.Show();
 	}
+	m_keyboard_view.Show();
 
 	m_action_stack.UpdateStack();
 	FileGroup::ProjectViewPopUp();

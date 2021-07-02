@@ -25,6 +25,8 @@ Technology is prohibited.
 #include "ProjectRootView.h"
 #include "LoggingView.h"
 #include "WarningView.h"
+#include "KeyBindingView.h"
+
 
 #include "ActionStack/EditorActionStack.h"
 #include "Engine/Memory/BufferAllocator.h"
@@ -87,7 +89,7 @@ private:
 	ProjectRootView m_projectroot_view;
 	LoggingView m_logging_view;
 	WarningView m_warning_view;
-
 	ActionStack m_action_stack;
+	KeyBindingView m_keyboard_view;
 };
 
