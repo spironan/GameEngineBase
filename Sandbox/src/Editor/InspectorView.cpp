@@ -24,12 +24,15 @@ InspectorView::InspectorView()
 }
 void InspectorView::Show()
 {
-	if (!ObjectGroup::s_FocusedObject)
-		return;
 
 	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
 	ImGui::Begin("inspector");
 	{
+		if (!ObjectGroup::s_FocusedObject)
+		{
+			ImGui::End();
+			return;
+		}
 		ImGui::Text("Name :  %s", ObjectGroup::s_FocusedObject->name.c_str());
 		ReadComponents(ObjectGroup::s_FocusedObject->get_type());
 	}

@@ -23,14 +23,22 @@ KeyBindingView::KeyBindingView()
 
 void KeyBindingView::Show()
 {
-	ImGuiIO& io = ImGui::GetIO();
+	
 	ImGui::SetNextWindowSize({1600,800});
 	ImGui::Begin("Key Shortcuts",nullptr,ImGuiWindowFlags_NoDocking);
+	KeyboardWindow();
+	PreviewShortcuts();
+	ImGui::End();
+}
+void KeyBindingView::KeyboardWindow()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui::BeginChild("Keyboard Preview", {0,400},true,ImGuiWindowFlags_AlwaysAutoResize);
 	ImVec2 p = ImGui::GetCursorScreenPos();
 	for (auto& key : m_keyboard_data)
 	{
-		ImGui::GetWindowDrawList()->AddImage(img_id, 
-											 { p.x + key.second.min_x ,p.y + key.second.min_y }, 
+		ImGui::GetWindowDrawList()->AddImage(img_id,
+											 { p.x + key.second.min_x ,p.y + key.second.min_y },
 											 { p.x + key.second.max_x, p.y + key.second.max_y },
 											 { 0,0 }, { 1,1 }, ImColor(255, 1, 0, 255));
 
@@ -49,5 +57,24 @@ void KeyBindingView::Show()
 											 { 0,0 }, { 0.1,1 }, ImColor(255, 255, 0, 255));
 	}
 	m_keypressed.clear();
-	ImGui::End();
+	for (const auto& kp : m_keyhighlight)
+	{
+		KeyData& kd = m_keyboard_data[kp];
+		ImGui::GetWindowDrawList()->AddImage(img_id,
+											 { p.x + kd.min_x ,p.y + kd.min_y },
+											 { p.x + kd.max_x, p.y + kd.max_y },
+											 { 0,0 }, { 0.1,1 }, ImColor(0, 255, 0, 255));
+	}
+
+	ImGui::EndChild();
+}
+void KeyBindingView::PreviewShortcuts()
+{
+	ImGui::BeginChild("Shortcuts", { 0,350 }, true);
+	if (ImGui::Button("Show Hierarchy", {100,100}))
+	{
+		m_keyhighlight.clear();
+		m_keyhighlight.emplace_back(engine::Key::D2);
+	}
+	ImGui::EndChild();
 }

@@ -63,6 +63,47 @@ Editor::~Editor()
 	//need to delete memory block of s_bufferAllocator
 }
 
+void Editor::MenuBarUI()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New"))
+			{
+
+			}
+			if (ImGui::MenuItem("Open"))
+			{
+
+			}
+			if (ImGui::MenuItem("Save"))
+			{
+
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Logging", NULL, logging_widget))
+			{
+				logging_widget = !logging_widget;
+			}
+			if (ImGui::MenuItem("Action History", NULL, action_widget))
+			{
+				action_widget = !action_widget;
+			}
+			if (ImGui::MenuItem("Keyboard Settings", NULL, keyboardview_widget))
+			{
+				keyboardview_widget = !keyboardview_widget;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+}
+
 void Editor::HotKeysUpdate()
 {
 	if(ImGui::GetActiveID())
@@ -152,10 +193,9 @@ void Editor::LoadData(const char* dir)
 void Editor::ShowAllWidgets()
 {
 	//main banner
-	
 	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-
 	ImGui::ShowDemoWindow();
+	MenuBarUI();
 	if(m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE))
 	{
 		m_inspector_view.Show();
@@ -175,13 +215,17 @@ void Editor::ShowAllWidgets()
 	{
 		m_projectfolder_view.Show();
 	}
-	m_keyboard_view.Show();
 
-	m_action_stack.UpdateStack();
 	FileGroup::ProjectViewPopUp();
-
-	m_logging_view.Show();
-	m_warning_view.Show();
+	ActionStack::UpdateStack();
 	HotKeysUpdate();
+
+	m_warning_view.Show();
+	if(keyboardview_widget)
+		m_keyboard_view.Show();
+	if(action_widget)
+		m_action_stack.Show();
+	if(logging_widget)
+		m_logging_view.Show();
 }
 

@@ -57,6 +57,8 @@ public:
 	//uses the (xor) operator to set the flag
 	void SetGUIInactive(GUIACTIVE_FLAGS flag) { m_activeFlagGUI ^= static_cast<int>(flag); }
 
+	void MenuBarUI();
+
 	void HotKeysUpdate();
 	void ShowAllWidgets();
 
@@ -91,5 +93,10 @@ private:
 	WarningView m_warning_view;
 	ActionStack m_action_stack;
 	KeyBindingView m_keyboard_view;
+
+	//remb to change the presets TODO: change the presets
+	bool logging_widget = true;
+	bool action_widget = false;
+	bool keyboardview_widget = false;
 };
 

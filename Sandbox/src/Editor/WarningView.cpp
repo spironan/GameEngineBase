@@ -17,6 +17,8 @@ void WarningView::Show()
 		ImGui::SetNextWindowPos({s_position[0],s_position[1]});
 		ImGui::SetNextWindowBgAlpha(0);
 		ImGui::Begin("WarningView", 0, ImGuiWindowFlags_NoDecoration| ImGuiWindowFlags_NoDocking |ImGuiWindowFlags_AlwaysAutoResize| ImGuiWindowFlags_NoBackground|ImGuiWindowFlags_NoInputs);
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 		switch (s_dtype)
 		{
 		case DisplayType::DISPLAY_LOG:
@@ -31,6 +33,8 @@ void WarningView::Show()
 		default:
 			break;
 		}
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
 		ImGui::End();
 		--s_counter;
 		if (!s_counter)

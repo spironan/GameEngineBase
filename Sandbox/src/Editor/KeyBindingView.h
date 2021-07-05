@@ -8,6 +8,8 @@ public:
 	KeyBindingView();
 
 	void Show();
+	void KeyboardWindow();
+	void PreviewShortcuts();
 private:
 	void* img_id;//change this to whatever the format for id once the loading is done
 	struct KeyData
@@ -19,5 +21,6 @@ private:
 	};
 	std::map < engine::Key, KeyData> m_keyboard_data;
 	std::vector<engine::Key> m_keypressed;
+	std::vector<engine::Key> m_keyhighlight;
 };
 

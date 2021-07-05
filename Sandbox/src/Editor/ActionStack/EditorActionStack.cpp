@@ -21,12 +21,8 @@ ActionStack::~ActionStack()
 {
 	ClearAll();
 }
-void ActionStack::UpdateStack()
+void ActionStack::Show()
 {
-	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
-		UndoStep();
-	if (ImGui::IsKeyPressed((int)engine::KeyCode::Y) && ImGui::GetIO().KeyCtrl)
-		RedoStep();
 	if (ImGui::Begin("Action Stack"))
 	{
 		ImGui::BeginChild("##ActionStackChild", { 0,ImGui::GetWindowHeight() * 0.8f }, true);
@@ -56,6 +52,13 @@ void ActionStack::UpdateStack()
 		if (ImGui::Button("Clear History")) ClearAll();
 	}
 	ImGui::End();
+}
+void ActionStack::UpdateStack()
+{
+	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
+		UndoStep();
+	if (ImGui::IsKeyPressed((int)engine::KeyCode::Y) && ImGui::GetIO().KeyCtrl)
+		RedoStep();
 }
 
 void ActionStack::UndoStep()
