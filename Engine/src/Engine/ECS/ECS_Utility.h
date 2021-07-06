@@ -26,4 +26,5 @@ namespace engine
 	const ComponentType MAX_COMPONENTS = 128;
 	using Signature = std::bitset<MAX_COMPONENTS>;
 
+	class ECS_Manager;
 }

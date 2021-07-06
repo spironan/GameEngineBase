@@ -32,7 +32,7 @@ namespace engine
 	class Test_Transform_System final : public System
 	{
 	public:
-		Test_Transform_System(ECS_Manager& _ECS_Manager) : m_ECS_Manager(_ECS_Manager) {};
+		Test_Transform_System(ECS_Manager& _ECS_Manager) : System(_ECS_Manager) {};
 		void Run()
 		{
 			auto view = m_ECS_Manager.GetComponentView<Test_Transform>();
@@ -43,9 +43,6 @@ namespace engine
 			}
 			LOG_TRACE("success");
 		}
-
-	private:
-		ECS_Manager& m_ECS_Manager;
 	};
 
 	void ECS_Test()
@@ -197,7 +194,7 @@ namespace engine
 		//test system
 		{
 			LOG_TRACE("test system");
-			auto test_transform_system = _ECS_Manager.RegisterSystem<Test_Transform_System>(_ECS_Manager);
+			auto test_transform_system = _ECS_Manager.RegisterSystem<Test_Transform_System>();
 			test_transform_system->Run();
 		}
 	}

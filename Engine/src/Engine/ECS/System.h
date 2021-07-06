@@ -20,9 +20,9 @@ namespace engine
 	class System
 	{
 	public:
-		//additional helper functions to be included when requested
+		explicit System(ECS_Manager& _ECS_Manager) : m_ECS_Manager(_ECS_Manager) {};
 		virtual ~System() = default;
-	private:
-
+	protected:
+		ECS_Manager& m_ECS_Manager;
 	};
 }
