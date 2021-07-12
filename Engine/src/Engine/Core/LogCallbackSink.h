@@ -21,6 +21,10 @@ namespace engine
 	class CallbackSink : public spdlog::sinks::base_sink <Mutex>
 	{
 	public:
+		/**
+		 * \brief 
+		 * construction sets the formatting for the sink
+		 */
 		CallbackSink() 
 		{
 			this->set_pattern("%n: %v%$");
@@ -34,13 +38,14 @@ namespace engine
 			m_subscriberList.emplace_back(subscriber);
 		}
 	protected:
+		/**
+		 * \brief action performed when there is a 
+		 * 
+		 * \param msg
+		 *  contains info about the log message
+		 */
 		void sink_it_(const spdlog::details::log_msg& msg) override
 		{
-
-			// log_msg is a struct containing the log entry info like level, timestamp, thread id etc.
-			// msg.raw contains pre formatted log
-			
-			// If needed (very likely but not mandatory), the sink formats the message before sending it to its final destination:
 			spdlog::memory_buf_t formatted;
 			spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
 			std::string temp = fmt::to_string(formatted);
