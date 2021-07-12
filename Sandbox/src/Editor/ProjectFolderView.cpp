@@ -38,7 +38,6 @@ void ProjectFolderView::Show()
 	FileGroup::KeyshortCuts();
 	ImGui::End();
 
-
 }
 
 

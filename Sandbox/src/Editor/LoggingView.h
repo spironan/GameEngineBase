@@ -12,17 +12,23 @@ Technology is prohibited.
  *********************************************************************/
 #pragma once
 #include <deque>
+#include <unordered_map>
 #include <string>
-#include <stdio.h>
 class LoggingView
 {
 public:
-
+	LoggingView();
 	void Show();
-
-	static void AddLoggingMsg(const char* fmt, ...);
-	static std::deque<std::string> s_messages;
+	
+	//static void AddLoggingMsg(const char* fmt, ...);
+protected:
+	static void AddItem(const std::string&);
 private:
+	static std::deque<std::string> s_messages;
+	static std::unordered_map<std::string, int> s_messagesRepeat;
+	static bool s_newItemAdded;
+
+	bool m_collapse_similar = false;
 	bool m_paused = false;
 };
 

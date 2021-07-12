@@ -32,6 +32,7 @@ namespace engine
     class Log final
     {
     public:
+
         /********************************************************************************//*!
          @brief     Initialization of logging library. Performed in main
         *//*********************************************************************************/
@@ -54,6 +55,7 @@ namespace engine
         *//*********************************************************************************/
         inline static std::shared_ptr<spdlog::logger>& GetClientLogger()    { return s_clientLogger; }
 
+
     protected:
         // do not create an instance of this class
         Log()   = delete;
@@ -63,6 +65,7 @@ namespace engine
         static std::shared_ptr<spdlog::logger> s_coreLogger;
         static std::shared_ptr<spdlog::logger> s_clientLogger;
         static std::ostringstream oss;
+		//callback sink
     };
 
 }

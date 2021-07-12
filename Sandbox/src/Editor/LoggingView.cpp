@@ -19,9 +19,20 @@ Technology is prohibited.
 
 // required to obtain the ostringstream to read its message
 #include <Engine/Core/Log.h>
+#include "Engine/Core/LogCallbackSink.h"
+
+#include <functional>
 #include <sstream>
 
 std::deque<std::string> LoggingView::s_messages;
+std::unordered_map<std::string, int> LoggingView::s_messagesRepeat;
+bool LoggingView::s_newItemAdded = false;
+
+LoggingView::LoggingView()
+{
+	std::function<void(const std::string&)> item = AddItem;
+	CallbackSink_mt::SubscribeToSink(item);
+}
 
 void LoggingView::Show()
 {
@@ -33,47 +44,74 @@ void LoggingView::Show()
 		{
 			s_messages.resize(0);
 		}
-		if (ImGui::MenuItem("Pause"))
+		if (ImGui::MenuItem("Pause",NULL,m_paused))
 		{
 			m_paused = !m_paused;
-			::engine::Log::GetOstreamOutput().str("");//clear the log
+		}
+		if (ImGui::MenuItem("Collapsed",NULL,m_collapse_similar))
+		{
+			m_collapse_similar = !m_collapse_similar;
 		}
 		ImGui::EndMenuBar();
 	}
 
 	//draw ui here
-	for(int i = static_cast<int>(s_messages.size()) - 1 ; i > 0; --i)
-		ImGui::Text(s_messages[i].c_str());
+	if (m_collapse_similar)
+	{
+		for (auto& item : s_messagesRepeat)
+		{
+			ImGui::Separator();
+			ImGui::TextWrapped(item.first.c_str());
+			ImGui::Text(std::to_string(item.second).c_str());
+			ImGui::Separator();
+		}
+	}
+	else
+	{
+		for(int i = static_cast<int>(s_messages.size()) - 1 ; i > 0; --i)
+			ImGui::Text(s_messages[i].c_str());
+	}
+
+	if (s_newItemAdded)
+	{
+		s_newItemAdded = false;
+		ImGui::SetScrollY(ImGui::GetScrollMaxY());
+	}
+
 	//if paused do not process string
 	if (m_paused)
 	{
 		ImGui::End();
 		return;
-	}
-	//process string here
-	std::ostringstream& oss = ::engine::Log::GetOstreamOutput();
-	if (oss.tellp() != 0)
-	{
-		if (s_messages.size() > 250)
-		{
-			s_messages.resize(200);
-		}
-		ImGui::SetScrollY(ImGui::GetScrollMaxY());
-		s_messages.emplace_front(oss.str());
-		oss.str("");//empty string
-		oss.clear();//clear error flags
+		
 	}
 	
+
 	ImGui::End();
 }
 
-//this is now unused
-void LoggingView::AddLoggingMsg(const char* fmt, ...)
+void LoggingView::AddItem(const std::string& str)
 {
-	char buf[1024];
-	va_list vargs;
-	va_start(vargs, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, vargs);
-	buf[sizeof(buf) - 1] = '\0';
-	s_messages.emplace_back(buf);
+	s_newItemAdded = true;
+	if (s_messages.size() > 250)
+	{
+		s_messages.resize(200);
+	}
+	//when added new message set the scroll bar to the newest
+
+	//emplace infomation about the logs
+	s_messages.emplace_front(str);
+	//to track the count for the logs
+	++s_messagesRepeat[str];
 }
+
+//this is now unused
+//void LoggingView::AddLoggingMsg(const char* fmt, ...)
+//{
+//	char buf[1024];
+//	va_list vargs;
+//	va_start(vargs, fmt);
+//	vsnprintf(buf, sizeof(buf), fmt, vargs);
+//	buf[sizeof(buf) - 1] = '\0';
+//	s_messages.emplace_back(buf);
+//}
