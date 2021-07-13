@@ -12,22 +12,18 @@ Technology is prohibited.
  *********************************************************************/
 
 #include "LoggingView.h"
+#include "Engine/Core/LogCallbackSink.h"
+#include "Utility/Hash.h"
 
 #include <imgui.h>
-#include <sstream>
-#include <iostream>
-
-// required to obtain the ostringstream to read its message
-#include <Engine/Core/Log.h>
-#include "Engine/Core/LogCallbackSink.h"
-
 #include <functional>
-#include <sstream>
 
-std::deque<std::string> LoggingView::s_messages;
-std::unordered_map<std::string, int> LoggingView::s_messagesRepeat;
+
+
+std::deque<engine::utility::StringHash::size_type> LoggingView::s_messages;
+std::unordered_map<engine::utility::StringHash::size_type, LoggingView::MessageData> LoggingView::s_messageCollection;
 bool LoggingView::s_newItemAdded = false;
-
+bool LoggingView::s_paused = false;
 LoggingView::LoggingView()
 {
 	std::function<void(const std::string&)> item = AddItem;
@@ -44,11 +40,11 @@ void LoggingView::Show()
 		{
 			s_messages.resize(0);
 		}
-		if (ImGui::MenuItem("Pause",NULL,m_paused))
+		if (ImGui::MenuItem((s_paused)?"UnPause" : "Pause", NULL, s_paused))
 		{
-			m_paused = !m_paused;
+			s_paused = !s_paused;
 		}
-		if (ImGui::MenuItem("Collapsed",NULL,m_collapse_similar))
+		if (ImGui::MenuItem((m_collapse_similar)? "Expand" : "Collapse", NULL, m_collapse_similar, true))
 		{
 			m_collapse_similar = !m_collapse_similar;
 		}
@@ -56,53 +52,71 @@ void LoggingView::Show()
 	}
 
 	//draw ui here
-	if (m_collapse_similar)
+	if (ImGui::BeginChild("LogView Child"))
 	{
-		for (auto& item : s_messagesRepeat)
+		if (m_collapse_similar)
 		{
-			ImGui::Separator();
-			ImGui::TextWrapped(item.first.c_str());
-			ImGui::Text(std::to_string(item.second).c_str());
-			ImGui::Separator();
+			ImGuiListClipper clipper;
+			clipper.Begin(s_messageCollection.size(),35.0f);
+			int counter = 0;
+			while (clipper.Step())
+			{
+				for (auto& iter = s_messageCollection.begin(); iter != s_messageCollection.end(); ++iter,++counter)
+				{
+					if (counter >= clipper.DisplayStart)
+					{
+						ImGui::TextWrapped(iter->second.msg.c_str());
+						ImGui::Text(std::to_string(iter->second.count).c_str());
+						ImGui::Separator();
+						if (counter >= clipper.DisplayEnd)
+							break;
+					}
+					else
+						continue;
+				}
+			}
 		}
+		else if(!s_messages.empty())
+		{
+			ImGuiListClipper clipper;
+			clipper.Begin(s_messages.size());
+			while (clipper.Step())
+			{
+				int distance = clipper.DisplayEnd - clipper.DisplayStart;
+				int start = static_cast<int>(s_messages.size()) - 1 - clipper.DisplayStart;
+				for (int i = start; i > start - distance; --i)
+					ImGui::Text(s_messageCollection[s_messages[i]].msg.c_str());
+			}
+		}
+		if (s_newItemAdded)
+		{
+			s_newItemAdded = false;
+			ImGui::SetScrollY(ImGui::GetScrollMaxY());
+		}	
 	}
-	else
-	{
-		for(int i = static_cast<int>(s_messages.size()) - 1 ; i > 0; --i)
-			ImGui::Text(s_messages[i].c_str());
-	}
-
-	if (s_newItemAdded)
-	{
-		s_newItemAdded = false;
-		ImGui::SetScrollY(ImGui::GetScrollMaxY());
-	}
-
-	//if paused do not process string
-	if (m_paused)
-	{
-		ImGui::End();
-		return;
-		
-	}
-	
-
+	ImGui::EndChild();
 	ImGui::End();
 }
 
 void LoggingView::AddItem(const std::string& str)
 {
+	if (s_paused)
+		return;
 	s_newItemAdded = true;
 	if (s_messages.size() > 250)
 	{
 		s_messages.resize(200);
 	}
 	//when added new message set the scroll bar to the newest
-
+	engine::utility::StringHash::size_type hash = engine::utility::StringHash::GenerateFNV1aHash(str);
 	//emplace infomation about the logs
-	s_messages.emplace_front(str);
+	s_messages.emplace_front(hash);
 	//to track the count for the logs
-	++s_messagesRepeat[str];
+
+	if(s_messageCollection.find(hash) == s_messageCollection.end())
+		s_messageCollection[hash] = { 0,0,str };
+	else
+		s_messageCollection[hash].count += 1;
 }
 
 //this is now unused

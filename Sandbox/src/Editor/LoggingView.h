@@ -14,6 +14,8 @@ Technology is prohibited.
 #include <deque>
 #include <unordered_map>
 #include <string>
+#include "Utility/Hash.h"
+
 class LoggingView
 {
 public:
@@ -24,12 +26,18 @@ public:
 protected:
 	static void AddItem(const std::string&);
 private:
-	static std::deque<std::string> s_messages;
-	static std::unordered_map<std::string, int> s_messagesRepeat;
+	struct MessageData
+	{
+		int count;
+		char type;
+		std::string msg;
+	};
+	static std::deque<engine::utility::StringHash::size_type> s_messages;
+	static std::unordered_map<engine::utility::StringHash::size_type, MessageData> s_messageCollection;
 	static bool s_newItemAdded;
+	static bool s_paused;
 
 	bool m_collapse_similar = false;
-	bool m_paused = false;
 };
 
 
