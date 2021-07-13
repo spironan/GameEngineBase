@@ -33,7 +33,7 @@ namespace engine
 		 * \brief 
 		 * subscribe to the current sink when the string gets formatted
 		 */
-		static void SubscribeToSink(std::function<void(const std::string&)> subscriber)
+		static void SubscribeToSink(std::function<void(const std::string&,char)> subscriber)
 		{
 			m_subscriberList.emplace_back(subscriber);
 		}
@@ -49,9 +49,10 @@ namespace engine
 			spdlog::memory_buf_t formatted;
 			spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
 			std::string temp = fmt::to_string(formatted);
+			
 			for (auto& subscriber : m_subscriberList)
 			{
-				subscriber(temp);
+				subscriber(temp,(char)msg.level);
 			}
 		}
 
@@ -60,10 +61,10 @@ namespace engine
 			
 		}
 	private:
-		static std::vector < std::function<void(const std::string&)> > m_subscriberList;
+		static std::vector < std::function<void(const std::string&,char)> > m_subscriberList;
 	};
 	template<typename mutex>
-	std::vector <std::function<void(const std::string&)> > CallbackSink<mutex>::m_subscriberList;
+	std::vector <std::function<void(const std::string&,char)> > CallbackSink<mutex>::m_subscriberList;
 }
 #include "spdlog/details/null_mutex.h"
 #include <mutex>

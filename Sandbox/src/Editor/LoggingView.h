@@ -24,7 +24,7 @@ public:
 	
 	//static void AddLoggingMsg(const char* fmt, ...);
 protected:
-	static void AddItem(const std::string&);
+	static void AddItem(const std::string&,char);
 private:
 	struct MessageData
 	{

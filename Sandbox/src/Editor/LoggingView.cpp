@@ -26,8 +26,7 @@ bool LoggingView::s_newItemAdded = false;
 bool LoggingView::s_paused = false;
 LoggingView::LoggingView()
 {
-	std::function<void(const std::string&)> item = AddItem;
-	CallbackSink_mt::SubscribeToSink(item);
+	CallbackSink_mt::SubscribeToSink(AddItem);
 }
 
 void LoggingView::Show()
@@ -65,7 +64,23 @@ void LoggingView::Show()
 				{
 					if (counter >= clipper.DisplayStart)
 					{
+						switch (iter->second.type)
+						{
+						case 0:
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.2f,0.5f,0.2f,1 });break;
+						case 1:
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,0.5f,1 });break;
+						case 2:
+							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,1,1 });break;
+						case 3:
+							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 }); break;
+						case 4:
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0,0,1 }); break;
+						case 5:
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 }); break;
+						}
 						ImGui::TextWrapped(iter->second.msg.c_str());
+						ImGui::PopStyleColor();
 						ImGui::Text(std::to_string(iter->second.count).c_str());
 						ImGui::Separator();
 						if (counter >= clipper.DisplayEnd)
@@ -76,7 +91,7 @@ void LoggingView::Show()
 				}
 			}
 		}
-		else if(!s_messages.empty())
+		else
 		{
 			ImGuiListClipper clipper;
 			clipper.Begin(s_messages.size());
@@ -85,7 +100,25 @@ void LoggingView::Show()
 				int distance = clipper.DisplayEnd - clipper.DisplayStart;
 				int start = static_cast<int>(s_messages.size()) - 1 - clipper.DisplayStart;
 				for (int i = start; i > start - distance; --i)
+				{
+					switch (s_messageCollection[s_messages[i]].type)
+					{
+					case 0:
+						ImGui::PushStyleColor(ImGuiCol_Text, { 0.2f,0.5f,0.2f,1 }); break;
+					case 1:
+						ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,0.5f,1 }); break;
+					case 2:
+						ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,1,1 }); break;
+					case 3:
+						ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 }); break;
+					case 4:
+						ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0,0,1 }); break;
+					case 5:
+						ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 }); break;
+					}
 					ImGui::Text(s_messageCollection[s_messages[i]].msg.c_str());
+					ImGui::PopStyleColor();
+				}
 			}
 		}
 		if (s_newItemAdded)
@@ -98,7 +131,7 @@ void LoggingView::Show()
 	ImGui::End();
 }
 
-void LoggingView::AddItem(const std::string& str)
+void LoggingView::AddItem(const std::string& str,char type)
 {
 	if (s_paused)
 		return;
@@ -114,7 +147,7 @@ void LoggingView::AddItem(const std::string& str)
 	//to track the count for the logs
 
 	if(s_messageCollection.find(hash) == s_messageCollection.end())
-		s_messageCollection[hash] = { 0,0,str };
+		s_messageCollection[hash] = { 0,type,str };
 	else
 		s_messageCollection[hash].count += 1;
 }
