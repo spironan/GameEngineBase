@@ -146,7 +146,7 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        CVarSystem::Get()->DrawImguiEditor();
+        //CVarSystem::Get()->DrawImguiEditor();
     }
 };
 
