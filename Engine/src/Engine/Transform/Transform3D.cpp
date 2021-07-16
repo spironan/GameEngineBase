@@ -30,15 +30,16 @@ namespace engine
     *//*********************************************************************************/
     Transform3D::Transform3D(Entity _entityID, bool _active)
     : Component         { _entityID, _active }
-    , position          { 0.f, 0.f, 0.f }
-    , rotation          { 0.f, 0.f, 0.f }
-    , scale             { 1.f, 1.f, 1.f }
-    , conversion        { false }
-    , dirty             { false }
-    , hasChanged        { false }
-    , globalTransform   { }
-    , localTransform    { }
-    , conversionMtx     { }
+    , m_position          { 0.f, 0.f, 0.f }
+    , m_rotationAngle     { 0.f }
+    , m_rotationAxis      { 0.f, 0.f, 1.f }
+    , m_scale             { 1.f, 1.f, 1.f }
+    , m_conversion        { false }
+    , m_dirty             { false }
+    , m_hasChanged        { false }
+    , m_globalTransform   { glm::mat4{} }
+    , m_localTransform    { glm::mat4{} }
+    , m_conversionMatrix     { glm::mat4{} }
     {
     }
 
@@ -49,21 +50,23 @@ namespace engine
     void Transform3D::Recalculate()
     {
         //localTransform = Matrix_util::model_matrix(position, rotation, scale);
-        glm::translate(localTransform, position);
+        glm::translate(m_localTransform, m_position);
+        glm::rotate(m_localTransform, m_rotationAngle, m_rotationAxis);
+        //glm::rotate(localTransform, )
         //glm::rotate(localTransform, rotation);
         //glm::rotate(localTransform, );
-        glm::scale(localTransform, scale);
+        glm::scale(m_localTransform, m_scale);
 
         //Apply conversion everytime upon calculation
-        conversionMtx *= localTransform;
+        m_conversionMatrix *= m_localTransform;
 
         //it is now recalculated and clean.
-        dirty = false;
+        m_dirty = false;
 
-        globalTransform = localTransform;
+        m_globalTransform = m_localTransform;
 
         //it has changed and been updated this frame
-        hasChanged = true;
+        m_hasChanged = true;
     }
 
     /****************************************************************************//*!
@@ -75,17 +78,17 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::SetGlobalMatrix(glm::mat4 _parentTransform)
     {
-        if (conversion)
+        if (m_conversion)
         {
             // store parents inverse as conversion matrix
-            conversionMtx = glm::inverse(_parentTransform);
+            m_conversionMatrix = glm::inverse(_parentTransform);
             
             //recalculate again
-            dirty       = true;
-            conversion  = false;
+            m_dirty       = true;
+            m_conversion  = false;
         }
 
-        globalTransform = _parentTransform * localTransform;
+        m_globalTransform = _parentTransform * m_localTransform;
         
     }
     /****************************************************************************//*!
@@ -101,10 +104,17 @@ namespace engine
     *//*****************************************************************************/
     glm::mat4 Transform3D::GetGlobalRotationMatrix() const
     {
-        glm::mat4 result{ globalTransform };
-        result[0][2] = 0.0f;
-        result[1][2] = 0.0f;
+        glm::mat4 result{ m_globalTransform };
+        result[0][3] = 0.0f;
+        result[1][3] = 0.0f;
+        result[2][3] = 0.0f;
         glm::vec3 scalar{ GetGlobalScale() };
+
+        /*result[0] /= scalar[0];
+        result[1] /= scalar[1];
+        result[2] /= scalar[2];
+
+        return glm::transpose(result);*/
 
         //TAKE NOTE OF THE AXIS IT MULTIPLIES BY ( EACH ROW MULTIPLY BY THAT ROW's SCALAR)
         result[0][0] /= scalar[0];
@@ -147,11 +157,13 @@ namespace engine
     {
         //calculate global scale by calculating the length of each row which represents
         //the scale of that particular axis.
-        glm::vec3 vecX { globalTransform[0][0], globalTransform[1][0], globalTransform[2][0] };
-        glm::vec3 vecY { globalTransform[0][1], globalTransform[1][1], globalTransform[2][1] };
-        glm::vec3 vecZ { globalTransform[0][1], globalTransform[1][1], globalTransform[2][2] };
-
+        glm::vec3 vecX { m_globalTransform[0][0], m_globalTransform[1][0], m_globalTransform[2][0] };
+        glm::vec3 vecY { m_globalTransform[0][1], m_globalTransform[1][1], m_globalTransform[2][1] };
+        glm::vec3 vecZ { m_globalTransform[0][1], m_globalTransform[1][1], m_globalTransform[2][2] };
         return glm::vec3{ glm::length(vecX), glm::length(vecY), glm::length(vecZ) };
+        
+        //glm::transpose(globalTransform);
+        //return glm::vec3{ globalTransform[0].length(), globalTransform[1].length(), globalTransform[2].length() };
     }
 
 } // namespace engine

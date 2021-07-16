@@ -33,8 +33,10 @@ namespace engine
         /* Constructors and Destructors                                                */
         /*-----------------------------------------------------------------------------*/
         Transform3D()                               = delete;
-        Transform3D(const Transform3D&)             = default;
-        Transform3D& operator=(const Transform3D&)  = default;
+        Transform3D(Transform3D const&)             = default;
+        Transform3D(Transform3D &&)                 = default;
+        Transform3D& operator=(Transform3D const&)  = default;
+        Transform3D& operator=(Transform3D &&)      = default;
         virtual ~Transform3D() override             = default;
 
         /****************************************************************************//*!
@@ -51,12 +53,13 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        inline const glm::vec3  GetPosition()       const   { return position; }
-        inline const glm::vec3  GetRotation()       const   { return rotation; }
-        inline const glm::vec3  GetScale()          const   { return scale;    }
+        const float      GetRotationAngle()  const   { return m_rotationAngle; }
+        const glm::vec3  GetPosition()       const   { return m_position; }
+        const glm::vec3  GetRotationAxis()   const   { return m_rotationAxis; }
+        const glm::vec3  GetScale()          const   { return m_scale;    }
 
-        inline const glm::mat4& GetLocalMatrix()    const   { return localTransform;}
-        inline const glm::mat4& GetGlobalMatrix()   const   { return globalTransform; }
+        const glm::mat4& GetLocalMatrix()    const   { return m_localTransform;}
+        const glm::mat4& GetGlobalMatrix()   const   { return m_globalTransform; }
         /****************************************************************************//*!
          @brief    Retrieves the global position of this Component from the global
                    transformation matrix.
@@ -68,7 +71,7 @@ namespace engine
          @return   An AEVec2 that represents the previous position of this Component in
                    global coordinates.
         *//*****************************************************************************/
-        inline glm::vec3 GetGlobalPosition() const { return { globalTransform[0][2], globalTransform[1][2], globalTransform[2][2] }; }
+        glm::vec3 GetGlobalPosition() const { return { m_globalTransform[0][3], m_globalTransform[1][3], m_globalTransform[2][3] }; }
         /****************************************************************************//*!
          @brief    Retrieves the global rotation matrix of this object from the global
                    transformation matrix.
@@ -123,18 +126,19 @@ namespace engine
          @return   An AEVec2 that represents the previous scale of this GameObject in
                    global coordinates.
         *//*****************************************************************************/
-        glm::vec3                GetGlobalScale() const;
+        glm::vec3    GetGlobalScale() const;
 
-        inline const bool   IsDirty()           const   { return dirty;    }
-        inline const bool   HasChanged()        const   { return hasChanged; }
+        const bool   IsDirty()           const   { return m_dirty;    }
+        const bool   HasChanged()        const   { return m_hasChanged; }
 
         /*-----------------------------------------------------------------------------*/
         /* Setter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        inline glm::vec3&   Position()      { dirty = true; return position; }
-        inline glm::vec3&   Rotation()      { dirty = true; return rotation; }
-        inline glm::vec3&   Scale()         { dirty = true; return scale;    }
-        inline void         Reset()         { hasChanged = false; }
+        float&       RotationAngle() { m_dirty = true; return m_rotationAngle; }
+        glm::vec3&   Position()      { m_dirty = true; return m_position; }
+        glm::vec3&   RotationAxis()  { m_dirty = true; return m_rotationAxis; }
+        glm::vec3&   Scale()         { m_dirty = true; return m_scale;    }
+        void         Reset()         { m_hasChanged = false; }
 
         /*-----------------------------------------------------------------------------*/
         /* Member Functions                                                            */
@@ -165,22 +169,24 @@ namespace engine
          @note     Conversion will automatically be set back to false once there is
                    the conversion matrix has been calculated.
         *//*****************************************************************************/
-        inline void ConvertCoordinates() { dirty = true; conversion = true; }
+        void ConvertCoordinates() { m_dirty = true; m_conversion = true; }
         
       private:
 
-        glm::mat4 globalTransform;
-        glm::mat4 localTransform;
+        glm::mat4 m_globalTransform;
+        glm::mat4 m_localTransform;
 
-        glm::vec3 position;
-        glm::vec3 rotation;
-        glm::vec3 scale;
+        float m_rotationAngle;
 
-        glm::mat4 conversionMtx;
-        bool conversion; 
+        glm::vec3 m_position;
+        glm::vec3 m_rotationAxis;
+        glm::vec3 m_scale;
 
-        bool dirty;
-        bool hasChanged;
+        glm::mat4 m_conversionMatrix;
+        bool m_conversion; 
+
+        bool m_dirty;
+        bool m_hasChanged;
 
     };
 
