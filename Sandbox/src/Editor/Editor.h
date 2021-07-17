@@ -27,6 +27,7 @@ Technology is prohibited.
 #include "WarningView.h"
 #include "KeyBindingView.h"
 #include "ToolbarView.h"
+#include "StyleEditorView.h"
 
 #include "ActionStack/EditorActionStack.h"
 #include "Engine/Memory/BufferAllocator.h"
@@ -94,6 +95,7 @@ private:
 	ActionStack m_action_stack;
 	KeyBindingView m_keyboard_view;
 	ToolbarView m_toolbar_view;
+	StyleEditorView m_styleEditor_view;
 	//remb to change the presets TODO: change the presets
 	bool logging_widget = true;
 	bool action_widget = false;

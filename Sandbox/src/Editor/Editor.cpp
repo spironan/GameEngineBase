@@ -216,7 +216,8 @@ void Editor::ShowAllWidgets()
 		m_projectfolder_view.Show();
 	}
 	m_toolbar_view.Show();
-
+	//ImGui::ShowStyleEditor();
+	m_styleEditor_view.Show();
 	FileGroup::ProjectViewPopUp();
 	ActionStack::UpdateStack();
 	HotKeysUpdate();

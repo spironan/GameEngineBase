@@ -7,6 +7,6 @@ public:
 private:
 	float btn_width;
 	float btn_height;
-	bool docking = true;
+	bool docking = false;
 };
 
