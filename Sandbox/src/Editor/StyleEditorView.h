@@ -8,6 +8,7 @@ public:
 	~StyleEditorView();
 	void Show();
 private:
+	void MenuBar();
 	void SaveStyle();
 	void LoadStyle();
 	std::string name;

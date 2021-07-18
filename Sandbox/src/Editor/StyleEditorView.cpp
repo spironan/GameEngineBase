@@ -10,20 +10,26 @@
 #include <istream>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/document.h>
+#include <filesystem>
+#include <iostream>
 
+#include <windows.h>
+#include <shobjidl_core.h>
 StyleEditorView::StyleEditorView()
 {
 	name = "Default";
 	LoadStyle();
 
 	(name+'\0').copy(namebuffer, 100);
-
 }
 StyleEditorView::~StyleEditorView()
 {
+
 }
 void StyleEditorView::Show()
 {
+	ImGui::Begin("StyleSelector",NULL,ImGuiWindowFlags_MenuBar);
+	MenuBar();
 	// You can pass in a reference ImGuiStyle structure to compare to, revert to and save to
 	// (without a reference style pointer, we will use one compared locally as a reference)
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -35,7 +41,6 @@ void StyleEditorView::Show()
 	init = false;
 	//if (ref == NULL)
 	//	ref = &ref_saved_style;
-
 	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
 
 	if (ImGui::ShowStyleSelector("Colors##Selector"))
@@ -269,6 +274,61 @@ void StyleEditorView::Show()
 	}
 
 	ImGui::PopItemWidth();
+	ImGui::End();
+}
+
+void StyleEditorView::MenuBar()
+{
+	ImGui::BeginMenuBar();
+	if (ImGui::BeginMenu("File"))
+	{
+#ifdef SANDBOX_PLATFORM_WINDOWS
+		if (ImGui::MenuItem("Open File Explorer"))
+		{
+			std::filesystem::path p;//this folder path
+			HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+										COINIT_DISABLE_OLE1DDE);
+			if (SUCCEEDED(hr))
+			{
+				IFileOpenDialog* pFileOpen;
+
+				// Create the FileOpenDialog object.
+				hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+									  IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+				if (SUCCEEDED(hr))
+				{
+					// Show the Open dialog box.
+					hr = pFileOpen->Show(NULL);
+					// Get the file name from the dialog box.
+					if (SUCCEEDED(hr))
+					{
+						IShellItem* pItem;
+						hr = pFileOpen->GetResult(&pItem);
+						if (SUCCEEDED(hr))
+						{
+							PWSTR pszFilePath;
+							hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+							p = pszFilePath;
+
+							pItem->Release();
+						}
+					}
+					pFileOpen->Release();
+				}
+				CoUninitialize();
+			}
+
+			if (p.empty() == false)
+			{
+				name = (p.parent_path().generic_u8string() + p.stem().generic_u8string()).c_str();
+				LoadStyle();
+			}
+		}
+#endif
+		ImGui::EndMenu();
+	}
+	ImGui::EndMenuBar();
 }
 
 void StyleEditorView::SaveStyle()
@@ -289,7 +349,7 @@ void StyleEditorView::SaveStyle()
 	writer.Double(item.WindowBorderSize);
 	writer.Double(item.WindowMinSize.x); writer.Double(item.WindowMinSize.y);
 	writer.Double(item.WindowTitleAlign.x); writer.Double(item.WindowTitleAlign.y);
-	writer.Double(item.WindowMenuButtonPosition);
+	writer.Int(item.WindowMenuButtonPosition);
 	writer.Double(item.ChildRounding);
 	writer.Double(item.ChildBorderSize);
 	writer.Double(item.PopupRounding);
@@ -311,7 +371,7 @@ void StyleEditorView::SaveStyle()
 	writer.Double(item.TabRounding);
 	writer.Double(item.TabBorderSize);
 	writer.Double(item.TabMinWidthForCloseButton);
-	writer.Double(item.ColorButtonPosition);
+	writer.Int(item.ColorButtonPosition);
 	writer.Double(item.ButtonTextAlign.x); writer.Double(item.ButtonTextAlign.y);
 	writer.Double(item.SelectableTextAlign.x); writer.Double(item.SelectableTextAlign.y);
 	writer.Double(item.DisplayWindowPadding.x); writer.Double(item.DisplayWindowPadding.y);
@@ -335,7 +395,6 @@ void StyleEditorView::SaveStyle()
 	writer.EndObject();
 	ofs.close();
 }
-
 void StyleEditorView::LoadStyle()
 {
 	std::ifstream ifs;
@@ -359,7 +418,7 @@ void StyleEditorView::LoadStyle()
 	item.WindowMinSize.y = arr[6].GetFloat();
 	item.WindowTitleAlign.x = arr[7].GetFloat();
 	item.WindowTitleAlign.y = arr[8].GetFloat();
-	item.WindowMenuButtonPosition = arr[9].GetFloat();
+	item.WindowMenuButtonPosition = arr[9].GetInt();
 	item.ChildRounding = arr[10].GetFloat();
 	item.ChildBorderSize = arr[11].GetFloat();
 	item.PopupRounding = arr[12].GetFloat();
@@ -386,7 +445,7 @@ void StyleEditorView::LoadStyle()
 	item.TabRounding = arr[33].GetFloat();
 	item.TabBorderSize = arr[34].GetFloat();
 	item.TabMinWidthForCloseButton = arr[35].GetFloat();
-	item.ColorButtonPosition = arr[36].GetFloat();
+	item.ColorButtonPosition = arr[36].GetInt();
 	item.ButtonTextAlign.x = arr[37].GetFloat();
 	item.ButtonTextAlign.y = arr[38].GetFloat();
 	item.SelectableTextAlign.x = arr[39].GetFloat();
