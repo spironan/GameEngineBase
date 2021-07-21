@@ -21,9 +21,9 @@ ActionStack::~ActionStack()
 {
 	ClearAll();
 }
-void ActionStack::Show()
+void ActionStack::Show(bool* active)
 {
-	if (ImGui::Begin("Action Stack"))
+	if (ImGui::Begin("Action Stack", active))
 	{
 		ImGui::BeginChild("##ActionStackChild", { 0,ImGui::GetWindowHeight() * 0.8f }, true);
 		size_t undoned_idx = s_actionDeque.size() - s_undoCount;

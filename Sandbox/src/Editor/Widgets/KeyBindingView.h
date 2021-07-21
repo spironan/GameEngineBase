@@ -7,7 +7,7 @@ class KeyBindingView
 public:
 	KeyBindingView();
 
-	void Show();
+	void Show(bool* active);
 	void KeyboardWindow();
 	void PreviewShortcuts();
 private:

@@ -97,6 +97,10 @@ void Editor::MenuBarUI()
 			{
 				keyboardview_widget = !keyboardview_widget;
 			}
+			if (ImGui::MenuItem("Style Editor", NULL, styleeditor_widget))
+			{
+				styleeditor_widget = !styleeditor_widget;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -217,17 +221,18 @@ void Editor::ShowAllWidgets()
 	}
 	m_toolbar_view.Show();
 	//ImGui::ShowStyleEditor();
-	m_styleEditor_view.Show();
 	FileGroup::ProjectViewPopUp();
 	ActionStack::UpdateStack();
 	HotKeysUpdate();
 
 	m_warning_view.Show();
 	if(keyboardview_widget)
-		m_keyboard_view.Show();
+		m_keyboard_view.Show(&keyboardview_widget);
 	if(action_widget)
-		m_action_stack.Show();
+		m_action_stack.Show(&action_widget);
 	if(logging_widget)
-		m_logging_view.Show();
+		m_logging_view.Show(&logging_widget);
+	if(styleeditor_widget)
+		m_styleEditor_view.Show(&styleeditor_widget);
 }
 

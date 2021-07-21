@@ -9,7 +9,7 @@ class ActionStack
 public:
 	ActionStack() {}
 	~ActionStack();
-	void Show();
+	void Show(bool* active);
 
 	static void UpdateStack();
 	static void AllocateInBuffer(ActionBehaviour* item);

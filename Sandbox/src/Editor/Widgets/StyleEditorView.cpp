@@ -26,9 +26,15 @@ StyleEditorView::~StyleEditorView()
 {
 
 }
-void StyleEditorView::Show()
+void StyleEditorView::Show(bool* active)
 {
-	ImGui::Begin("StyleSelector",NULL,ImGuiWindowFlags_MenuBar);
+	if (!ImGui::Begin("StyleSelector", active, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking))
+	{
+		ImGui::End();
+	}
+	/*ImVec2 region_max = ImGui::GetContentRegionMax();
+	ImVec2 cursor_pos = ImGui::GetCursorPos();
+	ImGui::CloseButton(ImGui::FindWindowByName("StyleSelector")->ID, ImVec2 { cursor_pos.x + region_max.x, cursor_pos.y + region_max.y });*/
 	MenuBar();
 	// You can pass in a reference ImGuiStyle structure to compare to, revert to and save to
 	// (without a reference style pointer, we will use one compared locally as a reference)

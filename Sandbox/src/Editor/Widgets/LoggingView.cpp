@@ -29,10 +29,10 @@ LoggingView::LoggingView()
 	CallbackSink_mt::SubscribeToSink(AddItem);
 }
 
-void LoggingView::Show()
+void LoggingView::Show(bool* active)
 {
 	
-	ImGui::Begin("Logger",0,ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("Logger", active,ImGuiWindowFlags_MenuBar);
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::MenuItem("Clear"))
@@ -56,7 +56,7 @@ void LoggingView::Show()
 		if (m_collapse_similar)
 		{
 			ImGuiListClipper clipper;
-			clipper.Begin(s_messageCollection.size(),35.0f);
+			clipper.Begin(static_cast<int>(s_messageCollection.size()),35.0f);
 			int counter = 0;
 			while (clipper.Step())
 			{
@@ -94,7 +94,7 @@ void LoggingView::Show()
 		else
 		{
 			ImGuiListClipper clipper;
-			clipper.Begin(s_messages.size());
+			clipper.Begin(static_cast<int>(s_messages.size()));
 			while (clipper.Step())
 			{
 				int distance = clipper.DisplayEnd - clipper.DisplayStart;

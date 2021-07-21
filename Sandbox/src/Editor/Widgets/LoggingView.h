@@ -20,7 +20,7 @@ class LoggingView
 {
 public:
 	LoggingView();
-	void Show();
+	void Show(bool* active);
 	
 	//static void AddLoggingMsg(const char* fmt, ...);
 protected:

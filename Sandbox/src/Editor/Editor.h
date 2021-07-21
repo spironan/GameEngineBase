@@ -23,11 +23,12 @@ Technology is prohibited.
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
 #include "ProjectRootView.h"
-#include "LoggingView.h"
 #include "WarningView.h"
-#include "KeyBindingView.h"
 #include "ToolbarView.h"
-#include "StyleEditorView.h"
+
+#include "Widgets/LoggingView.h"
+#include "Widgets/KeyBindingView.h"
+#include "Widgets/StyleEditorView.h"
 
 #include "ActionStack/EditorActionStack.h"
 #include "Engine/Memory/BufferAllocator.h"
@@ -100,5 +101,6 @@ private:
 	bool logging_widget = true;
 	bool action_widget = false;
 	bool keyboardview_widget = false;
+	bool styleeditor_widget = false;
 };
 

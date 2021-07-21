@@ -21,11 +21,11 @@ KeyBindingView::KeyBindingView()
 
 }
 
-void KeyBindingView::Show()
+void KeyBindingView::Show(bool* active)
 {
 	
 	ImGui::SetNextWindowSize({1600,800});
-	ImGui::Begin("Key Shortcuts",nullptr,ImGuiWindowFlags_NoDocking);
+	ImGui::Begin("Key Shortcuts",active,ImGuiWindowFlags_NoDocking);
 	KeyboardWindow();
 	PreviewShortcuts();
 	ImGui::End();
@@ -54,7 +54,7 @@ void KeyBindingView::KeyboardWindow()
 		ImGui::GetWindowDrawList()->AddImage(img_id,
 											 { p.x + kd.min_x ,p.y + kd.min_y },
 											 { p.x + kd.max_x, p.y + kd.max_y },
-											 { 0,0 }, { 0.1,1 }, ImColor(255, 255, 0, 255));
+											 { 0,0 }, { 0.1f,1 }, ImColor(255, 255, 0, 255));
 	}
 	m_keypressed.clear();
 	for (const auto& kp : m_keyhighlight)
@@ -63,7 +63,7 @@ void KeyBindingView::KeyboardWindow()
 		ImGui::GetWindowDrawList()->AddImage(img_id,
 											 { p.x + kd.min_x ,p.y + kd.min_y },
 											 { p.x + kd.max_x, p.y + kd.max_y },
-											 { 0,0 }, { 0.1,1 }, ImColor(0, 255, 0, 255));
+											 { 0,0 }, { 0.1f,1 }, ImColor(0, 255, 0, 255));
 	}
 
 	ImGui::EndChild();

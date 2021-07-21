@@ -6,7 +6,7 @@ class StyleEditorView
 public:
 	StyleEditorView();
 	~StyleEditorView();
-	void Show();
+	void Show(bool* active);
 private:
 	void MenuBar();
 	void SaveStyle();
