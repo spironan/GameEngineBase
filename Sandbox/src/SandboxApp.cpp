@@ -27,7 +27,6 @@ Technology is prohibited.
 #include "Engine/Transform/TransformSystem.h"
 
 #include "Engine/ECS/GameObject.h"
-#include "Engine/Scene/SceneManager.h"
 
 class TransformTestLayer : public engine::Layer
 {
@@ -167,13 +166,13 @@ public:
             cam.update_mouse_relative(mDelta.first, mDelta.second);
         }	
 
-        cam.update_camera((float)dt);    
+        cam.update_camera(dt);    
        
     }
 
     virtual void OnImGuiRender() override
     {
-        //CVarSystem::Get()->DrawImguiEditor();
+        CVarSystem::Get()->DrawImguiEditor();
     }
 };
 
@@ -329,16 +328,42 @@ public :
 class EditorSceneLayer : public engine::Layer
 {
 private:
-    engine::Scene& scene;
+    engine::World& world;
 public:
 
     EditorSceneLayer() : Layer{ "EditorSceneLayer" },
-        scene(engine::SceneManager::CreateScene(""))
+        world(engine::WorldManager::CreateWorld())
     {
+        auto& ts = world.RegisterSystem<engine::TransformSystem>();
+        
+        auto* root = new engine::GameObject();
+
+        for (int i = 0; i < 10; ++i)
+        {
+            auto* ent = new engine::GameObject();
+        }
+
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+        world.GetSystem<engine::TransformSystem>()->Update();
+
+        auto view = world.GetComponentView<engine::Transform3D>();
+        int iteration = 0;
+        for (auto& ent : view)
+        {
+            auto& transform = world.GetComponent<engine::Transform3D>(ent);
+            transform.Position().x += 1.f * ++iteration;
+            transform.Position().y -= 1.f * iteration;
+        }
+
+        /*for (auto& ent : view)
+        {
+            auto& transform = world.GetComponent<engine::Transform3D>(ent);
+
+            LOG_INFO("ent {0}: position ({1},{2})", ent, transform.Position().x, transform.Position().y);
+        }*/
     }
 
 };
@@ -356,18 +381,17 @@ public:
         LOG_CRITICAL("Critical Log!");
         
         //debug layer
-        PushLayer(new ExampleLayer());
+        //PushLayer(new ExampleLayer());
         PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
         PushOverlay(new SceneCamera());
         PushOverlay(new TransformTestLayer());
+
         // one actual layer - gameplay logic
         // one ui layer - game ui
         // one imgui layer - imgui stuff
             // one heirarchy layer - 
             // one inspector layer - 
-
-        
 
     };
 
