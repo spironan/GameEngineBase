@@ -23,6 +23,7 @@ project "Sandbox"
         "%{IncludeDir.rttr}",
         --"%{IncludeDir.mono}",
         --"%{IncludeDir.gl3w}",
+        "%{IncludeDir.glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.rapidjson}",
         

@@ -4,7 +4,7 @@ VULKAN_SDK = os.getenv("VULKAN_SDK")
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir                  = {}
-IncludeDir["gl3w"]          = "%{wks.location}/Engine/vendor/gl3w"
+IncludeDir["glad"]          = "%{wks.location}/Engine/vendor/glad/include"
 IncludeDir["glm"]           = "%{wks.location}/Engine/vendor/glm"
 IncludeDir["ImGui"]         = "%{wks.location}/Engine/vendor/ImGui"
 IncludeDir["mono"]          = "%{wks.location}/Engine/vendor/mono/include/mono-2.0"

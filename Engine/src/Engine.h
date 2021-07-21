@@ -33,3 +33,7 @@ Technology is prohibited.
 #include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/ECS.h"
 #include "Engine/Transform/Transform.h"
+
+// -- Rendering
+#include "Engine/Renderer/Renderer2D.h"
+#include "Engine/Renderer/OrthographicCamera.h"

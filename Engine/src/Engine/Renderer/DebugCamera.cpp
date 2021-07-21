@@ -189,7 +189,7 @@ void DebugCamera::move_backwards(bool invert)
 	move_fowards(!invert);
 }
 
-glm::mat4 DebugCamera::get_view_matrix()
+glm::mat4 DebugCamera::get_view_matrix()const
 {
 	glm::vec3 camPos = CVAR_CamPos.Get();
 
@@ -203,10 +203,9 @@ glm::mat4 DebugCamera::get_view_matrix()
 	return view;
 }
 
-glm::mat4 DebugCamera::get_projection_matrix()
+glm::mat4 DebugCamera::get_projection_matrix()const
 {
-	b_Ortho = CVAR_ortho.Get();
-	if (b_Ortho)
+	if (CVAR_ortho.Get())
 	{
 		float ar = static_cast<float>(_windowExtent.width)/ static_cast<float>(_windowExtent.height);	
 		float height = CVAR_orthoHeight.GetFloat();
@@ -222,7 +221,7 @@ glm::mat4 DebugCamera::get_projection_matrix()
 	}
 }
 
-glm::mat4 DebugCamera::get_rotation_matrix()
+glm::mat4 DebugCamera::get_rotation_matrix()const
 {
 	glm::mat4 pitch_rot;
 	if (b_Ortho)

@@ -32,7 +32,7 @@ project "ImGui"
 
     includedirs
     {
-        "%{IncludeDir.gl3w}",
+        "%{IncludeDir.glad}",
         "%{IncludeDir.SDL}",
         "%{IncludeDir.VulkanSDK}",
     }

@@ -43,6 +43,25 @@ public:
     {
     }
 
+    //virtual void OnRender(engine::Timestep dt) override
+    //{
+    //    engine::Renderer2D::BeginScene(camera);
+    //    
+    //    /*engine::Renderer::DrawQuad(0, 0.5);
+    //    engine::Renderer::DrawQuad(0, 0.5);
+    //    engine::Renderer::DrawQuad(0, 0.5);
+    //    engine::Renderer::DrawQuad(0, 0.5);
+    //    engine::Renderer::DrawQuad(0, 0.5);
+    //    engine::Renderer::DrawQuad(0, 0.5);*/
+    //    //engine::TileMapManager
+
+    //    getcomponent<tilemap>().draw();
+
+    //    engine::TileMapRenderer::Draw(tilemap);
+
+    //    engine::Renderer::EndScene();
+    //}
+
     virtual void OnImGuiRender() override
     {
         m_editor.ShowAllWidgets();
@@ -53,17 +72,32 @@ public:
 class SceneCamera : public engine::Layer
 {
 private:
-
+    AutoCVar_Vec3 cvar_pos{ "quad.position", "Position X, Y, Z", { 0.5f,0.5f,0.0f }, CVarFlags::EditFloatDrag };
+    AutoCVar_Vec3 cvar_col{ "quad.color", "Position X, Y, Z", { 1.0f,1.0f,1.0f }, CVarFlags::EditFloatDrag };
+    engine::OrthographicCamera cam{-1,1,-1,1};
 public:
 
     SceneCamera() : Layer{ "SceneCamera" }
     {
+        engine::Window& x = engine::Application::Get().GetWindow();
+        int width = x.GetSize().first;
+        int height = x.GetSize().second;
+        cam.SetProjection(0, width, 0, height);
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+
+
         engine::VulkanContext* x =  reinterpret_cast<engine::VulkanContext*>(engine::Application::Get().GetWindow().GetRenderingContext());
         DebugCamera& cam = *x->getRenderer()->getCam();
+
+        //engine::Renderer2D::BeginScene(cam);
+        
+     
+
+        //engine::Renderer2D::EndScene();
+
         //cam.CVAR_ortho.Set(true);
         if (engine::Input::IsMouseButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
 		{
@@ -151,6 +185,22 @@ public:
     virtual void OnImGuiRender() override
     {
         CVarSystem::Get()->DrawImguiEditor();
+        
+        //temporary rendering
+        engine::Renderer2D::BeginScene(cam);
+
+        auto col = cvar_col.Get();
+        engine::Renderer2D::DrawQuad({ cvar_pos.Get().x,cvar_pos.Get().y, 1.0f }, {  100.0f,100.0f}, { col.x,col.y,col.z,1.0f });
+
+        for (size_t i = 0; i < 20; i++)
+        {
+            for (size_t x = 0; x < 20; x++)
+            {
+                engine::Renderer2D::DrawQuad({ 50.0f* i, 50.0f * x }, { 10.0f,10.0f }, { col.x,col.y,col.z,1.0f });
+            }
+        }
+        engine::Renderer2D::EndScene();
+
     }
 };
 

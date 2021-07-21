@@ -52,8 +52,8 @@ struct DebugCamera
 
 	void update_mouse_relative(int32_t xRel, int32_t yRel);
 
-	glm::mat4 get_view_matrix();
-	glm::mat4 get_projection_matrix();
-	glm::mat4 get_rotation_matrix();
+	glm::mat4 get_view_matrix()const;
+	glm::mat4 get_projection_matrix()const;
+	glm::mat4 get_rotation_matrix()const;
 };
 

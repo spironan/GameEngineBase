@@ -17,9 +17,11 @@ Technology is prohibited.
 
 #include "Engine/Platform/OpenGL/OpenGLContext.h"
 
-#include <GL/gl3w.h>
-#include <GL/gl3w.h>
+#include "Engine/Renderer/Renderer2D.h"
+
+//#define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include <sdl2/SDL.h>
+#include <glad/glad.h>
 
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_opengl3.h>
@@ -44,15 +46,18 @@ namespace engine
         //OpenGL + SDL code
         s_glContext = SDL_GL_CreateContext(m_windowHandle);
         SDL_GL_MakeCurrent(m_windowHandle, s_glContext);
-        
-        bool status = (gl3wInit() == 0);
+        if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+        {
+            std::cout << "Failed to initialize OpenGL context" << std::endl;
+        }
+        bool status = (gladLoadGL() != 0);
         ENGINE_ASSERT_MSG(status, "Failed to initialize OpenGL loader!(gl3w)\n");
 
         LOG_ENGINE_INFO("OpenGL Info:");
         LOG_ENGINE_INFO("  Vendor   : {0}", glGetString(GL_VENDOR));
         LOG_ENGINE_INFO("  Renderer : {0}", glGetString(GL_RENDERER));
         LOG_ENGINE_INFO("  Version  : {0}", glGetString(GL_VERSION));
-        
+        engine::Renderer2D::Init();
         //set clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1);
     }

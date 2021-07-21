@@ -15,8 +15,8 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "pch.h"
 
+#include <glad/glad.h>
 #include <sdl2/SDL.h>
-#include <GL/gl3w.h>
 
 #include "Engine/Platform/Windows/WindowsWindow.h"
 #include "Engine/Core/Base.h"

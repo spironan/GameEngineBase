@@ -25,6 +25,7 @@ project "Engine"
     {
         "src/**.h",
         "src/**.cpp",
+        "src/**.c",
     }
 
     -- Engine's defines 
@@ -40,7 +41,7 @@ project "Engine"
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.SDL}",
         "%{IncludeDir.rttr}",
-        "%{IncludeDir.gl3w}",
+        "%{IncludeDir.glad}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.vkbootstrap}",
@@ -62,8 +63,8 @@ project "Engine"
     -- NOTE: do not put their extensions.
     links
     {
-        "gl3w",
         "ImGui",
+        "glad",
         "SDL2",
         "SDL2main",
         "SDL2test",
