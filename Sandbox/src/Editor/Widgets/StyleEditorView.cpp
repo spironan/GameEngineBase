@@ -1,4 +1,6 @@
 #include "StyleEditorView.h"
+#include "../WarningView.h"
+
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <cmath>
@@ -70,6 +72,7 @@ void StyleEditorView::Show(bool* active)
 	{
 		ref = ref_saved_style = style;
 		SaveStyle();
+		WarningView::DisplayWarning(WarningView::DisplayType::DISPLAY_LOG, "Saved Style");
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Revert Ref"))
@@ -330,6 +333,7 @@ void StyleEditorView::MenuBar()
 				name = (p.parent_path().generic_u8string() +'/' + p.stem().generic_u8string()).c_str();
 				LoadStyle();
 				(name + '\0').copy(namebuffer, 100);
+				WarningView::DisplayWarning(WarningView::DisplayType::DISPLAY_LOG, "Loaded");
 			}
 		}
 #endif
