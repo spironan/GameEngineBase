@@ -26,14 +26,15 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Lifecycle Functions                                                         */
     /*-----------------------------------------------------------------------------*/
-    void TransformSystem::Init() { /* empty function */ }
+    //void TransformSystem::Init() { /* empty function */ }
 
     void TransformSystem::Update()
     {
         // Algorithm that needs to happen! If this cannot be done, the scenegraph optimization suggestion following this will not be possible.
         // Assumptions : 
-        // 1. Every Transform has a parent ID.
+        // 1. Every Transform has a parent Entity ID.
         // 2. Transform cannot actually "detach from parent" Transform always need to attach to something (to "detach" == attach to root node).
+        // 3. If parent dies all residue children dies.
         // Sparse Set be ordered in the depth-first hierarchy, thus every add/remove of transform will need to adjust the sparse array
         // Position:    0      1       2        3
         // Example : [ root, child1, child1, child2]
@@ -45,8 +46,8 @@ namespace engine
         // 
         // Position:    0      1       2        3      4       5
         // Example : [ root, child1, child2, child3, child4, child1 ]
-        //                   ^parent ^swapping to be child of root
-        // When attaching to root : swap index of the parent(1) with its current index, and then continue doing that number of childrens times.
+        //             ^parent        ^swapping to be child of root
+        // When attaching to root : swap index of the index + 1 of the parent(1) with its current index, and then continue doing that number of childrens times.
         // therefore : 1 swap with 2, 2 swap with 3, 3 swap with 4. swapping n times where n = number of children + 1.
         // Example : [ root, child1, child2, child3, child1, child1 ]
         //                   ^swapped child2         ^ the previous parent
@@ -58,6 +59,23 @@ namespace engine
         // therefore : 4 swap with 5, swap 5 with 6
         // Example : [ root, child1, child2, child3, child4, child5, child1 ]
         //                                   ^parent  ^old child2
+        // 
+        // Position:    0      1       2        3      4       5       6
+        // Example : [ root, child1, child2, child3, child1, child2, child3 ]
+        //                                   ^child          ^ new parent         
+        // When attaching from one node to the LAST node : swap index of child + 1 with child index, and then continue doing so until child index > parent index
+        // therefore : 4 swap with 5, swap 5 with 6
+        // Example : [ root, child1, child2, child1, child2, child3, child3 ]
+        //                                   ^ parent         ^ old child3
+        //
+        // Position:    0      1       2        3      4       5       6
+        // Example : [ root, child1, child2, child3, child1, child2, child3 ]
+        //                          ^child                            ^ new parent
+        // When attaching from one node to the LAST node : swap index of child + 1 with child index, and then continue doing so until child index > parent index
+        // therefore : 4 swap with 5, swap 5 with 6
+        // Example : [ root, child1, child2, child1, child2, child3, child3 ]
+        //                                   ^ parent         ^ old child3
+        // 
         // Special case 1 : When Attempting to add parent which it already is of, dont do anything.
         // 
         // Therefore from observation : 
@@ -69,8 +87,6 @@ namespace engine
         // Using a linked list to keep track of their ID hierarchy allows for fast insertion, 
         // though this may lessen the point of using ecs as iteration on sparse set wont be used but the O(1) lookup is still being used
 
-        //m_ECS_Manager.GetComponent<Transform3D>(ent);
-        
         // Optimize Solution for Scenegraph
         // Assumptions That helps in general
         // 1. All Node Default parent is identity matrix
@@ -80,7 +96,7 @@ namespace engine
         // Reason : we have to ENSURE that the parent is already recalculated first before doing this
         // Cost : Overhead when adding and removing a lot of entities
         // Benefit : significant improved performance due to not using recursion
-        // example : [ root, child, child2, child2, child3, child, child, child, child2] 
+        // example : [ root, child, child2, child2, child3, child, child, child, child2 ] 
         // Sample Code 
         // container_reference transforms = ComponentStore::GetComponents<Transform3D>();
         // for(auto& tf : transforms)
@@ -95,7 +111,40 @@ namespace engine
             // transform.GlobalMatrix = transform.parent.globalTransform * localTransform;
         // }
 
-            
+        // ASSUMPTION 0 : ALL GAMEOBJECTS MUST HAVE A TRANSFORM COMPONENT.
+        // ASSUMPTION 1 : ROOT NODE MUST BE THE FIRST NODE
+        // ASSUMPTION 2 : ALL NODES HAVE A PARENT
+        // 
+        //// Iterate through and update all transforms that has changed last frame,
+        //// setting it to false.
+        //Transform3D const * prevTransform = nullptr;
+       
+        //// Grab Transforms from ECS manager
+        //for (auto& currTransform : m_transforms)
+        //{
+        //    if (currTransform.HasChanged())
+        //    {
+        //        currTransform.Reset();
+        //    }
+        //    
+        //    //recalculate if transform has been changed this frame
+        //    if (currTransform.IsDirty())
+        //    {
+        //        currTransform.Recalculate();
+        //    }
+
+        //    // Skips the first iteration thus root node is not considered.
+        //    // Recalculate global transform : Assumption is that parent ALWAYS Exist.
+        //    // calculated global transform : localTransform * parentTransform
+        //    // by default its a transformation else it does coordinate conversion
+        //    if(prevTransform && prevTransform->GetEntity() == currTransform.GetParentId())
+        //        currTransform.SetGlobalMatrix(prevTransform->GetGlobalMatrix());
+
+        //    //point prev to be current
+        //    prevTransform = &currTransform;
+        //}
+
+        
 
         //container_reference transforms = ComponentStore::GetComponents<Transform3D>();
         auto view = m_ECS_Manager.GetComponentView<Transform3D>();
@@ -110,22 +159,27 @@ namespace engine
             {
                 transform.Reset();
             }
-            
+
+            //recalculate if transform has been changed this frame
+            if (transform.IsDirty())
+            {
+                transform.Recalculate();
+            }
 
         }
 
-        UpdateTransform();
+        //UpdateTransform();
     }
 
-    void TransformSystem::UpdateTransform() 
-    {
-        // recursively, depth first, update all gameobjects transforms in the scene.
-        //GameObject& root = (getScene()->GetRootGameObject());
-        //updateTransform(root, nullptr);
-        //updateTransform(root.child);
-    }
+    //void TransformSystem::UpdateTransform() 
+    //{
+    //    // recursively, depth first, update all gameobjects transforms in the scene.
+    //    //GameObject& root = (getScene()->GetRootGameObject());
+    //    //updateTransform(root, nullptr);
+    //    //updateTransform(root.child);
+    //}
 
-    void TransformSystem::Exit() { /* empty function */ }
+    //void TransformSystem::Exit() { /* empty function */ }
     
 
     /********************************************************************************//*!
@@ -138,52 +192,52 @@ namespace engine
         the transform of the parent gameobject that will be used for global matrix
         calculations
     *//*********************************************************************************/
-    void TransformSystem::updateTransform(GameObject& _go, glm::mat4 const * const _parentTransform)
-    {
-        // if go does not have transform do next
-        if (!_go.HasComponent<Transform3D>()) return;
+    //void TransformSystem::updateTransform(GameObject& _go, glm::mat4 const * const _parentTransform)
+    //{
+    //    //// if go does not have transform do next
+    //    //if (!_go.HasComponent<Transform3D>()) return;
 
-        Transform3D& transform = _go.GetComponent<Transform3D>();
-        
-        //recalculate if transform has been changed this frame
-        if (transform.IsDirty())
-        {
-            transform.Recalculate();
-        }
+    //    //Transform3D& transform = _go.GetComponent<Transform3D>();
+    //    //
+    //    ////recalculate if transform has been changed this frame
+    //    //if (transform.IsDirty())
+    //    //{
+    //    //    transform.Recalculate();
+    //    //}
 
-        //recalculate global transform if parent exist
-        if (_parentTransform)
-        {
-            // calculated global transform : localTransform * parentTransform
-            // by default its a transformation else it does coordinate conversion
-            transform.SetGlobalMatrix(*_parentTransform); 
-        }
+    //    ////recalculate global transform if parent exist
+    //    //if (_parentTransform)
+    //    //{
+    //    //    // calculated global transform : localTransform * parentTransform
+    //    //    // by default its a transformation else it does coordinate conversion
+    //    //    transform.SetGlobalMatrix(*_parentTransform); 
+    //    //}
 
-        //depth first iterate through all children and update their transforms.
-        for (auto& it : _go.GetChildren())
-        {
-            updateTransform(*it, &transform.GetGlobalMatrix());
-            
-            // did not manage to do this optimization due to the fact that updating the child
-            // means that the matrix needs to be recalculated.
-            // Solution if REQUIRED: let transform store a parent matrix and update it whenever
-            // parent changes but if not use it for all calculations for global matrix.
-            /*if (transform.HasChanged())
-            {
-                updateTransform(*it, &transform.GetGlobalMatrix());
-            }
-            else
-            {
-                updateTransform(*it, nullptr); 
-            }*/
-            //updateTransform
-            //( *it
-            ////, &transform.GetGlobalMatrix() 
-            //, (transform.HasChanged()) 
-            // ? &transform.GetGlobalMatrix() 
-            // : nullptr
-            //);
-        }
-    }
+    //    ////depth first iterate through all children and update their transforms.
+    //    //for (auto& it : _go.GetChildren())
+    //    //{
+    //    //    updateTransform(*it, &transform.GetGlobalMatrix());
+    //    //    
+    //    //    // did not manage to do this optimization due to the fact that updating the child
+    //    //    // means that the matrix needs to be recalculated.
+    //    //    // Solution if REQUIRED: let transform store a parent matrix and update it whenever
+    //    //    // parent changes but if not use it for all calculations for global matrix.
+    //    //    /*if (transform.HasChanged())
+    //    //    {
+    //    //        updateTransform(*it, &transform.GetGlobalMatrix());
+    //    //    }
+    //    //    else
+    //    //    {
+    //    //        updateTransform(*it, nullptr); 
+    //    //    }*/
+    //    //    //updateTransform
+    //    //    //( *it
+    //    //    ////, &transform.GetGlobalMatrix() 
+    //    //    //, (transform.HasChanged()) 
+    //    //    // ? &transform.GetGlobalMatrix() 
+    //    //    // : nullptr
+    //    //    //);
+    //    //}
+    //}
 
 } // namespace engine

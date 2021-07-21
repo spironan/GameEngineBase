@@ -15,14 +15,15 @@ Technology is prohibited.
 #include "GameObject.h"
 
 #include "Engine/Transform/Transform3D.h"
+#include "Engine/Transform/TransformSystem.h"
 
 namespace engine
 {
+    // order matters! dont switch it!
     GameObject::GameObject()
+        : m_entity{ WorldManager::GetActiveWorld().CreateEntity() }
+        , m_transform { AddComponent<Transform3D>() }
     {
-        //m_entity = ECS_Manager::GenerateUID();
-        //m_entity = EntityManager::CreateEntity();
-
     }
 
     GameObject::~GameObject()
@@ -30,75 +31,59 @@ namespace engine
         WorldManager::GetActiveWorld().DestroyEntity(m_entity);
     }
 
-    void GameObject::Init()
-    {
-        m_entity = WorldManager::GetActiveWorld().CreateEntity();
-        auto& trans = AddComponent<Transform3D>();
-    }
-
-    void GameObject::AddChild(GameObject* gameObj, bool preserveTransforms)
+    void GameObject::AddChild(GameObject const& go, bool preserveTransforms)
     {
         // Flag coordinates to be converted when parented
         if (preserveTransforms)
         {
-            //gameObj->GetComponent<Transform3D>().ConvertCoordinates();
+            go.Transform().ConvertCoordinates();
         }
+        
+        //WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetSceneGraph().Attach(go, *this);
 
-        children.push_back(gameObj);
+        //children.push_back(gameObj);
     }
 
-    GameObject* GameObject::AddChild(bool preserveTransforms)
+    void GameObject::AddChild(std::initializer_list<GameObject> gos, bool preserveTransforms)
     {
-        // Flag coordinates to be converted when parented
-        if (preserveTransforms)
+        for (auto  go : gos)
         {
-            //gameObj->GetComponent<Transform3D>().ConvertCoordinates();
-        }
-        auto child = children.emplace_back(new GameObject());
-        child->Init();
-        return child;
-    }
-
-
-    void GameObject::AddChild(std::initializer_list<GameObject*> gameObjs, bool preserveTransforms)
-    {
-        for (GameObject* obj : gameObjs)
-        {
-            AddChild(obj, preserveTransforms);
+            AddChild(go, preserveTransforms);
         }
     }
 
-    void GameObject::RemoveChild(GameObject* gameObj)
-    {
-        children.erase(std::find(children.begin(), children.end(), gameObj));
-    }
+    //void GameObject::RemoveChild(GameObject* gameObj)
+    //{
+    //    //children.erase(std::find(children.begin(), children.end(), gameObj));
+    //}
 
-    std::vector<GameObject*> const& GameObject::GetChildren() const
-    {
-        return children;
-    }
+    //std::vector<GameObject*> const& GameObject::GetChildren() const
+    //{
+    //    //return children;
+    //}
 
-    GameObject* GameObject::FindGameObjectInChildrenByName(std::string const& name)
-    {
-        // Is this the one?
-        if (Name == name)
-        {
-            return this;
-        }
+    // CAN BE DONE BUT NOT REQUIRED RIGHT NOW
+    //GameObject* GameObject::FindGameObjectInChildrenByName(std::string const& name)
+    //{
+    //    // Is this the one?
+    //    if (Name == name)
+    //    {
+    //        return this;
+    //    }
 
-        // Search Children
-        for (auto& go : children)
-        {
-            // Checks to see if the object was found
-            GameObject* findResult = go->FindGameObjectInChildrenByName(name);
-            if (findResult)
-            {
-                // Found!
-                return findResult;
-            }
-        }
+    //    // Search Children
+    //    for (auto& go : children)
+    //    {
+    //        // Checks to see if the object was found
+    //        GameObject* findResult = go->FindGameObjectInChildrenByName(name);
+    //        if (findResult)
+    //        {
+    //            // Found!
+    //            return findResult;
+    //        }
+    //    }
 
-        // Went through everything and didn't find anything
-        return nullptr;
-    }
+    //    // Went through everything and didn't find anything
+    //    return nullptr;
+    //}
 }

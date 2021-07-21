@@ -29,17 +29,19 @@ namespace engine
         Determines if the component is active or not.
     *//*********************************************************************************/
     Transform3D::Transform3D(Entity _entityID, bool _active)
-    : Component         { _entityID, _active }
-    , m_position          { 0.f, 0.f, 0.f }
-    , m_rotationAngle     { 0.f }
-    , m_rotationAxis      { 0.f, 0.f, 1.f }
-    , m_scale             { 1.f, 1.f, 1.f }
-    , m_conversion        { false }
-    , m_dirty             { false }
-    , m_hasChanged        { false }
-    , m_globalTransform   { glm::mat4{} }
-    , m_localTransform    { glm::mat4{} }
-    , m_conversionMatrix     { glm::mat4{} }
+        : Component         { _entityID, _active }
+        , m_position        { 0.f, 0.f, 0.f }
+        , m_rotationAngle   { 0.f }
+        , m_rotationAxis    { 0.f, 0.f, 1.f }
+        , m_scale           { 1.f, 1.f, 1.f }
+        , m_conversion      { false }
+        , m_dirty           { false }
+        , m_hasChanged      { false }
+        , m_globalTransform { glm::mat4{} }
+        , m_localTransform  { glm::mat4{} }
+        , m_conversionMatrix{ glm::mat4{} }
+        , m_childCount      { 0 }
+        , m_parentId        { _entityID }
     {
     }
 
@@ -50,12 +52,12 @@ namespace engine
     void Transform3D::Recalculate()
     {
         //localTransform = Matrix_util::model_matrix(position, rotation, scale);
-        glm::translate(m_localTransform, m_position);
+        glm::scale(m_localTransform, m_scale);
         glm::rotate(m_localTransform, m_rotationAngle, m_rotationAxis);
+        glm::translate(m_localTransform, m_position);
         //glm::rotate(localTransform, )
         //glm::rotate(localTransform, rotation);
         //glm::rotate(localTransform, );
-        glm::scale(m_localTransform, m_scale);
 
         //Apply conversion everytime upon calculation
         m_conversionMatrix *= m_localTransform;
@@ -89,8 +91,18 @@ namespace engine
         }
 
         m_globalTransform = _parentTransform * m_localTransform;
-        
     }
+
+    void Transform3D::SetParent(Transform3D& parent)
+    {
+        // Reduce child count of current parent : REQUIRES SceneManager to be working.
+        //SceneManager::GetActiveScene().GetComponent<Transform3D>(m_parentId).m_childCount -= 1 + m_childCount;
+        // set parent child count to be equals to its current amount + 1(this object) + childCount(number of children this object has)
+        parent.m_childCount += 1 + m_childCount;
+        // set this parent id to be the entity ID of the parent
+        m_parentId = parent.m_entity;
+    }
+
     /****************************************************************************//*!
      @brief    Retrieves the global rotation matrix of this object from the global
                transformation matrix.
@@ -110,7 +122,8 @@ namespace engine
         result[2][3] = 0.0f;
         glm::vec3 scalar{ GetGlobalScale() };
 
-        /*result[0] /= scalar[0];
+        /*
+        result[0] /= scalar[0];
         result[1] /= scalar[1];
         result[2] /= scalar[2];
 

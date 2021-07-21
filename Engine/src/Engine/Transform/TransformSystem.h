@@ -16,6 +16,8 @@ Technology is prohibited.
 
 #include "Engine/ECS/System.h"
 
+//#include "SceneGraphList.h"
+
 namespace engine 
 {
     //forward declaration
@@ -41,7 +43,6 @@ namespace engine
         using container_iterator        = container_type::iterator;
         using container_const_iterator  = container_type::const_iterator;
 
-
         /*-----------------------------------------------------------------------------*/
         /* Explicit Constructor                                                        */
         /*-----------------------------------------------------------------------------*/
@@ -54,7 +55,7 @@ namespace engine
          @brief    Function that defines the initialization required for the
                    Runtime to function.
         *//*****************************************************************************/
-        void Init() /*override*/;
+        //void Init() /*override*/;
 
         /****************************************************************************//*!
          @brief    Function that defines the per-frame updates for the Runtime.
@@ -65,12 +66,14 @@ namespace engine
          @brief    Function that defines the clean up required for the Runtime
                    to close cleanly.
         *//*****************************************************************************/
-        void Exit() /*override*/;
+        //void Exit() /*override*/;
 
         /****************************************************************************//*!
          @brief    Updates all transforms in a scene-graph manner recursively
         *//*****************************************************************************/
-        void UpdateTransform();
+        //void UpdateTransform();
+
+        //Scenegraph GetSceneGraph() { return m_scenegraph; }
 
       private:
         /****************************************************************************//*!
@@ -83,7 +86,10 @@ namespace engine
             the transform of the parent gameobject that will be used for global matrix
             calculations
         *//*****************************************************************************/
-        void updateTransform(GameObject& _go, glm::mat4 const * const _parentTransform);
+        //void updateTransform(GameObject& _go, glm::mat4 const * const _parentTransform);
+
+        //Scenegraph m_scenegraph;
+
     };
 
 } // namespace engine

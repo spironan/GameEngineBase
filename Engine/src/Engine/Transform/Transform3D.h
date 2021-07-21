@@ -14,8 +14,7 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/Component.h"
-#include <glm/mat4x4.hpp>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 namespace engine 
 { 
@@ -60,6 +59,9 @@ namespace engine
 
         const glm::mat4& GetLocalMatrix()    const   { return m_localTransform;}
         const glm::mat4& GetGlobalMatrix()   const   { return m_globalTransform; }
+
+        const int&       GetChildCount()     const   { return m_childCount;}
+        const Entity&    GetParentId()       const   { return m_parentId;}
         /****************************************************************************//*!
          @brief    Retrieves the global position of this Component from the global
                    transformation matrix.
@@ -140,6 +142,7 @@ namespace engine
         glm::vec3&   Scale()         { m_dirty = true; return m_scale;    }
         void         Reset()         { m_hasChanged = false; }
 
+
         /*-----------------------------------------------------------------------------*/
         /* Member Functions                                                            */
         /*-----------------------------------------------------------------------------*/
@@ -171,7 +174,13 @@ namespace engine
         *//*****************************************************************************/
         void ConvertCoordinates() { m_dirty = true; m_conversion = true; }
         
-      private:
+
+        void SetParent(Transform3D& parent);
+
+    private:
+
+        int m_childCount;
+        Entity m_parentId;
 
         glm::mat4 m_globalTransform;
         glm::mat4 m_localTransform;
@@ -187,7 +196,6 @@ namespace engine
 
         bool m_dirty;
         bool m_hasChanged;
-
     };
 
 } // namespace Engine
