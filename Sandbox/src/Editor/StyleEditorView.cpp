@@ -321,8 +321,9 @@ void StyleEditorView::MenuBar()
 
 			if (p.empty() == false)
 			{
-				name = (p.parent_path().generic_u8string() + p.stem().generic_u8string()).c_str();
+				name = (p.parent_path().generic_u8string() +'/' + p.stem().generic_u8string()).c_str();
 				LoadStyle();
+				(name + '\0').copy(namebuffer, 100);
 			}
 		}
 #endif
@@ -334,141 +335,19 @@ void StyleEditorView::MenuBar()
 void StyleEditorView::SaveStyle()
 {
 	std::ofstream ofs;
-	ofs.open(name + ".json");
+	ofs.open(name+".settings", std::ios::binary);
 	if (ofs.is_open() == false)
 		return;
-	rapidjson::OStreamWrapper osw(ofs);
-	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
-	ImGuiStyle& item = (this->ref);
-	writer.StartObject();
-	writer.Key(name.c_str());
-	writer.StartArray();
-	writer.Double(item.Alpha);
-	writer.Double(item.WindowPadding.x); writer.Double(item.WindowPadding.y);
-	writer.Double(item.WindowRounding);
-	writer.Double(item.WindowBorderSize);
-	writer.Double(item.WindowMinSize.x); writer.Double(item.WindowMinSize.y);
-	writer.Double(item.WindowTitleAlign.x); writer.Double(item.WindowTitleAlign.y);
-	writer.Int(item.WindowMenuButtonPosition);
-	writer.Double(item.ChildRounding);
-	writer.Double(item.ChildBorderSize);
-	writer.Double(item.PopupRounding);
-	writer.Double(item.PopupBorderSize);
-	writer.Double(item.FramePadding.x); writer.Double(item.FramePadding.y);
-	writer.Double(item.FrameRounding);
-	writer.Double(item.FrameBorderSize);
-	writer.Double(item.ItemSpacing.x); writer.Double(item.ItemSpacing.y);
-	writer.Double(item.ItemInnerSpacing.x); writer.Double(item.ItemInnerSpacing.y);
-	writer.Double(item.CellPadding.x); writer.Double(item.CellPadding.y);
-	writer.Double(item.TouchExtraPadding.x); writer.Double(item.TouchExtraPadding.y);
-	writer.Double(item.IndentSpacing);
-	writer.Double(item.ColumnsMinSpacing);
-	writer.Double(item.ScrollbarSize);
-	writer.Double(item.ScrollbarRounding);
-	writer.Double(item.GrabMinSize);
-	writer.Double(item.GrabRounding);
-	writer.Double(item.LogSliderDeadzone);
-	writer.Double(item.TabRounding);
-	writer.Double(item.TabBorderSize);
-	writer.Double(item.TabMinWidthForCloseButton);
-	writer.Int(item.ColorButtonPosition);
-	writer.Double(item.ButtonTextAlign.x); writer.Double(item.ButtonTextAlign.y);
-	writer.Double(item.SelectableTextAlign.x); writer.Double(item.SelectableTextAlign.y);
-	writer.Double(item.DisplayWindowPadding.x); writer.Double(item.DisplayWindowPadding.y);
-	writer.Double(item.DisplaySafeAreaPadding.x);	writer.Double(item.DisplaySafeAreaPadding.y);
-	writer.Double(item.MouseCursorScale);
-	writer.Double(item.AntiAliasedLines);
-	writer.Double(item.AntiAliasedLinesUseTex);
-	writer.Double(item.AntiAliasedFill);
-	writer.Double(item.CurveTessellationTol);
-	writer.Double(item.CircleTessellationMaxError);
-	for (int i = 0; i < ImGuiCol_COUNT; ++i)
-	{
-		writer.StartArray();
-		writer.Double(item.Colors[i].x);
-		writer.Double(item.Colors[i].y);
-		writer.Double(item.Colors[i].z);
-		writer.Double(item.Colors[i].w);
-		writer.EndArray();
-	}
-	writer.EndArray();
-	writer.EndObject();
+	ofs.write(reinterpret_cast<char*>(&ref), sizeof(ref));
 	ofs.close();
 }
 void StyleEditorView::LoadStyle()
 {
 	std::ifstream ifs;
-	ifs.open(name + ".json");
+	ifs.open(name + ".settings",std::ios::binary);
 	if (ifs.is_open() == false)
 		return;
-	rapidjson::IStreamWrapper isw(ifs);
-	rapidjson::Document doc;
-	doc.ParseStream(isw);
-	ImGuiStyle& item = (this->ref);
-
-	auto it = doc.MemberBegin();
-	name = it->name.GetString();
-	auto arr  = it->value.GetArray();
-	item.Alpha = arr[0].GetFloat();
-	item.WindowPadding.x = arr[1].GetFloat();
-	item.WindowPadding.y = arr[2].GetFloat();
-	item.WindowRounding = arr[3].GetFloat();
-	item.WindowBorderSize = arr[4].GetFloat();
-	item.WindowMinSize.x = arr[5].GetFloat();
-	item.WindowMinSize.y = arr[6].GetFloat();
-	item.WindowTitleAlign.x = arr[7].GetFloat();
-	item.WindowTitleAlign.y = arr[8].GetFloat();
-	item.WindowMenuButtonPosition = arr[9].GetInt();
-	item.ChildRounding = arr[10].GetFloat();
-	item.ChildBorderSize = arr[11].GetFloat();
-	item.PopupRounding = arr[12].GetFloat();
-	item.PopupBorderSize = arr[13].GetFloat();
-	item.FramePadding.x = arr[14].GetFloat();
-	item.FramePadding.y = arr[15].GetFloat();
-	item.FrameRounding = arr[16].GetFloat();
-	item.FrameBorderSize = arr[17].GetFloat();
-	item.ItemSpacing.x = arr[18].GetFloat();
-	item.ItemSpacing.y = arr[19].GetFloat();
-	item.ItemInnerSpacing.x = arr[20].GetFloat();
-	item.ItemInnerSpacing.y = arr[21].GetFloat();
-	item.CellPadding.x = arr[22].GetFloat();
-	item.CellPadding.y = arr[23].GetFloat();
-	item.TouchExtraPadding.x = arr[24].GetFloat();
-	item.TouchExtraPadding.y = arr[25].GetFloat();
-	item.IndentSpacing = arr[26].GetFloat();
-	item.ColumnsMinSpacing = arr[27].GetFloat();
-	item.ScrollbarSize = arr[28].GetFloat();
-	item.ScrollbarRounding = arr[29].GetFloat();
-	item.GrabMinSize = arr[30].GetFloat();
-	item.GrabRounding = arr[31].GetFloat();
-	item.LogSliderDeadzone = arr[32].GetFloat();
-	item.TabRounding = arr[33].GetFloat();
-	item.TabBorderSize = arr[34].GetFloat();
-	item.TabMinWidthForCloseButton = arr[35].GetFloat();
-	item.ColorButtonPosition = arr[36].GetInt();
-	item.ButtonTextAlign.x = arr[37].GetFloat();
-	item.ButtonTextAlign.y = arr[38].GetFloat();
-	item.SelectableTextAlign.x = arr[39].GetFloat();
-	item.SelectableTextAlign.y = arr[40].GetFloat();
-	item.DisplayWindowPadding.x = arr[41].GetFloat();
-	item.DisplayWindowPadding.y = arr[42].GetFloat();
-	item.DisplaySafeAreaPadding.x = arr[43].GetFloat();
-	item.DisplaySafeAreaPadding.y = arr[44].GetFloat();
-	item.MouseCursorScale = arr[45].GetFloat();
-	item.AntiAliasedLines = arr[46].GetFloat();
-	item.AntiAliasedLinesUseTex = arr[47].GetFloat();
-	item.AntiAliasedFill = arr[48].GetFloat();
-	item.CurveTessellationTol = arr[49].GetFloat();
-	item.CircleTessellationMaxError = arr[50].GetFloat();
-
-	for (int i = 0; i < ImGuiCol_COUNT; ++i)
-	{
-		auto colarr = arr[51+i].GetArray();
-		item.Colors[i].x= colarr[0].GetFloat();
-		item.Colors[i].y= colarr[1].GetFloat();
-		item.Colors[i].z= colarr[2].GetFloat();
-		item.Colors[i].w= colarr[3].GetFloat();
-	}
+	ifs.read(reinterpret_cast<char*>(&ref), sizeof(ref));
 	ifs.close();
 	ImGui::GetStyle() = ref;
 }
