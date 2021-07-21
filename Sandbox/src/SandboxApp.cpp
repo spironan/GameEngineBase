@@ -78,7 +78,8 @@ public:
         engine::Window& x = engine::Application::Get().GetWindow();
         int width = x.GetSize().first;
         int height = x.GetSize().second;
-        cam.SetProjection(0, width, 0, height);
+        
+        cam.SetProjection(-width/2.0f,width/2.0f, -height/2.0f,height/2.0f );
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
@@ -186,15 +187,25 @@ public:
         engine::Renderer2D::BeginScene(cam);
 
         auto col = cvar_col.Get();
-        engine::Renderer2D::DrawQuad({ cvar_pos.Get().x,cvar_pos.Get().y, 1.0f }, {  100.0f,100.0f}, { col.x,col.y,col.z,1.0f });
 
-        for (size_t i = 0; i < 20; i++)
+        int xQuads = 20;
+        int yQuads = 20;
+        float quadSize = 30.0f;
+        float gutter = 10.0f;
+        float maxX = (quadSize+gutter) * xQuads;
+        float maxY = (quadSize+gutter) * yQuads;
+
+        for (size_t y = 0; y < yQuads; y++)
         {
-            for (size_t x = 0; x < 20; x++)
+            for (size_t x = 0; x < xQuads; x++)
             {
-                engine::Renderer2D::DrawQuad({ 50.0f* i, 50.0f * x }, { 10.0f,10.0f }, { col.x,col.y,col.z,1.0f });
+                engine::Renderer2D::DrawQuad({  (quadSize+gutter) * x  - maxX / 2.0f  , (quadSize + gutter) * y  - maxY / 2.0f  },
+                                             {quadSize,quadSize},
+                                             {col.x / xQuads * x,col.y / yQuads * y,col.z,1.0f});
             }
         }
+        engine::Renderer2D::DrawQuad({ cvar_pos.Get().x,cvar_pos.Get().y, 1.0f }, {  100.0f,100.0f}, { col.x,col.y,col.z,1.0f });
+
         engine::Renderer2D::EndScene();
 
     }
