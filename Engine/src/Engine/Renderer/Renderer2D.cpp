@@ -68,10 +68,10 @@ void engine::Renderer2D::Init()
 		// position
 	std::array<QuadVertex, 4> vertices{
 		//					position    colour,  uv			
-		QuadVertex({-0.5f,-0.5f, 1.0f} , {1.0f, 0.0f, 0.0f, 1.0f},{0.0f, 0.0f}),
-		QuadVertex({ 0.5f,-0.5f, 1.0f} , {0.0f, 1.0f, 0.0f, 1.0f},{1.0f, 0.0f}),
-		QuadVertex({-0.5f, 0.5f, 1.0f} , {1.0f, 0.0f, 1.0f, 1.0f},{0.0f, 1.0f}),
-		QuadVertex({ 0.5f, 0.5f, 1.0f} , {0.0f, 0.0f, 1.0f, 1.0f},{1.0f, 1.0f})
+		QuadVertex({-1.0f,-1.0f, 1.0f} , {1.0f, 0.0f, 0.0f, 1.0f},{0.0f, 0.0f}),
+		QuadVertex({ 1.0f,-1.0f, 1.0f} , {0.0f, 1.0f, 0.0f, 1.0f},{1.0f, 0.0f}),
+		QuadVertex({-1.0f, 1.0f, 1.0f} , {1.0f, 0.0f, 1.0f, 1.0f},{0.0f, 1.0f}),
+		QuadVertex({ 1.0f, 1.0f, 1.0f} , {0.0f, 0.0f, 1.0f, 1.0f},{1.0f, 1.0f})
 	};
 
 	// Get a buffer handle
@@ -137,7 +137,7 @@ uniform mat4 uViewProj_xform;
 
 void main()
 {
-gl_Position = uViewProj_xform* uModel_xform *  vec4(pos, 1.0);
+gl_Position = uViewProj_xform*uModel_xform * vec4(pos, 1.0);
 fCol= col;
 TexCoord = tex;
 }
