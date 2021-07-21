@@ -17,6 +17,7 @@ Technology is prohibited.
 #include "Editor.h"
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 /**
  * \brief The main function to displaying the Hierarchy window
@@ -50,6 +51,10 @@ void HeirarchyView::HeirarchyPopUp()
 		tc.name = "new gameobject";
 		Editor::s_testList.emplace_back(tc);
 		Editor::s_testList.back().SetParent(&Editor::s_rootnode);
+	}
+	if (ImGui::MenuItem("Toggle lock UI"))
+	{
+		ToggleLockUI();
 	}
 }
 
@@ -177,5 +182,14 @@ void HeirarchyView::FilterByName(const std::string& target)
 		if (obj.name.find(target) != std::string::npos)
 			m_filterlist.emplace_back(&obj);//in the ecs case will be its id
 	}
+}
+
+void HeirarchyView::ToggleLockUI()
+{
+	ImGuiWindow* window = ImGui::FindWindowByName("Hierarchy");
+	if (window->DockNode->LocalFlags == 0)
+		window->DockNode->LocalFlags = ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoTabBar;
+	else
+		window->DockNode->LocalFlags = 0;
 }
 

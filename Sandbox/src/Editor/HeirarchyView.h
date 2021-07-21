@@ -16,8 +16,9 @@ class testclass;
 class HeirarchyView
 {
 public: 
-	HeirarchyView() :m_dragging{ false }, m_editing{ false }, m_filtered{ false }, m_Buffer{ "" }, m_filterBuffer{ "" }{}
+	HeirarchyView() : m_dragging{ false }, m_editing{ false }, m_filtered{ false }, m_Buffer{ "" }, m_filterBuffer{ "" }{}
 	void Show();
+
 private:
 	void HeirarchyPopUp();
 
@@ -25,7 +26,10 @@ private:
 	void ListHeirarchy(testclass* );
 	void Search();
 	void FilterByName(const std::string& target);
+	void ToggleLockUI();
+
 private:
+
 	bool m_dragging;
 	bool m_editing;
 	bool m_filtered;
