@@ -23,7 +23,10 @@ void Renderer2DSystem::Update()
 		auto& transform = m_ECS_Manager.GetComponent<Transform3D>(it);
 		auto& sprite = m_ECS_Manager.GetComponent<Sprite2D>(it);
 		
-		Renderer2D::DrawQuad(transform.GetPosition(), glm::vec2{ transform.GetScale() }, sprite.GetColor() );
+		Renderer2D::DrawRotatedQuad(transform.GetPosition(), 
+									glm::vec2{transform.GetScale()},
+									transform.GetRotationAngle(),
+									sprite.GetColor() );
 	}
 	engine::Renderer2D::EndScene();
 }

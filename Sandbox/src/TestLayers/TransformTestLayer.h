@@ -27,7 +27,8 @@ public:
         for (int i = 0; i < 10; ++i)
         {
             auto* ent = new engine::GameObject();
-            ent->Transform().SetScale({ 100.0f, 100.0f, 1.0f });
+            ent->Transform().SetScale({ 20.0f, 20.0f, 1.0f });
+            ent->Transform().SetPosition({ -width/2.0f, height/2.0f, 1.0f });
             ent->AddComponent<engine::Sprite2D>();
         }
 
@@ -59,8 +60,9 @@ public:
             //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
             //LOG_INFO("ent {0}: position ({1},{2})", ent, transform.Position().x, transform.Position().y);
             //LOG_INFO("ent {0}", transform.IsDirty());
-            transform.Position().x += 1.f * ++iteration;
-            transform.Position().y -= 1.f * iteration;
+            transform.Position().x += 0.2f * ++iteration;
+            transform.Position().y -= 0.2f * iteration;
+            transform.RotationAngle() += 0.2f*iteration;
         }
 
         /*for (auto& ent : view)

@@ -131,7 +131,6 @@ layout(location = 2) in vec2 tex;
 layout(location = 1)out vec2 TexCoord;
 layout(location = 2)out vec4 fCol;
 
-
 uniform mat4 uModel_xform;
 uniform mat4 uViewProj_xform;
 
@@ -151,6 +150,7 @@ layout(location = 2)in vec4 colour;
 
 out vec4 FragColour;
 
+uniform sampler2D theTexture;
 uniform vec4 col;
 
 void main()
@@ -286,11 +286,27 @@ void engine::Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::v
 void engine::Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
 {
 	GLfloat rot = glm::radians(rotation);
-	glm::mat3 mdl_xform = {
-		cosf(rot) * size.x,		sinf(rot)* size.x,	0.0f,
-		-sinf(rot) * size.y,	cosf(rot)* size.y,	0.0f,
-		position.x,				position.y,			1.0f
+	glm::mat4 mdl_xform = {
+		cosf(rot) * size.x,		sinf(rot) * size.x,	0.0f, 0.0f,
+		-sinf(rot) * size.y,	cosf(rot) * size.y,	0.0f, 0.0f,
+		position.x,				position.y,			1.0f, 0.0f,
+		 0.0f,					0.0f,				0.0f, 1.0f
 	};
+
+	glBindVertexArray(s_Data.vaoid);
+	glUseProgram(s_Data.shaderid);
+	GLuint task_loc = glGetUniformLocation(s_Data.shaderid, "uViewProj_xform");
+	glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(s_Data.CameraBuffer.ViewProjection));
+
+	task_loc = glGetUniformLocation(s_Data.shaderid, "uModel_xform");
+	glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(mdl_xform));
+
+	task_loc = glGetUniformLocation(s_Data.shaderid, "col");
+	glUniform4fv(task_loc, 1, glm::value_ptr(color));
+
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, NULL);
+	glUseProgram(0);
+	glBindVertexArray(0);
 
 }
 
