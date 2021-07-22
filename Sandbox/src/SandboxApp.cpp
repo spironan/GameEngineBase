@@ -187,24 +187,35 @@ class EditorSceneLayer : public engine::Layer
 {
 private:
     engine::World& m_world;
+
+    std::vector<engine::GameObject*> gos;
 public:
 
     EditorSceneLayer() : Layer{ "EditorSceneLayer" },
         m_world(engine::WorldManager::CreateWorld())
     {
+        engine::WorldManager::SetActiveWorld(m_world.GetID());
+
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
-        
         auto* root = new engine::GameObject();
+        gos.push_back(root);
 
         for (int i = 0; i < 10; ++i)
         {
             auto* ent = new engine::GameObject();
+            gos.push_back(ent);
         }
+    }
 
+    ~EditorSceneLayer()
+    {
+        for (auto i : gos)
+            delete i;
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+        engine::WorldManager::SetActiveWorld(m_world.GetID());
         m_world.GetSystem<engine::TransformSystem>()->Update();
     }
 
@@ -228,11 +239,11 @@ public:
         PushOverlay(new ExampleLayer());
 
         //Actual Scene Layer
-        //PushLayer(new EditorSceneLayer());
+        PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
 
         // DEBUG/TEST LAYERS
-        PushLayer(new InputDebugLayer());
+        //PushLayer(new InputDebugLayer());
         PushLayer(new TransformTestLayer());
         //PushOverlay(new SceneCamera());
 

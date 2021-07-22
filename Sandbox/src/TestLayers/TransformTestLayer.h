@@ -32,14 +32,16 @@ public:
         : Layer{ "TransformTestLayer" }
         , m_world(engine::WorldManager::CreateWorld())
     {
+        engine::WorldManager::SetActiveWorld(m_world.GetID());
+
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
 
         m_root = new engine::GameObject();
 
-        /*for (int i = 0; i < 1; ++i)
+        for (int i = 0; i < 1; ++i)
         {
             auto* ent = new engine::GameObject();
-        }*/
+        }
 
     }
 
@@ -50,6 +52,7 @@ public:
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+        engine::WorldManager::SetActiveWorld(m_world.GetID());
         m_world.GetSystem<engine::TransformSystem>()->Update();
 
         auto view = m_world.GetComponentView<engine::Transform3D>();
