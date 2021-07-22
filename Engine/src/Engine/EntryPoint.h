@@ -18,6 +18,11 @@ Technology is prohibited.
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Base.h"
 
+// Hints enable Nvidia optimus on laptop systems
+extern "C" {
+    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+
 #ifdef ENGINE_PLATFORM_WINDOWS
 
 extern engine::Application* engine::CreateApplication(engine::CommandLineArgs args);

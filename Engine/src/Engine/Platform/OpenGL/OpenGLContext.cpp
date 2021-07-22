@@ -106,7 +106,7 @@ namespace engine
 
     bool OpenGLContext::SetVSync(bool enable)
     {
-        ENGINE_ASSERT_MSG(SDL_GL_SetSwapInterval(enable) == 0, "setting the swap interval {0} is not supported", enable);
+        ENGINE_VERIFY_MSG(SDL_GL_SetSwapInterval(enable) == 0, "setting the swap interval {0} is not supported", enable);
         return enable;
     }
 
