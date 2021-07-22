@@ -75,6 +75,7 @@ namespace engine
 
         //Scenegraph GetSceneGraph() { return m_scenegraph; }
 
+        bool Attach(GameObject const& child, GameObject const& parent);
       private:
         /****************************************************************************//*!
          @brief    private helper function that recursively updates all gameobjects in
