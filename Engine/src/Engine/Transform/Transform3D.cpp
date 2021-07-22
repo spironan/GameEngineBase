@@ -17,8 +17,22 @@ Technology is prohibited.
 #include <glm/matrix.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <rttr/registration>
 namespace engine 
 {
+    RTTR_REGISTRATION
+    {
+        using namespace rttr;
+        registration::class_<Transform3D>("Transform3D")
+            .property("Position", &Transform3D::GetPosition, &Transform3D::SetPosition)
+            .property("Rotation Axis", &Transform3D::GetRotationAxis, &Transform3D::SetRotationAxis)
+            .property("Rotation Angle", &Transform3D::GetRotationAngle, &Transform3D::SetRotationAngle)
+            .property("Scaling", &Transform3D::GetScale, &Transform3D::SetScale);
+
+        //std::function<glm::vec3(void)> getposition = Transform3D::GetPosition();
+        //.property("dirty", &Component::test);
+    }
+
     /********************************************************************************//*!
      @brief    Overloaded constructor for transform component
      

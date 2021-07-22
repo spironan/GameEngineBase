@@ -16,6 +16,8 @@ Technology is prohibited.
 #include "Engine/ECS/Component.h"
 #include <glm/glm.hpp>
 
+#include <rttr/type>
+
 namespace engine 
 { 
     /********************************************************************************//*!
@@ -52,16 +54,31 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        const float      GetRotationAngle()  const   { return m_rotationAngle; }
-        const glm::vec3  GetPosition()       const   { return m_position; }
-        const glm::vec3  GetRotationAxis()   const   { return m_rotationAxis; }
-        const glm::vec3  GetScale()          const   { return m_scale;    }
+        float     const& GetRotationAngle()    const { return m_rotationAngle; }
+        glm::vec3 const& GetPosition()         const { return m_position; }
+        glm::vec3 const& GetRotationAxis()     const { return m_rotationAxis; }
+        glm::vec3 const& GetScale()            const { return m_scale;    }
 
-        const glm::mat4& GetLocalMatrix()    const   { return m_localTransform;}
-        const glm::mat4& GetGlobalMatrix()   const   { return m_globalTransform; }
+        glm::mat4 const& GetLocalMatrix()      const { return m_localTransform;}
+        glm::mat4 const& GetGlobalMatrix()     const { return m_globalTransform; }
 
-        const int&       GetChildCount()     const   { return m_childCount;}
-        const Entity&    GetParentId()       const   { return m_parentId;}
+        int       const& GetChildCount()       const { return m_childCount; }
+        Entity    const& GetParentId()         const { return m_parentId; }
+        
+        /*-----------------------------------------------------------------------------*/
+        /* Setter Functions                                                            */
+        /*-----------------------------------------------------------------------------*/
+        float& RotationAngle() { m_dirty = true; return m_rotationAngle; }
+        glm::vec3& Position() { m_dirty = true; return m_position; }
+        glm::vec3& RotationAxis() { m_dirty = true; return m_rotationAxis; }
+        glm::vec3& Scale() { m_dirty = true; return m_scale; }
+        void         Reset() { m_hasChanged = false; }
+
+        void SetPosition(glm::vec3 const& pos) { m_dirty = true; m_position = pos; }
+        void SetRotationAxis(glm::vec3 const& rotAxis) { m_dirty = true; m_rotationAxis = rotAxis; }
+        void SetRotationAngle(float const& angle) { m_dirty = true; m_rotationAngle = angle; }
+        void SetScale(glm::vec3 const& scale) { m_dirty = true; m_scale = scale; }
+
         /****************************************************************************//*!
          @brief    Retrieves the global position of this Component from the global
                    transformation matrix.
@@ -133,15 +150,7 @@ namespace engine
         const bool   IsDirty()           const   { return m_dirty;    }
         const bool   HasChanged()        const   { return m_hasChanged; }
 
-        /*-----------------------------------------------------------------------------*/
-        /* Setter Functions                                                            */
-        /*-----------------------------------------------------------------------------*/
-        float&       RotationAngle() { m_dirty = true; return m_rotationAngle; }
-        glm::vec3&   Position()      { m_dirty = true; return m_position; }
-        glm::vec3&   RotationAxis()  { m_dirty = true; return m_rotationAxis; }
-        glm::vec3&   Scale()         { m_dirty = true; return m_scale;    }
-        void         Reset()         { m_hasChanged = false; }
-
+        
 
         /*-----------------------------------------------------------------------------*/
         /* Member Functions                                                            */
@@ -176,6 +185,8 @@ namespace engine
         
 
         void SetParent(Transform3D& parent);
+
+        RTTR_ENABLE();
 
     private:
 
