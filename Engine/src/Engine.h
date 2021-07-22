@@ -29,5 +29,10 @@ Technology is prohibited.
 
 #include "Engine/Core/Input.h"
 
-#include "Engine/Renderer/Renderer2D.h"
-#include "Engine/Renderer/OrthographicCamera.h"
+// -- ECS
+#include "Engine/ECS/GameObject.h"
+#include "Engine/ECS/ECS.h"
+#include "Engine/Transform/Transform.h"
+
+// -- Rendering
+#include "Engine/Renderer/2DRendering.h"

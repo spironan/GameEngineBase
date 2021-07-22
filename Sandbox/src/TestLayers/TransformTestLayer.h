@@ -7,20 +7,28 @@ class TransformTestLayer : public engine::Layer
 private:
     engine::World& world;
     engine::GameObject* root;
-
+    engine::OrthographicCamera cam{ -1,1,-1,1 };
 public:
 
     TransformTestLayer() 
         : Layer{ "TransformTestLayer" }
         , world(engine::WorldManager::CreateWorld())
     {
-        auto& ts = world.RegisterSystem<engine::TransformSystem>();
+        engine::Window& x = engine::Application::Get().GetWindow();
+        int width = x.GetSize().first;
+        int height = x.GetSize().second;
+        cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
+
+        auto& ts = world.RegisterSystem<engine::TransformSystem>();
+        auto& rs = world.RegisterSystem<engine::Renderer2DSystem>(cam);
         root = new engine::GameObject();
 
-        for (int i = 0; i < 1; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             auto* ent = new engine::GameObject();
+            ent->Transform().SetScale({ 100.0f, 100.0f, 1.0f });
+            ent->AddComponent<engine::Sprite2D>();
         }
 
     }
@@ -47,12 +55,12 @@ public:
         for (auto& ent : view)
         {
             auto& transform = world.GetComponent<engine::Transform3D>(ent);
-            auto rttrProps = transform.get_type().get_properties();
-            rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
+            //auto rttrProps = transform.get_type().get_properties();
+            //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
             //LOG_INFO("ent {0}: position ({1},{2})", ent, transform.Position().x, transform.Position().y);
-            LOG_INFO("ent {0}", transform.IsDirty());
-            /*transform.Position().x += 1.f * ++iteration;
-            transform.Position().y -= 1.f * iteration;*/
+            //LOG_INFO("ent {0}", transform.IsDirty());
+            transform.Position().x += 1.f * ++iteration;
+            transform.Position().y -= 1.f * iteration;
         }
 
         /*for (auto& ent : view)
@@ -65,5 +73,6 @@ public:
 
     virtual void OnImGuiRender() override
     {
+        world.GetSystem<engine::Renderer2DSystem>()->Update();
     }
 };
