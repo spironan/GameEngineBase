@@ -28,3 +28,8 @@ Technology is prohibited.
 #include "Engine/EntryPoint.h"
 
 #include "Engine/Core/Input.h"
+
+// -- ECS
+#include "Engine/ECS/GameObject.h"
+#include "Engine/ECS/ECS.h"
+#include "Engine/Transform/Transform.h"
