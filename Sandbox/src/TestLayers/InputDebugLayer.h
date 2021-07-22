@@ -1,7 +1,25 @@
+/************************************************************************************//*!
+\file           InputDebugLayer.h
+\project        INSERT PROJECT NAME
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           Jul 22, 2021
+\brief          Describes a Test scene used to test The Input Systems
+                Functionality and print out debug messages for all supported inputs.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 
 #include <Engine.h>
 
+/****************************************************************************//*!
+ @brief     Describes a Test scene used to test The Input Systems
+            Functionality and print out debug messages for all supported inputs.
+*//*****************************************************************************/
 class InputDebugLayer : public engine::Layer
 {
 public:
@@ -13,8 +31,10 @@ public:
     {
         //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
         // Commenting this out for now until engine::Input::GetMouseDelta() no longer consumes the information
-        //std::pair<int, int> pos = engine::Input::GetMouseDelta();
-        //LOG_INFO("{0}, {1}", pos.first , pos.second);
+        /*engine::Input::GetMouseDelta();
+        std::pair<int, int> pos = engine::Input::GetMouseDelta();
+        LOG_INFO("{0}, {1}", pos.first , pos.second);*/
+
 
         // New way to do check keys.
         if (engine::Input::IsKeyPressed(ENGINE_KEY_0))

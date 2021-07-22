@@ -1,55 +1,58 @@
+/************************************************************************************//*!
+\file           TransformTestLayer.h
+\project        INSERT PROJECT NAME
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           June 22, 2021
+\brief          Describes a Test scene used to test The Transform Components and Systems
+                Functionality with ECS and Gameobjects.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 
 #include <Engine.h>
-#include <random>
 
+/****************************************************************************//*!
+ @brief     Describes a Test scene used to test The Transform Components 
+            and Systems Functionality with ECS and Gameobjects.
+*//*****************************************************************************/
 class TransformTestLayer : public engine::Layer
 {
 private:
-    engine::World& world;
-    engine::GameObject* root;
-    engine::OrthographicCamera cam{ -1,1,-1,1 };
-    int width{}, height{};
+    engine::World& m_world;
+    engine::GameObject* m_root;
+
 public:
 
     TransformTestLayer() 
         : Layer{ "TransformTestLayer" }
-        , world(engine::WorldManager::CreateWorld())
+        , m_world(engine::WorldManager::CreateWorld())
     {
-        engine::Window& x = engine::Application::Get().GetWindow();
-        width = x.GetSize().first;
-        height = x.GetSize().second;
-        cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
+        auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
 
+        m_root = new engine::GameObject();
 
-        auto& ts = world.RegisterSystem<engine::TransformSystem>();
-        auto& rs = world.RegisterSystem<engine::Renderer2DSystem>(cam);
-        root = new engine::GameObject();
-
-        engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
-        engine::TextureDatabase::AddTexture("ogre", tex);
-
-        for (int i = 0; i < 1; ++i)
+        /*for (int i = 0; i < 1; ++i)
         {
             auto* ent = new engine::GameObject();
-            ent->Transform().SetScale({ 40.0f, 40.0f, 1.0f });
-            ent->Transform().SetPosition({ -width/2.0f, height/2.0f, 1.0f });
-            auto& objSprite = ent->AddComponent<engine::Sprite2D>();
-            objSprite.SetTexture(tex);
-            
-        }
+        }*/
 
+    }
+
+    ~TransformTestLayer()
+    {
+        delete m_root;
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
-        static std::random_device rd;
-        static std::mt19937 gen(rd());
-        static std::uniform_real_distribution<float> dis(-1.0f, std::nextafter(1.0f, FLT_MAX));
-        
-        world.GetSystem<engine::TransformSystem>()->Update();
+        m_world.GetSystem<engine::TransformSystem>()->Update();
 
-        auto view = world.GetComponentView<engine::Transform3D>();
+        auto view = m_world.GetComponentView<engine::Transform3D>();
 
         // transform 2 info : 1. parentID, 2. number of Children
         // 1. parentID == itself is root
@@ -64,22 +67,15 @@ public:
 
         int iteration = 0;
 
-        glm::vec4 mouse{ engine::Input::GetMousePosition().first,engine::Input::GetMousePosition().second ,1.0f ,1.0f};
-        //mouse = (cam.GetProjectionMatrix()) * mouse;
-        mouse.x -= width/2;
-        mouse.y = -mouse.y + height/2;
-
         for (auto& ent : view)
         {
-            auto& transform = world.GetComponent<engine::Transform3D>(ent);
-            //auto rttrProps = transform.get_type().get_properties();
-            //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
-            //LOG_INFO("ent {0}: position ({1},{2})", ent, transform.Position().x, transform.Position().y);
+            auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
+            auto rttrProps = transform.get_type().get_properties();
+            rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
             //LOG_INFO("ent {0}", transform.IsDirty());
-            transform.Position() = mouse;
-            transform.Position().x += dis(gen)* 0.2f * ++iteration;
-            transform.Position().y += dis(gen)* 0.2f * iteration;
-            transform.RotationAngle() += 0.02f*iteration;
+            //LOG_INFO("ent {0}: position ({1},{2})", ent, transform.GetPosition().x, transform.GetPosition().y);
+            /*transform.Position().x += 1.f * ++iteration;
+            transform.Position().y -= 1.f * iteration;*/
         }
 
         /*for (auto& ent : view)
@@ -92,9 +88,5 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        world.GetSystem<engine::Renderer2DSystem>()->Update();
-        ImGui::Begin("OgreImage");
-        ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("ogre").id, { 200.0f, 200.0f });
-        ImGui::End();
     }
 };

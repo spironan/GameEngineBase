@@ -3,7 +3,7 @@
 \project        INSERT PROJECT NAME
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
-\date           May 05, 2021
+\date           Jul 22, 2021
 \brief          Customer side of the project that utilizes the functions of the Engine.
                 An Editor will be a use case for game engine.
 
@@ -15,10 +15,14 @@ Technology is prohibited.
 
 // single-include file to get all the relevant functions from our engine.
 #include "Engine.h" 
-
+#include "Engine/ECS/ECS_Test.h"
 #include <iostream>
 
 #include "Editor/Editor.h"
+
+//TestLayers
+#include "TestLayers/InputDebugLayer.h"
+#include "TestLayers/TransformTestLayer.h"
 
 #include "Engine/Platform/Vulkan/VulkanContext.h"
 #include "Engine/Debug/cvars.h"
@@ -39,25 +43,6 @@ public:
     {
     }
 
-    //virtual void OnRender(engine::Timestep dt) override
-    //{
-    //    engine::Renderer2D::BeginScene(camera);
-    //    
-    //    /*engine::Renderer::DrawQuad(0, 0.5);
-    //    engine::Renderer::DrawQuad(0, 0.5);
-    //    engine::Renderer::DrawQuad(0, 0.5);
-    //    engine::Renderer::DrawQuad(0, 0.5);
-    //    engine::Renderer::DrawQuad(0, 0.5);
-    //    engine::Renderer::DrawQuad(0, 0.5);*/
-    //    //engine::TileMapManager
-
-    //    getcomponent<tilemap>().draw();
-
-    //    engine::TileMapRenderer::Draw(tilemap);
-
-    //    engine::Renderer::EndScene();
-    //}
-
     virtual void OnImGuiRender() override
     {
         m_editor.ShowAllWidgets();
@@ -68,33 +53,17 @@ public:
 class SceneCamera : public engine::Layer
 {
 private:
-    AutoCVar_Vec3 cvar_pos{ "quad.position", "Position X, Y, Z", { 0.5f,0.5f,0.0f }, CVarFlags::EditFloatDrag };
-    AutoCVar_Vec3 cvar_col{ "quad.color", "Position X, Y, Z", { 1.0f,1.0f,1.0f }, CVarFlags::EditFloatDrag };
-    engine::OrthographicCamera cam{-1,1,-1,1};
+
 public:
 
     SceneCamera() : Layer{ "SceneCamera" }
     {
-        engine::Window& x = engine::Application::Get().GetWindow();
-        int width = x.GetSize().first;
-        int height = x.GetSize().second;
-        
-        cam.SetProjection(-width/2.0f,width/2.0f, -height/2.0f,height/2.0f );
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
-
-
         engine::VulkanContext* x =  reinterpret_cast<engine::VulkanContext*>(engine::Application::Get().GetWindow().GetRenderingContext());
         DebugCamera& cam = *x->getRenderer()->getCam();
-
-        //engine::Renderer2D::BeginScene(cam);
-        
-     
-
-        //engine::Renderer2D::EndScene();
-
         //cam.CVAR_ortho.Set(true);
         if (engine::Input::IsMouseButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
 		{
@@ -182,32 +151,6 @@ public:
     virtual void OnImGuiRender() override
     {
         CVarSystem::Get()->DrawImguiEditor();
-        
-        //temporary rendering
-        engine::Renderer2D::BeginScene(cam);
-
-        auto col = cvar_col.Get();
-
-        int xQuads = 20;
-        int yQuads = 20;
-        float quadSize = 30.0f;
-        float gutter = 10.0f;
-        float maxX = (quadSize+gutter) * xQuads;
-        float maxY = (quadSize+gutter) * yQuads;
-
-        for (size_t y = 0; y < yQuads; y++)
-        {
-            for (size_t x = 0; x < xQuads; x++)
-            {
-                engine::Renderer2D::DrawQuad({  (quadSize+gutter) * x  - maxX / 2.0f  , (quadSize + gutter) * y  - maxY / 2.0f  },
-                                             {quadSize,quadSize},
-                                             {col.x / xQuads * x,col.y / yQuads * y,col.z,1.0f});
-            }
-        }
-        engine::Renderer2D::DrawQuad({ cvar_pos.Get().x,cvar_pos.Get().y, 1.0f }, {  100.0f,100.0f}, { col.x,col.y,col.z,1.0f });
-
-        engine::Renderer2D::EndScene();
-
     }
 };
 
@@ -220,143 +163,51 @@ public :
 
     void OnUpdate(engine::Timestep dt) override
     {
-        //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
-        // Commenting this out for now until engine::Input::GetMouseDelta() no longer consumes the information
-        //std::pair<int, int> pos = engine::Input::GetMouseDelta();
-        //LOG_INFO("{0}, {1}", pos.first , pos.second);
-        
-        // New way to do check keys.
-        if (engine::Input::IsKeyPressed(ENGINE_KEY_0))
-        {
-            LOG_TRACE("key 0 Pressed ");
-        }
-
-        if (engine::Input::IsAnyKeyDown())
-        {
-            for (engine::KeyCode key : engine::Input::GetKeysDown())
-            {
-                LOG_TRACE("Key {0} down", key);
-            }
-        }
-
-        if (engine::Input::IsAnyKeyPressed())
-        {
-            for (engine::KeyCode key : engine::Input::GetKeysPressed())
-            {
-                LOG_TRACE("Key {0} pressed", key);
-            }
-        }
-
-        if (engine::Input::IsAnyKeyReleased())
-        {
-            for (engine::KeyCode key : engine::Input::GetKeysReleased())
-            {
-                LOG_TRACE("Key {0} released", key);
-            }
-        }
-
-        if (engine::Input::IsAnyMouseButtonDown())
-        {
-            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsDown())
-            {
-                LOG_TRACE("Mouse Button {0} Down", mousecode);
-            }
-        }
-
-        if (engine::Input::IsAnyMouseButtonPressed())
-        {
-            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsPressed())
-            {
-                LOG_TRACE("Mouse Button {0} Pressed", mousecode);
-            }
-        }
-
-        if (engine::Input::IsAnyMouseButtonReleased())
-        {
-            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsReleased())
-            {
-                LOG_TRACE("Mouse Button {0} Released", mousecode);
-            }
-        }
-
-        //if (engine::Input::IsKeyDown(engine::key::W))
-        //{
-        //    LOG_TRACE("key W down!");
-        //}
-        //if (engine::Input::IsKeyPressed(engine::key::W))
-        //{
-        //    LOG_TRACE("key W pressed!");
-        //}
-        //if (engine::Input::IsKeyReleased(engine::key::W))
-        //{
-        //    LOG_TRACE("key W released!");
-        //}
-
-        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLeft))
-        //{
-        //    LOG_TRACE("mouse button Left is Down!");
-        //}
-        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLeft))
-        //{
-        //    LOG_TRACE("mouse button Left is Pressed!");
-        //}
-        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLeft))
-        //{
-        //    LOG_TRACE("mouse button Left is Released!");
-        //}
-
-        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonRight))
-        //{
-        //    LOG_TRACE("mouse button Right is Down!");
-        //}
-        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonRight))
-        //{
-        //    LOG_TRACE("mouse button Right is Pressed!");
-        //}
-        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonRight))
-        //{
-        //    LOG_TRACE("mouse button Right is Released!");
-        //}
-
-
-        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonMiddle))
-        //{
-        //    LOG_TRACE("mouse button Middle is Down!");
-        //}
-        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonMiddle))
-        //{
-        //    LOG_TRACE("mouse button Middle is Pressed!");
-        //}
-        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonMiddle))
-        //{
-        //    LOG_TRACE("mouse button Middle is Released!");
-        //}
-
-        /*if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLast))
-        {
-            LOG_TRACE("mouse button Last is Down!");
-        }
-        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLast))
-        {
-            LOG_TRACE("mouse button Last is Pressed!");
-        }
-        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLast))
-        {
-            LOG_TRACE("mouse button Last is Released!");
-        }*/
-
-        //LOG_TRACE("{0}, {1}", engine::Input::GetMousePosition().first, engine::Input::GetMousePosition().second);
-        //LOG_TRACE("{0}, {1}", engine::Input::GetMouseX(), engine::Input::GetMouseY());
     }
 
     void OnEvent(engine::Event& e) override
     {
-        //LOG_TRACE("{0}", e);
-        /*if (e.GetEventType() == engine::EVENT_TYPE::MOUSEMOVED)
-        {
-            LOG_TRACE("{0}", e);
-        }*/
+        engine::EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<engine::KeyPressedEvent>(ENGINE_BIND_EVENT_FN(ExampleLayer::CloseApp));
     }
+    
+    bool CloseApp(engine::KeyPressedEvent& e)
+    {
+        if (e.GetKeyCode() == ENGINE_KEY_ESCAPE)
+        {
+            engine::Application::Get().Close();
+            return true;
+        }
+
+        return false;
+    }
+};
+
+class EditorSceneLayer : public engine::Layer
+{
+private:
+    engine::World& m_world;
+public:
+
+    EditorSceneLayer() : Layer{ "EditorSceneLayer" },
+        m_world(engine::WorldManager::CreateWorld())
+    {
+        auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
+        
+        auto* root = new engine::GameObject();
+
+        for (int i = 0; i < 10; ++i)
+        {
+            auto* ent = new engine::GameObject();
+        }
+
+    }
+
+    virtual void OnUpdate(engine::Timestep dt) override
+    {
+        m_world.GetSystem<engine::TransformSystem>()->Update();
+    }
+
 };
 
 class Sandbox : public engine::Application
@@ -365,16 +216,26 @@ public:
     Sandbox(engine::CommandLineArgs args)
         : Application{ "Sandbox" , args }
     {
+        // Logging
         LOG_TRACE("Trace Log!");
         LOG_INFO("Info Log!");
         LOG_WARN("Warning Log!");
         LOG_ERROR("Error Log!");
         LOG_CRITICAL("Critical Log!");
         
-        //debug layer
-        PushLayer(new ExampleLayer());
+        ////Default Samples
+        PushLayer(new ExampleLayer());      // contains ability to quit progrom with esc
+        PushOverlay(new ExampleLayer());
+
+        //Actual Scene Layer
+        //PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
-        PushOverlay(new SceneCamera());
+
+        // DEBUG/TEST LAYERS
+        PushLayer(new InputDebugLayer());
+        PushLayer(new TransformTestLayer());
+        //PushOverlay(new SceneCamera());
+
         // one actual layer - gameplay logic
         // one ui layer - game ui
         // one imgui layer - imgui stuff
