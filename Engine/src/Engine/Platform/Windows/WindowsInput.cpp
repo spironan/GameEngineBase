@@ -25,6 +25,7 @@ namespace engine
 {
     // Windows Platform currently using SDL
     // SDL Specific Input Requirements
+
     int m_keyLength;
     const Uint8* m_keyboardState;
     Uint8* m_prevKeyboardState;
@@ -34,6 +35,9 @@ namespace engine
 
     int m_mouseXPos;
     int m_mouseYPos;
+
+    int m_mouseXDelta;
+    int m_mouseYDelta;
 
     void Input::Init()
     {
@@ -50,6 +54,8 @@ namespace engine
         m_prevMouseState = m_mouseState;
 
         m_mouseState = SDL_GetMouseState(&m_mouseXPos, &m_mouseYPos);
+
+        SDL_GetRelativeMouseState(&m_mouseXDelta, &m_mouseYDelta);
     }
 
     void Input::ShutDown()
@@ -298,9 +304,7 @@ namespace engine
 
     std::pair<int, int> Input::GetMouseDelta()
     {
-        int x, y;
-        SDL_GetRelativeMouseState(&x, &y);
-        return { x, y };   // invert y so that you get bottom left as 0,0 instead of top left as 0,0 (default is window space)
+        return { m_mouseXDelta, m_mouseYDelta };   // invert y so that you get bottom left as 0,0 instead of top left as 0,0 (default is window space)
     }
     
     int Input::GetMouseX()
