@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine.h>
+#include <random>
 
 class TransformTestLayer : public engine::Layer
 {
@@ -8,6 +9,7 @@ private:
     engine::World& world;
     engine::GameObject* root;
     engine::OrthographicCamera cam{ -1,1,-1,1 };
+    int width{}, height{};
 public:
 
     TransformTestLayer() 
@@ -15,8 +17,8 @@ public:
         , world(engine::WorldManager::CreateWorld())
     {
         engine::Window& x = engine::Application::Get().GetWindow();
-        int width = x.GetSize().first;
-        int height = x.GetSize().second;
+        width = x.GetSize().first;
+        height = x.GetSize().second;
         cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
 
@@ -24,7 +26,7 @@ public:
         auto& rs = world.RegisterSystem<engine::Renderer2DSystem>(cam);
         root = new engine::GameObject();
 
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < 100; ++i)
         {
             auto* ent = new engine::GameObject();
             ent->Transform().SetScale({ 20.0f, 20.0f, 1.0f });
@@ -36,6 +38,10 @@ public:
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<float> dis(-1.0f, std::nextafter(1.0f, FLT_MAX));
+        
         world.GetSystem<engine::TransformSystem>()->Update();
 
         auto view = world.GetComponentView<engine::Transform3D>();
@@ -53,6 +59,13 @@ public:
 
         int iteration = 0;
 
+        glm::vec4 mouse{ engine::Input::GetMousePosition().first,engine::Input::GetMousePosition().second ,1.0f ,1.0f};
+        //mouse = (cam.GetProjectionMatrix()) * mouse;
+        mouse.x -= width/2;
+        mouse.y = -mouse.y + height/2;
+        auto x = __FILE__;
+        LOG_TRACE("{0}",x );
+
         for (auto& ent : view)
         {
             auto& transform = world.GetComponent<engine::Transform3D>(ent);
@@ -60,9 +73,10 @@ public:
             //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
             //LOG_INFO("ent {0}: position ({1},{2})", ent, transform.Position().x, transform.Position().y);
             //LOG_INFO("ent {0}", transform.IsDirty());
-            transform.Position().x += 0.2f * ++iteration;
-            transform.Position().y -= 0.2f * iteration;
-            transform.RotationAngle() += 0.2f*iteration;
+            transform.Position() = mouse;
+            transform.Position().x += dis(gen)* 0.2f * ++iteration;
+            transform.Position().y += dis(gen)* 0.2f * iteration;
+            transform.RotationAngle() += 0.02f*iteration;
         }
 
         /*for (auto& ent : view)
