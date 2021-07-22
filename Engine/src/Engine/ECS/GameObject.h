@@ -3,7 +3,7 @@
 \project        INSERT PROJECT NAME
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
-\date           Jul 07, 2021
+\date           Jul 22, 2021
 \brief          Describes a gameobject which is the basic unit and building block for 
                 every scene. This object provides the ability to tap on existing ECS
                 systems and the ability to have scenegraph.
@@ -22,6 +22,11 @@ Technology is prohibited.
 
 namespace engine
 {
+    /****************************************************************************//*!
+     @brief     Describes a gameobject which is the basic unit and building block for 
+                every scene. This object provides the ability to tap on existing ECS
+                systems and the ability to have scenegraph.
+    *//*****************************************************************************/
     class GameObject final
     {
     private:
@@ -38,6 +43,9 @@ namespace engine
         GameObject();
         ~GameObject();
         
+        //implicit cast operator
+        operator Entity() { return m_entity; }
+
         constexpr Entity GetID() const { return m_entity; }
 
         constexpr bool IsActive() const { return m_active; }
@@ -54,7 +62,6 @@ namespace engine
 
         // CAN BE DONE BUT NOT REQUIRED RIGHT NOW
         //GameObject* FindGameObjectInChildrenByName(std::string const& name);
-
 
         // Retrieve the index of the gameobject.
         //int IndexPosition() const

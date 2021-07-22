@@ -3,8 +3,12 @@
 \project        INSERT PROJECT NAME
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
-\date           Jul 07, 2021
-\brief
+\date           Jul 22, 2021
+\brief          Defines a 2D transform component. A Transform Component is used to
+                identify a position in space and how much to rotate and scale the 
+                object by.
+                Refer to this as a template of how to implement a component.
+                Implements RTTR as well.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -18,8 +22,13 @@ Technology is prohibited.
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <rttr/registration>
+
 namespace engine 
 {
+    /********************************************************************************//*!
+     @brief     Used to register for RTTR Specifically to display the relevant 
+                information that will be displayed to the editor
+    *//*********************************************************************************/
     RTTR_REGISTRATION
     {
         using namespace rttr;
@@ -28,9 +37,6 @@ namespace engine
             .property("Rotation Axis", &Transform3D::GetRotationAxis, &Transform3D::SetRotationAxis)
             .property("Rotation Angle", &Transform3D::GetRotationAngle, &Transform3D::SetRotationAngle)
             .property("Scaling", &Transform3D::GetScale, &Transform3D::SetScale);
-
-        //std::function<glm::vec3(void)> getposition = Transform3D::GetPosition();
-        //.property("dirty", &Component::test);
     }
 
     /********************************************************************************//*!
@@ -58,7 +64,7 @@ namespace engine
         , m_parentId        { _entityID }
     {
     }
-
+    
     /****************************************************************************//*!
      @brief    Recalculate the local transform matrix.
                Should only be called by the transform runtime
@@ -66,9 +72,7 @@ namespace engine
     void Transform3D::Recalculate()
     {
         //localTransform = Matrix_util::model_matrix(position, rotation, scale);
-        glm::scale(m_localTransform, m_scale);
-        glm::rotate(m_localTransform, m_rotationAngle, m_rotationAxis);
-        glm::translate(m_localTransform, m_position);
+        glm::translate(glm::rotate(glm::scale(m_localTransform, m_scale), m_rotationAngle, m_rotationAxis), m_position);
         //glm::rotate(localTransform, )
         //glm::rotate(localTransform, rotation);
         //glm::rotate(localTransform, );
@@ -107,6 +111,12 @@ namespace engine
         m_globalTransform = _parentTransform * m_localTransform;
     }
 
+    /****************************************************************************//*!
+     @brief     Assign this transform parent class
+
+     @param[in]    parent
+            The new parent of this transform class
+    *//*****************************************************************************/
     void Transform3D::SetParent(Transform3D& parent)
     {
         // Reduce child count of current parent : REQUIRES SceneManager to be working.

@@ -3,7 +3,7 @@
 \project        INSERT PROJECT NAME
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
-\date           Jul 07, 2021
+\date           Jul 22, 2021
 \brief          Describes a gameobject which is the interface for everything ECS related
 
 Copyright (C) 2021 DigiPen Institute of Technology.
@@ -39,7 +39,7 @@ namespace engine
             go.Transform().ConvertCoordinates();
         }
         
-        //WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetSceneGraph().Attach(go, *this);
+        //WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Attach(go, *this);
 
         //children.push_back(gameObj);
     }
