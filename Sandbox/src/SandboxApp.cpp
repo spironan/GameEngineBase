@@ -20,34 +20,12 @@ Technology is prohibited.
 
 #include "Editor/Editor.h"
 
+//TestLayers
+#include "TestLayers/InputDebugLayer.h"
+#include "TestLayers/TransformTestLayer.h"
+
 #include "Engine/Platform/Vulkan/VulkanContext.h"
 #include "Engine/Debug/cvars.h"
-
-#include "Engine/ECS/ECS_Test.h"
-#include "Engine/Transform/TransformSystem.h"
-
-#include "Engine/ECS/GameObject.h"
-
-class TransformTestLayer : public engine::Layer
-{
-private:
-    engine::ECS_Manager manager;
-    engine::TransformSystem tfSystem{ manager };
-
-public:
-    
-    TransformTestLayer() : Layer{ "TransformTestLayer" }
-    {
-    }
-
-    virtual void OnUpdate(engine::Timestep dt) override
-    {
-    }
-
-    virtual void OnImGuiRender() override
-    {
-    }
-};
 
 class EditorLayer : public engine::Layer
 {
@@ -181,147 +159,27 @@ class ExampleLayer : public engine::Layer
 public :
     ExampleLayer(): Layer("Example")
     {
-        //engine::ECS_Test();
     }
 
     void OnUpdate(engine::Timestep dt) override
     {
-        //LOG_INFO("ExampleLayer::Update {0}s {1}ms", dt.GetSeconds(), dt.GetMilliSeconds());
-        // Commenting this out for now until engine::Input::GetMouseDelta() no longer consumes the information
-        //std::pair<int, int> pos = engine::Input::GetMouseDelta();
-        //LOG_INFO("{0}, {1}", pos.first , pos.second);
-        
-        // New way to do check keys.
-        if (engine::Input::IsKeyPressed(ENGINE_KEY_0))
-        {
-            LOG_TRACE("key 0 Pressed ");
-        }
-
-        if (engine::Input::IsAnyKeyDown())
-        {
-            for (engine::KeyCode key : engine::Input::GetKeysDown())
-            {
-                LOG_TRACE("Key {0} down", key);
-            }
-        }
-
-        if (engine::Input::IsAnyKeyPressed())
-        {
-            for (engine::KeyCode key : engine::Input::GetKeysPressed())
-            {
-                LOG_TRACE("Key {0} pressed", key);
-            }
-        }
-
-        if (engine::Input::IsAnyKeyReleased())
-        {
-            for (engine::KeyCode key : engine::Input::GetKeysReleased())
-            {
-                LOG_TRACE("Key {0} released", key);
-            }
-        }
-
-        if (engine::Input::IsAnyMouseButtonDown())
-        {
-            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsDown())
-            {
-                LOG_TRACE("Mouse Button {0} Down", mousecode);
-            }
-        }
-
-        if (engine::Input::IsAnyMouseButtonPressed())
-        {
-            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsPressed())
-            {
-                LOG_TRACE("Mouse Button {0} Pressed", mousecode);
-            }
-        }
-
-        if (engine::Input::IsAnyMouseButtonReleased())
-        {
-            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsReleased())
-            {
-                LOG_TRACE("Mouse Button {0} Released", mousecode);
-            }
-        }
-
-        //if (engine::Input::IsKeyDown(engine::key::W))
-        //{
-        //    LOG_TRACE("key W down!");
-        //}
-        //if (engine::Input::IsKeyPressed(engine::key::W))
-        //{
-        //    LOG_TRACE("key W pressed!");
-        //}
-        //if (engine::Input::IsKeyReleased(engine::key::W))
-        //{
-        //    LOG_TRACE("key W released!");
-        //}
-
-        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLeft))
-        //{
-        //    LOG_TRACE("mouse button Left is Down!");
-        //}
-        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLeft))
-        //{
-        //    LOG_TRACE("mouse button Left is Pressed!");
-        //}
-        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLeft))
-        //{
-        //    LOG_TRACE("mouse button Left is Released!");
-        //}
-
-        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonRight))
-        //{
-        //    LOG_TRACE("mouse button Right is Down!");
-        //}
-        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonRight))
-        //{
-        //    LOG_TRACE("mouse button Right is Pressed!");
-        //}
-        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonRight))
-        //{
-        //    LOG_TRACE("mouse button Right is Released!");
-        //}
-
-
-        //if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonMiddle))
-        //{
-        //    LOG_TRACE("mouse button Middle is Down!");
-        //}
-        //if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonMiddle))
-        //{
-        //    LOG_TRACE("mouse button Middle is Pressed!");
-        //}
-        //if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonMiddle))
-        //{
-        //    LOG_TRACE("mouse button Middle is Released!");
-        //}
-
-        /*if (engine::Input::IsMouseButtonDown(engine::mouse::ButtonLast))
-        {
-            LOG_TRACE("mouse button Last is Down!");
-        }
-        if (engine::Input::IsMouseButtonPressed(engine::mouse::ButtonLast))
-        {
-            LOG_TRACE("mouse button Last is Pressed!");
-        }
-        if (engine::Input::IsMouseButtonReleased(engine::mouse::ButtonLast))
-        {
-            LOG_TRACE("mouse button Last is Released!");
-        }*/
-
-        //LOG_TRACE("{0}, {1}", engine::Input::GetMousePosition().first, engine::Input::GetMousePosition().second);
-        //LOG_TRACE("{0}, {1}", engine::Input::GetMouseX(), engine::Input::GetMouseY());
     }
 
     void OnEvent(engine::Event& e) override
     {
-        //LOG_TRACE("{0}", e);
-        /*if (e.GetEventType() == engine::EVENT_TYPE::MOUSEMOVED)
+        engine::EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<engine::KeyPressedEvent>(ENGINE_BIND_EVENT_FN(ExampleLayer::CloseApp));
+    }
+    
+    bool CloseApp(engine::KeyPressedEvent& e)
+    {
+        if (e.GetKeyCode() == ENGINE_KEY_ESCAPE)
         {
-            LOG_TRACE("{0}", e);
-        }*/
+            engine::Application::Get().Close();
+            return true;
+        }
+
+        return false;
     }
 };
 
@@ -348,22 +206,6 @@ public:
     virtual void OnUpdate(engine::Timestep dt) override
     {
         world.GetSystem<engine::TransformSystem>()->Update();
-
-        auto view = world.GetComponentView<engine::Transform3D>();
-        int iteration = 0;
-        for (auto& ent : view)
-        {
-            auto& transform = world.GetComponent<engine::Transform3D>(ent);
-            transform.Position().x += 1.f * ++iteration;
-            transform.Position().y -= 1.f * iteration;
-        }
-
-        /*for (auto& ent : view)
-        {
-            auto& transform = world.GetComponent<engine::Transform3D>(ent);
-
-            LOG_INFO("ent {0}: position ({1},{2})", ent, transform.Position().x, transform.Position().y);
-        }*/
     }
 
 };
@@ -374,18 +216,25 @@ public:
     Sandbox(engine::CommandLineArgs args)
         : Application{ "Sandbox" , args }
     {
+        // Logging
         LOG_TRACE("Trace Log!");
         LOG_INFO("Info Log!");
         LOG_WARN("Warning Log!");
         LOG_ERROR("Error Log!");
         LOG_CRITICAL("Critical Log!");
         
-        //debug layer
-        //PushLayer(new ExampleLayer());
-        PushLayer(new EditorSceneLayer());
+        ////Default Samples
+        PushLayer(new ExampleLayer());      // contains ability to quit progrom with esc
+        PushOverlay(new ExampleLayer());
+
+        //Actual Scene Layer
+        //PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
-        PushOverlay(new SceneCamera());
-        PushOverlay(new TransformTestLayer());
+
+        // DEBUG/TEST LAYERS
+        //PushLayer(new InputDebugLayer());
+        PushLayer(new TransformTestLayer());
+        //PushOverlay(new SceneCamera());
 
         // one actual layer - gameplay logic
         // one ui layer - game ui
