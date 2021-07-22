@@ -17,6 +17,7 @@ Technology is prohibited.
 #include "Editor.h"
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 /**
  * \brief The main function to displaying the Hierarchy window
@@ -36,9 +37,8 @@ void HeirarchyView::Show()
 		HeirarchyPopUp();
 		ImGui::EndPopup();
 	}
-
-	for (testclass* obj : Editor::s_rootnode.childs)
-		ListHeirarchy(obj);
+	Search();
+	ShowHeirarchy();
 
 	ImGui::End();
 }
@@ -51,6 +51,24 @@ void HeirarchyView::HeirarchyPopUp()
 		tc.name = "new gameobject";
 		Editor::s_testList.emplace_back(tc);
 		Editor::s_testList.back().SetParent(&Editor::s_rootnode);
+	}
+	if (ImGui::MenuItem("Toggle lock UI"))
+	{
+		ToggleLockUI();
+	}
+}
+
+void HeirarchyView::ShowHeirarchy()
+{
+	if (m_filtered == false)
+	{
+		for (testclass* obj : Editor::s_rootnode.childs)
+			ListHeirarchy(obj);
+	}
+	else
+	{
+		for (testclass* obj : m_filterlist)
+			ListHeirarchy(obj);
 	}
 }
 
@@ -130,5 +148,48 @@ void HeirarchyView::ListHeirarchy(testclass* obj)
 			ImGui::TreePop();
 		}
 	}
+}
+
+void HeirarchyView::Search()
+{
+	if(ImGui::InputText("Search", m_filterBuffer, sizeof(m_filterBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		if (m_filterBuffer[0] == '\0')
+		{
+			m_filtered = false;
+			m_filterlist.clear();
+		}
+		else
+		{
+			m_filtered = true;
+			FilterByName(m_filterBuffer);
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::SmallButton("Clear"))
+	{
+		m_filterBuffer[0] = '\0';
+		m_filtered = false;
+		m_filterlist.clear();
+	}
+}
+
+void HeirarchyView::FilterByName(const std::string& target)
+{
+	m_filterlist.clear();
+	for (testclass& obj : Editor::s_testList)
+	{
+		if (obj.name.find(target) != std::string::npos)
+			m_filterlist.emplace_back(&obj);//in the ecs case will be its id
+	}
+}
+
+void HeirarchyView::ToggleLockUI()
+{
+	ImGuiWindow* window = ImGui::FindWindowByName("Hierarchy");
+	if (window->DockNode->LocalFlags == 0)
+		window->DockNode->LocalFlags = ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoTabBar;
+	else
+		window->DockNode->LocalFlags = 0;
 }
 

@@ -9,9 +9,9 @@ class ActionStack
 public:
 	ActionStack() {}
 	~ActionStack();
+	void Show(bool* active);
 
-	void UpdateStack();
-
+	static void UpdateStack();
 	static void AllocateInBuffer(ActionBehaviour* item);
 
 private:

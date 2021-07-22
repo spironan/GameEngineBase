@@ -12,18 +12,32 @@ Technology is prohibited.
  *********************************************************************/
 #pragma once
 #include <deque>
+#include <unordered_map>
 #include <string>
-#include <stdio.h>
+#include "Utility/Hash.h"
+
 class LoggingView
 {
 public:
-
-	void Show();
-
-	static void AddLoggingMsg(const char* fmt, ...);
-	static std::deque<std::string> s_messages;
+	LoggingView();
+	void Show(bool* active);
+	
+	//static void AddLoggingMsg(const char* fmt, ...);
+protected:
+	static void AddItem(const std::string&,char);
 private:
-	bool m_paused = false;
+	struct MessageData
+	{
+		int count;
+		char type;
+		std::string msg;
+	};
+	static std::deque<engine::utility::StringHash::size_type> s_messages;
+	static std::unordered_map<engine::utility::StringHash::size_type, MessageData> s_messageCollection;
+	static bool s_newItemAdded;
+	static bool s_paused;
+
+	bool m_collapse_similar = false;
 };
 
 

@@ -23,8 +23,12 @@ Technology is prohibited.
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
 #include "ProjectRootView.h"
-#include "LoggingView.h"
 #include "WarningView.h"
+#include "ToolbarView.h"
+
+#include "Widgets/LoggingView.h"
+#include "Widgets/KeyBindingView.h"
+#include "Widgets/StyleEditorView.h"
 
 #include "ActionStack/EditorActionStack.h"
 #include "Engine/Memory/BufferAllocator.h"
@@ -54,6 +58,8 @@ public:
 	void SetGUIActive(GUIACTIVE_FLAGS flag) { m_activeFlagGUI |= static_cast<int>(flag); }
 	//uses the (xor) operator to set the flag
 	void SetGUIInactive(GUIACTIVE_FLAGS flag) { m_activeFlagGUI ^= static_cast<int>(flag); }
+
+	void MenuBarUI();
 
 	void HotKeysUpdate();
 	void ShowAllWidgets();
@@ -87,7 +93,14 @@ private:
 	ProjectRootView m_projectroot_view;
 	LoggingView m_logging_view;
 	WarningView m_warning_view;
-
 	ActionStack m_action_stack;
+	KeyBindingView m_keyboard_view;
+	ToolbarView m_toolbar_view;
+	StyleEditorView m_styleEditor_view;
+	//remb to change the presets TODO: change the presets
+	bool logging_widget = true;
+	bool action_widget = false;
+	bool keyboardview_widget = false;
+	bool styleeditor_widget = false;
 };
 

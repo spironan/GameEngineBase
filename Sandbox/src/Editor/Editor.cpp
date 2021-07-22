@@ -24,7 +24,7 @@ Technology is prohibited.
 #include "Engine/Core/Input.h"
 #include "Engine/Memory/MemoryManager.h"
 
-
+#include "imgui_internal.h"
 
 /* static vars */
 
@@ -63,13 +63,55 @@ Editor::~Editor()
 	//need to delete memory block of s_bufferAllocator
 }
 
+void Editor::MenuBarUI()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New"))
+			{
+
+			}
+			if (ImGui::MenuItem("Open"))
+			{
+
+			}
+			if (ImGui::MenuItem("Save"))
+			{
+
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Logging", NULL, logging_widget))
+			{
+				logging_widget = !logging_widget;
+			}
+			if (ImGui::MenuItem("Action History", NULL, action_widget))
+			{
+				action_widget = !action_widget;
+			}
+			if (ImGui::MenuItem("Keyboard Settings", NULL, keyboardview_widget))
+			{
+				keyboardview_widget = !keyboardview_widget;
+			}
+			if (ImGui::MenuItem("Style Editor", NULL, styleeditor_widget))
+			{
+				styleeditor_widget = !styleeditor_widget;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+}
+
 void Editor::HotKeysUpdate()
 {
-	/*if(engine::Input::IsKeyPressed(engine::key::W))
-	{
-		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
-	}*/
-
+	if(ImGui::GetActiveID())
+		return;
 	if (ImGui::IsKeyPressed(s_hotkeymapping[KEY_ACTIONS::HIDE_INSPECTOR]))
 	{
 		SetGUIInactive(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE);
@@ -133,6 +175,7 @@ void Editor::LoadData(const char* dir)
 	for (auto it = doc.MemberBegin(); it != doc.MemberEnd(); ++it)
 	{
 		std::cout << (*it).name.GetString() << std::endl;
+		
 		rapidjson::GenericArray arr = it->value.GetArray();
 		for (rapidjson::SizeType i = 0; i < arr.Size(); ++i)
 		{
@@ -155,8 +198,8 @@ void Editor::ShowAllWidgets()
 {
 	//main banner
 	ImGui::DockSpaceOverViewport(ImGui::GetWindowViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-
 	ImGui::ShowDemoWindow();
+	MenuBarUI();
 	if(m_activeFlagGUI & static_cast<int>(GUIACTIVE_FLAGS::INSPECTOR_ACTIVE))
 	{
 		m_inspector_view.Show();
@@ -176,12 +219,20 @@ void Editor::ShowAllWidgets()
 	{
 		m_projectfolder_view.Show();
 	}
-
-	m_action_stack.UpdateStack();
+	m_toolbar_view.Show();
+	//ImGui::ShowStyleEditor();
 	FileGroup::ProjectViewPopUp();
-
-	m_logging_view.Show();
-	m_warning_view.Show();
+	ActionStack::UpdateStack();
 	HotKeysUpdate();
+
+	m_warning_view.Show();
+	if(keyboardview_widget)
+		m_keyboard_view.Show(&keyboardview_widget);
+	if(action_widget)
+		m_action_stack.Show(&action_widget);
+	if(logging_widget)
+		m_logging_view.Show(&logging_widget);
+	if(styleeditor_widget)
+		m_styleEditor_view.Show(&styleeditor_widget);
 }
 

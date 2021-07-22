@@ -21,13 +21,9 @@ ActionStack::~ActionStack()
 {
 	ClearAll();
 }
-void ActionStack::UpdateStack()
+void ActionStack::Show(bool* active)
 {
-	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
-		UndoStep();
-	if (ImGui::IsKeyPressed((int)engine::KeyCode::Y) && ImGui::GetIO().KeyCtrl)
-		RedoStep();
-	if (ImGui::Begin("Action Stack"))
+	if (ImGui::Begin("Action Stack", active))
 	{
 		ImGui::BeginChild("##ActionStackChild", { 0,ImGui::GetWindowHeight() * 0.8f }, true);
 		size_t undoned_idx = s_actionDeque.size() - s_undoCount;
@@ -57,12 +53,19 @@ void ActionStack::UpdateStack()
 	}
 	ImGui::End();
 }
+void ActionStack::UpdateStack()
+{
+	if (ImGui::IsKeyPressed((int)engine::KeyCode::Z) && ImGui::GetIO().KeyCtrl)
+		UndoStep();
+	if (ImGui::IsKeyPressed((int)engine::KeyCode::Y) && ImGui::GetIO().KeyCtrl)
+		RedoStep();
+}
 
 void ActionStack::UndoStep()
 {
 	if (s_actionDeque.size() <= s_undoCount)
 	{
-		WarningView::DisplayWarning("End of Undo Stack");
+		WarningView::DisplayWarning(WarningView::DisplayType::DISPLAY_WARNING,"End of Undo Stack");
 		return;
 	}
 	++s_undoCount;
@@ -73,7 +76,7 @@ void ActionStack::RedoStep()
 {
 	if (s_undoCount == 0)
 	{
-		WarningView::DisplayWarning("You have reach the most recent action");
+		WarningView::DisplayWarning(WarningView::DisplayType::DISPLAY_WARNING,"You have reach the most recent action");
 		return;
 	}
 	ActionBehaviour* ab = *(s_actionDeque.begin() + (s_actionDeque.size() - s_undoCount));

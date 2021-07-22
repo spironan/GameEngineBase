@@ -19,6 +19,7 @@ Technology is prohibited.
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/ostream_sink.h>
 #include <spdlog/sinks/dup_filter_sink.h>
+#include "LogCallbackSink.h"
 #pragma warning(pop)
 
 namespace engine
@@ -27,7 +28,6 @@ namespace engine
     std::shared_ptr<spdlog::logger> Log::s_coreLogger;
     std::shared_ptr<spdlog::logger> Log::s_clientLogger;
     std::ostringstream Log::oss;
-
     void Log::Init()
     {
         // %^	== Color
@@ -53,10 +53,12 @@ namespace engine
         // this can be broken down so that it takes in user defined oss.
         // create the ostream sink
         auto ostream_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+		auto callback_sink = std::make_shared<CallbackSink_mt>();
         // link them to both loggers
         s_coreLogger->sinks().push_back(ostream_sink);
         s_clientLogger->sinks().push_back(ostream_sink);
-
+		s_coreLogger->sinks().push_back(callback_sink);
+		s_clientLogger->sinks().push_back(callback_sink);
         //spdlog::flush_every(std::chrono::seconds(3));
     }
 

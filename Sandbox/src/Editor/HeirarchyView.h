@@ -10,18 +10,32 @@ without the prior written consent of DigiPen Institute of
 Technology is prohibited.
  *********************************************************************/
 #pragma once
+#include <string>
+#include <vector>
 class testclass;
 class HeirarchyView
 {
 public: 
-	HeirarchyView() :m_dragging{ false }, m_editing{ false }, m_Buffer{""}{}
+	HeirarchyView() : m_dragging{ false }, m_editing{ false }, m_filtered{ false }, m_Buffer{ "" }, m_filterBuffer{ "" }{}
 	void Show();
+
 private:
 	void HeirarchyPopUp();
+
+	void ShowHeirarchy();
 	void ListHeirarchy(testclass* );
+	void Search();
+	void FilterByName(const std::string& target);
+	void ToggleLockUI();
+
 private:
-	char m_Buffer[100];
+
 	bool m_dragging;
 	bool m_editing;
+	bool m_filtered;
+
+	char m_Buffer[100];
+	char m_filterBuffer[100];
+	std::vector<testclass*> m_filterlist;
 };
 
