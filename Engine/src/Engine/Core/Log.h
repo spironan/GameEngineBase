@@ -18,7 +18,7 @@ Technology is prohibited.
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
 #if !defined(SPDLOG_ACTIVE_LEVEL) 
-#define SPDLOG_ACTIVE_LEVEL 5 
+#define SPDLOG_ACTIVE_LEVEL 0 
 #endif 
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
@@ -85,11 +85,11 @@ namespace engine
     #define LOG_ENGINE_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::engine::Log::GetCoreLogger(),__VA_ARGS__)
 
     // Client Log macros
-    #define LOG_TRACE(...)              SPDLOG_LOGGER_TRACE(::engine::Log::GetClientLogger(),__VA_ARGS__)
-	#define LOG_INFO(...)               SPDLOG_LOGGER_INFO(::engine::Log::GetClientLogger(),__VA_ARGS__)
-	#define LOG_WARN(...)               SPDLOG_LOGGER_WARN(::engine::Log::GetClientLogger(),__VA_ARGS__)
-	#define LOG_ERROR(...)              SPDLOG_LOGGER_ERROR(::engine::Log::GetClientLogger(),__VA_ARGS__)
-	#define LOG_CRITICAL(...)           SPDLOG_LOGGER_CRITICAL(::engine::Log::GetClientLogger(),__VA_ARGS__)
+    #define LOG_TRACE(...)              SPDLOG_LOGGER_TRACE(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_INFO(...)               SPDLOG_LOGGER_INFO(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_WARN(...)               SPDLOG_LOGGER_WARN(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_ERROR(...)              SPDLOG_LOGGER_ERROR(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_CRITICAL(...)           SPDLOG_LOGGER_CRITICAL(::engine::Log::GetClientLogger(),__VA_ARGS__);
 
     //#define LOG_OUTPUT_STREAM(oss)      ::engine::Log::SetOutputStream(oss);
 #else

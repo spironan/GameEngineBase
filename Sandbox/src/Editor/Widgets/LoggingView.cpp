@@ -20,6 +20,8 @@ Technology is prohibited.
 #include <Windows.h>
 #include <shellapi.h>
 #include <filesystem>
+
+#include <iostream>
 std::deque<engine::utility::StringHash::size_type> LoggingView::s_messages;
 std::unordered_map<engine::utility::StringHash::size_type, LoggingView::MessageData> LoggingView::s_messageCollection;
 bool LoggingView::s_newItemAdded = false;
@@ -79,7 +81,7 @@ void LoggingView::Show(bool* active)
 						case 5:
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 }); break;
 						}
-						//UI item
+						//Log Messages UI
 						{
 							ImGui::PushID(iter->first);
 							ImGui::BeginGroup();
@@ -132,23 +134,27 @@ void LoggingView::Show(bool* active)
 					case 5:
 						ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 }); break;
 					}
-					ImGui::PushID(i);
-					ImGui::BeginGroup();
-					if (ImGui::Selectable("##Item", false, ImGuiSelectableFlags_AllowDoubleClick, ImVec2(0, 0)) &&
-						ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+					//LogMessages UI
 					{
-						ShellExecuteA(NULL, "open", item.filename.c_str(), NULL, NULL, SW_SHOWNORMAL);
+						ImGui::PushID(i);
+						ImGui::BeginGroup();
+						if (ImGui::Selectable("##Item", false, ImGuiSelectableFlags_AllowDoubleClick, ImVec2(0, 0)) &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+						{
+							ShellExecuteA(NULL, "open", item.filename.c_str(), NULL, NULL, SW_SHOWNORMAL);
+						}
+						if (ImGui::IsItemHovered())
+							interacted = true;
+						ImGui::SameLine();
+						ImGui::Text(item.msg.c_str());
+						ImGui::PopStyleColor();
+						ImGui::EndGroup();
+						ImGui::PopID();
 					}
-					if (ImGui::IsItemHovered())
-						interacted = true;
-					ImGui::SameLine();
-					ImGui::Text(item.msg.c_str());
-					ImGui::PopStyleColor();
-					ImGui::EndGroup();
-					ImGui::PopID();
 				}
 			}
 		}
+		//std::cout << ImGui::GetScrollY() << std::endl;
 		if (s_newItemAdded && !interacted)
 		{
 			s_newItemAdded = false;
