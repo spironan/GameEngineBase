@@ -125,8 +125,8 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::SetParent(Transform3D& parent)
     {
-        // Reduce child count of current parent : REQUIRES SceneManager to be working.
-        //SceneManager::GetActiveScene().GetComponent<Transform3D>(m_parentId).m_childCount -= 1 + m_childCount;
+        // Reduce child count of current parent 
+        //decrement here probably needs to be nested like increment as well.
         if (m_parentId != m_entity)
         {
             static_cast<GameObject>(m_parentId).Transform.m_childCount -= 1 + m_childCount;

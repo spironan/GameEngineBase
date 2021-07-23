@@ -275,17 +275,16 @@ namespace engine
         // Reject this , you cannot add a parent as a child to its child.
         if (child_idx < parent_idx && child_idx + child_childCount >= parent_idx) return false;
 
-        // difference between their positions
-        int diff = child_idx - parent_idx;
-        //special case when its exactly 1 : Just attach and return
-        if (diff == 1)
-        {
-            child.Transform.SetParent(parent.Transform);
-            return true;
-        }
-
         // set child's parent to be parent transform
         child.Transform.SetParent(parent.Transform);
+
+        // difference between their positions
+        int diff = child_idx - parent_idx;
+        //special case when its exactly 1 : nothing more needs to be done.
+        if (diff == 1)
+        {
+            return true;
+        }
 
         // reference to container
         auto& container = m_ECS_Manager.GetComponentContainer<Transform3D>();
