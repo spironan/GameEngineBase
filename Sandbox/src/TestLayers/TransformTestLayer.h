@@ -24,38 +24,49 @@ class TransformTestLayer : public engine::Layer
 {
 private:
     engine::World& m_world;
-    engine::GameObject* m_root;
+    engine::GameObject m_root;
+
+    double timer = 1.0;
 
 public:
 
     TransformTestLayer() 
         : Layer{ "TransformTestLayer" }
-        , m_world(engine::WorldManager::CreateWorld())
+        , m_world{ engine::WorldManager::CreateWorld() }
+        , m_root { engine::WorldManager::GetActiveWorld().CreateEntity() }
     {
         engine::WorldManager::SetActiveWorld(m_world.GetID());
 
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
 
-        m_root = new engine::GameObject();
-
-        for (int i = 0; i < 1; ++i)
+        engine::Entity prev;
+        
+        for (int i = 0; i < 10; ++i)
         {
-            auto* ent = new engine::GameObject();
+            engine::GameObject ent { engine::WorldManager::GetActiveWorld().CreateEntity() };
+            
+            //auto& trans = ent.GetComponent<engine::Transform3D>();
+            //trans.Position().x = 10 * i;
+
+            if (i % 2 == 1)
+            {
+                static_cast<engine::GameObject>(prev).AddChild(ent);
+            }
+            else
+            {
+                m_root.AddChild(ent);
+            }
+
+            prev = ent;
         }
-
     }
 
-    ~TransformTestLayer()
-    {
-        delete m_root;
-    }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
         engine::WorldManager::SetActiveWorld(m_world.GetID());
-        m_world.GetSystem<engine::TransformSystem>()->Update();
 
-        auto view = m_world.GetComponentView<engine::Transform3D>();
+        m_world.GetSystem<engine::TransformSystem>()->Update();
 
         // transform 2 info : 1. parentID, 2. number of Children
         // 1. parentID == itself is root
@@ -68,25 +79,33 @@ public:
 
         // vector   :   
 
-        int iteration = 0;
+        auto view = m_world.GetComponentView<engine::Transform3D>();
 
-        for (auto& ent : view)
+        timer -= dt;
+        if (timer < 0.f)
         {
-            auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
-            auto rttrProps = transform.get_type().get_properties();
-            rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
-            //LOG_INFO("ent {0}", transform.IsDirty());
-            //LOG_INFO("ent {0}: position ({1},{2})", ent, transform.GetPosition().x, transform.GetPosition().y);
-            /*transform.Position().x += 1.f * ++iteration;
-            transform.Position().y -= 1.f * iteration;*/
+            timer = 3.f;
+
+            for (auto& ent : view)
+            {
+                auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
+                transform.Position().x += 1.f;
+                
+                //transform.Position().y += 1.f;
+                
+                // rttr code below
+                //auto rttrProps = transform.get_type().get_properties();
+                //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
+                LOG_INFO("ent {0}: position ({1},{2})  parent : {3} childs : {4}"
+                    , ent
+                    , transform.GetGlobalPosition().x
+                    , transform.GetGlobalPosition().y
+                    , static_cast<engine::GameObject>(transform.GetParentId()).GetID()
+                    , transform.GetChildCount());
+            }
         }
 
-        /*for (auto& ent : view)
-        {
-            auto& transform = world.GetComponent<engine::Transform3D>(ent);
 
-            LOG_INFO("ent {0}: position ({1},{2})", ent, transform.Position().x, transform.Position().y);
-        }*/
     }
 
     virtual void OnImGuiRender() override
