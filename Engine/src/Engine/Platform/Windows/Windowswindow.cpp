@@ -107,6 +107,8 @@ namespace engine
         
         // Set VSync Status
         SetVSync(properties.VSync);
+
+        m_lastFrameTime = static_cast<double>(SDL_GetPerformanceCounter());
     }
 
     void WindowsWindow::Shutdown()
