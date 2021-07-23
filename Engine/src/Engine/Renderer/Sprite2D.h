@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Engine/ECS/Component.h"
+#include "Engine/Asset/AssetTypes.h"
+
 #include <glm/glm.hpp>
 
 #include <rttr/type>
 
 namespace engine
 {
+
     /********************************************************************************//*!
      @brief    Defines a 2D transform component. A Transform Component is used to
                identify a position in space and how much to rotate and scale the
@@ -41,13 +44,14 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        uint32_t GetTexture() { return m_texture; }
+        ooTexID GetTexture() { return m_texture; }
         glm::vec4 GetColor() { return m_color; }
 
         /*-----------------------------------------------------------------------------*/
         /* Setter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        void SetTexture(uint32_t textureID) { m_texture = textureID; }
+        void SetTexture(ooTexID textureID);
+        void SetTexture(Texture tex); 
         void SetColor(glm::vec4 col) { m_color = col; }
         void SetColor(float r, float g, float b, float alpha = 1.0f) { m_color.r = r; m_color.g = g; m_color.b = b; m_color.a = alpha;}
 

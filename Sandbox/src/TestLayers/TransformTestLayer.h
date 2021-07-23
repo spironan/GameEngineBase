@@ -26,12 +26,17 @@ public:
         auto& rs = world.RegisterSystem<engine::Renderer2DSystem>(cam);
         root = new engine::GameObject();
 
-        for (int i = 0; i < 100; ++i)
+        engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
+        engine::TextureDatabase::AddTexture("ogre", tex);
+
+        for (int i = 0; i < 1; ++i)
         {
             auto* ent = new engine::GameObject();
-            ent->Transform().SetScale({ 20.0f, 20.0f, 1.0f });
+            ent->Transform().SetScale({ 40.0f, 40.0f, 1.0f });
             ent->Transform().SetPosition({ -width/2.0f, height/2.0f, 1.0f });
-            ent->AddComponent<engine::Sprite2D>();
+            auto& objSprite = ent->AddComponent<engine::Sprite2D>();
+            objSprite.SetTexture(tex);
+            
         }
 
     }
@@ -63,8 +68,6 @@ public:
         //mouse = (cam.GetProjectionMatrix()) * mouse;
         mouse.x -= width/2;
         mouse.y = -mouse.y + height/2;
-        auto x = __FILE__;
-        LOG_TRACE("{0}",x );
 
         for (auto& ent : view)
         {
@@ -90,5 +93,8 @@ public:
     virtual void OnImGuiRender() override
     {
         world.GetSystem<engine::Renderer2DSystem>()->Update();
+        ImGui::Begin("OgreImage");
+        ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("ogre").id, { 200.0f, 200.0f });
+        ImGui::End();
     }
 };
