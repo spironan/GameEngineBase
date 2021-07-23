@@ -109,33 +109,33 @@ namespace engine
         *//*****************************************************************************/
         glm::mat4 GetGlobalRotationMatrix() const;
 
-        ///****************************************************************************//*!
-        // @brief    Retrieves the global rotation of this object in radians 
-        //           from the global transformation matrix.
-        //           link to explaination : https://tinyurl.com/DeriveTRSfrom2dMat
+        /****************************************************************************//*!
+         @brief    Retrieves the global rotation of this object in radians 
+                   from the global transformation matrix.
+                   link to explaination : https://tinyurl.com/DeriveTRSfrom2dMat
 
-        // @warning  Take note that in most cases, unless being called after the Transform
-        //           Runtime has been executed, this will be the rotation from the previous
-        //           frame.
+         @warning  Take note that in most cases, unless being called after the Transform
+                   Runtime has been executed, this will be the rotation from the previous
+                   frame.
 
-        // @return   A float in radians that represents the rotation angle of the previous 
-        //           frame of this Component in global coordinates.
-        //*//*****************************************************************************/
-        //float GetGlobalRotationRad() const;
+         @return   A float in radians that represents the rotation angle of the previous 
+                   frame of this Component in global coordinates.
+        *//*****************************************************************************/
+        float GetGlobalRotationRad() const;
 
-        ///****************************************************************************//*!
-        // @brief    Retrieves the global rotation of this object in degress
-        //           from the global transformation matrix.
-        //           link to explaination : https://tinyurl.com/DeriveTRSfrom2dMat
+        /****************************************************************************//*!
+         @brief    Retrieves the global rotation of this object in degress
+                   from the global transformation matrix.
+                   link to explaination : https://tinyurl.com/DeriveTRSfrom2dMat
 
-        // @warning  Take note that in most cases, unless being called after the Transform
-        //           Runtime has been executed, this will be the rotation from the previous
-        //           frame.
+         @warning  Take note that in most cases, unless being called after the Transform
+                   Runtime has been executed, this will be the rotation from the previous
+                   frame.
 
-        // @return   A float in degrees that represents the rotation angle of the previous 
-        //           frame of this Component in global coordinates.
-        //*//*****************************************************************************/
-        //float GetGlobalRotationDeg() const;
+         @return   A float in degrees that represents the rotation angle of the previous 
+                   frame of this Component in global coordinates.
+        *//*****************************************************************************/
+        float GetGlobalRotationDeg() const;
 
         /****************************************************************************//*!
          @brief     Retrieves the global scale of this object from the global

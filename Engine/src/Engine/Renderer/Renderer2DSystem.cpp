@@ -25,7 +25,7 @@ void Renderer2DSystem::Update()
 
 		Renderer2D::DrawRotatedQuad(transform.GetGlobalPosition(),
 									glm::vec2{ transform.GetGlobalScale() },
-									transform.GetRotationAngle(),
+									transform.GetGlobalRotationDeg(),
 									sprite.GetTexture(),1.0f,
 									sprite.GetColor() );
 	}

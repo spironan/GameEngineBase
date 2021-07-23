@@ -309,7 +309,7 @@ namespace engine
             {
                 // find the next index
                 int next_idx = proceedNegatively ? start_idx - 1 : start_idx + 1;
-                // swap indexes
+                // swap container indexes
                 container.Swap(start_idx, next_idx);
                 // set starting index to be the next and continue to next iteration
                 start_idx = next_idx;

@@ -24,6 +24,9 @@ Technology is prohibited.
 #include <rttr/registration>
 #include "Engine/ECS/GameObject.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>   // for now
+
 namespace engine 
 {
     /********************************************************************************//*!
@@ -77,7 +80,10 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::Recalculate()
     {
-        m_localTransform = glm::translate(glm::rotate(glm::scale(glm::mat4{1.f}, m_scale), m_rotationAngle, m_rotationAxis), m_position);
+        
+        m_localTransform = glm::translate(glm::mat4{ 1.f }, m_position) * glm::rotate(glm::mat4{ 1.f }, m_rotationAngle, glm::vec3{ 0,0,1 }) * glm::scale(glm::mat4{ 1 }, m_scale);
+        
+        //m_localTransform = glm::scale(glm::rotate(glm::translate(glm::mat4{ 1.f }, m_position), m_rotationAngle, m_rotationAxis), m_scale);
 
         //Apply conversion everytime upon calculation
         m_conversionMatrix *= m_localTransform;
@@ -102,19 +108,19 @@ namespace engine
     {
         if (m_parentId == m_entity) return;
 
-        glm::mat4 parentTf = static_cast<GameObject>(m_parentId).Transform.GetGlobalMatrix();
+        glm::mat4 parentMtx = static_cast<GameObject>(m_parentId).Transform.GetGlobalMatrix();
 
         if (m_conversion)
         {
             // store parents inverse as conversion matrix
-            m_conversionMatrix = glm::inverse(parentTf);
+            m_conversionMatrix = glm::inverse(parentMtx);
             
             //recalculate again
             m_dirty       = true;
             m_conversion  = false;
         }
 
-        m_globalTransform = parentTf * m_localTransform;
+        m_globalTransform = parentMtx * m_localTransform;
     }
 
     /****************************************************************************//*!
@@ -161,9 +167,7 @@ namespace engine
     glm::mat4 Transform3D::GetGlobalRotationMatrix() const
     {
         glm::mat4 result{ m_globalTransform };
-        result[0][3] = 0.0f;
-        result[1][3] = 0.0f;
-        result[2][3] = 0.0f;
+        result[3] = glm::vec4{ 0.f, 0.f, 0.f, 1.0f };
         glm::vec3 scalar{ GetGlobalScale() };
 
         /*
@@ -189,15 +193,17 @@ namespace engine
         return result;
     }
     
-    /*float Transform3D::GetGlobalRotationDeg() const
+    float Transform3D::GetGlobalRotationDeg() const
     {
-        return GetGlobalRotationRad() * 180.f / PI;
+        return GetGlobalRotationRad() * 180.0 / M_PI;
     }
 
     float Transform3D::GetGlobalRotationRad() const
     {
-        return std::atan2f(-globalTransform[0][1], globalTransform[0][0]);
-    }*/
+        //this should be of atan2 of either -b/a or c/d,
+        //not sure why its b/a now instead.
+        return std::atan2f(m_globalTransform[0][1], m_globalTransform[0][0]);
+    }
 
     /****************************************************************************//*!
      @brief    Retrieves the global scale of this object from the global
