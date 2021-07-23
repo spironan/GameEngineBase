@@ -21,25 +21,47 @@ namespace engine
 {
     // order matters! dont switch it!
     GameObject::GameObject()
-        : m_entity{ WorldManager::GetActiveWorld().CreateEntity() }
-        , m_transform { AddComponent<Transform3D>() }
+        : m_entity      { WorldManager::GetActiveWorld().CreateEntity() }
+        , ActiveSelf    { AddComponent<GameObjectComponent>().ActiveSelf }
+        , Name          { GetComponent<GameObjectComponent>().Name }
+        , Transform     { AddComponent<Transform3D>() }
     {
     }
 
-    GameObject::~GameObject()
+    GameObject::GameObject(Entity entt)
+        : m_entity      { entt }
+        , ActiveSelf    { EnsureComponent<GameObjectComponent>().ActiveSelf }
+        , Name          { EnsureComponent<GameObjectComponent>().Name }
+        , Transform     { EnsureComponent<Transform3D>() }
+    {
+    }
+
+    void GameObject::Destroy()
     {
         WorldManager::GetActiveWorld().DestroyEntity(m_entity);
     }
 
-    void GameObject::AddChild(GameObject const& go, bool preserveTransforms)
+    GameObject& GameObject::operator=(GameObject const& other)
+    {
+        //What happens if im another entity before assignment?
+        //1. do i destroy the previous gameobject?
+
+        m_entity = other.m_entity;
+        Transform = other.Transform;
+        ActiveSelf = other.ActiveSelf;
+
+        return *this;
+    }
+
+    void GameObject::AddChild(GameObject const& child, bool preserveTransforms)
     {
         // Flag coordinates to be converted when parented
         if (preserveTransforms)
         {
-            go.Transform().ConvertCoordinates();
+            child.Transform.ConvertCoordinates();
         }
         
-        //WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Attach(go, *this);
+        WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Attach(child, *this);
 
         //children.push_back(gameObj);
     }

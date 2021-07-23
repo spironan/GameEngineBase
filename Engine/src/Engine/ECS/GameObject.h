@@ -22,6 +22,15 @@ Technology is prohibited.
 
 namespace engine
 {
+
+    struct GameObjectComponent final
+    {
+        GameObjectComponent() = default;
+
+        bool ActiveSelf = true;
+        std::string Name = "new gameobject";
+    };
+
     /****************************************************************************//*!
      @brief     Describes a gameobject which is the basic unit and building block for 
                 every scene. This object provides the ability to tap on existing ECS
@@ -31,28 +40,33 @@ namespace engine
     {
     private:
         Entity m_entity;
-        Transform3D& m_transform;
-
-        bool m_active;
 
         //std::vector<GameObject*> children;
-
     public:
-        std::string Name;
+        Transform3D&    Transform;
+        bool&           ActiveSelf;
+        std::string&    Name;
 
         GameObject();
-        ~GameObject();
-        
+        GameObject(GameObject const& copy)        = default;
+        GameObject(GameObject &&)                 = default;
+        GameObject& operator=(GameObject const&); //= default;
+        GameObject& operator=(GameObject&&)       = default;
+
+        void Destroy();
+
+        GameObject(Entity entt);
+
         //implicit cast operator
-        operator Entity() { return m_entity; }
+        operator Entity() const { return m_entity; }
 
         constexpr Entity GetID() const { return m_entity; }
 
-        constexpr bool IsActive() const { return m_active; }
+        //constexpr bool IsActive() const { return m_active; }
         
-        Transform3D& Transform() const { return m_transform; }
+        //Transform3D& Transform() const { return m_transform; }
 
-        void SetActive(bool const active) { m_active = active; }
+        //void SetActive(bool const active) { m_active = active; }
         
         void AddChild(GameObject const& gameObj, bool preserveTransforms = false);
         void AddChild(std::initializer_list<GameObject> gameObjs, bool preserveTransforms = false);
@@ -74,8 +88,8 @@ namespace engine
         template<typename Component>
         Component& GetComponent() const;
         
-        template<>
-        Transform3D& GetComponent() const { return m_transform; }
+        /*template<>
+        Transform3D& GetComponent() const { return m_transform; }*/
 
         template<typename Component>
         Component* TryGetComponent() const;
