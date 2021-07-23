@@ -154,7 +154,6 @@ void LoggingView::Show(bool* active)
 				}
 			}
 		}
-		//std::cout << ImGui::GetScrollY() << std::endl;
 		if (s_newItemAdded && !interacted)
 		{
 			s_newItemAdded = false;
