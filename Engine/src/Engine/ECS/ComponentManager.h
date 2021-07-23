@@ -96,6 +96,7 @@ namespace engine
 		template<typename T>
 		bool HasComponent(Entity entity)
 		{
+			if (!IsRegistered<T>()) { return false; }
 			return GetComponentArray<T>()->HasData(entity);
 		}
 
