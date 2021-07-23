@@ -17,9 +17,11 @@ Technology is prohibited.
 
 #include <imgui.h>
 #include <functional>
+#include <Windows.h>
+#include <shellapi.h>
+#include <filesystem>
 
-
-
+#include <iostream>
 std::deque<engine::utility::StringHash::size_type> LoggingView::s_messages;
 std::unordered_map<engine::utility::StringHash::size_type, LoggingView::MessageData> LoggingView::s_messageCollection;
 bool LoggingView::s_newItemAdded = false;
@@ -31,7 +33,7 @@ LoggingView::LoggingView()
 
 void LoggingView::Show(bool* active)
 {
-	
+	bool interacted = false;
 	ImGui::Begin("Logger", active,ImGuiWindowFlags_MenuBar);
 	if (ImGui::BeginMenuBar())
 	{
@@ -79,10 +81,25 @@ void LoggingView::Show(bool* active)
 						case 5:
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 }); break;
 						}
-						ImGui::TextWrapped(iter->second.msg.c_str());
-						ImGui::PopStyleColor();
-						ImGui::Text(std::to_string(iter->second.count).c_str());
-						ImGui::Separator();
+						//Log Messages UI
+						{
+							ImGui::PushID(iter->first);
+							ImGui::BeginGroup();
+							if (ImGui::Selectable("##Item", false, ImGuiSelectableFlags_AllowDoubleClick, ImVec2(0, 0)) &&
+								ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+							{
+								ShellExecuteA(NULL, "open", iter->second.filename.c_str() , NULL, NULL, SW_SHOWNORMAL);
+							}
+							if (ImGui::IsItemHovered())
+								interacted = true;
+							ImGui::SameLine();
+							ImGui::TextWrapped(iter->second.msg.c_str());
+							ImGui::PopStyleColor();
+							ImGui::Text(std::to_string(iter->second.count).c_str());
+							ImGui::Separator();
+							ImGui::EndGroup();
+							ImGui::PopID();
+						}
 						if (counter >= clipper.DisplayEnd)
 							break;
 					}
@@ -101,7 +118,8 @@ void LoggingView::Show(bool* active)
 				int start = static_cast<int>(s_messages.size()) - 1 - clipper.DisplayStart;
 				for (int i = start; i > start - distance; --i)
 				{
-					switch (s_messageCollection[s_messages[i]].type)
+					auto& item = s_messageCollection[s_messages[i]];
+					switch (item.type)
 					{
 					case 0:
 						ImGui::PushStyleColor(ImGuiCol_Text, { 0.2f,0.5f,0.2f,1 }); break;
@@ -116,12 +134,27 @@ void LoggingView::Show(bool* active)
 					case 5:
 						ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 }); break;
 					}
-					ImGui::Text(s_messageCollection[s_messages[i]].msg.c_str());
-					ImGui::PopStyleColor();
+					//LogMessages UI
+					{
+						ImGui::PushID(i);
+						ImGui::BeginGroup();
+						if (ImGui::Selectable("##Item", false, ImGuiSelectableFlags_AllowDoubleClick, ImVec2(0, 0)) &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+						{
+							ShellExecuteA(NULL, "open", item.filename.c_str(), NULL, NULL, SW_SHOWNORMAL);
+						}
+						if (ImGui::IsItemHovered())
+							interacted = true;
+						ImGui::SameLine();
+						ImGui::Text(item.msg.c_str());
+						ImGui::PopStyleColor();
+						ImGui::EndGroup();
+						ImGui::PopID();
+					}
 				}
 			}
 		}
-		if (s_newItemAdded)
+		if (s_newItemAdded && !interacted)
 		{
 			s_newItemAdded = false;
 			ImGui::SetScrollY(ImGui::GetScrollMaxY());
@@ -131,7 +164,7 @@ void LoggingView::Show(bool* active)
 	ImGui::End();
 }
 
-void LoggingView::AddItem(const std::string& str,char type)
+void LoggingView::AddItem(const std::string& str,char type,const std::string& filename)
 {
 	if (s_paused)
 		return;
@@ -146,8 +179,10 @@ void LoggingView::AddItem(const std::string& str,char type)
 	s_messages.emplace_front(hash);
 	//to track the count for the logs
 
-	if(s_messageCollection.find(hash) == s_messageCollection.end())
-		s_messageCollection[hash] = { 0,type,str };
+	if (s_messageCollection.find(hash) == s_messageCollection.end())
+	{
+		s_messageCollection[hash] = { 0,type, str,filename};
+	}
 	else
 		s_messageCollection[hash].count += 1;
 }

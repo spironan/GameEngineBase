@@ -17,6 +17,9 @@ Technology is prohibited.
 
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
+#if !defined(SPDLOG_ACTIVE_LEVEL) 
+#define SPDLOG_ACTIVE_LEVEL 0 
+#endif 
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
@@ -70,24 +73,23 @@ namespace engine
 
 }
 
-
 /****************************************************************************//*!
  @brief     Disables all logging information if not in debug mode
 *//*****************************************************************************/
 #ifdef ENGINE_DEBUG
     // Engine Log macros
-    #define LOG_ENGINE_TRACE(...)       ::engine::Log::GetCoreLogger()->trace(__VA_ARGS__)
-    #define LOG_ENGINE_INFO(...)        ::engine::Log::GetCoreLogger()->info(__VA_ARGS__)
-    #define LOG_ENGINE_WARN(...)        ::engine::Log::GetCoreLogger()->warn(__VA_ARGS__)
-    #define LOG_ENGINE_ERROR(...)       ::engine::Log::GetCoreLogger()->error(__VA_ARGS__)
-    #define LOG_ENGINE_CRITICAL(...)    ::engine::Log::GetCoreLogger()->critical(__VA_ARGS__)
+    #define LOG_ENGINE_TRACE(...)       SPDLOG_LOGGER_TRACE(::engine::Log::GetCoreLogger(),__VA_ARGS__)
+    #define LOG_ENGINE_INFO(...)        SPDLOG_LOGGER_INFO(::engine::Log::GetCoreLogger(),__VA_ARGS__)
+    #define LOG_ENGINE_WARN(...)        SPDLOG_LOGGER_WARN(::engine::Log::GetCoreLogger(),__VA_ARGS__)
+    #define LOG_ENGINE_ERROR(...)       SPDLOG_LOGGER_ERROR(::engine::Log::GetCoreLogger(),__VA_ARGS__)
+    #define LOG_ENGINE_CRITICAL(...)    SPDLOG_LOGGER_CRITICAL(::engine::Log::GetCoreLogger(),__VA_ARGS__)
 
     // Client Log macros
-    #define LOG_TRACE(...)              ::engine::Log::GetClientLogger()->trace(__VA_ARGS__)
-    #define LOG_INFO(...)               ::engine::Log::GetClientLogger()->info(__VA_ARGS__)
-    #define LOG_WARN(...)               ::engine::Log::GetClientLogger()->warn(__VA_ARGS__)
-    #define LOG_ERROR(...)              ::engine::Log::GetClientLogger()->error(__VA_ARGS__)
-    #define LOG_CRITICAL(...)           ::engine::Log::GetClientLogger()->critical(__VA_ARGS__)
+    #define LOG_TRACE(...)              SPDLOG_LOGGER_TRACE(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_INFO(...)               SPDLOG_LOGGER_INFO(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_WARN(...)               SPDLOG_LOGGER_WARN(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_ERROR(...)              SPDLOG_LOGGER_ERROR(::engine::Log::GetClientLogger(),__VA_ARGS__);
+    #define LOG_CRITICAL(...)           SPDLOG_LOGGER_CRITICAL(::engine::Log::GetClientLogger(),__VA_ARGS__);
 
     //#define LOG_OUTPUT_STREAM(oss)      ::engine::Log::SetOutputStream(oss);
 #else

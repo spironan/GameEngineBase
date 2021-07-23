@@ -3,9 +3,10 @@
 #include "Editor.h"
 #include "ActionStack/EditorActionStack.h"
 #include "ActionStack/InspectorActionBehaviour.h"
-#include <imgui.h>
-#include <rttr/type>
 
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <rttr/type>
 #include <string>
 enum : int
 {
@@ -24,18 +25,33 @@ InspectorView::InspectorView()
 }
 void InspectorView::Show()
 {
-
-	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });
 	ImGui::Begin("inspector");
+	ImGui::BeginChild("Preview items",ImVec2(0,ImGui::GetContentRegionMax().y - 75));
 	{
 		if (!ObjectGroup::s_FocusedObject)
 		{
-			ImGui::End();
-			return;
+			ImGui::EndChild();
 		}
-		ImGui::Text("Name :  %s", ObjectGroup::s_FocusedObject->name.c_str());
-		ReadComponents(ObjectGroup::s_FocusedObject->get_type());
+		else
+		{
+			ImGui::Text("Name :  %s", ObjectGroup::s_FocusedObject->name.c_str());
+			ReadComponents(ObjectGroup::s_FocusedObject->get_type());
+			ImGui::EndChild();
+		}
 	}
+
+	ImGui::BeginChild("Ending bar");
+	static bool docked = ImGui::FindWindowByName("inspector")->DockNode->LocalFlags;
+	ImGui::Separator();
+	if (ImGui::RadioButton("Toggle Lock",docked))
+	{
+		auto& docknode = ImGui::FindWindowByName("inspector")->DockNode;
+		if (docknode->LocalFlags == 0)
+			docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
+		else
+			docknode->LocalFlags = 0;
+	}
+	ImGui::EndChild();
 	ImGui::End();
 }
 
