@@ -94,7 +94,7 @@ namespace engine
          @return    An AEVec2 that represents the previous position of this Component in
                     global coordinates.
         *//*****************************************************************************/
-        glm::vec3 GetGlobalPosition() const { return { m_globalTransform[0][3], m_globalTransform[1][3], m_globalTransform[2][3] }; }
+        glm::vec3 GetGlobalPosition() const { return m_globalTransform[3] ; }
         /****************************************************************************//*!
          @brief     Retrieves the global rotation matrix of this object from the global
                     transformation matrix.
@@ -169,7 +169,7 @@ namespace engine
          @param[in]    _parentTransform
                 the parent matrix to multiply with to generate global Transform matrix.
         *//*****************************************************************************/
-        void SetGlobalMatrix(glm::mat4 _parentTransform);
+        void SetGlobalMatrix(/*glm::mat4 _parentTransform*/);
 
         /****************************************************************************//*!
          @brief     Tells the Transform to do coordinate conversion instead of 
@@ -190,6 +190,9 @@ namespace engine
                 The new parent of this transform class
         *//*****************************************************************************/
         void SetParent(Transform3D& parent);
+
+
+        void IncrementChildCount(std::size_t childCount);
 
         RTTR_ENABLE();
 

@@ -22,6 +22,7 @@ Technology is prohibited.
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <rttr/registration>
+#include "Engine/ECS/GameObject.h"
 
 namespace engine 
 {
@@ -36,7 +37,12 @@ namespace engine
             .property("Position", &Transform3D::GetPosition, &Transform3D::SetPosition)
             .property("Rotation Axis", &Transform3D::GetRotationAxis, &Transform3D::SetRotationAxis)
             .property("Rotation Angle", &Transform3D::GetRotationAngle, &Transform3D::SetRotationAngle)
-            .property("Scaling", &Transform3D::GetScale, &Transform3D::SetScale);
+            .property("Scaling", &Transform3D::GetScale, &Transform3D::SetScale)
+            .property_readonly("My ID", &Transform3D::GetEntity)
+            .property_readonly("Parent ID",&Transform3D::GetParentId)
+            .property_readonly("No Of Childs", &Transform3D::GetChildCount)
+            .property_readonly("Local Matrix", &Transform3D::GetLocalMatrix)
+            .property_readonly("Global Matrix", &Transform3D::GetGlobalMatrix);
     }
 
     /********************************************************************************//*!
@@ -48,8 +54,8 @@ namespace engine
      @param[in]    _active 
         Determines if the component is active or not.
     *//*********************************************************************************/
-    Transform3D::Transform3D(Entity _entityID, bool _active)
-        : Component         { _entityID, _active }
+    Transform3D::Transform3D(Entity entityID, bool active)
+        : Component         { entityID, active }
         , m_position        { 0.f, 0.f, 0.f }
         , m_rotationAngle   { 0.f }
         , m_rotationAxis    { 0.f, 0.f, 1.f }
@@ -57,11 +63,11 @@ namespace engine
         , m_conversion      { false }
         , m_dirty           { false }
         , m_hasChanged      { false }
-        , m_globalTransform { glm::mat4{} }
-        , m_localTransform  { glm::mat4{} }
-        , m_conversionMatrix{ glm::mat4{} }
+        , m_globalTransform { glm::mat4{ 1.f } }
+        , m_localTransform  { glm::mat4{ 1.f } }
+        , m_conversionMatrix{ glm::mat4{ 1.f } }
         , m_childCount      { 0 }
-        , m_parentId        { _entityID }
+        , m_parentId        { entityID }
     {
     }
     
@@ -71,11 +77,7 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::Recalculate()
     {
-        //localTransform = Matrix_util::model_matrix(position, rotation, scale);
-        glm::translate(glm::rotate(glm::scale(m_localTransform, m_scale), m_rotationAngle, m_rotationAxis), m_position);
-        //glm::rotate(localTransform, )
-        //glm::rotate(localTransform, rotation);
-        //glm::rotate(localTransform, );
+        m_localTransform = glm::translate(glm::rotate(glm::scale(glm::mat4{1.f}, m_scale), m_rotationAngle, m_rotationAxis), m_position);
 
         //Apply conversion everytime upon calculation
         m_conversionMatrix *= m_localTransform;
@@ -93,22 +95,26 @@ namespace engine
      @brief    Sets the Global transform matrix.
                Should only be called by the transform runtime
 
-     @param[in]    _parentTransform
-        the parent matrix to multiply with to generate global Transform3D matrix.
+     //@param[in]    _parentTransform
+     //   the parent matrix to multiply with to generate global Transform3D matrix.
     *//*****************************************************************************/
-    void Transform3D::SetGlobalMatrix(glm::mat4 _parentTransform)
+    void Transform3D::SetGlobalMatrix(/*glm::mat4 _parentTransform*/)
     {
+        if (m_parentId == m_entity) return;
+
+        glm::mat4 parentTf = static_cast<GameObject>(m_parentId).Transform.GetGlobalMatrix();
+
         if (m_conversion)
         {
             // store parents inverse as conversion matrix
-            m_conversionMatrix = glm::inverse(_parentTransform);
+            m_conversionMatrix = glm::inverse(parentTf);
             
             //recalculate again
             m_dirty       = true;
             m_conversion  = false;
         }
 
-        m_globalTransform = _parentTransform * m_localTransform;
+        m_globalTransform = parentTf * m_localTransform;
     }
 
     /****************************************************************************//*!
@@ -121,10 +127,24 @@ namespace engine
     {
         // Reduce child count of current parent : REQUIRES SceneManager to be working.
         //SceneManager::GetActiveScene().GetComponent<Transform3D>(m_parentId).m_childCount -= 1 + m_childCount;
+        if (m_parentId != m_entity)
+        {
+            static_cast<GameObject>(m_parentId).Transform.m_childCount -= 1 + m_childCount;
+        }
         // set parent child count to be equals to its current amount + 1(this object) + childCount(number of children this object has)
-        parent.m_childCount += 1 + m_childCount;
+        //parent.m_childCount += 1 + m_childCount;
+        parent.IncrementChildCount(1 + m_childCount);
         // set this parent id to be the entity ID of the parent
         m_parentId = parent.m_entity;
+    }
+    
+    void Transform3D::IncrementChildCount(std::size_t childCount)
+    {
+        m_childCount += childCount;
+        if (m_parentId != m_entity)
+        {
+            static_cast<engine::GameObject>(m_parentId).Transform.IncrementChildCount(childCount);
+        }
     }
 
     /****************************************************************************//*!

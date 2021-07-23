@@ -117,56 +117,62 @@ namespace engine
         // 
         // Iterate through and update all transforms that has changed last frame,
         // setting it to false.
+        
         //Transform3D const * prevTransform = nullptr;
        
-        //// Grab Transforms from ECS manager
-        //for (auto& currTransform : m_transforms)
-        //{
-        //    if (currTransform.HasChanged())
-        //    {
-        //        currTransform.Reset();
-        //    }
-        //    
-        //    //recalculate if transform has been changed this frame
-        //    if (currTransform.IsDirty())
-        //    {
-        //        currTransform.Recalculate();
-        //    }
-
-        //    // Skips the first iteration thus root node is not considered.
-        //    // Recalculate global transform : Assumption is that parent ALWAYS Exist.
-        //    // calculated global transform : localTransform * parentTransform
-        //    // by default its a transformation else it does coordinate conversion
-        //    if(prevTransform && prevTransform->GetEntity() == currTransform.GetParentId())
-        //        currTransform.SetGlobalMatrix(prevTransform->GetGlobalMatrix());
-
-        //    //point prev to be current
-        //    prevTransform = &currTransform;
-        //}
-
-        
-
-        //container_reference transforms = ComponentStore::GetComponents<Transform3D>();
-        auto view = m_ECS_Manager.GetComponentView<Transform3D>();
-        
-        // Iterate through and update all transforms that has changed last frame,
-        // setting it to false.
-        for (auto it : view)
+        // Grab Transforms from ECS manager
+        for (auto& currTransform : m_ECS_Manager.GetComponentDenseArray<Transform3D>())
         {
-            auto& transform = m_ECS_Manager.GetComponent<Transform3D>(it);
-
-            if (transform.HasChanged())
+            if (currTransform.HasChanged())
             {
-                transform.Reset();
+                currTransform.Reset();
             }
-
+            
             //recalculate if transform has been changed this frame
-            if (transform.IsDirty())
+            if (currTransform.IsDirty())
             {
-                transform.Recalculate();
+                currTransform.Recalculate();
             }
 
+            // Skips the first iteration thus root node is not considered.
+            // Recalculate global transform : Assumption is that parent ALWAYS Exist.
+            // calculated global transform : localTransform * parentTransform
+            // by default its a transformation else it does coordinate conversion
+            /*if (prevTransform && prevTransform->GetEntity() == currTransform.GetParentId())
+            {
+                currTransform.SetGlobalMatrix(prevTransform->GetGlobalMatrix());
+            }*/
+
+            //Always sets the global transform
+            currTransform.SetGlobalMatrix();
+
+            //point prev to be current
+            //prevTransform = &currTransform;
         }
+
+        
+
+        ////container_reference transforms = ComponentStore::GetComponents<Transform3D>();
+        //auto view = m_ECS_Manager.GetComponentView<Transform3D>();
+        //
+        //// Iterate through and update all transforms that has changed last frame,
+        //// setting it to false.
+        //for (auto it : view)
+        //{
+        //    auto& transform = m_ECS_Manager.GetComponent<Transform3D>(it);
+
+        //    if (transform.HasChanged())
+        //    {
+        //        transform.Reset();
+        //    }
+
+        //    //recalculate if transform has been changed this frame
+        //    if (transform.IsDirty())
+        //    {
+        //        transform.Recalculate();
+        //    }
+
+        //}
 
         //UpdateTransform();
     }
@@ -256,56 +262,61 @@ namespace engine
                 2. you're not trying to attach oneself to itself
                 3. youre not trying to attach oneself to your own children.
     *//*****************************************************************************/
-    bool Attach(GameObject const& child, GameObject const& parent)
+    bool TransformSystem::Attach(GameObject const& child, GameObject const& parent)
     {
-        //int child_idx = child.IndexPosition();
-        //int parent_idx = parent.IndexPosition();
+        int child_idx = m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(child);
+        int parent_idx = m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(parent);
 
-        //if (child_idx == parent_idx) return false;    // attempting to add oneself to itself.
-        //
-        //// Child's number of Child
-        //int child_childCount = child.Transform().GetChildCount();
-        //// Perform a check to see if your'e attaching to a parent that is a child of child : 
-        //// Reject this , you cannot add a parent as a child to its child.
-        //if (child_idx < parent_idx && child_idx + child_childCount >= parent_idx) return false;
+        if (child_idx == parent_idx) return false;    // attempting to add oneself to itself.
+        
+        // Child's number of Child
+        int child_childCount = child.Transform.GetChildCount();
+        // Perform a check to see if your'e attaching to a parent that is a child of child : 
+        // Reject this , you cannot add a parent as a child to its child.
+        if (child_idx < parent_idx && child_idx + child_childCount >= parent_idx) return false;
 
-        //// difference between their positions
-        //int diff = child_idx - parent_idx;
-        ////special case when its exactly 1 : Just attach and return
-        //if (diff == 1)
-        //{
-        //    child.Transform().SetParent(parent.Transform());
-        //    return;
-        //}
+        // difference between their positions
+        int diff = child_idx - parent_idx;
+        //special case when its exactly 1 : Just attach and return
+        if (diff == 1)
+        {
+            child.Transform.SetParent(parent.Transform);
+            return true;
+        }
 
-        //// find direction to proceed from child to parent.
-        //bool proceedNegatively = diff > 0;
+        // set child's parent to be parent transform
+        child.Transform.SetParent(parent.Transform);
 
-        //// calculate number of times required to swap for each iteration
-        //diff = proceedNegatively ? diff - 1 : -diff;
+        // reference to container
+        auto& container = m_ECS_Manager.GetComponentContainer<Transform3D>();
 
-        //// find number of times to iterate : 1(itself) + once per child 
-        //int iterations = 1 + child_childCount;
+        // find direction to proceed from child to parent.
+        bool proceedNegatively = diff > 0;
 
-        //// iterate through and swap all relevant index(es)
-        //for(int currentIter = 0; currentIter < iterations; ++currentIter)
-        //{
-        //    int start_idx = child_idx + (child_childCount - currentIter);
-        //    int end_idx = parent_idx - currentIter;
-        //    
-        //    int swapCount = diff;
-        //    while (swapCount--)
-        //    {
-        //        // find the next index
-        //        int next_idx = proceedNegatively ? start_idx - 1 : start_idx + 1;
-        //        // call the right version : swappign from sparse set
-        //        std::swap(m_container[start_idx], m_container[next_idx]);
-        //        start_idx = next_idx;
-        //    }
-        //}
+        // calculate number of times required to swap for each iteration
+        diff = proceedNegatively ? diff - 1 : -diff;
 
-        //// set child's parent to be parent transform
-        //child.Transform().SetParent(parent.Transform());
+        // find number of times to iterate : 1(itself) + once per child 
+        int iterations = 1 + child_childCount;
+
+        // iterate through and swap all relevant index(es)
+        for(int currentIter = 0; currentIter < iterations; ++currentIter)
+        {
+            int start_idx = child_idx + (child_childCount - currentIter);
+            int end_idx = parent_idx - currentIter;
+            
+            int swapCount = diff;
+            while (swapCount--)
+            {
+                // find the next index
+                int next_idx = proceedNegatively ? start_idx - 1 : start_idx + 1;
+                // swap indexes
+                container.Swap(start_idx, next_idx);
+                // set starting index to be the next and continue to next iteration
+                start_idx = next_idx;
+            }
+        }
+
 
         return true;
     }
