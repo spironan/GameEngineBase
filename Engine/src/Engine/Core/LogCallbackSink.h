@@ -17,6 +17,7 @@ Technology is prohibited.
 #include <vector>
 namespace engine
 {
+	using FunctionType = std::function<void(const std::string&, char,const std::string&)>;
 	template <typename Mutex>
 	class CallbackSink : public spdlog::sinks::base_sink <Mutex>
 	{
@@ -33,7 +34,7 @@ namespace engine
 		 * \brief 
 		 * subscribe to the current sink when the string gets formatted
 		 */
-		static void SubscribeToSink(std::function<void(const std::string&,char)> subscriber)
+		static void SubscribeToSink(FunctionType subscriber)
 		{
 			m_subscriberList.emplace_back(subscriber);
 		}
@@ -47,12 +48,13 @@ namespace engine
 		void sink_it_(const spdlog::details::log_msg& msg) override
 		{
 			spdlog::memory_buf_t formatted;
+			
 			spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
 			std::string temp = fmt::to_string(formatted);
 			
 			for (auto& subscriber : m_subscriberList)
 			{
-				subscriber(temp,(char)msg.level);
+				subscriber(temp,(char)msg.level,msg.source.filename);
 			}
 		}
 
@@ -61,10 +63,10 @@ namespace engine
 			
 		}
 	private:
-		static std::vector < std::function<void(const std::string&,char)> > m_subscriberList;
+		static std::vector < FunctionType > m_subscriberList;
 	};
 	template<typename mutex>
-	std::vector <std::function<void(const std::string&,char)> > CallbackSink<mutex>::m_subscriberList;
+	std::vector < FunctionType > CallbackSink<mutex>::m_subscriberList;
 }
 #include "spdlog/details/null_mutex.h"
 #include <mutex>

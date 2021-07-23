@@ -24,13 +24,14 @@ public:
 	
 	//static void AddLoggingMsg(const char* fmt, ...);
 protected:
-	static void AddItem(const std::string&,char);
+	static void AddItem(const std::string&,char,const std::string&);
 private:
 	struct MessageData
 	{
 		int count;
 		char type;
 		std::string msg;
+		std::string filename;
 	};
 	static std::deque<engine::utility::StringHash::size_type> s_messages;
 	static std::unordered_map<engine::utility::StringHash::size_type, MessageData> s_messageCollection;
