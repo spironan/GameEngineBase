@@ -112,6 +112,8 @@ public:
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+        float deltaTime = static_cast<float>(dt);
+
         engine::WorldManager::SetActiveWorld(m_world.GetID());
         static std::random_device rd;
         static std::mt19937 gen(rd());
@@ -146,69 +148,69 @@ public:
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_W))
         {
-            m_root.Transform.Position().y += MOVESPEED_PARENT * dt;
+            m_root.Transform.Position().y += MOVESPEED_PARENT * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_A))
         {
-            m_root.Transform.Position().x -= MOVESPEED_PARENT * dt;
+            m_root.Transform.Position().x -= MOVESPEED_PARENT * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_S))
         {
-            m_root.Transform.Position().y -= MOVESPEED_PARENT * dt;
+            m_root.Transform.Position().y -= MOVESPEED_PARENT * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_D))
         {
-            m_root.Transform.Position().x += MOVESPEED_PARENT * dt;
+            m_root.Transform.Position().x += MOVESPEED_PARENT * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_Q))
         {
-            m_root.Transform.RotationAngle() -= ROTATIONSPEED_PARENT * dt;
+            m_root.Transform.RotationAngle() -= ROTATIONSPEED_PARENT * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_E))
         {
-            m_root.Transform.RotationAngle() += ROTATIONSPEED_PARENT * dt;
+            m_root.Transform.RotationAngle() += ROTATIONSPEED_PARENT * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_R))
         {
-            m_root.Transform.Scale() -= SCALINGSPEED_PARENT * dt;
+            m_root.Transform.Scale() -= SCALINGSPEED_PARENT * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_T))
         {
-            m_root.Transform.Scale() += SCALINGSPEED_PARENT * dt;
+            m_root.Transform.Scale() += SCALINGSPEED_PARENT * deltaTime;
         }
 
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_I))
         {
-            m_controller->Transform.Position().y += MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().y += MOVESPEED_CHILD * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_J))
         {
-            m_controller->Transform.Position().x -= MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().x -= MOVESPEED_CHILD * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_K))
         {
-            m_controller->Transform.Position().y -= MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().y -= MOVESPEED_CHILD * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_L))
         {
-            m_controller->Transform.Position().x += MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().x += MOVESPEED_CHILD * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_U))
         {
-            m_controller->Transform.RotationAngle() -= ROTATIONSPEED_CHILD * dt;
+            m_controller->Transform.RotationAngle() -= ROTATIONSPEED_CHILD * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_O))
         {
-            m_controller->Transform.RotationAngle() += ROTATIONSPEED_CHILD * dt;
+            m_controller->Transform.RotationAngle() += ROTATIONSPEED_CHILD * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_M))
         {
-            m_controller->Transform.Scale() -= SCALINGSPEED_CHILD * dt;
+            m_controller->Transform.Scale() -= SCALINGSPEED_CHILD * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_N))
         {
-            m_controller->Transform.Scale() += SCALINGSPEED_CHILD * dt;
+            m_controller->Transform.Scale() += SCALINGSPEED_CHILD * deltaTime;
         }
 
         auto view = m_world.GetComponentView<engine::Transform3D>();

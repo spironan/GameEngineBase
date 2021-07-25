@@ -200,7 +200,7 @@ namespace engine
          @param[in]    childCount
                     the number of children to increment the new parent's child count by.
         *//*****************************************************************************/
-        void IncrementChildCount(std::size_t childCount);
+        void IncrementChildCount(int childCount);
 
         int m_childCount;
         Entity m_parentId;

@@ -159,8 +159,8 @@ namespace engine
     *//*****************************************************************************/
     bool TransformSystem::Attach(GameObject const& child, GameObject const& parent)
     {
-        int child_idx = m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(child);
-        int parent_idx = m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(parent);
+        int child_idx   = static_cast<int>(m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(child));
+        int parent_idx  = static_cast<int>(m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(parent));
 
         if (child_idx == parent_idx) return false;    // attempting to add oneself to itself.
         

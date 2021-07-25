@@ -144,7 +144,7 @@ namespace engine
      @param[in]    childCount
                 the number of children to increment the new parent's child count by.
     *//*****************************************************************************/
-    void Transform3D::IncrementChildCount(std::size_t childCount)
+    void Transform3D::IncrementChildCount(int childCount)
     {
         m_childCount += childCount;
         if (m_parentId != m_entity)
@@ -210,7 +210,7 @@ namespace engine
     *//*****************************************************************************/
     float Transform3D::GetGlobalRotationDeg() const
     {
-        return GetGlobalRotationRad() * 180.0 / M_PI;
+        return GetGlobalRotationRad() * 180.f / static_cast<float>(M_PI);
     }
 
     /****************************************************************************//*!
