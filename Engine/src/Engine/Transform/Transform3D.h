@@ -104,7 +104,7 @@ namespace engine
                     Runtime has been executed, this will be the rotation matrix 
                     from the previous frame.
 
-         @return    An AEMtx33 that represents the rotation matrix from the previous frame
+         @return    An glm::mat4 that represents the rotation matrix from the previous frame
                     of this Component in global coordinates.
         *//*****************************************************************************/
         glm::mat4 GetGlobalRotationMatrix() const;
@@ -146,7 +146,7 @@ namespace engine
                     Runtime has been executed, this will be the scale from the previous
                     frame.
 
-         @return    An AEVec2 that represents the previous scale of this GameObject in
+         @return    An glm::vec3 that represents the previous scale of this GameObject in
                     global coordinates.
         *//*****************************************************************************/
         glm::vec3    GetGlobalScale()   const;
@@ -165,11 +165,8 @@ namespace engine
         /****************************************************************************//*!
          @brief     Sets the Global transform matrix.
                     Should only be called by the transform runtime
-
-         @param[in]    _parentTransform
-                the parent matrix to multiply with to generate global Transform matrix.
         *//*****************************************************************************/
-        void SetGlobalMatrix(/*glm::mat4 _parentTransform*/);
+        void SetGlobalMatrix();
 
         /****************************************************************************//*!
          @brief     Tells the Transform to do coordinate conversion instead of 
@@ -192,11 +189,18 @@ namespace engine
         void SetParent(Transform3D& parent);
 
 
-        void IncrementChildCount(std::size_t childCount);
-
         RTTR_ENABLE();
 
     private:
+
+        /****************************************************************************//*!
+         @brief     Helper function to recursively decrement child count of all
+                    parent nodes.
+
+         @param[in]    childCount
+                    the number of children to increment the new parent's child count by.
+        *//*****************************************************************************/
+        void IncrementChildCount(std::size_t childCount);
 
         int m_childCount;
         Entity m_parentId;

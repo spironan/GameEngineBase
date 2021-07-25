@@ -26,7 +26,6 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Lifecycle Functions                                                         */
     /*-----------------------------------------------------------------------------*/
-    //void TransformSystem::Init() { /* empty function */ }
 
     void TransformSystem::Update()
     {
@@ -118,8 +117,6 @@ namespace engine
         // Iterate through and update all transforms that has changed last frame,
         // setting it to false.
         
-        //Transform3D const * prevTransform = nullptr;
-       
         // Grab Transforms from ECS manager
         for (auto& currTransform : m_ECS_Manager.GetComponentDenseArray<Transform3D>())
         {
@@ -134,133 +131,31 @@ namespace engine
                 currTransform.Recalculate();
             }
 
-            // Skips the first iteration thus root node is not considered.
+            //Always update the global transform
+            // for the root node it'll just update itself against Identity thus nothing happens.
             // Recalculate global transform : Assumption is that parent ALWAYS Exist.
             // calculated global transform : localTransform * parentTransform
             // by default its a transformation else it does coordinate conversion
-            /*if (prevTransform && prevTransform->GetEntity() == currTransform.GetParentId())
-            {
-                currTransform.SetGlobalMatrix(prevTransform->GetGlobalMatrix());
-            }*/
-
-            //Always sets the global transform
             currTransform.SetGlobalMatrix();
-
-            //point prev to be current
-            //prevTransform = &currTransform;
         }
 
-        
-
-        ////container_reference transforms = ComponentStore::GetComponents<Transform3D>();
-        //auto view = m_ECS_Manager.GetComponentView<Transform3D>();
-        //
-        //// Iterate through and update all transforms that has changed last frame,
-        //// setting it to false.
-        //for (auto it : view)
-        //{
-        //    auto& transform = m_ECS_Manager.GetComponent<Transform3D>(it);
-
-        //    if (transform.HasChanged())
-        //    {
-        //        transform.Reset();
-        //    }
-
-        //    //recalculate if transform has been changed this frame
-        //    if (transform.IsDirty())
-        //    {
-        //        transform.Recalculate();
-        //    }
-
-        //}
-
-        //UpdateTransform();
     }
 
-    //void TransformSystem::UpdateTransform() 
-    //{
-    //    // recursively, depth first, update all gameobjects transforms in the scene.
-    //    //GameObject& root = (getScene()->GetRootGameObject());
-    //    //updateTransform(root, nullptr);
-    //    //updateTransform(root.child);
-    //}
-
-    //void TransformSystem::Exit() { /* empty function */ }
-    
-
-    /********************************************************************************//*!
-     @brief    private helper function that recursively updates all gameobjects in
-               a scene-graph(parent-child) manner.
-     
-     @param[in]    _go 
-        the gameobject to update its local/global matrix and its children
-     @param[in]    _parentTransform 
-        the transform of the parent gameobject that will be used for global matrix
-        calculations
-    *//*********************************************************************************/
-    //void TransformSystem::updateTransform(GameObject& _go, glm::mat4 const * const _parentTransform)
-    //{
-    //    //// if go does not have transform do next
-    //    //if (!_go.HasComponent<Transform3D>()) return;
-
-    //    //Transform3D& transform = _go.GetComponent<Transform3D>();
-    //    //
-    //    ////recalculate if transform has been changed this frame
-    //    //if (transform.IsDirty())
-    //    //{
-    //    //    transform.Recalculate();
-    //    //}
-
-    //    ////recalculate global transform if parent exist
-    //    //if (_parentTransform)
-    //    //{
-    //    //    // calculated global transform : localTransform * parentTransform
-    //    //    // by default its a transformation else it does coordinate conversion
-    //    //    transform.SetGlobalMatrix(*_parentTransform); 
-    //    //}
-
-    //    ////depth first iterate through all children and update their transforms.
-    //    //for (auto& it : _go.GetChildren())
-    //    //{
-    //    //    updateTransform(*it, &transform.GetGlobalMatrix());
-    //    //    
-    //    //    // did not manage to do this optimization due to the fact that updating the child
-    //    //    // means that the matrix needs to be recalculated.
-    //    //    // Solution if REQUIRED: let transform store a parent matrix and update it whenever
-    //    //    // parent changes but if not use it for all calculations for global matrix.
-    //    //    /*if (transform.HasChanged())
-    //    //    {
-    //    //        updateTransform(*it, &transform.GetGlobalMatrix());
-    //    //    }
-    //    //    else
-    //    //    {
-    //    //        updateTransform(*it, nullptr); 
-    //    //    }*/
-    //    //    //updateTransform
-    //    //    //( *it
-    //    //    ////, &transform.GetGlobalMatrix() 
-    //    //    //, (transform.HasChanged()) 
-    //    //    // ? &transform.GetGlobalMatrix() 
-    //    //    // : nullptr
-    //    //    //);
-    //    //}
-    //}
-
-    
-
     /****************************************************************************//*!
-        @brief     Attaches child GameObject to Parent GameObject in a scenegraph manner
-
-        @param[in] child
-            the node that will potential become a child if operation succeed.
-        @param[in] parent
-            the node that will potentially become a parent node if operation succeed.
-
-        @return    Returns true if the attach succeeded. False otherwise.
-                In General, attaching will succeed as long as
-                1. the child is not the root node(first node)
-                2. you're not trying to attach oneself to itself
-                3. youre not trying to attach oneself to your own children.
+      @brief  Attaches child GameObject to Parent GameObject in a scenegraph manner
+              Allows data to be laid in a way that one can do iteration
+              for traversing scenegraph instead of recursion.
+      
+      @param[in] child
+          the node that will potential become a child if operation succeed.
+      @param[in] parent
+          the node that will potentially become a parent node if operation succeed.
+      
+      @return    Returns true if the attach succeeded. False otherwise.
+              In General, attaching will succeed as long as
+              1. the child is not the root node(first node)
+              2. you're not trying to attach oneself to itself
+              3. youre not trying to attach oneself to your own children.
     *//*****************************************************************************/
     bool TransformSystem::Attach(GameObject const& child, GameObject const& parent)
     {
@@ -315,7 +210,6 @@ namespace engine
                 start_idx = next_idx;
             }
         }
-
 
         return true;
     }

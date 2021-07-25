@@ -45,7 +45,8 @@ namespace engine
             .property_readonly("Parent ID",&Transform3D::GetParentId)
             .property_readonly("No Of Childs", &Transform3D::GetChildCount)
             .property_readonly("Local Matrix", &Transform3D::GetLocalMatrix)
-            .property_readonly("Global Matrix", &Transform3D::GetGlobalMatrix);
+            .property_readonly("Global Matrix", &Transform3D::GetGlobalMatrix)
+            .property_readonly("Global Rotation", &Transform3D::GetGlobalRotationDeg);
     }
 
     /********************************************************************************//*!
@@ -80,10 +81,7 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::Recalculate()
     {
-        
-        m_localTransform = glm::translate(glm::mat4{ 1.f }, m_position) * glm::rotate(glm::mat4{ 1.f }, m_rotationAngle, glm::vec3{ 0,0,1 }) * glm::scale(glm::mat4{ 1 }, m_scale);
-        
-        //m_localTransform = glm::scale(glm::rotate(glm::translate(glm::mat4{ 1.f }, m_position), m_rotationAngle, m_rotationAxis), m_scale);
+        m_localTransform = glm::scale(glm::rotate(glm::translate(glm::mat4{ 1.f }, m_position), m_rotationAngle, m_rotationAxis), m_scale);
 
         //Apply conversion everytime upon calculation
         m_conversionMatrix *= m_localTransform;
@@ -100,11 +98,8 @@ namespace engine
     /****************************************************************************//*!
      @brief    Sets the Global transform matrix.
                Should only be called by the transform runtime
-
-     //@param[in]    _parentTransform
-     //   the parent matrix to multiply with to generate global Transform3D matrix.
     *//*****************************************************************************/
-    void Transform3D::SetGlobalMatrix(/*glm::mat4 _parentTransform*/)
+    void Transform3D::SetGlobalMatrix()
     {
         if (m_parentId == m_entity) return;
 
@@ -132,18 +127,23 @@ namespace engine
     void Transform3D::SetParent(Transform3D& parent)
     {
         // Reduce child count of current parent 
-        //decrement here probably needs to be nested like increment as well.
         if (m_parentId != m_entity)
         {
             static_cast<GameObject>(m_parentId).Transform.m_childCount -= 1 + m_childCount;
         }
         // set parent child count to be equals to its current amount + 1(this object) + childCount(number of children this object has)
-        //parent.m_childCount += 1 + m_childCount;
         parent.IncrementChildCount(1 + m_childCount);
         // set this parent id to be the entity ID of the parent
         m_parentId = parent.m_entity;
     }
-    
+
+    /****************************************************************************//*!
+     @brief     Helper function to recursively decrement child count of all
+                parent nodes.
+
+     @param[in]    childCount
+                the number of children to increment the new parent's child count by.
+    *//*****************************************************************************/
     void Transform3D::IncrementChildCount(std::size_t childCount)
     {
         m_childCount += childCount;
@@ -161,7 +161,7 @@ namespace engine
                Runtime has been executed, this will be the position from the previous
                frame.
 
-     @return   An AEMtx33 that represents the current rotation matrix
+     @return   An glm::mat4 that represents the current rotation matrix
                of this GameObject in global coordinates.
     *//*****************************************************************************/
     glm::mat4 Transform3D::GetGlobalRotationMatrix() const
@@ -171,6 +171,7 @@ namespace engine
         glm::vec3 scalar{ GetGlobalScale() };
 
         /*
+        * Have not been tested but should work better
         result[0] /= scalar[0];
         result[1] /= scalar[1];
         result[2] /= scalar[2];
@@ -193,11 +194,37 @@ namespace engine
         return result;
     }
     
+
+
+    /****************************************************************************//*!
+     @brief    Retrieves the global rotation of this object in degress
+               from the global transformation matrix.
+               link to explaination : https://tinyurl.com/DeriveTRSfrom2dMat
+
+     @warning  Take note that in most cases, unless being called after the Transform
+               Runtime has been executed, this will be the rotation from the previous
+               frame.
+
+     @return   A float in degrees that represents the rotation angle of the previous
+               frame of this Component in global coordinates.
+    *//*****************************************************************************/
     float Transform3D::GetGlobalRotationDeg() const
     {
         return GetGlobalRotationRad() * 180.0 / M_PI;
     }
 
+    /****************************************************************************//*!
+     @brief    Retrieves the global rotation of this object in radians
+               from the global transformation matrix.
+               link to explaination : https://tinyurl.com/DeriveTRSfrom2dMat
+
+     @warning  Take note that in most cases, unless being called after the Transform
+               Runtime has been executed, this will be the rotation from the previous
+               frame.
+
+     @return   A float in radians that represents the rotation angle of the previous
+               frame of this Component in global coordinates.
+    *//*****************************************************************************/
     float Transform3D::GetGlobalRotationRad() const
     {
         //this should be of atan2 of either -b/a or c/d,
@@ -213,7 +240,7 @@ namespace engine
                Runtime has been executed, this will be the position from the previous
                frame.
 
-     @return   An AEVec2 that represents the current scale of this GameObject in
+     @return   An glm::vec3 that represents the current scale of this GameObject in
                global coordinates.
     *//*****************************************************************************/
     glm::vec3 Transform3D::GetGlobalScale() const
@@ -225,6 +252,7 @@ namespace engine
         glm::vec3 vecZ { m_globalTransform[0][1], m_globalTransform[1][1], m_globalTransform[2][2] };
         return glm::vec3{ glm::length(vecX), glm::length(vecY), glm::length(vecZ) };
         
+        // Havent test but should be a better version below
         //glm::transpose(globalTransform);
         //return glm::vec3{ globalTransform[0].length(), globalTransform[1].length(), globalTransform[2].length() };
     }

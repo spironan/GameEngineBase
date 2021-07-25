@@ -27,8 +27,15 @@ private:
     engine::World& m_world;
     engine::GameObject m_root;
     engine::GameObject m_child;
+    
+    std::vector<engine::GameObject> m_gos;
+    std::vector<engine::GameObject>::iterator m_controller;
+
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
     int width{}, height{};
+
+    static constexpr float scaling = 50.f;
+
 public:
 
     TransformTestLayer() 
@@ -50,52 +57,47 @@ public:
         engine::TextureDatabase::AddTexture("ogre", tex);
 
         engine::Entity prev;
-        static constexpr float childScale = 50.f;
         
-        m_root.Transform.Scale() = { childScale, childScale, 1.0f };
+        m_root.Transform.Scale() = { scaling, scaling, 1.0f };
         auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
         rootSpr.SetTexture(tex);
+        
+        m_gos.emplace_back(m_root);
 
-        //m_child.Transform.Position() = { childScale, childScale, 1.f };
+        m_child.Transform.Position() = { 1.f, 1.f, 1.f };
         //m_child.Transform.Scale() = { childScale, childScale, 1.0f };
         //m_child.Transform.RotationAngle() = 90.f;
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
         m_root.AddChild(m_child, true);
-
-        //for (int i = 0; i < 10; ++i)
-        //{
-        //    if (i == 0)
-        //    {
-        //        //m_child.Transform.RotationAngle() = 36.f;
-        //        auto& objSprite = m_child.AddComponent<engine::Sprite2D>();
-        //        objSprite.SetTexture(tex);
-        //        m_root.AddChild(m_child);
-        //    }
-        //    else
-        //    {
-        //        engine::GameObject ent{ engine::WorldManager::GetActiveWorld().CreateEntity() };
-        //        ent.Transform.Scale() = { childScale, childScale, 1.f };
-        //        ent.Transform.Position() = { childScale * i , childScale * i, 1.f };
-        //        //ent.Transform.RotationAngle() = i * 36.f;
-        //        auto& objSprite = ent.AddComponent<engine::Sprite2D>();
-        //        objSprite.SetTexture(tex);
-
-        //        /*auto& trans = ent.GetComponent<engine::Transform3D>();
-        //        trans.Position().x = 10 * i;*/
-
-        //        /*if (i % 2 == 1)
-        //        {
-        //            static_cast<engine::GameObject>(prev).AddChild(ent);
-        //        }
-        //        else
-        //        {*/
-        //        m_child.AddChild(ent);
-        //        //}
-        //        prev = ent;
-        //    }
-        //}
         
+        prev = m_child;
+
+        m_gos.emplace_back(m_child);
+
+        for (int i = 1; i < 10; ++i)
+        {
+            engine::GameObject ent{ engine::WorldManager::GetActiveWorld().CreateEntity() };
+
+            m_gos.emplace_back(ent);
+
+            //ent.Transform.Scale() = { childScale, childScale, 1.f };
+            ent.Transform.Position() = { 1.f, 1.f, 1.f };
+            //ent.Transform.RotationAngle() = i * 36.f;
+            auto& objSprite = ent.AddComponent<engine::Sprite2D>();
+            objSprite.SetTexture(tex);
+            
+            if(prev != m_child.GetID())
+                static_cast<engine::GameObject>(prev).AddChild(ent);
+            else
+                m_child.AddChild(ent);
+
+            prev = ent;
+        }
+
+        // set default controller
+        m_controller = m_gos.begin();
+
        /* int iteration = 0;
         auto view = m_world.GetComponentView<engine::Transform3D>();
         for (auto& ent : view)
@@ -115,19 +117,24 @@ public:
         static std::mt19937 gen(rd());
         static std::uniform_real_distribution<float> dis(-1.0f, std::nextafter(1.0f, FLT_MAX));
         
-       
-
         m_world.GetSystem<engine::TransformSystem>()->Update();
 
-        // transform 2 info : 1. parentID, 2. number of Children
-        // 1. parentID == itself is root
-        // 2. 
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_TAB))
+        {
+            ++m_controller;
+            if (m_controller == m_gos.end()) m_controller = m_gos.begin();
+        }
 
-                    // root child child2 child3 child4 child child child child
-        // ID       :   0     A     B       C      D      E     F     G     H
-        // parentID :   0     0     A       B      C      0     0     0     0
-        // position :   0     1     2       3      4      5     6     7     8
-        // vector   :   
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_1))
+        {
+            m_root.Transform.Position() = { 0.f,0.f,0.f };
+            m_root.Transform.RotationAngle() = 0.f;
+            m_root.Transform.Scale() = { scaling, scaling, 1.f };
+
+            m_child.Transform.Position() = { 0.f, 0.f, 0.f };
+            m_child.Transform.RotationAngle() = 0.f;
+            m_child.Transform.Scale() = { 1.f, 1.f, 1.f };
+        }
 
         static constexpr float MOVESPEED_PARENT     = 300.f;
         static constexpr float ROTATIONSPEED_PARENT = 10.f;
@@ -173,35 +180,35 @@ public:
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_I))
         {
-            m_child.Transform.Position().y += MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().y += MOVESPEED_CHILD * dt;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_J))
         {
-            m_child.Transform.Position().x -= MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().x -= MOVESPEED_CHILD * dt;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_K))
         {
-            m_child.Transform.Position().y -= MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().y -= MOVESPEED_CHILD * dt;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_L))
         {
-            m_child.Transform.Position().x += MOVESPEED_CHILD * dt;
+            m_controller->Transform.Position().x += MOVESPEED_CHILD * dt;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_U))
         {
-            m_child.Transform.RotationAngle() -= ROTATIONSPEED_CHILD * dt;
+            m_controller->Transform.RotationAngle() -= ROTATIONSPEED_CHILD * dt;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_O))
         {
-            m_child.Transform.RotationAngle() += ROTATIONSPEED_CHILD * dt;
+            m_controller->Transform.RotationAngle() += ROTATIONSPEED_CHILD * dt;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_M))
         {
-            m_child.Transform.Scale() -= SCALINGSPEED_CHILD * dt;
+            m_controller->Transform.Scale() -= SCALINGSPEED_CHILD * dt;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_N))
         {
-            m_child.Transform.Scale() += SCALINGSPEED_CHILD * dt;
+            m_controller->Transform.Scale() += SCALINGSPEED_CHILD * dt;
         }
 
         auto view = m_world.GetComponentView<engine::Transform3D>();
