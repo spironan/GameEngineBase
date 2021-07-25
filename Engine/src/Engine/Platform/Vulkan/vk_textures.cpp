@@ -6,19 +6,26 @@
 #pragma warning(push)
 #pragma warning( disable : 26812 )
 
-
 #include "Engine/Platform/Vulkan/vk_initializers.h"
 
-#include <iostream>
+// This ignores all warnings raised inside External headers
+namespace stbi_local
+{
 
+#pragma warning(push, 0)
+#ifdef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif // STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#pragma warning(pop, 0)
+}
+
 
 bool vkutil::load_image_from_file(VulkanEngine &engine, const char *file, AllocatedImage &outImage)
 {
     int texWidth, texHeight, texChannels;
 
-    stbi_uc *pixels = stbi_load(file, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_local::stbi_uc *pixels = stbi_local::stbi_load(file, &texWidth, &texHeight, &texChannels, stbi_local::STBI_rgb_alpha);
 
     if (!pixels)
     {
@@ -42,7 +49,7 @@ bool vkutil::load_image_from_file(VulkanEngine &engine, const char *file, Alloca
     vmaUnmapMemory(engine._allocator, stagingBuffer._allocation);
 
     // the data is loaded, we no longer need the pixel data
-    stbi_image_free(pixels);
+    stbi_local::stbi_image_free(pixels);
 
     VkExtent3D imageExtent{};
     imageExtent.width = static_cast<uint32_t>(texWidth);
@@ -51,7 +58,7 @@ bool vkutil::load_image_from_file(VulkanEngine &engine, const char *file, Alloca
 
     VkImageCreateInfo dimg_info = vkinit::image_create_info(image_format, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, imageExtent);
 
-    AllocatedImage newImage;
+    AllocatedImage newImage{};
     
     VmaAllocationCreateInfo dimg_alloc_info{};
     dimg_alloc_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
@@ -61,7 +68,7 @@ bool vkutil::load_image_from_file(VulkanEngine &engine, const char *file, Alloca
 
     engine.immediate_submit([&](VkCommandBuffer cmd)
     {
-        VkImageSubresourceRange range;
+        VkImageSubresourceRange range{};
         range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         range.baseMipLevel = 0;
         range.levelCount = 1;

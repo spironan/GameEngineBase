@@ -45,7 +45,7 @@ namespace engine
 		static std::vector<std::pair<Texture, std::string>> GetAllTextures()
 		{ 
 			std::vector<std::pair<Texture, std::string>> vec;
-			for (auto iter : m_nameToTexture)
+			for (auto& iter : m_nameToTexture)
 			{
 				vec.emplace_back(std::make_pair(iter.second, m_idToName[iter.second.id]));
 			}

@@ -84,7 +84,7 @@ void VulkanEngine::init()
 
 void VulkanEngine::load_images()
 {
-	Texture lostEmpire;
+	//Texture lostEmpire;
 
 	//vkutil::load_image_from_file(*this, "../Engine/assets/model/lost_empire-RGBA.png", lostEmpire.image);
 
@@ -287,7 +287,7 @@ AllocatedBuffer VulkanEngine::create_buffer(size_t allocSize, VkBufferUsageFlags
 void VulkanEngine::init_scene()
 {
 	
-	RenderObject monkey;
+	RenderObject monkey{};
 	monkey.mesh = get_mesh("monkey");
 	monkey.material = get_material("defaultmesh");
 	monkey.transformMatrix = glm::mat4{ 1.0f };
@@ -298,7 +298,7 @@ void VulkanEngine::init_scene()
 	{
 		for (int y = -20; y <= 20; y++)
 		{
-			RenderObject tri;
+			RenderObject tri{};
 			tri.mesh = get_mesh("triangle");
 			tri.material = get_material("defaultmesh");
 			glm::mat4 translation = glm::translate(glm::mat4{ 1.0f }, glm::vec3{x, 0, y});
@@ -331,7 +331,7 @@ void VulkanEngine::init_scene()
 	});
 
 	//write to the desciptor set so that it points to our empire_diffuse texture
-	VkDescriptorImageInfo imageBufferInfo;
+	VkDescriptorImageInfo imageBufferInfo{};
 	imageBufferInfo.sampler = blockySampler;
 	imageBufferInfo.imageView = _loadedTextures["empire_diffuse"].imageView;
 	imageBufferInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -553,7 +553,7 @@ void VulkanEngine::init_framebuffers()
 	// create framebuffers for each of the swapchain image views
 	for (size_t i = 0; i < swapchain_imageCount; i++)
 	{
-		VkImageView attachments[2];
+		VkImageView attachments[2]{};
 		attachments[0] = _swapchainImageViews[i];
 		attachments[1] = _depthImageView;
 
@@ -867,7 +867,7 @@ void VulkanEngine::init_pipelines()
 	VkPipelineLayoutCreateInfo mesh_pipeline_layout_info = vkinit::pipeline_layout_create_info();
 
 	//setup push constant
-	VkPushConstantRange push_constant;
+	VkPushConstantRange push_constant{};
 
 	// this push constant range starts at the beginning
 	push_constant.offset = 0;
@@ -1071,7 +1071,7 @@ void VulkanEngine::upload_mesh(Mesh &mesh)
 	VmaAllocationCreateInfo vmaAllocInfo{};
 	vmaAllocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
 
-	AllocatedBuffer stagingBuffer;
+	AllocatedBuffer stagingBuffer{};
 
 	// allocate the buffer
 	VK_CHECK(vmaCreateBuffer(_allocator, &stagingBufferInfo, &vmaAllocInfo,
@@ -1180,7 +1180,7 @@ void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int co
 
 	_camera.update_cameraExtent(_windowExtent);
 	//fill a GPU camera struct
-	GPUCameraData camData;
+	GPUCameraData camData{};
 	camData.projection = _camera.get_projection_matrix();
 	camData.view = _camera.get_view_matrix();
 	camData.viewproj = camData.projection * camData.view;
@@ -1194,7 +1194,7 @@ void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int co
 	float framed = (_frameNumber / 120.0f);
 	_sceneParameters.ambientColor = { sin(framed),0,cos(framed),1 };
 
-	char *sceneData;
+	char* sceneData{nullptr};
 	vmaMapMemory(_allocator, _sceneParameterBuffer._allocation, (void **)&sceneData);
 	int frameIndex = _frameNumber % FRAME_OVERLAP;
 
@@ -1265,7 +1265,7 @@ void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int co
 									1, 1, &get_current_frame().objectDescriptor, 0, nullptr);
 		}
 
-		MeshPushConstants constants;
+		MeshPushConstants constants{};
 		constants.render_matrix = object.transformMatrix;
 
 		//upload the mesh to GPU via push constants
@@ -1444,7 +1444,7 @@ void VulkanEngine::PresentFrame()
 
 void VulkanEngine::run()
 {
-	SDL_Event e;
+	//SDL_Event e;
 	bool bQuit = false;
 
 	//main loop

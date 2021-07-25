@@ -103,7 +103,7 @@ void DebugCamera::update_camera(float deltaSeconds)
 	}
 	inputAxis = glm::clamp(inputAxis, { -1.0,-1.0,-1.0 }, { 1.0,1.0,1.0 });
 	
-	const float cam_vel = 0.001f + !b_slowDown * 0.01;
+	const float cam_vel = static_cast<float>(0.001f + !b_slowDown * 0.01f);
 	glm::vec3 forward = { 0,0, -cam_vel };
 	glm::vec3 right = { cam_vel,0,0 };
 
