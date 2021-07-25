@@ -15,7 +15,8 @@ namespace engine
 
         Component(Entity entity, bool active = true) : m_entity(entity), m_active(active) {}
 
-        constexpr Entity GetEntity()       const { return m_entity; }
+        Entity GetEntity()       const { return m_entity; }
+        void SetEntity(Entity entity)  { m_entity = entity; }
         constexpr bool IsActive()    const { return m_active; }
 
         void SetActive(bool _active) { m_active = _active; }

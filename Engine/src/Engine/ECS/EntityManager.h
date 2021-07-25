@@ -17,6 +17,8 @@ Technology is prohibited.
 #include "ECS_Utility.h"
 #include "Engine/Core/Assert.h"
 
+#include "Utility/UniqueInstanceIDGenerator.h"
+
 namespace engine
 {
 	class EntityManager
@@ -26,6 +28,8 @@ namespace engine
 		using used_entity_container = std::set<Entity>;
 		using signature_container = std::array<Signature, MAX_ENTITY>;
 		using iterator = typename used_entity_container::iterator;
+
+		utility::UIID_Generator<size_t> idGen;
 
 		EntityManager()
 		{
@@ -40,6 +44,8 @@ namespace engine
 			//Too many entities in existence
 			ENGINE_ASSERT(m_LivingEntityCount < MAX_ENTITY);
 
+			//Entity id = idGen.GenerateID();
+
 			Entity id = m_AvailableEntities.front();
 			m_AvailableEntities.pop();
 			m_UsedEntities.insert(id);
@@ -52,6 +58,8 @@ namespace engine
 		{
 			//Entity out of range
 			ENGINE_ASSERT(entity < MAX_ENTITY);
+
+			//idGen.DiscardID(entity);
 
 			m_Signatures[entity].reset();
 			m_AvailableEntities.push(entity);

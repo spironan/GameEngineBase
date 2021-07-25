@@ -17,7 +17,8 @@ Technology is prohibited.
 #include <type_traits>
 
 namespace engine{
-namespace utility{
+namespace utility
+{
 
     /********************************************************************************//*!
         @brief    Allows enum classes to be used as a bitmask
@@ -135,4 +136,5 @@ namespace utility{
     {
         return bitmask<option_type>{lhs} | rhs;
     }
+
 }}

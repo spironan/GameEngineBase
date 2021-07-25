@@ -15,13 +15,40 @@ Technology is prohibited.
 
 // single-include file to get all the relevant functions from our engine.
 #include "Engine.h" 
-
+#include "Engine/ECS/ECS_Test.h"
 #include <iostream>
 
 #include "Editor/Editor.h"
 
 #include "Engine/Platform/Vulkan/VulkanContext.h"
 #include "Engine/Debug/cvars.h"
+
+#include "Engine/ECS/ECS_Test.h"
+#include "Engine/Transform/TransformSystem.h"
+
+#include "Engine/ECS/GameObject.h"
+#include "Engine/Scene/SceneManager.h"
+
+class TransformTestLayer : public engine::Layer
+{
+private:
+    engine::ECS_Manager manager;
+    engine::TransformSystem tfSystem{ manager };
+
+public:
+    
+    TransformTestLayer() : Layer{ "TransformTestLayer" }
+    {
+    }
+
+    virtual void OnUpdate(engine::Timestep dt) override
+    {
+    }
+
+    virtual void OnImGuiRender() override
+    {
+    }
+};
 
 class EditorLayer : public engine::Layer
 {
@@ -155,6 +182,7 @@ class ExampleLayer : public engine::Layer
 public :
     ExampleLayer(): Layer("Example")
     {
+        //engine::ECS_Test();
     }
 
     void OnUpdate(engine::Timestep dt) override
@@ -298,6 +326,23 @@ public :
     }
 };
 
+class EditorSceneLayer : public engine::Layer
+{
+private:
+    engine::Scene& scene;
+public:
+
+    EditorSceneLayer() : Layer{ "EditorSceneLayer" },
+        scene(engine::SceneManager::CreateScene(""))
+    {
+    }
+
+    virtual void OnUpdate(engine::Timestep dt) override
+    {
+    }
+
+};
+
 class Sandbox : public engine::Application
 {
 public:
@@ -312,13 +357,17 @@ public:
         
         //debug layer
         PushLayer(new ExampleLayer());
+        PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
         PushOverlay(new SceneCamera());
+        PushOverlay(new TransformTestLayer());
         // one actual layer - gameplay logic
         // one ui layer - game ui
         // one imgui layer - imgui stuff
             // one heirarchy layer - 
             // one inspector layer - 
+
+        
 
     };
 
