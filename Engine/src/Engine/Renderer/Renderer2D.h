@@ -36,7 +36,7 @@ namespace engine
 		//static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
 
 		// Stats
-		struct Statistics
+		struct BatchRenderStats
 		{
 			uint32_t DrawCalls = 0;
 			uint32_t QuadCount = 0;
@@ -45,9 +45,10 @@ namespace engine
 			uint32_t GetTotalIndexCount() const { return QuadCount * 6; }
 		};
 		static void ResetStats();
-		static Statistics GetStats();
+		static BatchRenderStats GetStats();
 
 	private:
+		static void FlushAndReset();
 		static void StartBatch();
 		static void NextBatch();
 	};
