@@ -34,22 +34,19 @@ private:
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
 
     static constexpr float scaling = 50.f;
+    static constexpr float TARGET_ROTATION = 90.f;
 
 public:
 
     TransformTestLayer() 
-        : Layer{ "TransformTestLayer" }
-        , m_world{ engine::WorldManager::CreateWorld() }
-        , m_root { }
-        , m_child{ }
+        : Layer    { "TransformTestLayer" }
+        , m_world  { engine::WorldManager::CreateWorld() }
+        , m_root   { }
+        , m_child  { }
     {
-
         engine::Window& x = engine::Application::Get().GetWindow();
         int width = x.GetSize().first;
         int height = x.GetSize().second;
-        /*auto [width, height] = x.GetSize();
-        width = static_cast<int>(width);
-        height = static_cast<int>(height);*/
         cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
@@ -58,14 +55,12 @@ public:
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
 
-        
-        m_root.Transform.Scale() = { scaling, scaling, 1.0f };
-        auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
+        /*auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
         rootSpr.SetTexture(tex);
-        
-        m_gos.emplace_back(m_root);
+        m_gos.emplace_back(m_root);*/
+        m_root.Transform.Scale() = { scaling, scaling, 1.0f };
 
-        m_child.Transform.Position() = { 1.f, 1.f, 1.f };
+        //m_child.Transform.Position() = { 1.f, 1.f, 1.f };
         //m_child.Transform.RotationAngle() = 90.f;
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
@@ -92,21 +87,51 @@ public:
             prev = ent;
         }
 
+        //m_target->Transform.RotationAngle() += 90;
+        //m_target->Transform.RotationAngle() += TARGET_ROTATION;
+
+        /*engine::GameObject m_child2 {};
+        m_child2.Transform.Position() = { -1.f, -1.f, 1.f };
+        auto& secondChild = m_child2.AddComponent<engine::Sprite2D>();
+        childSpr.SetTexture(tex);
+        m_root.AddChild(m_child2);
+        m_gos.emplace_back(m_child2);*/
+
+        for (int i = 1; i < 10; ++i)
+        {
+            engine::GameObject ent{};
+            m_gos.emplace_back(ent);
+
+            //ent.Transform.Position() = { -1.f, -1.f, 1.f };
+            ent.Transform.RotationAngle() += 90.f;
+            auto& objSprite = ent.AddComponent<engine::Sprite2D>();
+            objSprite.SetTexture(tex);
+
+            //Nested Add child
+            m_root.AddChild(ent);
+        }
+
         // set default controller
         m_controller = m_gos.begin();
         // set target to be controller too.
-        m_target = m_controller;
-
+        m_target = m_controller + 1;
     }
 
+    
+    void SelectNewTarget()
+    {
+        /*m_target->Transform.RotationAngle() += TARGET_ROTATION;*/
+        ++m_target;
+        if (m_target == m_gos.end())
+        {
+            m_target = m_gos.begin();
+            /*m_target->Transform.RotationAngle() -= TARGET_ROTATION;*/
+        }
+    }
 
-    static constexpr float MOVESPEED_PARENT = 300.f;
-    static constexpr float ROTATIONSPEED_PARENT = 10.f;
-    static constexpr float SCALINGSPEED_PARENT = 20.f;
-
-    static constexpr float MOVESPEED_CHILD = 30.f;
-    static constexpr float ROTATIONSPEED_CHILD = 10.f;
-    static constexpr float SCALINGSPEED_CHILD = 10.f;
+    static constexpr float MOVESPEED = 30.f;
+    static constexpr float ROTATIONSPEED = 10.f;
+    static constexpr float SCALINGSPEED = 20.f;
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
@@ -118,135 +143,62 @@ public:
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
         {
-            m_controller->Transform.Position().y += MOVESPEED_PARENT * deltaTime;
+            m_controller->Transform.Position().y += MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
         {
-            m_controller->Transform.Position().y -= MOVESPEED_PARENT * deltaTime;
+            m_controller->Transform.Position().y -= MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
         {
-            m_controller->Transform.Position().x -= MOVESPEED_PARENT * deltaTime;
+            m_controller->Transform.Position().x -= MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
         {
-            m_controller->Transform.Position().x += MOVESPEED_PARENT * deltaTime;
+            m_controller->Transform.Position().x += MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_Z))
         {
-            m_controller->Transform.RotationAngle() -= ROTATIONSPEED_PARENT * deltaTime;
+            m_controller->Transform.RotationAngle() -= ROTATIONSPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_X))
         {
-            m_controller->Transform.RotationAngle() += ROTATIONSPEED_PARENT * deltaTime;
+            m_controller->Transform.RotationAngle() += ROTATIONSPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_C))
         {
-            m_controller->Transform.Scale() -= SCALINGSPEED_PARENT * deltaTime;
+            m_controller->Transform.Scale() -= SCALINGSPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_V))
         {
-            m_controller->Transform.Scale() += SCALINGSPEED_PARENT * deltaTime;
+            m_controller->Transform.Scale() += SCALINGSPEED * deltaTime;
         }
-
         if (engine::Input::IsKeyPressed(ENGINE_KEY_S))
         {
             if (m_controller == m_gos.begin())
-                m_controller = m_gos.end();
+                m_controller = m_gos.end() - 1;
             else
                 --m_controller;
         }
-
         if (engine::Input::IsKeyPressed(ENGINE_KEY_D))
         {
             ++m_controller;
             if (m_controller == m_gos.end()) m_controller = m_gos.begin();
         }
 
+
         if (engine::Input::IsKeyPressed(ENGINE_KEY_TAB))
         {
-            ++m_controller;
-            if (m_controller == m_gos.end()) m_controller = m_gos.begin();
+            SelectNewTarget();
         }
 
-        if (engine::Input::IsKeyPressed(ENGINE_KEY_1))
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_R))
         {
-            m_root.Transform.Position() = { 0.f,0.f,0.f };
+            m_root.Transform.Position() = { 0.f, 0.f, 0.f };
             m_root.Transform.RotationAngle() = 0.f;
             m_root.Transform.Scale() = { scaling, scaling, 1.f };
-
-            m_child.Transform.Position() = { 0.f, 0.f, 0.f };
-            m_child.Transform.RotationAngle() = 0.f;
-            m_child.Transform.Scale() = { 1.f, 1.f, 1.f };
         }
 
-
-        if (engine::Input::IsKeyDown(ENGINE_KEY_W))
-        {
-            m_root.Transform.Position().y += MOVESPEED_PARENT * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_A))
-        {
-            m_root.Transform.Position().x -= MOVESPEED_PARENT * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_S))
-        {
-            m_root.Transform.Position().y -= MOVESPEED_PARENT * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_D))
-        {
-            m_root.Transform.Position().x += MOVESPEED_PARENT * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_Q))
-        {
-            m_root.Transform.RotationAngle() -= ROTATIONSPEED_PARENT * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_E))
-        {
-            m_root.Transform.RotationAngle() += ROTATIONSPEED_PARENT * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_R))
-        {
-            m_root.Transform.Scale() -= SCALINGSPEED_PARENT * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_T))
-        {
-            m_root.Transform.Scale() += SCALINGSPEED_PARENT * deltaTime;
-        }
-
-
-        if (engine::Input::IsKeyDown(ENGINE_KEY_I))
-        {
-            m_controller->Transform.Position().y += MOVESPEED_CHILD * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_J))
-        {
-            m_controller->Transform.Position().x -= MOVESPEED_CHILD * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_K))
-        {
-            m_controller->Transform.Position().y -= MOVESPEED_CHILD * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_L))
-        {
-            m_controller->Transform.Position().x += MOVESPEED_CHILD * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_U))
-        {
-            m_controller->Transform.RotationAngle() -= ROTATIONSPEED_CHILD * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_O))
-        {
-            m_controller->Transform.RotationAngle() += ROTATIONSPEED_CHILD * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_M))
-        {
-            m_controller->Transform.Scale() -= SCALINGSPEED_CHILD * deltaTime;
-        }
-        if (engine::Input::IsKeyDown(ENGINE_KEY_N))
-        {
-            m_controller->Transform.Scale() += SCALINGSPEED_CHILD * deltaTime;
-        }
 
         auto view = m_world.GetComponentView<engine::Transform3D>();
 
@@ -267,11 +219,11 @@ public:
                 , transform.GetGlobalRotationDeg()
                 );*/
 
-            LOG_INFO("ent {0}: scale ({1},{2}) "
+            /*LOG_INFO("ent {0}: scale ({1},{2}) "
                 , ent
                 , transform.GetGlobalScale().x
                 , transform.GetGlobalScale().y
-            );
+            );*/
 
             // rttr code below
             //auto rttrProps = transform.get_type().get_properties();
