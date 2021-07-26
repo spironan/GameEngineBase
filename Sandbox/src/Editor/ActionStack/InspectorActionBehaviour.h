@@ -1,6 +1,6 @@
 #pragma once
 #include "ActionBehaviour.h"
-#include "Engine.h"
+#include "Engine/ECS/ECS_Utility.h"
 
 #include <rttr/property.h>
 #include <rttr/variant.h>

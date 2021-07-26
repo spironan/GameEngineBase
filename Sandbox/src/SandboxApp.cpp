@@ -242,14 +242,14 @@ public:
         PushOverlay(new ExampleLayer());
 
         //Actual Scene Layer
-        //PushLayer(new EditorSceneLayer());
+        PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
 
         // DEBUG/TEST LAYERS
         //PushLayer(new InputDebugLayer());
         //PushLayer(new TransformTestLayer());
         //PushOverlay(new SceneCamera());
-        PushLayer(new GameObjectTestLayer());
+        //PushLayer(new GameObjectTestLayer());
 
         // one actual layer - gameplay logic
         // one ui layer - game ui

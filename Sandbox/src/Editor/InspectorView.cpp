@@ -6,7 +6,7 @@
 
 //engine code
 #include "Engine/Transform/Transform3D.h"
-#include "Engine.h"
+#include "Engine/ECS/GameObject.h"
 
 //libs
 #include <imgui.h>
@@ -45,18 +45,18 @@ void InspectorView::Show()
 		}
 	}
 
-	ImGui::BeginChild("Ending bar");
-	static bool docked = ImGui::FindWindowByName("inspector")->DockNode->LocalFlags;
-	ImGui::Separator();
-	if (ImGui::RadioButton("Toggle Lock",docked))
-	{
-		auto& docknode = ImGui::FindWindowByName("inspector")->DockNode;
-		if (docknode->LocalFlags == 0)
-			docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
-		else
-			docknode->LocalFlags = 0;
-	}
-	ImGui::EndChild();
+	//ImGui::BeginChild("Ending bar");
+	//static bool docked = ImGui::FindWindowByName("inspector")->DockNode->LocalFlags;
+	//ImGui::Separator();
+	//if (ImGui::RadioButton("Toggle Lock",docked))
+	//{
+	//	auto& docknode = ImGui::FindWindowByName("inspector")->DockNode;
+	//	if (docknode->LocalFlags == 0)
+	//		docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
+	//	else
+	//		docknode->LocalFlags = 0;
+	//}
+	//ImGui::EndChild();
 	ImGui::End();
 }
 

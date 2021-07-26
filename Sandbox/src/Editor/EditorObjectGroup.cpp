@@ -12,4 +12,4 @@ Technology is prohibited.
  *********************************************************************/
 #include "EditorObjectGroup.h"
 
-engine::Entity ObjectGroup::s_FocusedObject = 0;
+std::uint32_t ObjectGroup::s_FocusedObject = 0;

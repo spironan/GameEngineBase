@@ -13,11 +13,11 @@ Technology is prohibited.
  *********************************************************************/
 #pragma once
 #include "testclass.h"//remove this once ecs is done
-#include "Engine/Transform/Transform3D.h"
+
 
 class ObjectGroup
 {
 public:
-	static engine::Entity s_FocusedObject;
+	static std::uint32_t s_FocusedObject;
 };
 
