@@ -30,14 +30,18 @@ namespace engine
 
     GameObject::GameObject(Entity entt)
         : m_entity      { entt }
-        , ActiveSelf    { EnsureComponent<GameObjectComponent>().ActiveSelf }
-        , Name          { EnsureComponent<GameObjectComponent>().Name }
-        , Transform     { EnsureComponent<Transform3D>() }
+        , ActiveSelf    { GetComponent<GameObjectComponent>().ActiveSelf }
+        , Name          { GetComponent<GameObjectComponent>().Name }
+        , Transform     { GetComponent<Transform3D>() }
     {
     }
 
     void GameObject::Destroy()
     {
+        // use with caution : should not delete the gameobject immediately
+        // but add to a stack instead that is used to call the code below
+        // at the end of the frame.
+        // should use a pair to avoid multiple removes of the same object.
         WorldManager::GetActiveWorld().DestroyEntity(m_entity);
     }
 
@@ -62,8 +66,6 @@ namespace engine
         }
         
         WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Attach(child, *this);
-
-        //children.push_back(gameObj);
     }
 
     void GameObject::AddChild(std::initializer_list<GameObject> gos, bool preserveTransforms)
