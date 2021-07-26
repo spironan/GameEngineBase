@@ -1,15 +1,15 @@
-/*****************************************************************//**
- * \file   LoggingView.h
- * \brief  Logs the console outputs into a window
- *		   Logs the console output from scripts
- * 
- * \author Leong Jun Xiang (junxiang.leong)
- * \date   June 2021
+/************************************************************************************//*!
+\file          LoggingView.h
+\author        Leong Jun Xiang, junxiang.leong , 390007920
+\par           email: junxiang.leong\@digipen.edu
+\date          July 26, 2021
+\brief         Declaration of the Logging System/UI 
+
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
 without the prior written consent of DigiPen Institute of
 Technology is prohibited.
- *********************************************************************/
+*//*************************************************************************************/
 #pragma once
 #include <deque>
 #include <unordered_map>
