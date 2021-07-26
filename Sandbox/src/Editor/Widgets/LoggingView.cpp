@@ -1,15 +1,15 @@
-/*****************************************************************//**
- * \file   LoggingView.cpp
- * \brief  Logs the console outputs into a window
- *		   Logs the console output from scripts
- * 
- * \author Leong Jun Xiang (junxiang.leong)
- * \date   June 2021
+/************************************************************************************//*!
+\file          LoggingView.cpp
+\author        Leong Jun Xiang, junxiang.leong , 390007920
+\par           email: junxiang.leong\@digipen.edu
+\date          July 26, 2021
+\brief         Logging System/UI for Editor 
+
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
 without the prior written consent of DigiPen Institute of
 Technology is prohibited.
- *********************************************************************/
+*//*************************************************************************************/
 
 #include "LoggingView.h"
 #include "Engine/Core/LogCallbackSink.h"
@@ -26,11 +26,22 @@ std::deque<engine::utility::StringHash::size_type> LoggingView::s_messages;
 std::unordered_map<engine::utility::StringHash::size_type, LoggingView::MessageData> LoggingView::s_messageCollection;
 bool LoggingView::s_newItemAdded = false;
 bool LoggingView::s_paused = false;
+/**
+ * \brief 
+ *	default constructor 
+ * (should only be called in the editor file)
+ */
 LoggingView::LoggingView()
 {
 	CallbackSink_mt::SubscribeToSink(AddItem);
 }
-
+/**
+ * \brief 
+ * displaying of UI
+ * 
+ * \param active
+ * 
+ */
 void LoggingView::Show(bool* active)
 {
 	bool interacted = false;
@@ -88,7 +99,7 @@ void LoggingView::Show(bool* active)
 							if (ImGui::Selectable("##Item", false, ImGuiSelectableFlags_AllowDoubleClick, ImVec2(0, 0)) &&
 								ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 							{
-								ShellExecuteA(NULL, "open", iter->second.filename.c_str() , NULL, NULL, SW_SHOWNORMAL);
+								ShellExecuteA(NULL, "open", iter->second.filename.c_str() , NULL, NULL, SW_SHOW);
 							}
 							if (ImGui::IsItemHovered())
 								interacted = true;
@@ -163,7 +174,17 @@ void LoggingView::Show(bool* active)
 	ImGui::EndChild();
 	ImGui::End();
 }
+/*********************************************************************************//*!
+\brief    A callback function to attatch to the spdlog's callback sink
+ 
+\param    str
+			the formatted message from spdlog
+\param    type
+			the logging type
+\param    filename
+			the file where the log came from
 
+*//**********************************************************************************/
 void LoggingView::AddItem(const std::string& str,char type,const std::string& filename)
 {
 	if (s_paused)
@@ -187,13 +208,3 @@ void LoggingView::AddItem(const std::string& str,char type,const std::string& fi
 		s_messageCollection[hash].count += 1;
 }
 
-//this is now unused
-//void LoggingView::AddLoggingMsg(const char* fmt, ...)
-//{
-//	char buf[1024];
-//	va_list vargs;
-//	va_start(vargs, fmt);
-//	vsnprintf(buf, sizeof(buf), fmt, vargs);
-//	buf[sizeof(buf) - 1] = '\0';
-//	s_messages.emplace_back(buf);
-//}
