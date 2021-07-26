@@ -16,6 +16,7 @@ Technology is prohibited.
 
 #include "Engine/Memory/MemoryCommon.h"
 #include "Engine/ECS/ECS.h"
+#include "Engine/Scene/SceneManager.h"
 //#include "Engine/Core/PlatformDetection.h"
 
 #include "Engine/Core/Log.h"

@@ -32,11 +32,11 @@ public:
     {
         {
             // Creates an Entity : should not be allowed
-            engine::Entity ent{};
+            //engine::Entity ent{};
             // Creates a GameObject That Generates a unique Entity ID : allowed
             engine::GameObject go0{};
             // Creates a GameObject with entity : should not be allowed, soln : dont allowed entity to be constructed by any tomdickharry.
-            engine::GameObject go1{ engine::Entity{} };
+            //engine::GameObject go1{ engine::Entity{} };
             //Creates a GameObject and copy over its data from the other gameobject : allowed
             engine::GameObject go2{ engine::GameObject{} };
 
@@ -45,20 +45,20 @@ public:
             engine::Entity ent2{ go0 };
 
             //Copy Assignment
-            engine::GameObject go3 = go1;
+            //engine::GameObject go3 = go1;
             
             //Move Assignment
-            engine::GameObject go4 = std::move(go1);
+            //engine::GameObject go4 = std::move(go1);
 
             //Copy Assignment
-            engine::GameObject go5 = engine::Entity{};
+            //engine::GameObject go5 = engine::Entity{};
             engine::GameObject go6 = engine::GameObject{};
 
 
             //objects Does not get destroyed when getting out of scope!
 
             go0.Destroy();
-            go1.Destroy();
+            //go1.Destroy();
             go2.Destroy();
             go6.Destroy();
         }

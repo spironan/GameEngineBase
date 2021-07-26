@@ -56,7 +56,7 @@ public:
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
 
-        engine::Entity prev;
+        //engine::Entity prev;
         
         m_root.Transform.Scale() = { scaling, scaling, 1.0f };
         auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
@@ -71,7 +71,7 @@ public:
         childSpr.SetTexture(tex);
         m_root.AddChild(m_child, true);
         
-        prev = m_child;
+        //prev = m_child;
 
         m_gos.emplace_back(m_child);
 
@@ -87,12 +87,12 @@ public:
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
             objSprite.SetTexture(tex);
             
-            if(prev != m_child.GetID())
+            /*if(prev != m_child.GetID())
                 static_cast<engine::GameObject>(prev).AddChild(ent);
             else
-                m_child.AddChild(ent);
+                m_child.AddChild(ent);*/
 
-            prev = ent;
+            //prev = ent;
         }
 
         // set default controller

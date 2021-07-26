@@ -78,10 +78,12 @@ namespace engine
 			return *m_root;
 		}
 
-		GameObject* CreateGameObject()
+		GameObject CreateGameObject()
 		{
 			ENGINE_ASSERT(IsLoaded());
-			return m_root->AddChild();
+			GameObject temp{ GetWorld().CreateEntity() };
+			m_root->AddChild(temp);
+			return temp;
 		}
 	};
 }
