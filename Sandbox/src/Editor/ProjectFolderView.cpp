@@ -136,20 +136,20 @@ void ProjectFolderView::ProjectView()
 	}
 	ImGui::EndTable();
 	//drag and drop interaction for prefab
-	if (ImGui::BeginDragDropTarget())
-	{
-		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
-		if (payload)
-		{
-			std::ofstream stream("prefab");
-			rapidjson::OStreamWrapper osw(stream);
-			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
-			writer.StartObject();
-			SaveHeirarchy(ObjectGroup::s_FocusedObject, writer);
-			writer.EndObject();
-		}
-		ImGui::EndDragDropTarget();
-	}
+	//if (ImGui::BeginDragDropTarget())
+	//{
+	//	const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
+	//	if (payload)
+	//	{
+	//		std::ofstream stream("prefab");
+	//		rapidjson::OStreamWrapper osw(stream);
+	//		rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+	//		writer.StartObject();
+	//		SaveHeirarchy(ObjectGroup::s_FocusedObject, writer);
+	//		writer.EndObject();
+	//	}
+	//	ImGui::EndDragDropTarget();
+	//}
 }
 
 void ProjectFolderView::SaveHeirarchy(testclass* object, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
