@@ -34,5 +34,8 @@ Technology is prohibited.
 #include "Engine/ECS/ECS.h"
 #include "Engine/Transform/Transform.h"
 
+//Scene
+#include "Engine/Scene/SceneManager.h"
+
 // -- Rendering
 #include "Engine/Renderer/2DRendering.h"
