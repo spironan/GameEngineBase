@@ -4,16 +4,21 @@
 #include "ActionStack/EditorActionStack.h"
 #include "ActionStack/InspectorActionBehaviour.h"
 
+//engine code
+#include "Engine/Transform/Transform3D.h"
+#include "Engine.h"
+
+//libs
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <rttr/type>
 #include <string>
 enum : int
 {
-	INT,
-	FLOAT,
-	STRING,
-	BOOL
+	enum_INT,
+	enum_FLOAT,
+	enum_STRING,
+	enum_BOOL
 };
 
 InspectorView::InspectorView()
@@ -34,8 +39,8 @@ void InspectorView::Show()
 		}
 		else
 		{
-			ImGui::Text("Name :  %s", ObjectGroup::s_FocusedObject->name.c_str());
-			ReadComponents(ObjectGroup::s_FocusedObject->get_type());
+			ImGui::Text("Name :  %s", static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name);
+			//ReadComponents(ObjectGroup::s_FocusedObject->get_type());
 			ImGui::EndChild();
 		}
 	}
@@ -66,7 +71,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 	{
 		current_value.clear();
 		const rttr::type::type_id id = element.get_type().get_id();
-		if (id == m_tracked_ids[INT])
+		if (id == m_tracked_ids[enum_INT])
 		{
 			int value = element.get_value(ObjectGroup::s_FocusedObject).get_value<int>();
 			current_value = value;
@@ -76,7 +81,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 
 			}
 		}
-		else if (id == m_tracked_ids[FLOAT])
+		else if (id == m_tracked_ids[enum_FLOAT])
 		{
 			float value = element.get_value(ObjectGroup::s_FocusedObject).get_value<float>();
 			current_value = value;
@@ -85,7 +90,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 				element.set_value(ObjectGroup::s_FocusedObject, value);
 			}
 		}
-		else if (id == m_tracked_ids[STRING])
+		else if (id == m_tracked_ids[enum_STRING])
 		{
 			static char buf[100];
 			std::string value = element.get_value(ObjectGroup::s_FocusedObject).get_value<std::string>();
@@ -112,7 +117,7 @@ void InspectorView::ReadComponents(const rttr::type& _type)
 				//redo stack
 				redo.clear();
 				redo = current_value;
-				std::string temp = "Change value of element: " + element.get_name() + " of " + ObjectGroup::s_FocusedObject->name;
+				std::string temp = "Change value of element: " + element.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name;
 				ActionStack::AllocateInBuffer(new InspectorActionBehaviour{temp, ObjectGroup::s_FocusedObject, element, undo, redo });
 			}
 		}
