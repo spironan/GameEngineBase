@@ -23,6 +23,7 @@ Technology is prohibited.
 //TestLayers
 #include "TestLayers/InputDebugLayer.h"
 #include "TestLayers/TransformTestLayer.h"
+#include "TestLayers/GameObjectTestLayer.h"
 
 #include "Engine/Platform/Vulkan/VulkanContext.h"
 #include "Engine/Debug/cvars.h"
@@ -244,8 +245,9 @@ public:
 
         // DEBUG/TEST LAYERS
         //PushLayer(new InputDebugLayer());
-        PushLayer(new TransformTestLayer());
+        //PushLayer(new TransformTestLayer());
         //PushOverlay(new SceneCamera());
+        PushLayer(new GameObjectTestLayer());
 
         // one actual layer - gameplay logic
         // one ui layer - game ui
