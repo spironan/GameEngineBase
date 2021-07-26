@@ -38,6 +38,7 @@ namespace engine
     
     OpenGLContext::~OpenGLContext()
     {
+        Renderer2D::Shutdown();
         SDL_GL_DeleteContext(s_glContext);
     }
 

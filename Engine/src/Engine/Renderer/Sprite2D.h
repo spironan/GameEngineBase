@@ -70,9 +70,9 @@ namespace engine
 
     private:
 
-        uint32_t m_texture;
+        uint32_t m_texture{ static_cast<uint32_t>(-1) };
 
-        glm::vec4 m_color;
+        glm::vec4 m_color{1.0f,1.0f,1.0f,1.0f};
 
     };
 
