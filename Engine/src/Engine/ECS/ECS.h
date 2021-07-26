@@ -4,6 +4,7 @@
 #include "SparseArray.h"
 #include "Component.h"
 #include "ECS_Manager.h"
+#include "WorldManager.h"
 
 namespace engine
 {

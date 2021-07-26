@@ -58,8 +58,8 @@ protected:
 struct AutoCVar_Float : AutoCVar<double>
 {
 	AutoCVar_Float(const char *name, const char *description, double defaultValue, CVarFlags flags = CVarFlags::None);
-	double Get();
-	float GetFloat();
+	double Get()const;
+	float GetFloat()const;
 	double* GetPtr();
 	float* GetFloatPtr();
 	void Set(double val);
@@ -68,7 +68,7 @@ struct AutoCVar_Float : AutoCVar<double>
 struct AutoCVar_Int : AutoCVar<int32_t>
 {
 	AutoCVar_Int(const char* name, const char* description, int32_t defaultValue, CVarFlags flags = CVarFlags::None);
-	int32_t Get();
+	int32_t Get()const;
 	int32_t* GetPtr();
 	void Set(int32_t val);
 };
@@ -76,13 +76,13 @@ struct AutoCVar_Int : AutoCVar<int32_t>
 struct AutoCVar_String : AutoCVar<std::string>
 {
 	AutoCVar_String(const char* name, const char* description, const char* defaultValue, CVarFlags flags = CVarFlags::None);
-	const char* Get();
+	const char* Get()const;
 	void Set(std::string&& val);
 };
 
 struct AutoCVar_Vec3 : AutoCVar<glm::vec3>
 {
 	AutoCVar_Vec3(const char* name, const char* description, glm::vec3 defaultValue, CVarFlags flags = CVarFlags::None);
-	glm::vec3 Get();
+	glm::vec3 Get()const;
 	void Set(glm::vec3&& val);
 };

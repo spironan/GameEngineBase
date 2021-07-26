@@ -31,6 +31,7 @@ namespace engine
 
 	class Test_Transform_System final : public System
 	{
+		int success_times = 0;
 	public:
 		Test_Transform_System(ECS_Manager& _ECS_Manager) : System(_ECS_Manager) {};
 		void Run()
@@ -41,10 +42,13 @@ namespace engine
 				auto transform = m_ECS_Manager.GetComponent<Test_Transform>(it);
 				transform.x += 1.f;
 			}
-			LOG_TRACE("success");
+			LOG_TRACE("success {0}", success_times++);
 		}
-	};
+	private:
 
+
+	};
+#if 0
 	void ECS_Test()
 	{
 		LOG_TRACE("ECS_Test");
@@ -197,5 +201,34 @@ namespace engine
 			auto test_transform_system = _ECS_Manager.RegisterSystem<Test_Transform_System>();
 			test_transform_system->Run();
 		}
+
+
+		{
+			auto& container = _ECS_Manager.GetComponentContainer<Test_Transform>();
+			auto& containerDense = _ECS_Manager.GetComponentDenseArray<Test_Transform>();
+			auto view2 = _ECS_Manager.GetComponentView<Test_Transform>();
+			int i = 0;
+			Entity prev;
+			for (auto it : view2)
+			{
+				auto entityindex = container.GetIndex(it);
+				i++;
+				if (i > 2)
+				{
+					prev = it;
+					container.Swap(it, prev);
+
+				}
+			}
+			LOG_TRACE("test container retrieval SUCCESS: {0}", i);
+		}
 	}
+
+	void ECS_Scene_Test()
+	{	
+
+
+
+	};
+#endif
 }

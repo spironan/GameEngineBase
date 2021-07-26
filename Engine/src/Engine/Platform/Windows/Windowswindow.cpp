@@ -15,8 +15,8 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "pch.h"
 
+#include <glad/glad.h>
 #include <sdl2/SDL.h>
-#include <GL/gl3w.h>
 
 #include "Engine/Platform/Windows/WindowsWindow.h"
 #include "Engine/Core/Base.h"
@@ -107,6 +107,8 @@ namespace engine
         
         // Set VSync Status
         SetVSync(properties.VSync);
+
+        m_lastFrameTime = static_cast<double>(SDL_GetPerformanceCounter());
     }
 
     void WindowsWindow::Shutdown()

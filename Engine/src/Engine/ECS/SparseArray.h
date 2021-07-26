@@ -149,6 +149,26 @@ namespace engine
         iterator begin() { return m_dense.begin(); }
         iterator end() { return m_dense.end(); }
 
+        void Swap(size_type index1, size_type index2)
+        {
+            if (index1 >= m_dense.size() || index2 >= m_dense.size() || index1 == index2)
+                return;
+            std::swap(*(m_dense.begin() + index1), *(m_dense.begin() + index2));
+            std::swap(*(m_sparse.begin() + index1), *(m_sparse.begin() + index2));
+            std::swap(m_index[*(m_sparse.begin() + index1)], m_index[*(m_sparse.begin() + index2)]);
+        }
+
+        dense_container& GetDenseContainer()
+        {
+            return m_dense;
+        }
+
+        size_type GetIndex(Entity e)
+        {
+            if (IsAvailable((size_type)e))
+                return Size();
+            return m_index[e];
+        }
     private:
 
     };

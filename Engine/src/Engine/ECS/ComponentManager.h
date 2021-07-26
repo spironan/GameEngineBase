@@ -23,7 +23,6 @@ namespace engine
 	public:
 		using TypeContainer = std::unordered_map<const char*, ComponentType>;
 		using ComponentContainer = std::unordered_map<const char*, std::shared_ptr<ComponentArrayBase>>;
-
 		/*****************************************************************//**
 		 * @brief Registers a component to be used. Creates a ComponentArray
 		 * of type T and inserts it into m_ComponentArrays
@@ -52,12 +51,32 @@ namespace engine
 			return m_ComponentTypes[typeName];
 		}
 
-		template<typename T>
+		/*template<typename T>
 		T& AddComponent(Entity entity, T component)
 		{
 			if (IsRegistered<T>() == false)
 				RegisterComponent<T>();
-			return GetComponentArray<T>()->InsertData(entity, component);
+			return *GetComponentArray<T>()->InsertData(entity, component);
+		}*/
+
+		template<typename T>
+		std::enable_if_t<std::is_base_of<Component,T>::value,T&> AddComponent(Entity entity, T component)
+		{
+			if (IsRegistered<T>() == false)
+				RegisterComponent<T>();
+			auto comp = GetComponentArray<T>()->InsertData(entity, component);
+			Component* base = static_cast<Component*>(&*comp);
+			base->SetEntity(entity);
+			return *comp;
+		}
+
+		template<typename T>
+		std::enable_if_t<std::is_base_of<Component, T>::value == false, T&> AddComponent(Entity entity, T component)
+		{
+			if (IsRegistered<T>() == false)
+				RegisterComponent<T>();
+			auto& comp = GetComponentArray<T>()->InsertData(entity, component);
+			return comp;
 		}
 
 		template<typename T, typename... args>
@@ -77,6 +96,7 @@ namespace engine
 		template<typename T>
 		bool HasComponent(Entity entity)
 		{
+			if (!IsRegistered<T>()) { return false; }
 			return GetComponentArray<T>()->HasData(entity);
 		}
 
@@ -124,6 +144,29 @@ namespace engine
 			}
 		}
 
+		template<typename T>
+		Entity GetEntity(T& component)
+		{
+			return static_cast<Component>(component).GetEntity();
+		}
+
+		template<typename T>
+		Entity GetEntity(T* component)
+		{
+			return static_cast<Component>(component).GetEntity();
+		}
+
+		template<typename T>
+		typename ComponentArray<T>::container_type& GetContainer()
+		{
+			return GetComponentArray<T>()->GetContainer();
+		}
+
+		template<typename T>
+		typename ComponentArray<T>::container_type::dense_container& GetContainerDenseArray()
+		{
+			return GetContainer<T>().GetDenseContainer();
+		}
 	private:
 		TypeContainer m_ComponentTypes{};
 		ComponentContainer m_ComponentArrays{};

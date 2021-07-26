@@ -203,7 +203,7 @@ public:
 	void EditParameter(CVarParameter* p, float textWidth);
 
 private:	
-	//std::shared_mutex mutex_;
+	mutable std::shared_mutex mutex_;
 
 	CVarParameter* InitCVar(const char* name, const char* description);
 
@@ -242,7 +242,7 @@ CVarSystem* CVarSystem::Get()
 
 CVarParameter* CVarSystemImpl::GetCVar(engine::utility::StringHash hash)
 {
-	//std::shared_lock lock(mutex_);
+	std::shared_lock<std::shared_mutex> lock(mutex_);
 	auto it = savedCVars.find(hash);
 
 	if (it != savedCVars.end())
@@ -275,7 +275,7 @@ void CVarSystemImpl::SetVec3CVar(engine::utility::StringHash hash, glm::vec3 val
 
 CVarParameter* CVarSystemImpl::CreateFloatCVar(const char* name, const char* description, double defaultValue, double currentValue)
 {
-	//std::unique_lock lock(mutex_);
+	std::unique_lock lock(mutex_);
 	CVarParameter* param = InitCVar(name, description);
 	if (!param) return nullptr;
 
@@ -288,7 +288,7 @@ CVarParameter* CVarSystemImpl::CreateFloatCVar(const char* name, const char* des
 
 CVarParameter* CVarSystemImpl::CreateIntCVar(const char* name, const char* description, int32_t defaultValue, int32_t currentValue)
 {
-	//std::unique_lock lock(mutex_);
+	std::unique_lock lock(mutex_);
 	CVarParameter* param = InitCVar(name, description);
 	if (!param) return nullptr;
 
@@ -301,7 +301,7 @@ CVarParameter* CVarSystemImpl::CreateIntCVar(const char* name, const char* descr
 
 CVarParameter* CVarSystemImpl::CreateStringCVar(const char* name, const char* description, const char* defaultValue, const char* currentValue)
 {
-	//std::unique_lock lock(mutex_);
+	std::unique_lock lock(mutex_);
 	CVarParameter* param = InitCVar(name, description);
 	if (!param) return nullptr;
 
@@ -314,7 +314,7 @@ CVarParameter* CVarSystemImpl::CreateStringCVar(const char* name, const char* de
 
 CVarParameter* CVarSystemImpl::CreateVec3CVar(const char* name, const char* description, glm::vec3 defaultValue, glm::vec3 currentValue)
 {
-	//std::unique_lock lock(mutex_);
+	std::unique_lock lock(mutex_);
 	CVarParameter* param = InitCVar(name, description);
 	if (!param) return nullptr;
 
@@ -327,7 +327,7 @@ CVarParameter* CVarSystemImpl::CreateVec3CVar(const char* name, const char* desc
 
 CVarParameter* CVarSystemImpl::InitCVar(const char* name, const char* description)
 {
-	if (GetCVar(name)) return nullptr; //if exists return null
+	//if (GetCVar(name)) return nullptr; //if exists return null
 
 	uint32_t namehash = engine::utility::StringHash{ name };
 	savedCVars[namehash] = CVarParameter{};
@@ -368,7 +368,7 @@ AutoCVar_Float::AutoCVar_Float(const char* name, const char* description, double
 	index = cvar->arrayIndex;
 }
 
-double AutoCVar_Float::Get()
+double AutoCVar_Float::Get()const
 {
 	return GetCVarCurrentByIndex<CVarType>(index);
 }
@@ -378,7 +378,7 @@ double* AutoCVar_Float::GetPtr()
 	return PtrGetCVarCurrentByIndex<CVarType>(index);
 }
 
-float AutoCVar_Float::GetFloat()
+float AutoCVar_Float::GetFloat()const
 {
 	return static_cast<float>(Get());
 }
@@ -402,7 +402,7 @@ AutoCVar_Vec3::AutoCVar_Vec3(const char* name, const char* description, glm::vec
 	index = cvar->arrayIndex;
 }
 
-glm::vec3 AutoCVar_Vec3::Get()
+glm::vec3 AutoCVar_Vec3::Get()const
 {
 	return GetCVarCurrentByIndex<CVarType>(index);
 }
@@ -419,7 +419,7 @@ AutoCVar_Int::AutoCVar_Int(const char* name, const char* description, int32_t de
 	index = cvar->arrayIndex;
 }
 
-int32_t AutoCVar_Int::Get()
+int32_t AutoCVar_Int::Get()const
 {
 	return GetCVarCurrentByIndex<CVarType>(index);
 }
@@ -441,7 +441,7 @@ AutoCVar_String::AutoCVar_String(const char* name, const char* description, cons
 	index = cvar->arrayIndex;
 }
 
-const char* AutoCVar_String::Get()
+const char* AutoCVar_String::Get()const
 {
 	return (*PtrGetCVarCurrentByIndex<CVarType>(index)).c_str();
 }

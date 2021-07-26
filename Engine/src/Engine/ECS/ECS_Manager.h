@@ -57,27 +57,44 @@ namespace engine
 		}
 
 		template<typename T>
-		void AddComponent(Entity entity, T component)
+		T& AddComponent(Entity entity, T component)
 		{
-			m_ComponentManager->AddComponent<T>(entity, component);
+			auto comp = m_ComponentManager->AddComponent<T>(entity, component);
 
 			auto signature = m_EntityManager->GetSignature(entity);
 			signature.set(m_ComponentManager->GetComponentID<T>(), true);
 			m_EntityManager->SetSignature(entity, signature);
 
 			//m_SystemManager->EntitySignatureChanged(entity, signature);
+			return comp;
 		}
 
 		template<typename T, typename... args>
-		void EmplaceComponent(Entity entity, args&&... arguementList)
+		std::enable_if_t<std::is_base_of_v<Component, T> == true, T&>
+			EmplaceComponent(Entity entity, args&&... arguementList)
 		{
-			m_ComponentManager->EmplaceComponent<T>(entity, std::forward<args>(arguementList)...);
+			auto& comp = m_ComponentManager->EmplaceComponent<T>(entity, entity, std::forward<args>( arguementList)...);
 
 			auto signature = m_EntityManager->GetSignature(entity);
 			signature.set(m_ComponentManager->GetComponentID<T>(), true);
 			m_EntityManager->SetSignature(entity, signature);
 
 			//m_SystemManager->EntitySignatureChanged(entity, signature);
+			return comp;
+		}
+
+		template<typename T, typename... args>
+		std::enable_if_t<std::is_base_of_v<Component, T> == false, T&> 
+			EmplaceComponent(Entity entity, args&&... arguementList)
+		{
+			auto& comp = m_ComponentManager->EmplaceComponent<T>(entity, std::forward<args>(arguementList)...);
+
+			auto signature = m_EntityManager->GetSignature(entity);
+			signature.set(m_ComponentManager->GetComponentID<T>(), true);
+			m_EntityManager->SetSignature(entity, signature);
+
+			//m_SystemManager->EntitySignatureChanged(entity, signature);
+			return comp;
 		}
 
 		template<typename T>
@@ -137,6 +154,12 @@ namespace engine
 		}
 
 		template<typename T>
+		T* GetSystem()
+		{
+			return m_SystemManager->GetSystem<T>();
+		}
+
+		template<typename T>
 		void SetSystemSignature(Signature signature)
 		{
 			m_SystemManager->SetSignature<T>(signature);
@@ -147,6 +170,19 @@ namespace engine
 		{
 			return ComponentView<Args...>(*m_ComponentManager, *m_EntityManager);
 		}
+
+		template<typename T>
+		typename ComponentArray<T>::container_type& GetComponentContainer()
+		{
+			return m_ComponentManager->GetContainer<T>();
+		}
+
+		template<typename T>
+		typename ComponentArray<T>::container_type::dense_container& GetComponentDenseArray()
+		{
+			return m_ComponentManager->GetContainerDenseArray<T>();
+		}
+
 
 		//// Event methods
 		//void AddEventListener(EventId eventId, std::function<void(Event&)> const& listener)
@@ -164,7 +200,7 @@ namespace engine
 		//	mEventManager->SendEvent(eventId);
 		//}
 
-	private:
+	protected:
 		std::unique_ptr<ComponentManager> m_ComponentManager;
 		std::unique_ptr<EntityManager> m_EntityManager;
 		//std::unique_ptr<EventManager> mEventManager;

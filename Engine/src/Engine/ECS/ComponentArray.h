@@ -35,6 +35,7 @@ namespace engine
     {
     public:
         using size_type = std::size_t;
+        using container_type = SparseContainer<T, MAX_ENTITY>;
 
         T& InsertData(Entity entity, T component)
         {
@@ -71,8 +72,10 @@ namespace engine
         {
             return !m_sparseContainer.IsAvailable(entity);
         }
+
+        container_type& GetContainer() { return m_sparseContainer; }
     private:
-        SparseContainer<T, MAX_ENTITY> m_sparseContainer;
+        container_type m_sparseContainer;
     };
 
 }

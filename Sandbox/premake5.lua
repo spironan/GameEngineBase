@@ -23,8 +23,11 @@ project "Sandbox"
         "%{IncludeDir.rttr}",
         --"%{IncludeDir.mono}",
         --"%{IncludeDir.gl3w}",
+        "%{IncludeDir.glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.rapidjson}",
+        
+        "%{IncludeDir.glm}",
 		
 		"%{IncludeDir.VulkanSDK}", -- Temporary until the rendering can standalone
 

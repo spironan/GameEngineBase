@@ -3,7 +3,7 @@
 \project        Tenebris
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
-\date           Feb 13, 2021
+\date           Jul 07, 2021
 \brief          Template class that transforms inherited classes into a singleton.
 
                 SingletonTemplate should only be used for something that should only has

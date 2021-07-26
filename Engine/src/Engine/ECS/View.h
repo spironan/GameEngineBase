@@ -117,8 +117,8 @@ namespace engine
 		void SetSignature(ComponentManager& componentManager)
 		{
 			m_signature.set(componentManager.GetComponentID<Type>(), true);
-			LOG_ENGINE_TRACE("View set signature");
-			LOG_ENGINE_TRACE(componentManager.GetComponentID<Type>());
+			//LOG_ENGINE_TRACE("View set signature");
+			//LOG_ENGINE_TRACE(componentManager.GetComponentID<Type>());
 			SetSignature<Aux_type, Args...>(componentManager);
 		}
 

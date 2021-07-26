@@ -49,6 +49,16 @@ namespace engine
 			m_Signatures.insert({ typeName, signature });
 		}
 
+		template<typename T>
+		T* GetSystem()
+		{
+			const char* typeName = typeid(T).name();
+			static_assert(std::is_base_of_v<System,T>);
+			ENGINE_ASSERT(m_Systems.find(typeName) != m_Systems.end() && "System used before registered.");
+
+			return static_cast<T*>(&(*m_Systems[typeName]));
+		}
+
 		void EntityDestroyed(Entity entity)
 		{
 			/*for (auto const& pair : m_Systems)
