@@ -243,7 +243,7 @@ public:
         PushOverlay(new ExampleLayer());
 
         //Actual Scene Layer
-        //PushLayer(new EditorSceneLayer());
+        PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
 
         // DEBUG/TEST LAYERS

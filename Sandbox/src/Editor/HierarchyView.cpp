@@ -15,7 +15,7 @@ Technology is prohibited.
 #include "EditorObjectGroup.h"
 #include "Editor.h"
 #include "Engine/Scene/SceneManager.h"
-
+#include "Engine/ECS/WorldManager.h"
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -47,10 +47,8 @@ void HierarchyView::HierarchyPopUp()
 {
 	if (ImGui::MenuItem("New Object"))
 	{
-		testclass tc{ 100 };
-		tc.name = "new gameobject";
-		Editor::s_testList.emplace_back(tc);
-		Editor::s_testList.back().SetParent(&Editor::s_rootnode);
+		engine::GameObject go;
+		go.Name = "New GameObject";
 	}
 	if (ImGui::MenuItem("Toggle lock UI"))
 	{
@@ -62,8 +60,7 @@ void HierarchyView::ShowHierarchy()
 {
 	if (m_filtered == false)
 	{
-		for (testclass* obj : Editor::s_rootnode.childs)
-			ListHierarchy();
+		ListHierarchy();
 	}
 	else
 	{
@@ -141,10 +138,11 @@ void HierarchyView::ListHierarchy()
 	ImGuiTreeNodeFlags flag = 0;
 
 	std::vector<std::uint32_t> depth;
-	depth.emplace_back(engine::SceneManager::GetActiveScene().GetRoot());
-	auto& transformList = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
+	depth.emplace_back(0);
+	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
 	for (engine::Transform3D& transform : transformList)
 	{
+		flag = 0;
 		if (ObjectGroup::s_FocusedObject == transform.GetEntity())
 		{
 			flag = ImGuiTreeNodeFlags_Selected;
@@ -154,13 +152,14 @@ void HierarchyView::ListHierarchy()
 				m_dragging = !ImGui::IsMouseReleased(ImGuiMouseButton_Left);
 			}
 		}
-		while (depth.back() != transform.GetParentId())
-		{
-			depth.pop_back();
-			ImGui::TreePop();
-			if (!depth.size())
-				return;
-		}
+		//check if theres an error here TODO
+		//while (depth.back() != transform.GetParentId())
+		//{
+		//	depth.pop_back();
+		//	ImGui::TreePop();
+		//	if (depth.size() == 1)
+		//		return;
+		//}
 		if (transform.GetChildCount())
 		{
 			flag |= ImGuiTreeNodeFlags_OpenOnArrow;
