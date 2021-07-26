@@ -16,9 +16,10 @@ Technology is prohibited.
 #pragma once
 #include "pch.h"
 #include <bitset>
-
+#define ENT_IS_CLASS 0
 namespace engine
 {
+#if ENT_IS_CLASS
 	class ENT
 	{
 
@@ -39,6 +40,10 @@ namespace engine
 
 	using Entity = ENT;
 	constexpr Entity::type MAX_ENTITY = 5000;
+#else
+	using Entity = std::uint32_t;
+	constexpr Entity MAX_ENTITY = 5000;
+#endif
 
 	using ComponentType = std::uint16_t;
 	const ComponentType MAX_COMPONENTS = 128;
