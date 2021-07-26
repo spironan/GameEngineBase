@@ -200,6 +200,7 @@ public:
         engine::WorldManager::SetActiveWorld(m_world.GetID());
 
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
+		
         auto* root = new engine::GameObject();
         gos.push_back(root);
 
