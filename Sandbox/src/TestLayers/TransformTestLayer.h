@@ -15,7 +15,6 @@ Technology is prohibited.
 #pragma once
 
 #include <Engine.h>
-#include <random>
 
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components 
@@ -30,9 +29,9 @@ private:
     
     std::vector<engine::GameObject> m_gos;
     std::vector<engine::GameObject>::iterator m_controller;
+    std::vector<engine::GameObject>::iterator m_target;
 
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
-    int width{}, height{};
 
     static constexpr float scaling = 50.f;
 
@@ -41,13 +40,16 @@ public:
     TransformTestLayer() 
         : Layer{ "TransformTestLayer" }
         , m_world{ engine::WorldManager::CreateWorld() }
-        , m_root { engine::WorldManager::GetActiveWorld().CreateEntity() }
-        , m_child{ engine::WorldManager::GetActiveWorld().CreateEntity() }
+        , m_root { }
+        , m_child{ }
     {
 
         engine::Window& x = engine::Application::Get().GetWindow();
-        width = x.GetSize().first;
-        height = x.GetSize().second;
+        int width = x.GetSize().first;
+        int height = x.GetSize().second;
+        /*auto [width, height] = x.GetSize();
+        width = static_cast<int>(width);
+        height = static_cast<int>(height);*/
         cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
@@ -56,7 +58,6 @@ public:
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
 
-        //engine::Entity prev;
         
         m_root.Transform.Scale() = { scaling, scaling, 1.0f };
         auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
@@ -65,19 +66,18 @@ public:
         m_gos.emplace_back(m_root);
 
         m_child.Transform.Position() = { 1.f, 1.f, 1.f };
-        //m_child.Transform.Scale() = { childScale, childScale, 1.0f };
         //m_child.Transform.RotationAngle() = 90.f;
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
-        m_root.AddChild(m_child, true);
-        
-        //prev = m_child;
+        m_root.AddChild(m_child);
 
         m_gos.emplace_back(m_child);
 
+        engine::Entity prev = m_child;
+
         for (int i = 1; i < 10; ++i)
         {
-            engine::GameObject ent{ engine::WorldManager::GetActiveWorld().CreateEntity() };
+            engine::GameObject ent{ };
 
             m_gos.emplace_back(ent);
 
@@ -87,39 +87,81 @@ public:
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
             objSprite.SetTexture(tex);
             
-            /*if(prev != m_child.GetID())
-                static_cast<engine::GameObject>(prev).AddChild(ent);
-            else
-                m_child.AddChild(ent);*/
-
-            //prev = ent;
+            //Nested Add child
+            static_cast<engine::GameObject>(prev).AddChild(ent);
+            prev = ent;
         }
 
         // set default controller
         m_controller = m_gos.begin();
-
-       /* int iteration = 0;
-        auto view = m_world.GetComponentView<engine::Transform3D>();
-        for (auto& ent : view)
-        {
-            auto& tf = m_world.GetComponent<engine::Transform3D>(ent);
-            tf.Position() = { childScale * iteration , childScale * iteration, 1.f };
-            ++iteration;
-        }*/
+        // set target to be controller too.
+        m_target = m_controller;
 
     }
 
+
+    static constexpr float MOVESPEED_PARENT = 300.f;
+    static constexpr float ROTATIONSPEED_PARENT = 10.f;
+    static constexpr float SCALINGSPEED_PARENT = 20.f;
+
+    static constexpr float MOVESPEED_CHILD = 30.f;
+    static constexpr float ROTATIONSPEED_CHILD = 10.f;
+    static constexpr float SCALINGSPEED_CHILD = 10.f;
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
         float deltaTime = static_cast<float>(dt);
 
         engine::WorldManager::SetActiveWorld(m_world.GetID());
-        static std::random_device rd;
-        static std::mt19937 gen(rd());
-        static std::uniform_real_distribution<float> dis(-1.0f, std::nextafter(1.0f, FLT_MAX));
         
         m_world.GetSystem<engine::TransformSystem>()->Update();
+
+        if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
+        {
+            m_controller->Transform.Position().y += MOVESPEED_PARENT * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
+        {
+            m_controller->Transform.Position().y -= MOVESPEED_PARENT * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
+        {
+            m_controller->Transform.Position().x -= MOVESPEED_PARENT * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
+        {
+            m_controller->Transform.Position().x += MOVESPEED_PARENT * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_Z))
+        {
+            m_controller->Transform.RotationAngle() -= ROTATIONSPEED_PARENT * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_X))
+        {
+            m_controller->Transform.RotationAngle() += ROTATIONSPEED_PARENT * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_C))
+        {
+            m_controller->Transform.Scale() -= SCALINGSPEED_PARENT * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_V))
+        {
+            m_controller->Transform.Scale() += SCALINGSPEED_PARENT * deltaTime;
+        }
+
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_S))
+        {
+            if (m_controller == m_gos.begin())
+                m_controller = m_gos.end();
+            else
+                --m_controller;
+        }
+
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_D))
+        {
+            ++m_controller;
+            if (m_controller == m_gos.end()) m_controller = m_gos.begin();
+        }
 
         if (engine::Input::IsKeyPressed(ENGINE_KEY_TAB))
         {
@@ -138,13 +180,6 @@ public:
             m_child.Transform.Scale() = { 1.f, 1.f, 1.f };
         }
 
-        static constexpr float MOVESPEED_PARENT     = 300.f;
-        static constexpr float ROTATIONSPEED_PARENT = 10.f;
-        static constexpr float SCALINGSPEED_PARENT  = 20.f;
-
-        static constexpr float MOVESPEED_CHILD      = 30.f;
-        static constexpr float ROTATIONSPEED_CHILD  = 10.f;
-        static constexpr float SCALINGSPEED_CHILD   = 10.f;
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_W))
         {
@@ -219,21 +254,28 @@ public:
         {
             auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
 
-            LOG_INFO("ent {0}: rotation : {1},  globalRotation : {2}"
+            /*LOG_INFO("ent {0}: position ({1},{2})  parent : {3} childs : {4}"
+                , ent
+                , transform.GetGlobalPosition().x
+                , transform.GetGlobalPosition().y
+                , static_cast<engine::GameObject>(transform.GetParentId()).GetID()
+                , transform.GetChildCount());*/
+
+            /*LOG_INFO("ent {0}: rotation : {1},  globalRotation : {2}"
                 , ent
                 , transform.GetRotationAngle()
                 , transform.GetGlobalRotationDeg()
-                );
+                );*/
+
+            LOG_INFO("ent {0}: scale ({1},{2}) "
+                , ent
+                , transform.GetGlobalScale().x
+                , transform.GetGlobalScale().y
+            );
 
             // rttr code below
             //auto rttrProps = transform.get_type().get_properties();
             //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
-           /* LOG_INFO("ent {0}: position ({1},{2})  parent : {3} childs : {4}"
-                        , ent
-                        , transform.GetGlobalPosition().x
-                        , transform.GetGlobalPosition().y
-                        , static_cast<engine::GameObject>(transform.GetParentId()).GetID()
-                        , transform.GetChildCount());*/
         }
     }
 
