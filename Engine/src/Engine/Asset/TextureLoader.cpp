@@ -4,8 +4,17 @@
 #include "Engine/Core/Log.h"
 #include <glad/glad.h>
 
+// This ignores all warnings raised inside External headers
+namespace stbi_local
+{
+
+#pragma warning(push, 0)
+#ifdef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif // STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#pragma warning(pop, 0)
+}
 
 namespace engine
 {
@@ -14,11 +23,11 @@ Texture TextureLoader::LoadFromFilePath(const std::string& fileName)
 {
 	Texture texture;
 	texture.name = fileName;
-	unsigned char* texData = stbi_load(fileName.c_str(), &texture.width, &texture.height, &texture.bitDepth, STBI_rgb_alpha);
+	unsigned char* texData = stbi_local::stbi_load(fileName.c_str(), &texture.width, &texture.height, &texture.bitDepth, stbi_local::STBI_rgb_alpha);
 	if (!texData)
 	{
 		LOG_ENGINE_ERROR("Failed to load image at filepath:{0}", fileName);
-		texture.id = -1;
+		texture.id = engine::ooTexID{ 0 };
 		return texture;
 	}
 
@@ -36,7 +45,7 @@ Texture TextureLoader::LoadFromFilePath(const std::string& fileName)
 	}
 
 
-	stbi_image_free(texData);
+	stbi_local::stbi_image_free(texData);
 
 	return texture;
 }

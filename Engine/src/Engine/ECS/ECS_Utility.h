@@ -16,11 +16,34 @@ Technology is prohibited.
 #pragma once
 #include "pch.h"
 #include <bitset>
-
+#define ENT_IS_CLASS 0
 namespace engine
 {
+#if ENT_IS_CLASS
+	class ENT
+	{
+
+	public:
+		using type = std::uint32_t;
+
+		ENT() = delete;
+		operator std::uint32_t() const { return m_value; }
+		ENT(type val) :m_value{ val } {};
+		ENT& operator++() { ++m_value; return *this; }
+		ENT operator++(int) { m_value++; return *this; }
+		//constexpr ENT(type val) :m_value{ val } {};
+		//constexpr ENT(ENT const& other) = default;
+	private:
+		type m_value;
+	};
+
+
+	using Entity = ENT;
+	constexpr Entity::type MAX_ENTITY = 5000;
+#else
 	using Entity = std::uint32_t;
 	constexpr Entity MAX_ENTITY = 5000;
+#endif
 
 	using ComponentType = std::uint16_t;
 	const ComponentType MAX_COMPONENTS = 128;
@@ -29,4 +52,6 @@ namespace engine
 	class Component;
 	class ECS_Manager;
 	class GameObject;
+
+	
 }

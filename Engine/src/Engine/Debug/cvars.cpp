@@ -527,7 +527,7 @@ void CVarSystemImpl::DrawImguiEditor()
 			it->second.push_back(p);
 		}
 
-		for (auto [category, parameters] : categorizedParams)
+		for (auto& [category, parameters] : categorizedParams)
 		{
 			//alphabetical sort
 			std::sort(parameters.begin(), parameters.end(), [](CVarParameter* A, CVarParameter* B)
@@ -647,11 +647,11 @@ void CVarSystemImpl::EditParameter(CVarParameter* p, float textWidth)
 				ImGui::PushID(p->name.c_str());
 				if (dragFlag)
 				{					
-					ImGui::DragScalar("", ImGuiDataType_Double, GetCVarArray<double>()->GetCurrentPtr(p->arrayIndex), 0.1, 0, 0, "%.3f");
+					ImGui::DragScalar("", ImGuiDataType_Double, reinterpret_cast<void*>(GetCVarArray<double>()->GetCurrentPtr(p->arrayIndex)), 0.1f, 0, 0, "%.3lf");
 				}
 				else
 				{
-					ImGui::InputDouble("", GetCVarArray<double>()->GetCurrentPtr(p->arrayIndex), 0, 0, "%.3f");
+					ImGui::InputDouble("", GetCVarArray<double>()->GetCurrentPtr(p->arrayIndex), 0, 0, "%.3lf");
 				}
 				ImGui::PopID();
 			}

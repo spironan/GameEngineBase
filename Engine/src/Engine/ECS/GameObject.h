@@ -60,7 +60,7 @@ namespace engine
         //implicit cast operator
         operator Entity() const { return m_entity; }
 
-        constexpr Entity GetID() const { return m_entity; }
+        Entity GetID() const { return m_entity; }
 
         //constexpr bool IsActive() const { return m_active; }
         
