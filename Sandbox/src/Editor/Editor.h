@@ -19,7 +19,7 @@ Technology is prohibited.
 #include <stack>//std::stack
 #include <imgui.h>
 //widgets
-#include "HeirarchyView.h"
+#include "HierarchyView.h"
 #include "InspectorView.h"
 #include "ProjectFolderView.h"
 #include "ProjectRootView.h"
@@ -87,7 +87,7 @@ private:
 
 	int m_activeFlagGUI = 0;
 
-	HeirarchyView m_heirarchy_view;
+	HierarchyView m_heirarchy_view;
 	InspectorView m_inspector_view;
 	ProjectFolderView m_projectfolder_view;
 	ProjectRootView m_projectroot_view;

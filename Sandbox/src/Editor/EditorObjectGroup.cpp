@@ -12,4 +12,4 @@ Technology is prohibited.
  *********************************************************************/
 #include "EditorObjectGroup.h"
 
-testclass* ObjectGroup::s_FocusedObject = nullptr;
+engine::Entity ObjectGroup::s_FocusedObject = 0;

@@ -1,5 +1,5 @@
 /*****************************************************************//**
- * \file   HeirarchyView.h
+ * \file   HierarchyView.h
  * \brief  Manages and updates the object in the game scene
  * 
  * \author Leong Jun Xiang (junxiang.leong)
@@ -12,18 +12,19 @@ Technology is prohibited.
 #pragma once
 #include <string>
 #include <vector>
-class testclass;
-class HeirarchyView
+
+#include "Engine/Transform/Transform3D.h"
+class HierarchyView
 {
 public: 
-	HeirarchyView() : m_dragging{ false }, m_editing{ false }, m_filtered{ false }, m_Buffer{ "" }, m_filterBuffer{ "" }{}
+	HierarchyView() : m_dragging{ false }, m_editing{ false }, m_filtered{ false }, m_Buffer{ "" }, m_filterBuffer{ "" }{}
 	void Show();
 
 private:
-	void HeirarchyPopUp();
+	void HierarchyPopUp();
 
-	void ShowHeirarchy();
-	void ListHeirarchy(testclass* );
+	void ShowHierarchy();
+	void ListHierarchy();
 	void Search();
 	void FilterByName(const std::string& target);
 	void ToggleLockUI();
@@ -36,6 +37,7 @@ private:
 
 	char m_Buffer[100];
 	char m_filterBuffer[100];
-	std::vector<testclass*> m_filterlist;
+
+	std::vector<engine::Entity> m_filterlist;
 };
 
