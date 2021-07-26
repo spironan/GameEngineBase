@@ -39,6 +39,7 @@ public:
 
     EditorLayer() : Layer{"EditorLayer"}
     {
+		LOG_WARN("testing");
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
