@@ -80,7 +80,7 @@ private:
 			}
 			else if (id == m_tracked_ids[type_ENTITY])
 			{
-				ImGui::Text("%s : %d", element.get_name().c_str(), ObjectGroup::s_FocusedObject);
+				ImGui::Text("%s : %u", element.get_name().c_str(), element.get_value(component).to_uint32());
 			}
 			else if (id == m_tracked_ids[type_VEC3])
 			{
