@@ -82,13 +82,13 @@ void HierarchyView::ShowHierarchy()
 					m_dragging = !ImGui::IsMouseReleased(ImGuiMouseButton_Left);
 				}
 			}
-			//while (depth.back() != transform.GetParentId())
-			//{
-			//	depth.pop_back();
-			//	ImGui::TreePop();
-			//	if (!depth.size())
-			//		return;
-			//}
+			while (depth.back() != transform.GetParentId())
+			{
+				depth.pop_back();
+				ImGui::TreePop();
+				if (!depth.size())
+					return;
+			}
 			if (transform.GetChildCount())
 			{
 				flag |= ImGuiTreeNodeFlags_OpenOnArrow;
@@ -143,6 +143,8 @@ void HierarchyView::ListHierarchy()
 	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
 	for (engine::Transform3D& transform : transformList)
 	{
+		if (transform.GetEntity() == 0) continue;
+
 		flag = 0;
 		if (ObjectGroup::s_FocusedObject == transform.GetEntity())
 		{
@@ -154,13 +156,14 @@ void HierarchyView::ListHierarchy()
 			}
 		}
 		//check if theres an error here TODO
-		//while (depth.back() != transform.GetParentId())
-		//{
-		//	depth.pop_back();
-		//	ImGui::TreePop();
-		//	if (depth.size() == 1)
-		//		return;
-		//}
+		while (depth.back() != transform.GetParentId())
+		{
+			if (depth.size() == 1)
+				return;
+
+			depth.pop_back();
+			ImGui::TreePop();
+		}
 		if (transform.GetChildCount())
 		{
 			flag |= ImGuiTreeNodeFlags_OpenOnArrow;
@@ -188,7 +191,8 @@ void HierarchyView::ListHierarchy()
 			if (payload)
 			{
 				m_dragging = false;
-				static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).GetComponent<engine::Transform3D>().SetParent(transform);
+				static_cast<engine::GameObject>(transform.GetEntity()).AddChild(ObjectGroup::s_FocusedObject);
+				//static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).GetComponent<engine::Transform3D>().SetParent(transform);
 			}
 			ImGui::EndDragDropTarget();
 		}
