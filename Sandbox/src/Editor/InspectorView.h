@@ -53,7 +53,6 @@ private:
 				if (ImGui::DragFloat(element.get_name().c_str(), &value))
 				{
 					element.set_value(component, value);
-					current_value = value;
 				}
 			}
 			else if (id == m_tracked_ids[type_STRING])
