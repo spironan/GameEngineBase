@@ -191,30 +191,28 @@ class EditorSceneLayer : public engine::Layer
 private:
     engine::World& m_world;
 
-    std::vector<engine::GameObject*> gos;
+    engine::GameObject m_root;
+
 public:
 
-    EditorSceneLayer() : Layer{ "EditorSceneLayer" },
-        m_world(engine::WorldManager::CreateWorld())
+    EditorSceneLayer() 
+        : Layer{ "EditorSceneLayer" }
+        , m_world(engine::WorldManager::CreateWorld())
+        , m_root {}
     {
         engine::WorldManager::SetActiveWorld(m_world.GetID());
 
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
-		
-        auto* root = new engine::GameObject();
-        gos.push_back(root);
-
+        
         for (int i = 0; i < 10; ++i)
         {
-            auto* ent = new engine::GameObject();
-            gos.push_back(ent);
+            engine::GameObject ent{};
+            m_root.AddChild(ent);
         }
     }
 
     ~EditorSceneLayer()
     {
-        for (auto i : gos)
-            delete i;
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
