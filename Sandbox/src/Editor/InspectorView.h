@@ -13,8 +13,7 @@ class InspectorView
 public:
 	InspectorView();
 	void Show();
-	static void SetElementData(void*);
-	static void DeleteElementData(void*);
+
 private:
 	enum type_rttrID : int
 	{
@@ -97,9 +96,10 @@ private:
 				glm::mat4 value = element.get_value(component).get_value<glm::mat4>();
 				current_value = value;
 				ImGui::Text(element.get_name().c_str());
-				bool activated = ImGui::DragFloat3(("##x" + element.get_name()).c_str(), glm::value_ptr(value[0]));
-				activated = ImGui::DragFloat3(("##y" + element.get_name()).c_str(), glm::value_ptr(value[1]));
-				activated = ImGui::DragFloat3(("##z" + element.get_name()).c_str(), glm::value_ptr(value[2]));
+				bool activated = ImGui::DragFloat4(("##x" + element.get_name()).c_str(), glm::value_ptr(value[0]));
+				activated = ImGui::DragFloat4(("##y" + element.get_name()).c_str(), glm::value_ptr(value[1]));
+				activated = ImGui::DragFloat4(("##z" + element.get_name()).c_str(), glm::value_ptr(value[2]));
+				activated = ImGui::DragFloat4(("##z" + element.get_name()).c_str(), glm::value_ptr(value[3]));
 				if (activated)
 					element.set_value(component, value);
 			}
