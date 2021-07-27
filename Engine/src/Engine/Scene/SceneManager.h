@@ -149,28 +149,3 @@ namespace engine
 
 }
 
-
-//......
-
-
-
-/*
-* 
-* 
-auto& scene = SceneManager::CreateScene("Scene1.scn");
-
-scene.Load();
-scene.GetWorld()->RegisterSystem<A>();
-
-world.System<A>.Init();
-
-.....
-
-world.System<A>.Update();
-
-...
-
-world.System<A>.Exit();
-
-
-*/
