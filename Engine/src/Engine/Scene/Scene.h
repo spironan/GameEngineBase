@@ -59,11 +59,21 @@ namespace engine
 
 		void Unload()
 		{
-			//save data to file here
+			SaveToFile();
 
 			if (m_world)
 				WorldManager::DestroyWorld(m_world->GetID());
 			m_world = nullptr;
+		}
+
+		void SaveToFile()
+		{
+			SaveToFileName(m_filename);
+		}
+
+		void SaveToFileName(std::string const& filename)
+		{
+			//save data to file here
 		}
 
 		World& GetWorld()
