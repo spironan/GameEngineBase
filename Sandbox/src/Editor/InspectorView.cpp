@@ -18,7 +18,10 @@ enum : int
 	enum_INT,
 	enum_FLOAT,
 	enum_STRING,
-	enum_BOOL
+	enum_BOOL,
+	type_ENTITY,
+	type_VEC3,
+	type_MAT4,
 };
 
 InspectorView::InspectorView()
@@ -27,6 +30,9 @@ InspectorView::InspectorView()
 	m_tracked_ids.emplace_back(rttr::type::get<float>().get_id());
 	m_tracked_ids.emplace_back(rttr::type::get<std::string>().get_id());
 	m_tracked_ids.emplace_back(rttr::type::get<bool>().get_id());
+	m_tracked_ids.emplace_back(rttr::type::get<engine::Entity>().get_id());
+	m_tracked_ids.emplace_back(rttr::type::get<glm::vec3>().get_id());
+	m_tracked_ids.emplace_back(rttr::type::get<glm::mat4>().get_id());
 }
 void InspectorView::Show()
 {
