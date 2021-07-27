@@ -54,6 +54,7 @@ private:
 				if (ImGui::DragFloat(element.get_name().c_str(), &value))
 				{
 					element.set_value(component, value);
+					current_value = value;
 				}
 			}
 			else if (id == m_tracked_ids[type_STRING])
@@ -117,7 +118,7 @@ private:
 					redo.clear();
 					redo = current_value;
 					std::string temp = "Change value of element: " + element.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name;
-					ActionStack::AllocateInBuffer(new InspectorActionBehaviour{ temp, ObjectGroup::s_FocusedObject, element, undo, redo });
+					ActionStack::AllocateInBuffer(new InspectorActionBehaviour<Component>{ temp, ObjectGroup::s_FocusedObject, element, undo, redo });
 				}
 			}
 
