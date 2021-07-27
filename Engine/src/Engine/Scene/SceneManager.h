@@ -42,9 +42,10 @@ namespace engine
 		\brief    Adds a scene to the scene manager and if this is the first scene added
 		or the only scene, sets this as the active scene
 		 
-		\param    filename
+		\param    filename 
+			filename of the scene file this scene uses
 		\return   
-		
+			the added scene
 		*//**********************************************************************************/
 		static Scene& AddScene(std::string filename)
 		{
@@ -58,9 +59,10 @@ namespace engine
 		/*********************************************************************************//*!
 		\brief    Same as AddScene but also loads the scene
 
-		\param    filename
+		\param    filename 
+			filename of the scene file this scene uses
 		\return
-
+			the added scene
 		*//**********************************************************************************/
 		static Scene& CreateScene(std::string filename)
 		{
@@ -79,6 +81,25 @@ namespace engine
 			ENGINE_ASSERT(GetInstance().m_scenes.empty());
 			ENGINE_ASSERT(GetInstance().active_scene != GetInstance().m_scenes.end());
 			return *GetInstance().active_scene;
+
+		}
+		/*********************************************************************************//*!
+		\brief    Gets the scene with the specified filename
+		 
+		\param    filename
+			the specified filename
+		\return   
+			the scene with the specified filename, if not found, returns the first scene
+		*//**********************************************************************************/
+		static Scene& GetScene(std::string filename)
+		{
+			ENGINE_ASSERT(GetInstance().m_scenes.empty());
+			for (auto& i : GetInstance().m_scenes)
+			{
+				if (i.m_filename == filename)
+					return i;
+			}
+			return *GetInstance().m_scenes.begin();
 
 		}
 		/*********************************************************************************//*!
