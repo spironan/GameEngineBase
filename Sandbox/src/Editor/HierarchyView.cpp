@@ -65,12 +65,13 @@ void HierarchyView::ShowHierarchy()
 	else
 	{
 		bool activated = false;
-		ImGuiTreeNodeFlags flag = 0;
+		ImGuiTreeNodeFlags flag;
 		std::vector<std::uint32_t> depth;
-		depth.emplace_back(engine::SceneManager::GetActiveScene().GetRoot());
+		depth.emplace_back(0);//root
 
 		for (engine::Entity& ent : m_filterlist)
 		{
+			flag = 0;
 			engine::Transform3D& transform = static_cast<engine::GameObject>(ent).GetComponent<engine::Transform3D>();
 			if (ObjectGroup::s_FocusedObject == transform.GetEntity())
 			{
@@ -81,13 +82,13 @@ void HierarchyView::ShowHierarchy()
 					m_dragging = !ImGui::IsMouseReleased(ImGuiMouseButton_Left);
 				}
 			}
-			while (depth.back() != transform.GetParentId())
-			{
-				depth.pop_back();
-				ImGui::TreePop();
-				if (!depth.size())
-					return;
-			}
+			//while (depth.back() != transform.GetParentId())
+			//{
+			//	depth.pop_back();
+			//	ImGui::TreePop();
+			//	if (!depth.size())
+			//		return;
+			//}
 			if (transform.GetChildCount())
 			{
 				flag |= ImGuiTreeNodeFlags_OpenOnArrow;
@@ -138,7 +139,7 @@ void HierarchyView::ListHierarchy()
 	ImGuiTreeNodeFlags flag = 0;
 
 	std::vector<std::uint32_t> depth;
-	depth.emplace_back(0);
+	depth.emplace_back(0);//root
 	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
 	for (engine::Transform3D& transform : transformList)
 	{
@@ -230,7 +231,7 @@ void HierarchyView::Search()
 void HierarchyView::FilterByName(const std::string& target)
 {
 	m_filterlist.clear();
-	auto& transformList = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
+	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
 	for (engine::Transform3D& transform : transformList)
 	{
 		engine::GameObject& ent = static_cast<engine::GameObject>(transform.GetEntity());
