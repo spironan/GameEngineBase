@@ -51,18 +51,23 @@ void InspectorView::Show()
 		}
 	}
 
-	//ImGui::BeginChild("Ending bar");
-	//static bool docked = ImGui::FindWindowByName("inspector")->DockNode->LocalFlags;
-	//ImGui::Separator();
-	//if (ImGui::RadioButton("Toggle Lock",docked))
-	//{
-	//	auto& docknode = ImGui::FindWindowByName("inspector")->DockNode;
-	//	if (docknode->LocalFlags == 0)
-	//		docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
-	//	else
-	//		docknode->LocalFlags = 0;
-	//}
-	//ImGui::EndChild();
+	ImGui::BeginChild("Ending bar");
+	auto* dock = ImGui::FindWindowByName("inspector")->DockNode;
+	if(dock != nullptr)
+		static bool docked = dock->LocalFlags;
+	ImGui::Separator();
+	if (ImGui::RadioButton("Toggle Lock", dock))
+	{
+		auto* docknode = ImGui::FindWindowByName("inspector")->DockNode;
+		if (docknode != nullptr) 
+		{
+			if (docknode->LocalFlags == 0)
+				docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
+			else
+				docknode->LocalFlags = 0;
+		}
+	}
+	ImGui::EndChild();
 	ImGui::End();
 }
 
