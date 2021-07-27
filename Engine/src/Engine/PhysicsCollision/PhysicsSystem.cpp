@@ -1,3 +1,18 @@
+/************************************************************************************//*!
+\file          PhysicsSystem.cpp
+\project       <PROJECT_NAME>
+\author        Chua Teck Lee, c.tecklee, 390008420
+\par           email: c.tecklee\@digipen.edu
+\date          July 27, 2021
+\brief         Describes a Physics System that applies dynamics to all physics objects
+               performs collision detection between physics objects and 
+               resolve Physics based Collision resolution. 
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #include "pch.h"
 
 #include "PhysicsSystem.h"
@@ -23,14 +38,13 @@ namespace engine
 
             if (rb.UseGravity)
             {
-                rb.Force += rb.Mass * Gravity * rb.GravityScale;
-                rb.Velocity += rb.Force / rb.Mass * static_cast<float>(deltaTime);
+                rb.ApplyGravity(Gravity);
+                rb.UpdateVelocity(deltaTime);
             }
 
-            static_cast<engine::GameObject>(rb.GetEntity()).Transform.Position() 
-                += glm::vec3{ rb.Velocity, 0.f } * static_cast<float>(deltaTime);
+            rb.UpdatePosition(deltaTime);
 
-            rb.Force = glm::vec2{};
+            rb.SetForce(glm::vec2{0.f});
         }
     }
 
