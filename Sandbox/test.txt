@@ -1,0 +1,25 @@
+PlayerScript
+SCRIPTEND
+
+HealthScript
+totalHealth 45
+SCRIPTEND
+
+TweenScript
+enableTweenName DISABLE
+testValue tweenName TEST|type 3|from 0.5|to 1|duration 1|startDelay 10|isLoop 1
+tweenList
+tweenName DISABLE|type 5|from 0|to 1|duration 0.35|startDelay 0.0|isLoop 0
+tweenName ENABLE|type 1|from -180|to 180|duration 1.5|startDelay 0.5|isLoop 1
+tweenName DISABLE|type 2|from 1|to 0|duration 0.5|startDelay 0.15|isLoop 1
+LISTEND
+testList
+1
+0
+0
+LISTEND
+SCRIPTEND
+OBJECTEND
+
+Ouroboros/Component
+SCRIPTEND
