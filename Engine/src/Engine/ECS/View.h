@@ -55,6 +55,61 @@ namespace engine
 				return (m_entityManager.GetSignature(*m_curr) & m_signature) == m_signature;
 			}
 
+			
+			Iterator& operator+=(int i)
+			{
+				difference_type m = i;
+				if (m >= 0) while (m--) ++(*this);
+				else while (m++) --(*this);
+				return *this;
+			};
+
+			Iterator& operator-=(int i)
+			{
+				return (*this) += -i;
+			};
+
+			Iterator operator+(int i)
+			{
+				auto temp = *this;
+				return temp += i;
+			};
+
+			Iterator operator-(int i)
+			{
+				auto temp = *this;
+				return temp -= i;
+			};
+
+			difference_type operator-(Iterator i)
+			{
+				return m_curr - i.m_curr;
+			};
+
+			reference operator[](int i) const
+			{
+				return *(*this + i);
+			}
+
+			bool operator<(Iterator i)
+			{
+				return m_curr < i.m_curr;
+			}
+
+			bool operator<=(Iterator i)
+			{
+				return m_curr <= i.m_curr;
+			}
+
+			bool operator>(Iterator i)
+			{
+				return m_curr > i.m_curr;
+			}
+
+			bool operator>=(Iterator i)
+			{
+				return m_curr >= i.m_curr;
+			}
 
 			//pre
 			Iterator& operator++() 
