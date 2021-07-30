@@ -1,5 +1,5 @@
 /************************************************************************************//*!
-\file          RigidBody.h
+\file          Rigidbody2D.h
 \project       <PROJECT_NAME>
 \author        Chua Teck Lee, c.tecklee, 390008420
 \par           email: c.tecklee\@digipen.edu
@@ -20,12 +20,11 @@ Technology is prohibited.
 #include "Engine/ECS/Component.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Core/Timestep.h"
-//#include <glm/glm.hpp>
-#include <oom/oom.hpp>
+#include <glm/glm.hpp>
 
 namespace engine
 {
-    class RigidBody : public Component
+    class Rigidbody2D : public Component
     {
     public:
         bool IsStatic = false;
@@ -34,20 +33,20 @@ namespace engine
         float GravityScale = 1.0f;
 
         float Restitution = 0.f;
-        float DynamicFriction = 0.f;
-        float StaticFriction = 0.f;
+        float DynamicFriction = 0.01f;
+        float StaticFriction = 0.01f;
         
         /*-----------------------------------------------------------------------------*/
         /* Constructors and Destructors                                                */
         /*-----------------------------------------------------------------------------*/
-        RigidBody()                             = delete;
-        RigidBody(RigidBody const&)             = default;
-        RigidBody(RigidBody &&)                 = default;
-        RigidBody& operator=(RigidBody const&)  = default;
-        RigidBody& operator=(RigidBody &&)      = default;
-        virtual ~RigidBody() override           = default;
+        Rigidbody2D()                               = delete;
+        Rigidbody2D(Rigidbody2D const&)             = default;
+        Rigidbody2D(Rigidbody2D &&)                 = default;
+        Rigidbody2D& operator=(Rigidbody2D const&)  = default;
+        Rigidbody2D& operator=(Rigidbody2D &&)      = default;
+        virtual ~Rigidbody2D() override             = default;
 
-        RigidBody(Entity entity, bool active = true);
+        Rigidbody2D(Entity entity, bool active = true);
 
         /*********************************************************************************//*!
         \brief    Adds a force to the rigidbody
@@ -56,7 +55,7 @@ namespace engine
                 vector indicating the direction and strength of the force to apply onto
                 this object
         *//**********************************************************************************/
-        void AddForce(oom::vec2 force) { m_force += force; }
+        void AddForce(glm::vec2 force) { m_force += force; }
         
         /*********************************************************************************//*!
         \brief    Set the mass of the rigidbody with new mass
@@ -75,19 +74,21 @@ namespace engine
         *//**********************************************************************************/
         float GetMass() const { return m_mass; }
 
+        float GetInverseMass() const { return m_inverseMass; }
+
         /*********************************************************************************//*!
         \brief    Set the velocity of the rigidbody with new velocity.
 
         \param    newVel
                 The new velocity to assign this rigidbody's velocity to.
         *//**********************************************************************************/
-        void SetVelocity(oom::vec2 newVel) { m_velocity = newVel; }
+        void SetVelocity(glm::vec2 newVel) { m_linearVelocity = newVel; }
         /*********************************************************************************//*!
         \brief    Retrieve the current velocity of the rigidbody
 
         \return   the current velocity of the rigidbody.
         *//**********************************************************************************/
-        oom::vec2 GetVelocity() const { return m_velocity; }
+        glm::vec2 GetVelocity() const { return m_linearVelocity; }
 
 
         /*********************************************************************************//*!
@@ -96,23 +97,27 @@ namespace engine
         \param    newForce
                 The new force to assign this rigidbody's force to.
         *//**********************************************************************************/
-        void SetForce(oom::vec2 newForce) { m_force = newForce; }
+        void SetForce(glm::vec2 newForce) { m_force = newForce; }
         /*********************************************************************************//*!
         \brief    Retrieve the current force of the rigidbody
 
         \return   the current force of the rigidbody.
         *//**********************************************************************************/
-        oom::vec2 GetForce() const { return m_force; }
+        glm::vec2 GetForce() const { return m_force; }
 
     private:
-        oom::vec2 m_velocity = { 0.f, 0.f };
-        oom::vec2 m_force = { 0.f, 0.f };
+
+        glm::vec3 m_previoiusPosition = { 0.f, 0.f, 0.f };
+
+        glm::vec2 m_linearVelocity = { 0.f, 0.f };
+        glm::vec2 m_force = { 0.f, 0.f };
 
         float m_mass = 1.0f;
         float m_inverseMass = 1.0f / m_mass;
 
-
         friend class PhysicsSystem;
+
+        //void Interpolate(float alpha);
 
         /*********************************************************************************//*!
         \brief    Apply Gravity to object. Should only be called By Physics System.
@@ -120,7 +125,7 @@ namespace engine
         \param    gravity
                     Gravity of the world to apply to this rigidbody.
         *//**********************************************************************************/
-        void ApplyGravity(oom::vec2 gravity);
+        void ApplyGravity(glm::vec2 gravity);
 
         /*********************************************************************************//*!
         \brief    Updates the Velocity of the object with forces.

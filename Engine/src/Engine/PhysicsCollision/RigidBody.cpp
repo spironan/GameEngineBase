@@ -1,5 +1,5 @@
 /************************************************************************************//*!
-\file          RigidBody.cpp
+\file          Rigidbody2D.cpp
 \project       <PROJECT_NAME>
 \author        Chua Teck Lee, c.tecklee, 390008420
 \par           email: c.tecklee\@digipen.edu
@@ -16,18 +16,18 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "pch.h"
 
-#include "RigidBody.h"
+#include "Rigidbody.h"
 
 #include "Engine/ECS/GameObject.h"
 
 namespace engine
 {
-    RigidBody::RigidBody(Entity entity, bool active)
+    Rigidbody2D::Rigidbody2D(Entity entity, bool active)
         : Component { entity, active }
     {
     }
 
-    void RigidBody::SetMass(float newMass)
+    void Rigidbody2D::SetMass(float newMass)
     {
         ENGINE_ASSERT_MSG(newMass > 0.f, "Mass canont be lesser then 0!");
         if (newMass < 0.f)
@@ -36,19 +36,31 @@ namespace engine
         m_inverseMass = 1.0f / m_mass;
     }
 
-    void RigidBody::ApplyGravity(oom::vec2 gravity)
+    /*void Rigidbody2D::Interpolate(float alpha)
+    {
+        Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform;
+        glm::vec3 previous = m_previoiusPosition * alpha;
+        glm::vec3 current = trans.Position() * (1.f - alpha);
+        trans.Position() = previous + current;
+    }*/
+
+    void Rigidbody2D::ApplyGravity(glm::vec2 gravity)
     {
         AddForce(gravity * m_mass * GravityScale);
     }
 
-    void RigidBody::UpdateVelocity(Timestep dt)
+    void Rigidbody2D::UpdateVelocity(Timestep dt)
     {
-        m_velocity += m_force / m_mass * static_cast<float>(dt);
+        m_linearVelocity += (m_force / m_mass) * static_cast<float>(dt);
+
+        m_linearVelocity *= 1.f - DynamicFriction;  // is this correct for dynamic friction?
     }
 
-    void RigidBody::UpdatePosition(Timestep dt)
+    void Rigidbody2D::UpdatePosition(Timestep dt)
     {
-        static_cast<GameObject>(GetEntity()).Transform().Position() += oom::vec3{ m_velocity, 0.f } *static_cast<float>(dt);
+        Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform;
+        m_previoiusPosition = trans.GetPosition();
+        trans.Position() += glm::vec3{ m_linearVelocity, 0.f } * static_cast<float>(dt);
     }
 
 }
