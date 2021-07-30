@@ -5,7 +5,7 @@
 #include <rttr/variant.h>
 #include <vector>
 #include "Engine/Transform/Transform3D.h"
-
+#include "RttrTypeID.h"
 
 
 class InspectorView
@@ -15,16 +15,7 @@ public:
 	void Show();
 
 private:
-	enum type_rttrID : int
-	{
-		type_INT,
-		type_FLOAT,
-		type_STRING,
-		type_BOOL,
-		type_ENTITY,
-		type_VEC3,
-		type_MAT4,
-	};
+
 	template<typename Component>
 	void ReadComponents(Component& component)
 	{
@@ -143,6 +134,6 @@ private:
 		ImGui::PopID();
 		ImGui::EndChild();
 	}
-	std::vector <rttr::type::type_id> m_tracked_ids;
+	
 };
 

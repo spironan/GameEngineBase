@@ -12,6 +12,8 @@ Technology is prohibited.
 #pragma once
 #include <string>
 #include <vector>
+#include <rapidjson/document.h>
+#include <rapidjson/istreamwrapper.h>
 
 #include "Engine/Transform/Transform3D.h"
 class HierarchyView

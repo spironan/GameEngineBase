@@ -19,6 +19,7 @@ Technology is prohibited.
 #include <filesystem>
 
 #include <windows.h>
+#include <shellapi.h>
 
 const std::string FileGroup::s_rootPath = "./";
 std::string FileGroup::s_CurrentPath = s_rootPath;
