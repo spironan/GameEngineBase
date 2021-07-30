@@ -28,7 +28,7 @@ private:
 	void Search();
 	void FilterByName(const std::string& target);
 	void ToggleLockUI();
-
+	bool SetParent(engine::Entity entt);
 private:
 
 	bool m_dragging;
