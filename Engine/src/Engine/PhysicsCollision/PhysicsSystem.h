@@ -15,10 +15,13 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+#include "Engine/PhysicsCollision/PhysicsFwd.h"
 #include "Engine/ECS/System.h"
 #include "Engine/Core/Timestep.h"
-//#include <glm/glm.hpp>
-#include <oom/oom.hpp>
+#include "Engine/ECS/World.h"
+#include "Engine/PhysicsCollision/Manifold.h"
+
+#include "Solvers/ImpulseSolver.h"
 
 namespace engine
 {
@@ -34,6 +37,9 @@ namespace engine
         PhysicsSystem(ECS_Manager& ECS_Manager) 
             : System { ECS_Manager } 
             , Gravity { 0.f, -9.81f }
+            , m_collisions { }
+            , m_triggers { }
+            //, m_accumulator{ 0.f }
         {};
 
 
@@ -45,12 +51,18 @@ namespace engine
         *//**********************************************************************************/
         void Update(Timestep deltaTime);
         
-        oom::vec2 Gravity;
+        vec2 Gravity;
 
     private:
         void UpdateDynamics(Timestep deltaTime);
         void UpdatePhysicsCollision();
-        void UpdatePhysicsResolution();
+        void UpdatePhysicsResolution(Timestep deltaTime);
 
+        //float m_accumulator;
+        std::vector<Manifold2D> m_collisions;
+        std::vector<Manifold2D> m_triggers;
+        //std::vector<Solver> m_solvers;
+
+        ImpulseSolver m_impulseSolver;
     };
 }

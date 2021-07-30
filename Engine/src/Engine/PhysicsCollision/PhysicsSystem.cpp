@@ -20,18 +20,31 @@ Technology is prohibited.
 
 #include "Engine/ECS/GameObject.h"
 
-#include "RigidBody.h"
+#include "Rigidbody.h"
+
+#include "BoxCollider.h"
+
+#include "Engine/Transform/TransformSystem.h"
+
+#include "Manifold.h"
 
 namespace engine
 {
+    //static float FixedDeltaTime = 1 / 60.f;
+
     void PhysicsSystem::Update(Timestep deltaTime)
     {
         UpdateDynamics(deltaTime);
+        UpdatePhysicsCollision();
+        UpdatePhysicsResolution(deltaTime);
+
     }
 
     void PhysicsSystem::UpdateDynamics(Timestep deltaTime)
     {
-        auto& container = m_ECS_Manager.GetComponentDenseArray<RigidBody>();
+        // Update dynamics
+        auto& container = m_ECS_Manager.GetComponentDenseArray<Rigidbody2D>();
+
         for (auto& rb : container)
         {
             if (rb.IsStatic) continue;
@@ -39,22 +52,63 @@ namespace engine
             if (rb.UseGravity)
             {
                 rb.ApplyGravity(Gravity);
-                rb.UpdateVelocity(deltaTime);
             }
 
+            rb.UpdateVelocity(deltaTime);
             rb.UpdatePosition(deltaTime);
 
-            rb.SetForce(oom::vec2{0.f});
+            if (rb.UseGravity) rb.AddForce(-Gravity * rb.GravityScale * rb.m_mass); //normal gravity force acting against object
+
+            //rb.SetForce(glm::vec2{ 0.f });
         }
+
+
     }
 
     void PhysicsSystem::UpdatePhysicsCollision()
     {
+        //Broadphase Collection Generation : Collider
 
+
+        //Broadphase Rejection
+
+
+        //NarrowPhase Check
+
+
+        //Generate Manifold : Rigidbody only. If trigger : 2 flags and set them
+        //_mm_rsqrt_ss
+
+        auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, BoxCollider2D>();
+
+        for (auto& ent : view)
+        {
+            auto& collider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
+            for (auto& ent2 : view)
+            {
+                auto& collider2 = m_ECS_Manager.GetComponent<BoxCollider2D>(ent2);
+                if (collider.GetEntity() == collider2.GetEntity()) break;
+
+                /*if(collider.TestCollision(&collider2))
+                    LOG_INFO("Collision!");*/
+                
+                Manifold2D result = collider.TestCollision(&collider2);
+                LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
+                if (result.HasCollision) m_collisions.emplace_back(result);
+                
+            }
+        }
+        
     }
 
-    void PhysicsSystem::UpdatePhysicsResolution()
+    void PhysicsSystem::UpdatePhysicsResolution(Timestep dt)
     {
+        //Resolve all the collision
+        /*for (Solver* solver : m_solvers) {
+            solver->Solve(m_collisions, dt);
+        }*/
+        m_impulseSolver.Solve(m_collisions, dt);
+        // Update all Triggers
 
     }
 
