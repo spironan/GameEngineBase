@@ -141,6 +141,26 @@ namespace engine
 
     }
 
+    void TransformSystem::UpdateTransform()
+    {
+        // Grab Transforms from ECS manager
+        for (auto& currTransform : m_ECS_Manager.GetComponentDenseArray<Transform3D>())
+        {
+            //recalculate if transform has been changed this frame
+            if (currTransform.IsDirty())
+            {
+                currTransform.Recalculate();
+            }
+
+            //Always update the global transform
+            // for the root node it'll just update itself against Identity thus nothing happens.
+            // Recalculate global transform : Assumption is that parent ALWAYS Exist.
+            // calculated global transform : localTransform * parentTransform
+            // by default its a transformation else it does coordinate conversion
+            currTransform.SetGlobalMatrix();
+        }
+    }
+
     /****************************************************************************//*!
       @brief  Attaches child GameObject to Parent GameObject in a scenegraph manner
               Allows data to be laid in a way that one can do iteration

@@ -69,7 +69,7 @@ namespace engine
         /****************************************************************************//*!
          @brief    Updates all transforms in a scene-graph manner recursively
         *//*****************************************************************************/
-        //void UpdateTransform();
+        void UpdateTransform();
 
         /****************************************************************************//*!
          @brief     Attaches child GameObject to Parent GameObject in a scenegraph manner
