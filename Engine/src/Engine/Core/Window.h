@@ -28,7 +28,7 @@ namespace engine
         unsigned int Width = 1600;
         unsigned int Height = 900;
         bool Fullscreen = false;
-        bool VSync = false;
+        bool VSync = true;
     };
 
     /********************************************************************************//*!
