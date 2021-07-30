@@ -130,17 +130,41 @@ void HierarchyView::ShowHierarchy()
 void HierarchyView::ListHierarchy()
 {
 	bool activated = false;
-	ImGuiTreeNodeFlags flag = 0;
+	bool showTree = false;
+	//default flag for the first node
+	ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_DefaultOpen ;
 	int treePop = 0;
 	std::vector<std::uint32_t> depth;
-	depth.emplace_back(0);//root
+	engine::Entity root = 0;//todo use scenemanager to get rootnode after its ready
+	depth.emplace_back(root);//root
 	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
-	for (size_t i = 0; i < transformList.size() ; ++i)
+	
+	//display the root node
+	if (transformList.size())
+	{
+		depth.emplace_back(root);
+		++treePop;
+		ImGui::Separator();
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.5f,0.5f,1.0f });
+		showTree = ImGui::TreeNodeEx(engine::GameObject(root).Name.c_str(), flag);
+		SetParent(root);
+		ImGui::PopStyleColor();
+		ImGui::Separator();
+
+
+		//if tree is not open nothing is shown
+		if (!showTree)
+			return;
+		
+	}
+	//reset the flag after use
+	flag = 0;
+
+	for (size_t i = (showTree)? 1:-1 ; i < transformList.size() ; ++i)//skip the root node
 	{
 		engine::Transform3D& transform = transformList[i];
-		if (transform.GetEntity() == 0) continue;
 
-		flag = 0;
+		
 		if (ObjectGroup::s_FocusedObject == transform.GetEntity())
 		{
 			flag = ImGuiTreeNodeFlags_Selected;
@@ -153,9 +177,6 @@ void HierarchyView::ListHierarchy()
 		//check if theres an error here TODO
 		while (depth.back() != transform.GetParentId())
 		{
-			//if (depth.size() == 1)
-			//	return;
-			std::uint32_t temp = depth.back();
 			depth.pop_back();
 			ImGui::TreePop();
 			--treePop;
@@ -179,22 +200,12 @@ void HierarchyView::ListHierarchy()
 			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name.c_str(), flag);
 			ImGui::PopID();
 		}
-
+		flag = 0;//reset flag after use
 		if (ImGui::IsItemClicked())
 			ObjectGroup::s_FocusedObject = transform.GetEntity();
 		//drop
-		if (ImGui::BeginDragDropTarget())
-		{
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
-			if (payload)
-			{
-				m_dragging = false;
-				static_cast<engine::GameObject>(transform.GetEntity()).AddChild(ObjectGroup::s_FocusedObject);
-				ImGui::EndDragDropTarget();
-				break;
-			}
-			ImGui::EndDragDropTarget();
-		}
+		if (SetParent(transform.GetEntity()))
+			break;
 		//drag
 		if (ObjectGroup::s_FocusedObject && ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
 		{
@@ -258,5 +269,22 @@ void HierarchyView::ToggleLockUI()
 		window->DockNode->LocalFlags = ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoTabBar;
 	else
 		window->DockNode->LocalFlags = 0;
+}
+
+bool HierarchyView::SetParent(engine::Entity entt)
+{
+	if (ImGui::BeginDragDropTarget())
+	{
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
+		if (payload)
+		{
+			m_dragging = false;
+			static_cast<engine::GameObject>(entt).AddChild(ObjectGroup::s_FocusedObject);
+			ImGui::EndDragDropTarget();
+			return true;
+		}
+		ImGui::EndDragDropTarget();
+	}
+	return false;
 }
 
