@@ -11,6 +11,8 @@
 #include "EditorFileGroup.h"
 #include "EditorObjectGroup.h"
 
+#include "RttrTypeID.h"
+
 #include <imgui.h>
 #include <string>
 #include <filesystem>
@@ -94,16 +96,28 @@ void ProjectFolderView::ProjectView()
 		if (m_filtering && entry.path().filename().u8string().find(m_filter) == std::string::npos)
 			continue;
 
+
 		ImGui::BeginGroup();//start
+
 		//change this would be changed once rendering is integrated
 		if (entry.path().filename().has_extension() == false)
 			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize }, { 0,0 }, { 0.125,1 });
 		else
 			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize });
 
+		//drag
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
+		{
+			ImGui::SetDragDropPayload("PREFAB_OBJ",nullptr,0);
+			ImGui::Text("%s", FileGroup::s_hoveredPath.c_str());
+			ImGui::EndDragDropSource();
+		}
+
 		//text of the filename
 		ImGui::TextWrapped(entry.path().filename().generic_u8string().c_str());
 		ImGui::EndGroup();//end
+
+
 		ImGui::TableNextColumn();//item done
 
 		//interactions of item
@@ -133,56 +147,40 @@ void ProjectFolderView::ProjectView()
 			}
 			FileGroup::s_hoveredPath = entry.path().u8string();
 		}
+
 	}
 	ImGui::EndTable();
 	//drag and drop interaction for prefab
-	//if (ImGui::BeginDragDropTarget())
-	//{
-	//	const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
-	//	if (payload)
-	//	{
-	//		std::ofstream stream("prefab");
-	//		rapidjson::OStreamWrapper osw(stream);
-	//		rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
-	//		writer.StartObject();
-	//		SaveHeirarchy(ObjectGroup::s_FocusedObject, writer);
-	//		writer.EndObject();
-	//	}
-	//	ImGui::EndDragDropTarget();
-	//}
-}
-
-void ProjectFolderView::SaveHeirarchy(testclass* object, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
-{
-	SaveObject(object, writer);
-	for (int i = 0; i < object->childs.size(); ++i)
+	if (ImGui::BeginDragDropTarget())
 	{
-		SaveHeirarchy(object->childs[i], writer);
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
+		if (payload)
+		{
+			std::ofstream stream("prefab.orofab");
+			rapidjson::OStreamWrapper osw(stream);
+			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+			writer.StartObject();
+			SaveHierarchy(static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject), writer);
+			writer.EndObject();
+		}
+		ImGui::EndDragDropTarget();
 	}
-}
-void ProjectFolderView::SaveObject(testclass* object, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
-{
-	std::vector<rttr::property> list = rttr::type::get<testclass>().get_properties();
 
-	writer.Key(std::to_string(object->uid).c_str());
+}
+
+void ProjectFolderView::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+{
+	SaveObject(go, writer);
+}
+void ProjectFolderView::SaveObject(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+{
+	writer.Key(std::to_string(go.GetID()).c_str());
 	writer.StartArray();
-
-	writer.Key(object->get_type().get_name().c_str());
-	writer.StartArray();//start component 1
-	for (int j = 0; j < list.size(); ++j)
-	{
-		if (list[j].get_type() == rttr::type::get<int>())
-		{
-			writer.Int(list[j].get_value(*object).to_int());
-		}
-		else if (list[j].get_type() == rttr::type::get<std::string>())
-		{
-			writer.String(list[j].get_value(*object).to_string().c_str());
-		}
-	}
-	writer.EndArray();//end component 1
+	if(go.TryGetComponent<engine::Transform3D>())
+		SaveComponent<engine::Transform3D>(go.GetComponent<engine::Transform3D>(),writer);
 	writer.EndArray();
 }
+
 
 void ProjectFolderView::PathDir(std::filesystem::path& entry, std::string& path)
 {

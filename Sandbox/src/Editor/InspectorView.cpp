@@ -15,16 +15,10 @@
 #include <rttr/type>
 #include <string>
 
+using namespace rttr_type_ID;
 
 InspectorView::InspectorView()
 {
-	m_tracked_ids.emplace_back(rttr::type::get<int>().get_id());
-	m_tracked_ids.emplace_back(rttr::type::get<float>().get_id());
-	m_tracked_ids.emplace_back(rttr::type::get<std::string>().get_id());
-	m_tracked_ids.emplace_back(rttr::type::get<bool>().get_id());
-	m_tracked_ids.emplace_back(rttr::type::get<engine::Entity>().get_id());
-	m_tracked_ids.emplace_back(rttr::type::get<glm::vec3>().get_id());
-	m_tracked_ids.emplace_back(rttr::type::get<glm::mat4>().get_id());
 }
 void InspectorView::Show()
 {

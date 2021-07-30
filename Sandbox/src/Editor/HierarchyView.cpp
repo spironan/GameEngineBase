@@ -13,9 +13,12 @@ Technology is prohibited.
  *********************************************************************/
 #include "HierarchyView.h"
 #include "EditorObjectGroup.h"
+#include "EditorFileGroup.h"
 #include "Editor.h"
 #include "Engine/Scene/SceneManager.h"
 #include "Engine/ECS/WorldManager.h"
+
+#include "Seralizer.h"
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -28,7 +31,7 @@ void HierarchyView::Show()
 {
 	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });//only works when undocked
 	ImGui::Begin("Hierarchy");
-	
+
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
 		ImGui::OpenPopup("HierarchyViewPopUp");
 
@@ -47,8 +50,9 @@ void HierarchyView::HierarchyPopUp()
 {
 	if (ImGui::MenuItem("New Object"))
 	{
-		engine::GameObject go;
-		go.Name = "New GameObject";
+		engine::GameObject ent;
+		(ent).AddComponent<engine::Transform3D>();
+		engine::GameObject(0).AddChild(ent);
 	}
 	if (ImGui::MenuItem("Toggle lock UI"))
 	{
@@ -58,6 +62,7 @@ void HierarchyView::HierarchyPopUp()
 
 void HierarchyView::ShowHierarchy()
 {
+
 	if (m_filtered == false)
 	{
 		ListHierarchy();
@@ -142,29 +147,33 @@ void HierarchyView::ListHierarchy()
 	//display the root node
 	if (transformList.size())
 	{
-		depth.emplace_back(root);
-		++treePop;
 		ImGui::Separator();
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.5f,0.5f,1.0f });
 		showTree = ImGui::TreeNodeEx(engine::GameObject(root).Name.c_str(), flag);
 		SetParent(root);
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB_OBJ");
+			if (payload)
+			{
+				Serializer::LoadObject(FileGroup::s_hoveredPath);
+			}
+			ImGui::EndDragDropTarget();
+		}
 		ImGui::PopStyleColor();
 		ImGui::Separator();
-
 
 		//if tree is not open nothing is shown
 		if (!showTree)
 			return;
-		
+		depth.emplace_back(root);
+		++treePop;
 	}
-	//reset the flag after use
-	flag = 0;
 
-	for (size_t i = (showTree)? 1:-1 ; i < transformList.size() ; ++i)//skip the root node
+	for (size_t i = 1 ; i < transformList.size() ; ++i)//skip the root node
 	{
+		flag = 0;//reset flag before use
 		engine::Transform3D& transform = transformList[i];
-
-		
 		if (ObjectGroup::s_FocusedObject == transform.GetEntity())
 		{
 			flag = ImGuiTreeNodeFlags_Selected;
@@ -200,7 +209,6 @@ void HierarchyView::ListHierarchy()
 			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name.c_str(), flag);
 			ImGui::PopID();
 		}
-		flag = 0;//reset flag after use
 		if (ImGui::IsItemClicked())
 			ObjectGroup::s_FocusedObject = transform.GetEntity();
 		//drop
