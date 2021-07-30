@@ -188,7 +188,7 @@ namespace engine
         bool proceedNegatively = diff > 0;
 
         // calculate number of times required to swap for each iteration
-        diff = proceedNegatively ? diff - 1 : -diff;
+        //diff = proceedNegatively ? diff - 1 : -diff;
 
         // find number of times to iterate : 1(itself) + once per child 
         int iterations = 1 + child_childCount;
@@ -196,10 +196,14 @@ namespace engine
         // iterate through and swap all relevant index(es)
         for(int currentIter = 0; currentIter < iterations; ++currentIter)
         {
-            int start_idx = child_idx + (child_childCount - currentIter);
-            int end_idx = parent_idx - currentIter;
-            
-            int swapCount = diff;
+            // Calculate start and end index depending on whether we are 
+            // iteratively swapping forward or backwards based on the diff and current
+            // iteration.
+            int start_idx = child_idx + child_childCount - !proceedNegatively * currentIter;
+            int end_idx = parent_idx - !proceedNegatively * currentIter;
+
+            // calculate number of times to swap
+            int swapCount = proceedNegatively ? start_idx - end_idx - 1 : end_idx - start_idx;
             while (swapCount--)
             {
                 // find the next index

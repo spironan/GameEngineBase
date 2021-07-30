@@ -41,7 +41,7 @@ namespace engine
             .property("Rotation Axis", &Transform3D::GetRotationAxis, &Transform3D::SetRotationAxis)
             .property("Rotation Angle", &Transform3D::GetRotationAngle, &Transform3D::SetRotationAngle)
             .property("Scaling", &Transform3D::GetScale, &Transform3D::SetScale)
-            .property_readonly("My ID", &Transform3D::GetEntity)
+            .property_readonly("My ID", &Transform3D::GetID)
             .property_readonly("Parent ID",&Transform3D::GetParentId)
             .property_readonly("No Of Childs", &Transform3D::GetChildCount)
             .property_readonly("Local Matrix", &Transform3D::GetLocalMatrix)
@@ -126,10 +126,10 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::SetParent(Transform3D& parent)
     {
-        // Reduce child count of current parent 
+        // Reduce child count of current parent if parent isnt itself.
         if (m_parentId != m_entity)
         {
-            static_cast<GameObject>(m_parentId).Transform.m_childCount -= 1 + m_childCount;
+            static_cast<GameObject>(m_parentId).Transform.DecrementChildCount(1 + m_childCount);
         }
         // set parent child count to be equals to its current amount + 1(this object) + childCount(number of children this object has)
         parent.IncrementChildCount(1 + m_childCount);
@@ -138,10 +138,10 @@ namespace engine
     }
 
     /****************************************************************************//*!
-     @brief     Helper function to recursively decrement child count of all
+     @brief     Helper function to recursively increment child count of all
                 parent nodes.
 
-     @param[in]    childCount
+     @param    childCount
                 the number of children to increment the new parent's child count by.
     *//*****************************************************************************/
     void Transform3D::IncrementChildCount(int childCount)
@@ -150,6 +150,22 @@ namespace engine
         if (m_parentId != m_entity)
         {
             static_cast<engine::GameObject>(m_parentId).Transform.IncrementChildCount(childCount);
+        }
+    }
+
+    /*********************************************************************************//*!
+     @brief     Helper function to recursively decrement child count of all
+                parent nodes.
+
+     @param    childCount
+                the number of children to decrement the new parent's child count by.
+    *//**********************************************************************************/
+    void engine::Transform3D::DecrementChildCount(int childCount)
+    {
+        m_childCount -= childCount;
+        if (m_parentId != m_entity)
+        {
+            static_cast<engine::GameObject>(m_parentId).Transform.DecrementChildCount(childCount);
         }
     }
 

@@ -22,7 +22,10 @@ Technology is prohibited.
 
 namespace engine
 {
-
+    /****************************************************************************//*!
+     @brief     GameObjectComponent holds essential/useful
+                information in gneeral that each gameobject has
+    *//*****************************************************************************/
     struct GameObjectComponent final
     {
         GameObjectComponent() = default;
@@ -41,7 +44,6 @@ namespace engine
     private:
         Entity m_entity;
 
-        //std::vector<GameObject*> children;
     public:
         Transform3D&    Transform;
         bool&           ActiveSelf;
@@ -53,21 +55,17 @@ namespace engine
         GameObject& operator=(GameObject const&); //= default;
         GameObject& operator=(GameObject&&)       = default;
 
-        void Destroy();
-
+        //Construct GameObject Based on Entity
         GameObject(Entity entt);
+
+        // use with caution, should not immediately delete the object
+        void Destroy();
 
         //implicit cast operator
         operator Entity() const { return m_entity; }
 
         Entity GetID() const { return m_entity; }
 
-        //constexpr bool IsActive() const { return m_active; }
-        
-        //Transform3D& Transform() const { return m_transform; }
-
-        //void SetActive(bool const active) { m_active = active; }
-        
         void AddChild(GameObject const& gameObj, bool preserveTransforms = false);
         void AddChild(std::initializer_list<GameObject> gameObjs, bool preserveTransforms = false);
 
@@ -77,19 +75,8 @@ namespace engine
         // CAN BE DONE BUT NOT REQUIRED RIGHT NOW
         //GameObject* FindGameObjectInChildrenByName(std::string const& name);
 
-        // Retrieve the index of the gameobject.
-        //int IndexPosition() const
-        //{
-        //    // do code here to return the index
-        //    return ;
-        //}
-
-
         template<typename Component>
         Component& GetComponent() const;
-        
-        /*template<>
-        Transform3D& GetComponent() const { return m_transform; }*/
 
         template<typename Component>
         Component* TryGetComponent() const;

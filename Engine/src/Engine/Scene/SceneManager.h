@@ -19,6 +19,10 @@ namespace engine
 {
 	class SceneManager
 	{
+	public:
+		using container_type = std::list<Scene>;
+		using iterator = container_type::iterator;
+		
 	private:
 		SceneManager() = default;
 		~SceneManager() = default;
@@ -30,20 +34,19 @@ namespace engine
 		}
 
 	private:
-		std::list<Scene> m_scenes;
-		std::list<Scene>::iterator active_scene = m_scenes.end();
+		container_type m_scenes{};
+		iterator active_scene = m_scenes.end();
 
 	public:
-		static Scene& CreateScene(std::string filename)
-		{
-			auto& scene = GetInstance().m_scenes.emplace_back(filename);
-			if (GetInstance().m_scenes.size() == 1)
-			{
-				GetInstance().active_scene = GetInstance().m_scenes.begin();
-			}
-			return scene;
-		}
-
+		/*********************************************************************************//*!
+		\brief    Adds a scene to the scene manager and if this is the first scene added
+		or the only scene, sets this as the active scene
+		 
+		\param    filename 
+			filename of the scene file this scene uses
+		\return   
+			the added scene
+		*//**********************************************************************************/
 		static Scene& AddScene(std::string filename)
 		{
 			auto& scene = GetInstance().m_scenes.emplace_back(filename);
@@ -53,7 +56,26 @@ namespace engine
 			}
 			return scene;
 		}
+		/*********************************************************************************//*!
+		\brief    Same as AddScene but also loads the scene
 
+		\param    filename 
+			filename of the scene file this scene uses
+		\return
+			the added scene
+		*//**********************************************************************************/
+		static Scene& CreateScene(std::string filename)
+		{
+			auto& temp = GetInstance().AddScene(filename);
+			temp.Load();
+			return temp;
+		}
+		/*********************************************************************************//*!
+		\brief    Returns the current active scene
+		 
+		\return   current active scene
+		
+		*//**********************************************************************************/
 		static Scene& GetActiveScene()
 		{
 			ENGINE_ASSERT(GetInstance().m_scenes.empty());
@@ -61,13 +83,59 @@ namespace engine
 			return *GetInstance().active_scene;
 
 		}
+		/*********************************************************************************//*!
+		\brief    Gets the scene with the specified filename
+		 
+		\param    filename
+			the specified filename
+		\return   
+			the scene with the specified filename, if not found, returns the first scene
+		*//**********************************************************************************/
+		static Scene& GetScene(std::string filename)
+		{
+			ENGINE_ASSERT(GetInstance().m_scenes.empty());
+			for (auto& i : GetInstance().m_scenes)
+			{
+				if (i.m_filename == filename)
+					return i;
+			}
+			return *GetInstance().m_scenes.begin();
 
+		}
+		/*********************************************************************************//*!
+		\brief    Sets the current active scene as the scene with the specified filename
+		 
+		\param    filename filename of the scene to set
+		\return   current active scene after it has been set
+		
+		*//**********************************************************************************/
+		static Scene& SetActiveScene(std::string filename)
+		{
+			for (iterator i = GetInstance().m_scenes.begin(); i != GetInstance().m_scenes.end(); ++i)
+			{
+				if (i->m_filename == filename)
+				{
+					GetInstance().active_scene = i;
+				}
+			}
+		}
+		/*********************************************************************************//*!
+		\brief    Gets the world of the current active scene
+		 
+		\return   world of the current active scene
+		
+		*//**********************************************************************************/
 		static World& GetActiveWorld()
 		{
 			return GetActiveScene().GetWorld();
 
 		}
-
+		/*********************************************************************************//*!
+		\brief    Gets the root gameobject of the world of the current active scene
+		 
+		\return   root gameobject of the world of the current active scene
+		
+		*//**********************************************************************************/
 		static GameObject& GetActiveRoot()
 		{
 			return GetActiveScene().GetRoot();
@@ -81,28 +149,3 @@ namespace engine
 
 }
 
-
-//......
-
-
-
-/*
-* 
-* 
-auto& scene = SceneManager::CreateScene("Scene1.scn");
-
-scene.Load();
-scene.GetWorld()->RegisterSystem<A>();
-
-world.System<A>.Init();
-
-.....
-
-world.System<A>.Update();
-
-...
-
-world.System<A>.Exit();
-
-
-*/

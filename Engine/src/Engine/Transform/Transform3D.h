@@ -4,7 +4,7 @@
 \author         Chua Teck Lee, c.tecklee, 390008420
 \par            email: c.tecklee\@digipen.edu
 \date           Jul 22, 2021
-\brief          Defines a 2D transform component. A Transform Component is used to
+\brief          Defines a 3D transform component. A Transform Component is used to
                 identify a position in space and how much to rotate and scale the 
                 object by.
                 Refer to this as a template of how to implement a component.
@@ -23,13 +23,7 @@ Technology is prohibited.
 #include <rttr/type>
 
 namespace engine 
-{ 
-    /********************************************************************************//*!
-     @brief    Defines a 2D transform component. A Transform Component is used to
-               identify a position in space and how much to rotate and scale the 
-               object by.
-               Refer to this as a template of how to implement a component.
-    *//*********************************************************************************/
+{
     class Transform3D final : public Component
     {
       public:
@@ -47,9 +41,9 @@ namespace engine
         /****************************************************************************//*!
          @brief     Overloaded constructor for transform component
          
-         @param[in]     entityID 
+         @param     entityID 
                 The id that is attached to the entity.
-         @param[in]     active 
+         @param     active 
                 Determines if the component is active or not.
         *//*****************************************************************************/
         Transform3D(Entity entityID, bool active = true);
@@ -91,10 +85,11 @@ namespace engine
                     Runtime has been executed, this will be the position from the previous
                     frame.
 
-         @return    An AEVec2 that represents the previous position of this Component in
+         @return    An glm::vec3 that represents the previous position of this Component in
                     global coordinates.
         *//*****************************************************************************/
         glm::vec3 GetGlobalPosition() const { return m_globalTransform[3] ; }
+
         /****************************************************************************//*!
          @brief     Retrieves the global rotation matrix of this object from the global
                     transformation matrix.
@@ -180,27 +175,41 @@ namespace engine
         *//*****************************************************************************/
         void ConvertCoordinates() { m_dirty = true; m_conversion = true; }
         
+
+        // Temporary way to get the id of the transform component : should delete
+        // and find better fix.[TODO]
+        Entity GetID() { return GetEntity(); }
+
+        RTTR_ENABLE();
+    
+    private:
+        
+        friend class TransformSystem;
         /****************************************************************************//*!
          @brief     Assign this transform parent class
 
-         @param[in]    parent
+         @param     parent
                 The new parent of this transform class
         *//*****************************************************************************/
         void SetParent(Transform3D& parent);
-
-
-        RTTR_ENABLE();
-
-    private:
 
         /****************************************************************************//*!
          @brief     Helper function to recursively decrement child count of all
                     parent nodes.
 
-         @param[in]    childCount
-                    the number of children to increment the new parent's child count by.
+         @param     childCount
+                the number of children to increment the new parent's child count by.
         *//*****************************************************************************/
         void IncrementChildCount(int childCount);
+
+        /*********************************************************************************//*!
+         @brief     Helper function to recursively decrement child count of all
+                    parent nodes.
+
+         @param     childCount
+                the number of children to decrement the new parent's child count by.
+        *//**********************************************************************************/
+        void DecrementChildCount(int childCount);
 
         int m_childCount;
         Entity m_parentId;
