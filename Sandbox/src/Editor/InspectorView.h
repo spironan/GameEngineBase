@@ -22,10 +22,10 @@ private:
 		bool is_readonly;
 		std::vector<rttr::property> types = component.get_type().get_properties();
 		rttr::variant current_value;
-		if (ImGui::CollapsingHeader(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_Framed) == false)
+		if (ImGui::CollapsingHeader(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed) == false)
 			return;
 
-		ImGui::PushID(ObjectGroup::s_FocusedObject);
+		ImGui::PushID(component.get_type().get_name().c_str());
 		for (const rttr::property& element : types)
 		{
 			is_readonly = element.is_readonly();
