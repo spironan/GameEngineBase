@@ -14,6 +14,8 @@ namespace engine
     class CircleCollider2D;
 
     struct Manifold2D;
+    struct PhysicsMaterial;
+    struct MassData;
 
     class ImpulseSolver;
 }
