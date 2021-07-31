@@ -64,10 +64,9 @@ namespace engine
 		{
 			if (IsRegistered<T>() == false)
 				RegisterComponent<T>();
-			auto comp = GetComponentArray<T>()->InsertData(entity, component);
-			Component* base = static_cast<Component*>(&*comp);
-			base->SetEntity(entity);
-			return *comp;
+			auto& comp = GetComponentArray<T>()->InsertData(entity, component);			
+			comp->SetEntity(entity);
+			return comp;
 		}
 
 		template<typename T>
@@ -80,12 +79,28 @@ namespace engine
 		}
 
 		template<typename T, typename... args>
-		T& EmplaceComponent(Entity entity, args&&... arguementList)
+		std::enable_if_t<std::is_base_of<Component, T>::value == false, T&> EmplaceComponent(Entity entity, args&&... arguementList)			
 		{
 			if (IsRegistered<T>() == false)
 				RegisterComponent<T>();
 			return GetComponentArray<T>()->EmplaceData(entity, std::forward<args>(arguementList)...);
 		}
+
+		template<typename T, typename... args>
+		std::enable_if_t<std::is_base_of<Component, T>::value, T&> EmplaceComponent(Entity entity, args&&... arguementList)
+		{
+			if (IsRegistered<T>() == false)
+				RegisterComponent<T>();
+			return GetComponentArray<T>()->EmplaceData(entity, std::forward<args>(arguementList)...);
+		}
+
+		/*template<typename T, typename... args>
+		std::enable_if_t<std::is_base_of<Component, T>::value, T&> EmplaceComponent(Entity entity,bool active, args&&... arguementList)
+		{
+			if (IsRegistered<T>() == false)
+				RegisterComponent<T>();
+			return GetComponentArray<T>()->EmplaceData(entity, entity, active, std::forward<args>(arguementList)...);
+		}*/
 
 		template<typename T>
 		void RemoveComponent(Entity entity)
@@ -167,6 +182,25 @@ namespace engine
 		{
 			return GetContainer<T>().GetDenseContainer();
 		}
+
+		template<typename T>
+		std::enable_if_t<std::is_base_of<Component, T>::value, void> Swap(typename ComponentArray<T>::container_type::dense_container::size_type index1,
+			typename ComponentArray<T>::container_type::dense_container::size_type index2)
+		{
+			auto& cont = GetContainer();
+			cont.Swap(index1, index2);
+			cont.AtIndex(index1).SetEntity(cont.AtIndexSparse(index1));
+			cont.AtIndex(index2).SetEntity(cont.AtIndexSparse(index2));
+		}
+
+		template<typename T>
+		std::enable_if_t<std::is_base_of<Component, T>::value == false, void> Swap(typename ComponentArray<T>::container_type::dense_container::size_type index1,
+			typename ComponentArray<T>::container_type::dense_container::size_type index2)
+		{
+			GetContainer().Swap(index1, index2);
+		}
+
+
 	private:
 		TypeContainer m_ComponentTypes{};
 		ComponentContainer m_ComponentArrays{};

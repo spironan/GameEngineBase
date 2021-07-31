@@ -83,6 +83,16 @@ namespace engine
             return &(m_dense[m_index[index]]);
         }
 
+        T& AtIndex(size_type const index)
+        {
+            return m_dense[index];
+        }
+
+        typename sparse_container::value_type AtIndexSparse(size_type const index)
+        {
+            return m_sparse[index];
+        }
+
         T* operator[](size_type const index)
         {
             return At(index);
