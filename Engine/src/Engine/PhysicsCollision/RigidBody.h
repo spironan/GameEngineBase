@@ -20,21 +20,35 @@ Technology is prohibited.
 #include "Engine/ECS/Component.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Core/Timestep.h"
+#include "Engine/PhysicsCollision/PhysicsMaterial.h"
 #include <glm/glm.hpp>
 
 namespace engine
 {
+    enum class BodyType : int
+    {
+        STATIC,
+        KINEMATIC,
+        DYNAMIC
+    };
+
+    struct MassData
+    {
+        float Mass = 1.0f;
+        float InverseMass = 1.0f;
+
+        // for rotations
+        float Inertia = 0.f;
+        float InverseInertia = 0.f;
+    };
+
     class Rigidbody2D : public Component
     {
     public:
-        bool IsStatic = false;
-
-        bool UseGravity = true;
+        BodyType BodyType = BodyType::DYNAMIC;
+        
+        bool UseAutoMass = true;
         float GravityScale = 1.0f;
-
-        float Restitution = 0.f;
-        float DynamicFriction = 0.01f;
-        float StaticFriction = 0.01f;
         
         /*-----------------------------------------------------------------------------*/
         /* Constructors and Destructors                                                */
@@ -49,32 +63,45 @@ namespace engine
         Rigidbody2D(Entity entity, bool active = true);
 
         /*********************************************************************************//*!
-        \brief    Adds a force to the rigidbody
+        \brief    Applies a force to the rigidbody
          
+        \warning  Only moves the object if its dynamic.
+
         \param    force
                 vector indicating the direction and strength of the force to apply onto
-                this object
+                this object. 
         *//**********************************************************************************/
-        void AddForce(glm::vec2 force) { m_force += force; }
+        void ApplyForce(glm::vec2 force) { if(IsDynamic()) m_force += force; }
         
+        /*********************************************************************************//*!
+        \brief    Applies a velocity to the rigidbody
+
+        \warning  Only moves the object if its kinematic.
+
+        \param    force
+                vector indicating the direction and strength of the force to apply onto
+                this object's velocity
+        *//**********************************************************************************/
+        void ApplyVelocity(glm::vec2 velocity) { if (IsKinematic()) m_linearVelocity += velocity; }
+
         /*********************************************************************************//*!
         \brief    Set the mass of the rigidbody with new mass
         
-        \throw    
-                 throws when the mass is lesser then 0.
+        \throw    throws when the mass is lesser then 0.
 
         \param    newMass
                 The new mass to assign this rigidbody's mass to.
         *//**********************************************************************************/
         void SetMass(float newMass); 
+
         /*********************************************************************************//*!
         \brief    Retrieve the current mass of the rigidbody
          
         \return   the current mass of the rigidbody.
         *//**********************************************************************************/
-        float GetMass() const { return m_mass; }
+        float GetMass() const { return m_data.Mass; }
 
-        float GetInverseMass() const { return m_inverseMass; }
+        float GetInverseMass() const { return m_data.InverseMass; }
 
         /*********************************************************************************//*!
         \brief    Set the velocity of the rigidbody with new velocity.
@@ -83,14 +110,14 @@ namespace engine
                 The new velocity to assign this rigidbody's velocity to.
         *//**********************************************************************************/
         void SetVelocity(glm::vec2 newVel) { m_linearVelocity = newVel; }
+
         /*********************************************************************************//*!
         \brief    Retrieve the current velocity of the rigidbody
 
         \return   the current velocity of the rigidbody.
         *//**********************************************************************************/
         glm::vec2 GetVelocity() const { return m_linearVelocity; }
-
-
+        
         /*********************************************************************************//*!
         \brief    Set the force of the rigidbody with new force.
 
@@ -98,26 +125,47 @@ namespace engine
                 The new force to assign this rigidbody's force to.
         *//**********************************************************************************/
         void SetForce(glm::vec2 newForce) { m_force = newForce; }
+
         /*********************************************************************************//*!
         \brief    Retrieve the current force of the rigidbody
 
         \return   the current force of the rigidbody.
         *//**********************************************************************************/
         glm::vec2 GetForce() const { return m_force; }
+        
+        bool IsStatic()     const { return BodyType == BodyType::STATIC; }
+        bool IsKinematic()  const { return BodyType == BodyType::KINEMATIC; }
+        bool IsDynamic()    const { return BodyType == BodyType::DYNAMIC; }
 
+        void SetMaterial(PhysicsMaterial material) { m_material = material; }
+        PhysicsMaterial GetMaterial() const { return m_material; }
+
+        void SetAutoMass(bool useAutoMass) 
+        {
+            UseAutoMass = useAutoMass; 
+            if (UseAutoMass)    // if Use Auto Mass is set to true.
+            {
+                // Use Density for now, should be Mass = Density * Volume
+                SetMass(m_material.Density);
+            }
+        }
     private:
 
-        glm::vec3 m_previoiusPosition = { 0.f, 0.f, 0.f };
+        PhysicsMaterial m_material;
 
-        glm::vec2 m_linearVelocity = { 0.f, 0.f };
-        glm::vec2 m_force = { 0.f, 0.f };
+        MassData m_data;
 
-        float m_mass = 1.0f;
-        float m_inverseMass = 1.0f / m_mass;
+        /*float m_mass = 1.0f;
+        float m_inverseMass = 1.0f / m_mass;*/
+
+        glm::vec2 m_linearVelocity;
+        glm::vec2 m_force;
+
+        glm::vec3 m_prevPos;
 
         friend class PhysicsSystem;
 
-        //void Interpolate(float alpha);
+        void Interpolate(float alpha);
 
         /*********************************************************************************//*!
         \brief    Apply Gravity to object. Should only be called By Physics System.
