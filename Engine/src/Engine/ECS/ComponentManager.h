@@ -94,13 +94,6 @@ namespace engine
 			return GetComponentArray<T>()->EmplaceData(entity, std::forward<args>(arguementList)...);
 		}
 
-		/*template<typename T, typename... args>
-		std::enable_if_t<std::is_base_of<Component, T>::value, T&> EmplaceComponent(Entity entity,bool active, args&&... arguementList)
-		{
-			if (IsRegistered<T>() == false)
-				RegisterComponent<T>();
-			return GetComponentArray<T>()->EmplaceData(entity, entity, active, std::forward<args>(arguementList)...);
-		}*/
 
 		template<typename T>
 		void RemoveComponent(Entity entity)
