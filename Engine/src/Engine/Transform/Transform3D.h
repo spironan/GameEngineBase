@@ -18,16 +18,17 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/Component.h"
+#include "Engine/ECS/ComponentMk2.h"
 #include <glm/glm.hpp>
 
 #include <rttr/type>
 
 namespace engine 
 {
-    class Transform3D final : public Component
+    class Transform3D final : public ComponentMk2<>
     {
       public:
-        
+        using Component = ComponentMk2<>;
         /*-----------------------------------------------------------------------------*/
         /* Constructors and Destructors                                                */
         /*-----------------------------------------------------------------------------*/
