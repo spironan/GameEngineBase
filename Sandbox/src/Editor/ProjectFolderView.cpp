@@ -12,6 +12,7 @@
 #include "EditorObjectGroup.h"
 
 #include "RttrTypeID.h"
+#include "Seralizer.h"
 
 #include <imgui.h>
 #include <string>
@@ -156,30 +157,13 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-			std::ofstream stream("prefab.orofab");
-			rapidjson::OStreamWrapper osw(stream);
-			rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
-			writer.StartObject();
-			SaveHierarchy(static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject), writer);
-			writer.EndObject();
+			Serializer::SaveObject("Prefab.orofab");
 		}
 		ImGui::EndDragDropTarget();
 	}
 
 }
 
-void ProjectFolderView::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
-{
-	SaveObject(go, writer);
-}
-void ProjectFolderView::SaveObject(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
-{
-	writer.Key(std::to_string(go.GetID()).c_str());
-	writer.StartArray();
-	if(go.TryGetComponent<engine::Transform3D>())
-		SaveComponent<engine::Transform3D>(go.GetComponent<engine::Transform3D>(),writer);
-	writer.EndArray();
-}
 
 
 void ProjectFolderView::PathDir(std::filesystem::path& entry, std::string& path)
