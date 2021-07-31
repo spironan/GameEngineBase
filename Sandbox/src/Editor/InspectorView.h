@@ -19,13 +19,18 @@ private:
 	template<typename Component>
 	void ReadComponents(Component& component)
 	{
+		bool is_readonly;
 		std::vector<rttr::property> types = component.get_type().get_properties();
-
-		ImGui::BeginChild(component.get_type().get_name().c_str(), { 0,types.size() * 30.0f }, true);
 		rttr::variant current_value;
+		if (ImGui::CollapsingHeader(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_Framed) == false)
+			return;
+
 		ImGui::PushID(ObjectGroup::s_FocusedObject);
 		for (const rttr::property& element : types)
 		{
+			is_readonly = element.is_readonly();
+			if (is_readonly)
+				ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f,0.5f,0.5f,1 });
 			current_value.clear();
 			const rttr::type::type_id id = element.get_type().get_id();
 			if (id == m_tracked_ids[type_INT])
@@ -129,10 +134,11 @@ private:
 					ActionStack::AllocateInBuffer(new InspectorActionBehaviour<Component>{ temp, ObjectGroup::s_FocusedObject, element, undo, redo });
 				}
 			}
+			if (is_readonly)
+				ImGui::PopStyleColor();
 
 		}
 		ImGui::PopID();
-		ImGui::EndChild();
 	}
 	
 };
