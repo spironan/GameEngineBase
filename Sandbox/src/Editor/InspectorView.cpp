@@ -36,6 +36,7 @@ void InspectorView::Show()
 			ImGui::Text("Name :  %s", go.Name.c_str());
 			
 			ReadComponents(go.GetComponent<engine::Transform3D>());//hard coded to read only 1 component
+			ImGui::Button("Add Component");
 			ImGui::EndChild();
 		}
 	}
