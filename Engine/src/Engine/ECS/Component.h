@@ -3,7 +3,6 @@
 
 namespace engine
 {
-
     class Component
     {
     public:
@@ -21,12 +20,15 @@ namespace engine
 
         void SetActive(bool _active) { m_active = _active; }
 
+        template<typename T, typename T2 = engine::WorldManager>
+        T& GetComponent()
+        {
+            return T2::GetActiveWorld().GetComponent<T>(m_entity);
+        }
     protected:
         Entity m_entity;
         bool m_active;
     };
 
-
-	
 
 }

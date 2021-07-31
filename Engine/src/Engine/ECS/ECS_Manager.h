@@ -71,9 +71,9 @@ namespace engine
 
 		template<typename T, typename... args>
 		std::enable_if_t<std::is_base_of_v<Component, T> == true, T&>
-			EmplaceComponent(Entity entity, args&&... arguementList)
+			EmplaceComponent(Entity entity, bool active = true, args&&... arguementList)
 		{
-			auto& comp = m_ComponentManager->EmplaceComponent<T>(entity, entity, std::forward<args>( arguementList)...);
+			auto& comp = m_ComponentManager->EmplaceComponent<T>(entity, entity, active, std::forward<args>( arguementList)...);
 
 			auto signature = m_EntityManager->GetSignature(entity);
 			signature.set(m_ComponentManager->GetComponentID<T>(), true);
@@ -183,6 +183,12 @@ namespace engine
 			return m_ComponentManager->GetContainerDenseArray<T>();
 		}
 
+		template<typename T>
+		void Swap(typename ComponentArray<T>::container_type::dense_container::size_type index1,
+			typename ComponentArray<T>::container_type::dense_container::size_type index2)
+		{
+			return m_ComponentManager->Swap<T>(index1, index2);
+		}
 
 		//// Event methods
 		//void AddEventListener(EventId eventId, std::function<void(Event&)> const& listener)
