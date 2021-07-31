@@ -29,8 +29,8 @@ public:
     PhysicsTestLayer()
         : Layer{ "PhysicsTestLayer" }
         , m_world{ engine::WorldManager::CreateWorld() }
-        , upperbounds { 200,  200 }
-        , lowerbounds {-200, -200 }
+        , upperbounds { 500,  200 }
+        , lowerbounds {-500, -200 }
     {
         engine::Window& x = engine::Application::Get().GetWindow();
         width = x.GetSize().first;
@@ -47,7 +47,7 @@ public:
             m_root.AddComponent<engine::BoxCollider2D>();
             auto& pc = m_root.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
-            pc.GravityScale = 0.0f;
+            pc.GravityScale = 1.0f;
         }
         
         {
@@ -70,24 +70,24 @@ public:
 
         if (engine::Input::IsKeyPressed(ENGINE_KEY_UP))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().AddForce(glm::vec2{ 0, 50 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, 20 });
         }
         
         if (engine::Input::IsKeyPressed(ENGINE_KEY_DOWN))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().AddForce(glm::vec2{ 0,-50 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0,-20 });
         }
         
         if (engine::Input::IsKeyPressed(ENGINE_KEY_RIGHT))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().AddForce(glm::vec2{ 50,0 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 20,0 });
         }
         
         if (engine::Input::IsKeyPressed(ENGINE_KEY_LEFT))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().AddForce(glm::vec2{ -50,0 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ -20,0 });
         }
-        auto force = m_root.GetComponent<engine::Rigidbody2D>().GetForce();
+        //auto force = m_root.GetComponent<engine::Rigidbody2D>().GetForce();
         //LOG_TRACE("{0}{1}", force.x, force.y );
 
         // transform objects

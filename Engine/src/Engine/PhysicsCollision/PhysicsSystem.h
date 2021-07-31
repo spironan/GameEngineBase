@@ -34,14 +34,7 @@ namespace engine
         \param    ECS_Manager
                   The Manager that controls of the systems
         *//**********************************************************************************/
-        PhysicsSystem(ECS_Manager& ECS_Manager) 
-            : System { ECS_Manager } 
-            , Gravity { 0.f, -9.81f }
-            , m_collisions { }
-            , m_triggers { }
-            //, m_accumulator{ 0.f }
-        {};
-
+        PhysicsSystem(ECS_Manager& ECS_Manager);
 
         /*********************************************************************************//*!
         \brief    Updates the Physics System everyframe
@@ -53,15 +46,19 @@ namespace engine
         
         vec2 Gravity;
 
+        static constexpr double AccumulatorLimit = 0.2;
+        static constexpr double FixedDeltaTime = 1.0 / 120.0;
+
     private:
         void UpdateDynamics(Timestep deltaTime);
         void UpdatePhysicsCollision();
         void UpdatePhysicsResolution(Timestep deltaTime);
 
-        //float m_accumulator;
+        double m_accumulator;
+
         std::vector<Manifold2D> m_collisions;
         std::vector<Manifold2D> m_triggers;
-        //std::vector<Solver> m_solvers;
+        std::vector<Solver*> m_solvers;
 
         ImpulseSolver m_impulseSolver;
     };

@@ -30,39 +30,73 @@ Technology is prohibited.
 
 namespace engine
 {
-    //static float FixedDeltaTime = 1 / 60.f;
+    /*********************************************************************************//*!
+        \brief    Default constructor
+
+        \param    ECS_Manager
+                  The Manager that controls of the systems
+        *//**********************************************************************************/
+    PhysicsSystem::PhysicsSystem(ECS_Manager& ECS_Manager)
+        : System{ ECS_Manager }
+        , Gravity{ 0.f, -9.81f }
+        , m_collisions{ }
+        , m_triggers{ }
+        , m_solvers{ }
+        , m_impulseSolver {}
+        , m_accumulator{ 0.f }
+    {
+        m_solvers.emplace_back(&m_impulseSolver);
+    };
+
 
     void PhysicsSystem::Update(Timestep deltaTime)
     {
         UpdateDynamics(deltaTime);
         UpdatePhysicsCollision();
         UpdatePhysicsResolution(deltaTime);
-
     }
 
     void PhysicsSystem::UpdateDynamics(Timestep deltaTime)
     {
+        m_accumulator += deltaTime;
+        
+        //avoids spiral of death.
+        if (m_accumulator > AccumulatorLimit)
+            m_accumulator = AccumulatorLimit;
+
+        while (m_accumulator > FixedDeltaTime)
+        {
+            // Update dynamics
+            auto& container = m_ECS_Manager.GetComponentDenseArray<Rigidbody2D>();
+
+            for (auto& rb : container)
+            {
+                if (rb.IsStatic()) continue;
+
+                rb.ApplyForce(Gravity * rb.GravityScale * rb.m_data.Mass);
+
+                rb.UpdateVelocity(FixedDeltaTime);
+                rb.UpdatePosition(FixedDeltaTime);
+
+                //rb.ApplyForce(-Gravity * rb.GravityScale * rb.m_data.Mass); //normal gravity force acting against object
+
+                rb.SetForce(glm::vec2{ 0.f });
+            }
+
+            m_accumulator -= FixedDeltaTime;
+        }
+
+        const double alpha = m_accumulator / FixedDeltaTime;
+
         // Update dynamics
         auto& container = m_ECS_Manager.GetComponentDenseArray<Rigidbody2D>();
 
         for (auto& rb : container)
         {
-            if (rb.IsStatic) continue;
+            if (rb.IsStatic()) continue;
 
-            if (rb.UseGravity)
-            {
-                rb.ApplyGravity(Gravity);
-            }
-
-            rb.UpdateVelocity(deltaTime);
-            rb.UpdatePosition(deltaTime);
-
-            if (rb.UseGravity) rb.AddForce(-Gravity * rb.GravityScale * rb.m_mass); //normal gravity force acting against object
-
-            //rb.SetForce(glm::vec2{ 0.f });
+            rb.Interpolate(alpha);
         }
-
-
     }
 
     void PhysicsSystem::UpdatePhysicsCollision()
@@ -93,7 +127,9 @@ namespace engine
                     LOG_INFO("Collision!");*/
                 
                 Manifold2D result = collider.TestCollision(&collider2);
-                LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
+                
+                //LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
+
                 if (result.HasCollision) m_collisions.emplace_back(result);
                 
             }
@@ -104,10 +140,12 @@ namespace engine
     void PhysicsSystem::UpdatePhysicsResolution(Timestep dt)
     {
         //Resolve all the collision
-        /*for (Solver* solver : m_solvers) {
+        for (auto* solver : m_solvers) {
             solver->Solve(m_collisions, dt);
-        }*/
-        m_impulseSolver.Solve(m_collisions, dt);
+        }
+
+        //m_impulseSolver.Solve(m_collisions, dt);
+       
         // Update all Triggers
 
     }
