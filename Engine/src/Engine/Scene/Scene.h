@@ -46,7 +46,7 @@ namespace engine
 		{
 			m_world = &WorldManager::CreateWorld();
 			WorldManager::SetActiveWorld(m_world->GetID());
-			m_root = GameObject{ m_world->CreateEntity() };
+			m_root = GameObject{};
 			//deserialise scene file and load objects here
 
 
