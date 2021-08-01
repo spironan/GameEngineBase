@@ -33,6 +33,10 @@ public:
     
     }
 
+    ~SceneBaseLayer()
+    {
+        engine::SceneManager::RemoveScene(m_scene.GetSceneName());
+    }
     virtual void OnUpdate(engine::Timestep dt) override
     {
         m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
