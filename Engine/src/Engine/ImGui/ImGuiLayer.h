@@ -39,6 +39,8 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         void OnAttach() override;
         void OnDetach() override;
+        
+        //void OnRestart();
 
         void Begin();
         void End();
@@ -49,5 +51,7 @@ namespace engine
         bool m_blockEvents;
         SDL_Window* m_window;
         GraphicsContext* m_renderer;
+
+        //bool m_restart = false;
     };
 }

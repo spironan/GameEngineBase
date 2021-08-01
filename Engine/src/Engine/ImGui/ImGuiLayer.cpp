@@ -82,6 +82,12 @@ namespace engine
 
     void ImGuiLayer::Begin()
     {
+        /*if (m_restart)
+        {
+            OnRestart();
+            m_restart = true;
+        }*/
+
         ENGINE_PROFILE_FUNCTION();
 
         m_renderer->OnImGuiBegin();
@@ -106,6 +112,11 @@ namespace engine
         ImGui::Render();
         
         m_renderer->OnImGuiEnd();
+
+        /*if (m_restart)
+        {
+            OnDetach();
+        }*/
     }
 
 }
