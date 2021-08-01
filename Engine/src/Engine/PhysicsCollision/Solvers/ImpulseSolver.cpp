@@ -4,6 +4,9 @@
 
 #include "Engine/PhysicsCollision/RigidBody.h"
 
+#include "Engine/ECS/WorldManager.h"
+#include "Engine/Transform/Transform3D.h"
+
 namespace engine
 {
     void ImpulseSolver::Solve(std::vector<Manifold2D> manifolds, float dt)
@@ -13,7 +16,7 @@ namespace engine
             // Replaces non dynamic objects with default values.
 
             Rigidbody2D* aBody = manifold.ObjA.IsDynamic() ? &manifold.ObjA : nullptr;
-            Rigidbody2D* bBody = manifold.ObjA.IsDynamic() ? &manifold.ObjB : nullptr;
+            Rigidbody2D* bBody = manifold.ObjB.IsDynamic() ? &manifold.ObjB : nullptr;
 
             glm::vec2 aVel = aBody ? aBody->GetVelocity() : glm::vec2{ 0.0f };
             glm::vec2 bVel = bBody ? bBody->GetVelocity() : glm::vec2{ 0.0f };
@@ -44,43 +47,49 @@ namespace engine
                 bVel += impluse * bInvMass;
             }
 
-            //// Friction
-            //rVel = bVel - aVel;
-            //velAlongNormal = glm::dot(rVel, manifold.Normal);
+            // Friction
+            rVel = bVel - aVel;
 
-            //glm::vec2 tangent = rVel - velAlongNormal * manifold.Normal;
+            glm::vec2 tangent = rVel - glm::dot(rVel, manifold.Normal) * manifold.Normal;
 
-            //if (glm::length(tangent) > 0.0001f) { // safe normalize
-            //    tangent = glm::normalize(tangent);
-            //}
+            if (glm::length(tangent) > 0.0001f) { // safe normalize
+                tangent = glm::normalize(tangent);
+            }
 
-            //float fVel = glm::dot(rVel, tangent);
+            // Solve for magnitude to apply along the friction vector
+            float fVel = glm::dot(rVel, tangent);
 
-            //float aSF = aBody ? aBody->GetMaterial().StaticFriction : 0.0f;
-            //float bSF = bBody ? bBody->GetMaterial().StaticFriction : 0.0f;
-            //float aDF = aBody ? aBody->GetMaterial().DynamicFriction : 0.0f;
-            //float bDF = bBody ? bBody->GetMaterial().DynamicFriction : 0.0f;
-            //float mu = glm::vec2(aSF, bSF).length();
+            float aSF = aBody ? aBody->GetMaterial().StaticFriction : 0.0f;
+            float bSF = bBody ? bBody->GetMaterial().StaticFriction : 0.0f;
+            float aDF = aBody ? aBody->GetMaterial().DynamicFriction : 0.0f;
+            float bDF = bBody ? bBody->GetMaterial().DynamicFriction : 0.0f;
+            float mu = glm::vec2(aSF, bSF).length();
 
-            //float f = -fVel / (aInvMass + bInvMass);
+            float f = -fVel / (aInvMass + bInvMass);
 
-            //glm::vec2 friction;
-            //if (abs(f) < j * mu) {
-            //    friction = f * tangent;
-            //}
+            glm::vec2 friction;
+            if (abs(f) < j * mu) {
+                friction = f * tangent;
+            }
+            else {
+                mu = glm::length(glm::vec2(aDF, bDF));
+                friction = -j * tangent * mu;
+            }
 
-            //else {
-            //    mu = glm::length(glm::vec2(aDF, bDF));
-            //    friction = -j * tangent * mu;
-            //}
+            if (aBody ? !aBody->IsKinematic() : false) {
+                aBody->SetVelocity(aVel - friction * aInvMass);
+            }
 
-            //if (aBody ? !aBody->IsKinematic() : false) {
-            //    aBody->SetVelocity(aVel - friction * aInvMass);
-            //}
+            if (bBody ? !bBody->IsKinematic() : false) {
+                bBody->SetVelocity(bVel + friction * bInvMass);
+            }
 
-            //if (bBody ? !bBody->IsKinematic() : false) {
-            //    bBody->SetVelocity(bVel + friction * bInvMass);
-            //}
+            // testing positional correction
+            const float percent = 0.2f; // usually 20% to 80%
+            const float slop = 0.01f; // usually 0.01 to 0.1
+            vec2 correction = std::fmaxf(manifold.PenetrationDepth - slop, 0.0f) / (aInvMass + bInvMass)* percent* manifold.Normal;
+            if(aBody) aBody->GetComponent<Transform3D>().Position() -= glm::vec3{ aInvMass * correction , 0.f};
+            if(bBody) bBody->GetComponent<Transform3D>().Position() += glm::vec3{ bInvMass * correction , 0.f};
         }
     }
 
