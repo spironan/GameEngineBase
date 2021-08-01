@@ -46,7 +46,7 @@ void Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 			engine::GameObject(parent).AddChild(hierarchyItem.second.first);
 		}
 	}
-	
+	ifs.close();
 }
 
 void Serializer::SaveObject(const std::string& prefab)
@@ -57,6 +57,7 @@ void Serializer::SaveObject(const std::string& prefab)
 	writer.StartObject();
 	SaveHierarchy(static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject), writer);
 	writer.EndObject();
+	stream.close();
 }
 
 void Serializer::SaveWorld(const std::string& path)
@@ -71,6 +72,7 @@ void Serializer::SaveWorld(const std::string& path)
 		SaveItem(static_cast<engine::GameObject>(t3d.GetEntity()), writer);
 	}
 	writer.EndObject();
+	stream.close();
 }
 
 void Serializer::LoadWorld(const std::string& path)
@@ -105,6 +107,7 @@ void Serializer::LoadWorld(const std::string& path)
 			engine::GameObject(0).AddChild(hierarchyItem.second.first);
 		}
 	}
+	ifs.close();
 }
 
 void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
