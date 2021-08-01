@@ -91,33 +91,34 @@ void ProjectFolderView::ProjectView()
 		return;
 
 	ImGui::TableNextColumn();//push 1 column first
+	std::string fileNameTemp;
 	for (auto& entry : dir_iter)
 	{
 		//filter search
 		if (m_filtering && entry.path().filename().u8string().find(m_filter) == std::string::npos)
 			continue;
 
-
+		ImGui::PushID(entry.path().u8string().c_str());
 		ImGui::BeginGroup();//start
-
 		//change this would be changed once rendering is integrated
 		if (entry.path().filename().has_extension() == false)
 			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize }, { 0,0 }, { 0.125,1 });
 		else
 			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize });
-
-		//drag
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
-		{
-			ImGui::SetDragDropPayload("PREFAB_OBJ",nullptr,0);
-			ImGui::Text("%s", FileGroup::s_hoveredPath.c_str());
-			ImGui::EndDragDropSource();
-		}
+		/// <summary> Drag and drop
+		/// this scope will contain all the drag from file to (xxx) payload creation
+		/// </summary>
+		FileBeginDrag(entry.path());
 
 		//text of the filename
-		ImGui::TextWrapped(entry.path().filename().generic_u8string().c_str());
-		ImGui::EndGroup();//end
+		fileNameTemp = entry.path().filename().generic_u8string();
+		//do not shorten name when item is hovered
+		if(!ImGui::IsItemHovered())
+			TextProcessing(fileNameTemp, imgsize*2.0f);
 
+		ImGui::TextWrapped(fileNameTemp.c_str());
+		ImGui::EndGroup();//end
+		ImGui::PopID();
 
 		ImGui::TableNextColumn();//item done
 
@@ -148,7 +149,6 @@ void ProjectFolderView::ProjectView()
 			}
 			FileGroup::s_hoveredPath = entry.path().u8string();
 		}
-
 	}
 	ImGui::EndTable();
 	//drag and drop interaction for prefab
@@ -157,7 +157,7 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-			Serializer::SaveObject("Prefab.orofab");
+			Serializer::SaveObject(engine::GameObject(ObjectGroup::s_FocusedObject).Name+".prefab");
 		}
 		ImGui::EndDragDropTarget();
 	}
@@ -205,4 +205,42 @@ void ProjectFolderView::SearchFilter()
 		m_filtering = false;
 	ImGui::EndChild();
 
+}
+/*********************************************************************************//*!
+\brief    This Fuction will require constant updating as there will be more file
+		  interation support
+ 
+\param    path
+
+*//**********************************************************************************/
+void ProjectFolderView::FileBeginDrag(const std::filesystem::path& path)
+{
+	if (ImGui::IsItemActive() && ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
+	{
+		std::string temp = path.extension().u8string();
+		if (temp == ".prefab")
+		{
+			temp = path.u8string();
+			ImGui::SetDragDropPayload("PREFAB_OBJ", temp.c_str(), temp.size());
+			ImGui::Text("%s", temp.c_str());
+		}
+		ImGui::EndDragDropSource();
+	}
+}
+
+void ProjectFolderView::TextProcessing(std::string& str, float windowSize)
+{
+	size_t characters =static_cast<size_t>(floor(windowSize / ImGui::GetFontSize()));
+	if (str.size() < characters)
+		return;
+	if (characters <= 4)
+	{
+		str.resize(2);
+		str += ".\0";
+	}
+	else
+	{
+		str.resize(characters - 3);
+		str += "..\0";
+	}
 }

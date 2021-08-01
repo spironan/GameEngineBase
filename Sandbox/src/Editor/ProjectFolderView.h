@@ -32,6 +32,8 @@ private:
 	void ProjectView();
 	void PathDir(std::filesystem::path&, std::string&);
 	void SearchFilter();
+	void FileBeginDrag(const std::filesystem::path&);
+	void TextProcessing(std::string& string,float windowSize);
 private:
 	std::string m_filter;
 	bool m_filtering = false;

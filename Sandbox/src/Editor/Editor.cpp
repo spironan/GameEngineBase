@@ -81,6 +81,9 @@ void Editor::MenuBarUI()
 			{
 
 			}
+			if (ImGui::MenuItem("Reset Layout"))
+			{
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("View"))

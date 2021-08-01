@@ -119,7 +119,7 @@ void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<r
 			break;
 	}
 	SaveItem(go, writer);
-	for (int i = 1; i < go.GetComponent<engine::Transform3D>().GetChildCount(); ++i)
+	for (int i = 1; i < go.GetComponent<engine::Transform3D>().GetChildCount()+1; ++i)
 	{
 		SaveItem((engine::GameObject)list[count+i].GetEntity(),writer);
 	}
