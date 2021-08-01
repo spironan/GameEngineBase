@@ -48,7 +48,7 @@ namespace engine
 
     void RigidBody::UpdatePosition(Timestep dt)
     {
-        static_cast<GameObject>(GetEntity()).Transform.Position() += glm::vec3{ m_velocity, 0.f } *static_cast<float>(dt);
+        static_cast<GameObject>(GetEntity()).Transform().Position() += glm::vec3{ m_velocity, 0.f } *static_cast<float>(dt);
     }
 
 }

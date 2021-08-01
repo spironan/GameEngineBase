@@ -44,7 +44,7 @@ public:
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
 
-        m_root.Transform.Scale() = { 50.f, 50.f, 1.0f };
+        m_root.Transform().Scale() = { 50.f, 50.f, 1.0f };
         auto& pc = m_root.AddComponent<engine::RigidBody>();
         pc.SetMass(100.f);
         auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();

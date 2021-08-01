@@ -165,13 +165,13 @@ namespace engine
         if (child_idx == parent_idx) return false;    // attempting to add oneself to itself.
         
         // Child's number of Child
-        int child_childCount = child.Transform.GetChildCount();
+        int child_childCount = child.Transform().GetChildCount();
         // Perform a check to see if your'e attaching to a parent that is a child of child : 
         // Reject this , you cannot add a parent as a child to its child.
         if (child_idx < parent_idx && child_idx + child_childCount >= parent_idx) return false;
 
         // set child's parent to be parent transform
-        child.Transform.SetParent(parent.Transform);
+        child.Transform().SetParent(parent.Transform());
 
         // difference between their positions
         int diff = child_idx - parent_idx;

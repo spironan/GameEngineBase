@@ -103,7 +103,7 @@ namespace engine
     {
         if (m_parentId == m_entity) return;
 
-        glm::mat4 parentMtx = static_cast<GameObject>(m_parentId).Transform.GetGlobalMatrix();
+        glm::mat4 parentMtx = static_cast<GameObject>(m_parentId).Transform().GetGlobalMatrix();
 
         if (m_conversion)
         {
@@ -129,7 +129,7 @@ namespace engine
         // Reduce child count of current parent if parent isnt itself.
         if (m_parentId != m_entity)
         {
-            static_cast<GameObject>(m_parentId).Transform.DecrementChildCount(1 + m_childCount);
+            static_cast<GameObject>(m_parentId).Transform().DecrementChildCount(1 + m_childCount);
         }
         // set parent child count to be equals to its current amount + 1(this object) + childCount(number of children this object has)
         parent.IncrementChildCount(1 + m_childCount);
@@ -149,7 +149,7 @@ namespace engine
         m_childCount += childCount;
         if (m_parentId != m_entity)
         {
-            static_cast<engine::GameObject>(m_parentId).Transform.IncrementChildCount(childCount);
+            static_cast<engine::GameObject>(m_parentId).Transform().IncrementChildCount(childCount);
         }
     }
 
@@ -165,7 +165,7 @@ namespace engine
         m_childCount -= childCount;
         if (m_parentId != m_entity)
         {
-            static_cast<engine::GameObject>(m_parentId).Transform.DecrementChildCount(childCount);
+            static_cast<engine::GameObject>(m_parentId).Transform().DecrementChildCount(childCount);
         }
     }
 

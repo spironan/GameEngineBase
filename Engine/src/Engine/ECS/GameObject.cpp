@@ -22,17 +22,19 @@ namespace engine
     // order matters! dont switch it!
     GameObject::GameObject()
         : m_entity      { WorldManager::GetActiveWorld().CreateEntity() }
-        , ActiveSelf    { AddComponent<GameObjectComponent>().ActiveSelf }
+        /*, ActiveSelf    { AddComponent<GameObjectComponent>().ActiveSelf }
         , Name          { GetComponent<GameObjectComponent>().Name }
-        , Transform     { AddComponent<Transform3D>() }
+        , Transform     { AddComponent<Transform3D>() }*/
     {
+        AddComponent<Transform3D>();
+        AddComponent<GameObjectComponent>();
     }
 
     GameObject::GameObject(Entity entt)
         : m_entity      { entt }
-        , ActiveSelf    { GetComponent<GameObjectComponent>().ActiveSelf }
+        /*, ActiveSelf    { GetComponent<GameObjectComponent>().ActiveSelf }
         , Name          { GetComponent<GameObjectComponent>().Name }
-        , Transform     { GetComponent<Transform3D>() }
+        , Transform     { GetComponent<Transform3D>() }*/
     {
     }
 
@@ -45,24 +47,24 @@ namespace engine
         WorldManager::GetActiveWorld().DestroyEntity(m_entity);
     }
 
-    GameObject& GameObject::operator=(GameObject const& other)
-    {
-        //What happens if im another entity before assignment?
-        //1. do i destroy the previous gameobject?
+    //GameObject& GameObject::operator=(GameObject const& other)
+    //{
+    //    //What happens if im another entity before assignment?
+    //    //1. do i destroy the previous gameobject?
 
-        m_entity = other.m_entity;
-        Transform = other.Transform;
-        ActiveSelf = other.ActiveSelf;
+    //    m_entity = other.m_entity;
+    //    /*Transform = other.Transform;
+    //    ActiveSelf = other.ActiveSelf;*/
 
-        return *this;
-    }
+    //    return *this;
+    //}
 
     void GameObject::AddChild(GameObject const& child, bool preserveTransforms)
     {
         // Flag coordinates to be converted when parented
         if (preserveTransforms)
         {
-            child.Transform.ConvertCoordinates();
+            child.Transform().ConvertCoordinates();
         }
         
         WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Attach(child, *this);

@@ -34,14 +34,19 @@ namespace engine
         Entity m_entity;
 
     public:
+        /*
         Transform3D&    Transform;
         bool&           ActiveSelf;
         std::string&    Name;
+        */
+        Transform3D& Transform() const { return GetComponent<Transform3D>(); };
+        bool& ActiveSelf() const { return GetComponent<GameObjectComponent>().ActiveSelf; }
+        std::string& Name() const { return GetComponent<GameObjectComponent>().Name; }
 
         GameObject();
         GameObject(GameObject const& copy)        = default;
         GameObject(GameObject &&)                 = default;
-        GameObject& operator=(GameObject const&); //= default;
+        GameObject& operator=(GameObject const&)  = default;
         GameObject& operator=(GameObject&&)       = default;
 
         //Construct GameObject Based on Entity
@@ -67,6 +72,7 @@ namespace engine
         template<typename Component>
         Component& GetComponent() const;
 
+        
         template<typename Component>
         Component* TryGetComponent() const;
 

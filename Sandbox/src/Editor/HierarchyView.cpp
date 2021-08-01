@@ -105,7 +105,7 @@ void HierarchyView::ShowHierarchy()
 				flag |= ImGuiTreeNodeFlags_OpenOnArrow;
 
 				ImGui::PushID(transform.GetEntity());
-				activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name.c_str(), flag);
+				activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
 				ImGui::PopID();
 				//if activated then show child else skip
 				(activated && !(flag & ImGuiTreeNodeFlags_NoTreePushOnOpen)) ? ++treePop, depth.emplace_back(transform.GetEntity()) : i += transform.GetChildCount();
@@ -116,7 +116,7 @@ void HierarchyView::ShowHierarchy()
 				flag |= ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 				ImGui::PushID(transform.GetEntity());
-				activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name.c_str(), flag);
+				activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
 				ImGui::PopID();
 			}
 
@@ -149,7 +149,7 @@ void HierarchyView::ListHierarchy()
 	{
 		ImGui::Separator();
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.5f,0.5f,1.0f });
-		showTree = ImGui::TreeNodeEx(engine::GameObject(root).Name.c_str(), flag);
+		showTree = ImGui::TreeNodeEx(engine::GameObject(root).Name().c_str(), flag);
 		SetParent(root);
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -195,7 +195,7 @@ void HierarchyView::ListHierarchy()
 			flag |= ImGuiTreeNodeFlags_OpenOnArrow;
 			
 			ImGui::PushID(transform.GetEntity());
-			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name.c_str(), flag);
+			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
 			ImGui::PopID();
 			//if activated then show child else skip
 			(activated && !(flag & ImGuiTreeNodeFlags_NoTreePushOnOpen)) ? ++treePop , depth.emplace_back(transform.GetEntity()) : i += transform.GetChildCount();
@@ -206,7 +206,7 @@ void HierarchyView::ListHierarchy()
 			flag |=	 ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
 			ImGui::PushID(transform.GetEntity());
-			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name.c_str(), flag);
+			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
 			ImGui::PopID();
 		}
 		if (ImGui::IsItemClicked())
@@ -220,7 +220,7 @@ void HierarchyView::ListHierarchy()
 			// Set payload to carry the index of our item (could be anything)
 			m_dragging = true;
 			ImGui::SetDragDropPayload("HIERACHY_OBJ", nullptr, 0);
-			ImGui::Text("%s", static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name.c_str());
+			ImGui::Text("%s", static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name().c_str());
 			ImGui::EndDragDropSource();
 		}
 	}
@@ -263,7 +263,7 @@ void HierarchyView::FilterByName(const std::string& target)
 	for (engine::Transform3D& transform : transformList)
 	{
 		engine::GameObject& ent = static_cast<engine::GameObject>(transform.GetEntity());
-		if (ent.Name.find(target) != std::string::npos)
+		if (ent.Name().find(target) != std::string::npos)
 		{
 			m_filterlist.emplace_back(ent);
 		}
