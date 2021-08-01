@@ -156,7 +156,9 @@ void HierarchyView::ListHierarchy()
 			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB_OBJ");
 			if (payload)
 			{
-				Serializer::LoadObject(FileGroup::s_hoveredPath);
+				std::string temp;
+				memcpy(temp.data(), reinterpret_cast<char*>(payload->Data), payload->DataSize);
+				Serializer::LoadObject(temp.c_str());
 			}
 			ImGui::EndDragDropTarget();
 		}
