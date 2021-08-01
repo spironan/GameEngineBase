@@ -21,7 +21,7 @@ private:
     engine::World& m_world;
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
     int width{}, height{};
-    engine::GameObject m_root, m_second;
+    engine::GameObject m_root, /*m_second,*/ m_floor;
 
     oom::vec2 upperbounds, lowerbounds;
 public:
@@ -50,13 +50,25 @@ public:
             pc.GravityScale = 1.0f;
         }
         
-        {
+        /*{
             m_second.Transform.Position() = { 100.f, 0.f, 0.f };
             m_second.Transform.Scale() = { 50.f, 50.f, 1.0f };
             m_second.AddComponent<engine::Sprite2D>();
             m_second.AddComponent<engine::BoxCollider2D>();
             auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
+            pc.GravityScale = 0.0f;
+        }*/
+
+        //Ground
+        {
+            m_floor.Transform.Position() = { 0.f, -150.f, 0.f };
+            m_floor.Transform.Scale() = { 1000.f, 5.f, 1.0f };
+            m_floor.AddComponent<engine::Sprite2D>();
+            m_floor.AddComponent<engine::BoxCollider2D>();
+            auto& pc = m_floor.AddComponent<engine::Rigidbody2D>();
+            /*pc.SetMass(1.f);*/
+            pc.BodyType = engine::BodyType::STATIC;
             pc.GravityScale = 0.0f;
         }
 
@@ -68,27 +80,36 @@ public:
         m_world.GetSystem<engine::TransformSystem>()->Update();
         m_world.GetSystem<engine::PhysicsSystem>()->Update(dt);
 
-        if (engine::Input::IsKeyPressed(ENGINE_KEY_UP))
+        constexpr float force   = 300.f;
+        constexpr float jumpforce = 10000.f;
+
+        if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, 20 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, force });
         }
         
-        if (engine::Input::IsKeyPressed(ENGINE_KEY_DOWN))
+        if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0,-20 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, -force });
         }
         
-        if (engine::Input::IsKeyPressed(ENGINE_KEY_RIGHT))
+        if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 20,0 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ force, 0 });
         }
         
-        if (engine::Input::IsKeyPressed(ENGINE_KEY_LEFT))
+        if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ -20,0 });
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ -force, 0 });
         }
-        //auto force = m_root.GetComponent<engine::Rigidbody2D>().GetForce();
-        //LOG_TRACE("{0}{1}", force.x, force.y );
+
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_SPACE))
+        {
+            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, jumpforce });
+        }
+
+        /*auto rootsForce = m_root.GetComponent<engine::Rigidbody2D>().GetForce();
+        LOG_TRACE("{0}{1}", rootsForce.x, rootsForce.y );*/
 
         // transform objects
         auto view = m_world.GetComponentView<engine::Transform3D>();

@@ -38,7 +38,6 @@ namespace engine
         *//**********************************************************************************/
     PhysicsSystem::PhysicsSystem(ECS_Manager& ECS_Manager)
         : System{ ECS_Manager }
-        , Gravity{ 0.f, -9.81f }
         , m_collisions{ }
         , m_triggers{ }
         , m_solvers{ }
@@ -73,6 +72,7 @@ namespace engine
             {
                 if (rb.IsStatic()) continue;
 
+                // apply gravity onto object
                 rb.ApplyForce(Gravity * rb.GravityScale * rb.m_data.Mass);
 
                 rb.UpdateVelocity(FixedDeltaTime);
@@ -128,7 +128,7 @@ namespace engine
                 
                 Manifold2D result = collider.TestCollision(&collider2);
                 
-                //LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
+                LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
 
                 if (result.HasCollision) m_collisions.emplace_back(result);
                 
@@ -143,6 +143,8 @@ namespace engine
         for (auto* solver : m_solvers) {
             solver->Solve(m_collisions, dt);
         }
+        
+        m_collisions.clear();
 
         //m_impulseSolver.Solve(m_collisions, dt);
        

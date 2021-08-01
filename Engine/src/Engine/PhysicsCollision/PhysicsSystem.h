@@ -44,10 +44,10 @@ namespace engine
         *//**********************************************************************************/
         void Update(Timestep deltaTime);
         
-        vec2 Gravity;
+        vec2 Gravity = { 0,-9.81f * 50 };
 
         static constexpr double AccumulatorLimit = 0.2;
-        static constexpr double FixedDeltaTime = 1.0 / 120.0;
+        static constexpr double FixedDeltaTime = 0.02;
 
     private:
         void UpdateDynamics(Timestep deltaTime);
