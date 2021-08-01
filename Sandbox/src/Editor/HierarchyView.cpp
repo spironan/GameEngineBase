@@ -93,8 +93,6 @@ void HierarchyView::ShowHierarchy()
 			//check if theres an error here TODO
 			while (depth.back() != transform.GetParentId())
 			{
-				//if (depth.size() == 1)
-				//	return;
 				std::uint32_t temp = depth.back();
 				depth.pop_back();
 				ImGui::TreePop();

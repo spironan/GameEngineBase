@@ -19,9 +19,7 @@ private:
 	static void SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& osw);
 	template<typename Component>
 	static void SaveComponent(Component & component, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer);
-
 	static void LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& go);
-
 
 	static glm::vec3 GetVec3(rapidjson::Value& val)
 	{
