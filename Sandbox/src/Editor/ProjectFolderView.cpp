@@ -13,15 +13,12 @@
 
 #include "RttrTypeID.h"
 #include "Seralizer.h"
-#include "Engine/Asset/AssetsManager.h"
-#include "Utility/Hash.h"
 
 #include <imgui.h>
 #include <string>
 #include <filesystem>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
-
 
 /**
  * \brief
@@ -30,7 +27,9 @@
  */
 void ProjectFolderView::Show()
 {
+
 	ImGui::SetNextWindowSizeConstraints({ 200,200 }, { 1280,1080 });
+
 	ImGui::Begin("Project Folder");
 	ProjectView();
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
@@ -63,6 +62,7 @@ void ProjectFolderView::ProjectView()
 
 	//local variables
 	std::filesystem::directory_iterator dir_iter = std::filesystem::directory_iterator(FileGroup::s_CurrentPath);
+	bool selected = false;
 	//when scrolled
 	float scroll_count = io.MouseWheel;
 	if (io.KeyCtrl && (scroll_count))
@@ -70,7 +70,7 @@ void ProjectFolderView::ProjectView()
 		scroll_count = abs(scroll_count) > 1 ? scroll_count * 0.5f : scroll_count / abs(scroll_count);
 		size_multiplier -= static_cast<int>(scroll_count);
 		size_multiplier = size_multiplier < 1 ? 1 : size_multiplier;//min
-		size_multiplier = size_multiplier > 4 ? 4 : size_multiplier;//max
+		size_multiplier = size_multiplier > 7 ? 7 : size_multiplier;//max
 		padding = max_padding / size_multiplier;//determin the padding when scrolled
 		imgsize = max_imgsize / size_multiplier;
 	}
@@ -100,12 +100,11 @@ void ProjectFolderView::ProjectView()
 
 		ImGui::PushID(entry.path().u8string().c_str());
 		ImGui::BeginGroup();//start
-
-		/// <summary> Icons for file thumbnail
-		/// help generate icons corresponding the the file ext
-		/// </summary>
-		IconButtons(entry.path().extension().u8string(),imgsize);
-
+		//change this would be changed once rendering is integrated
+		if (entry.path().filename().has_extension() == false)
+			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize }, { 0,0 }, { 0.125,1 });
+		else
+			selected = ImGui::ImageButton(atlas->TexID, { imgsize, imgsize });
 		/// <summary> Drag and drop
 		/// this scope will contain all the drag from file to (xxx) payload creation
 		/// </summary>
@@ -138,6 +137,8 @@ void ProjectFolderView::ProjectView()
 				else if (entry.path().has_extension())
 				{
 					std::string a = entry.path().generic_u8string().c_str();
+					//TODO remove this in place of a better code
+					//std::system(a.substr(2).c_str());//substr can be removed one we have a proper filepath
 				}
 			}
 			else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
@@ -156,7 +157,7 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-			Serializer::SaveObject(engine::GameObject(ObjectGroup::s_FocusedObject).Name()+".prefab");
+			Serializer::SaveObject(engine::GameObject(ObjectGroup::s_FocusedObject).Name+".prefab");
 		}
 		ImGui::EndDragDropTarget();
 	}
@@ -225,40 +226,6 @@ void ProjectFolderView::FileBeginDrag(const std::filesystem::path& path)
 		}
 		ImGui::EndDragDropSource();
 	}
-}
-
-bool ProjectFolderView::IconButtons(const std::string& ext , float imgsize)
-{
-	static std::vector<engine::utility::StringHash::size_type> ext_hash{
-		engine::utility::StringHash(".png"),
-		engine::utility::StringHash(".wav"),
-		engine::utility::StringHash(".mp3"),
-		engine::utility::StringHash(".prefab")
-	};
-	bool selected;
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
-	if (ext.empty())
-	{
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Folder").id), {imgsize, imgsize});
-		ImGui::PopStyleColor();
-		return selected;
-	}
-	
-	engine::utility::StringHash::size_type curr_item = engine::utility::StringHash(ext);
-
-	if(curr_item == ext_hash[0])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_PNG").id), { imgsize, imgsize });
-	else if(curr_item == ext_hash[1])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_WAV").id), { imgsize, imgsize });
-	else if (curr_item == ext_hash[2])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_MP3").id), { imgsize, imgsize });
-	else if (curr_item == ext_hash[3])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id), { imgsize, imgsize });
-	else
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_GenericFile").id), { imgsize, imgsize });
-
-	ImGui::PopStyleColor();
-	return selected;
 }
 
 void ProjectFolderView::TextProcessing(std::string& str, float windowSize)
