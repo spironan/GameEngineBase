@@ -140,11 +140,23 @@ namespace engine
 		{
 			return GetActiveScene().GetRoot();
 		}
-
-		/*static Scene& RemoveScene(std::string filename)
+		/*********************************************************************************//*!
+		\brief    Removes a scene from the scene manager
+		 
+		\param    filename filename of the scene to remove
+		
+		*//**********************************************************************************/
+		static void RemoveScene(std::string filename)
 		{
-			for ()
-		}*/
+			for (iterator i = GetInstance().m_scenes.begin(); i != GetInstance().m_scenes.end(); ++i)
+			{
+				if (i->m_filename == filename)
+				{
+					GetInstance().m_scenes.erase(i);
+					return;
+				}
+			}
+		}
 	};
 
 }
