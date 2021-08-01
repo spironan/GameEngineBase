@@ -19,21 +19,10 @@ Technology is prohibited.
 #include "ECS.h"
 #include "WorldManager.h"
 #include "Engine/Transform/Transform3D.h"
+#include "GameObjectComponent.h"
 
 namespace engine
 {
-    /****************************************************************************//*!
-     @brief     GameObjectComponent holds essential/useful
-                information in gneeral that each gameobject has
-    *//*****************************************************************************/
-    struct GameObjectComponent final
-    {
-        GameObjectComponent() = default;
-
-        bool ActiveSelf = true;
-        std::string Name = "new gameobject";
-    };
-
     /****************************************************************************//*!
      @brief     Describes a gameobject which is the basic unit and building block for 
                 every scene. This object provides the ability to tap on existing ECS
