@@ -156,7 +156,7 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-			Serializer::SaveObject(engine::GameObject(ObjectGroup::s_FocusedObject).Name+".prefab");
+			Serializer::SaveObject(engine::GameObject(ObjectGroup::s_FocusedObject).Name()+".prefab");
 		}
 		ImGui::EndDragDropTarget();
 	}
@@ -239,7 +239,7 @@ bool ProjectFolderView::IconButtons(const std::string& ext , float imgsize)
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 	if (ext.empty())
 	{
-		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Folder").id, {imgsize, imgsize});
+		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Folder").id), {imgsize, imgsize});
 		ImGui::PopStyleColor();
 		return selected;
 	}
@@ -247,15 +247,15 @@ bool ProjectFolderView::IconButtons(const std::string& ext , float imgsize)
 	engine::utility::StringHash::size_type curr_item = engine::utility::StringHash(ext);
 
 	if(curr_item == ext_hash[0])
-		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_PNG").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_PNG").id), { imgsize, imgsize });
 	else if(curr_item == ext_hash[1])
-		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_WAV").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_WAV").id), { imgsize, imgsize });
 	else if (curr_item == ext_hash[2])
-		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_MP3").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_MP3").id), { imgsize, imgsize });
 	else if (curr_item == ext_hash[3])
-		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id), { imgsize, imgsize });
 	else
-		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_GenericFile").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_GenericFile").id), { imgsize, imgsize });
 
 	ImGui::PopStyleColor();
 	return selected;
