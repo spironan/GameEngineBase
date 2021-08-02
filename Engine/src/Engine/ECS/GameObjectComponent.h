@@ -18,9 +18,10 @@ Technology is prohibited.
 
 namespace engine
 {
-    struct GameObjectComponent final
+    class GameObjectComponent final
     {
-        GameObjectComponent() = default;
+	public:
+        GameObjectComponent();
 
         bool ActiveSelf = true;
         std::string Name = "new gameobject";

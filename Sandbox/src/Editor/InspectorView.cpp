@@ -6,9 +6,10 @@
 
 //engine code
 #include "glm/gtc/type_ptr.hpp"
-#include "Engine/Transform/Transform3D.h"
 #include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/WorldManager.h"
+#include "Engine/ECS/GameObjectComponent.h"
+#include "Engine/Transform/Transform3D.h"
 //libs
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -34,8 +35,12 @@ void InspectorView::Show()
 			auto& go = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject);
 			
 			ImGui::Text("Name :  %s", go.Name().c_str());
-			
-			ReadComponents(go.GetComponent<engine::Transform3D>());//hard coded to read only 1 component
+			engine::GameObjectComponent t;
+			std::cout<<t.get_type().get_name() << std::endl;
+			if(go.TryGetComponent<engine::GameObjectComponent>())
+				ReadComponents(go.GetComponent<engine::GameObjectComponent>());
+			if(go.TryGetComponent<engine::Transform3D>())
+				ReadComponents(go.GetComponent<engine::Transform3D>());
 			ImGui::Button("Add Component");
 			ImGui::EndChild();
 		}
