@@ -14,6 +14,7 @@ Technology is prohibited.
 #include "LoggingView.h"
 #include "Engine/Core/LogCallbackSink.h"
 #include "Utility/Hash.h"
+#include "Engine/Asset/AssetsManager.h"
 
 #include <imgui.h>
 #include <functional>
@@ -44,6 +45,7 @@ LoggingView::LoggingView()
  */
 void LoggingView::Show(bool* active)
 {
+	static float imageSize = 50.0f;
 	bool interacted = false;
 	ImGui::Begin("Logger", active,ImGuiWindowFlags_MenuBar);
 	if (ImGui::BeginMenuBar())
@@ -64,6 +66,7 @@ void LoggingView::Show(bool* active)
 	}
 
 	//draw ui here
+	float textPosition = ImGui::GetContentRegionAvail().x - ImGui::GetFontSize() *5;//support for 5 chars
 	if (ImGui::BeginChild("LogView Child"))
 	{
 		if (m_collapse_similar)
@@ -77,40 +80,56 @@ void LoggingView::Show(bool* active)
 				{
 					if (counter >= clipper.DisplayStart)
 					{
+						ImGui::PushID(iter->first);
+						ImGui::BeginGroup();
+						if (ImGui::Selectable("##Item", false, ImGuiSelectableFlags_AllowDoubleClick, ImVec2(0, imageSize)) &&
+							ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+						{
+							ShellExecuteA(NULL, "open", iter->second.filename.c_str(), NULL, NULL, SW_SHOW);
+						}
+						ImGui::SameLine();
 						switch (iter->second.type)
 						{
-						case 0:
-							ImGui::PushStyleColor(ImGuiCol_Text, { 0.2f,0.5f,0.2f,1 });break;
-						case 1:
-							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,0.5f,1 });break;
-						case 2:
-							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,1,1 });break;
-						case 3:
-							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 }); break;
-						case 4:
-							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0,0,1 }); break;
-						case 5:
-							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 }); break;
+						case 0://trace
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.2f,0.5f,0.2f,1 });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
+							break;
+						case 1://debug
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,0.5f,1 });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
+							break;
+						case 2://info
+							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,1,1 });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
+							break;
+						case 3://warn
+							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 }); 
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Warning_Icon_Yellow").id, { imageSize,imageSize });
+							break;
+						case 4://err
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0,0,1 }); 
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id, { imageSize,imageSize });
+							break;
+						case 5://critical
+							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id, { imageSize,imageSize });
+							break;
 						}
+						ImGui::SameLine();
 						//Log Messages UI
-						{
-							ImGui::PushID(iter->first);
-							ImGui::BeginGroup();
-							if (ImGui::Selectable("##Item", false, ImGuiSelectableFlags_AllowDoubleClick, ImVec2(0, 0)) &&
-								ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-							{
-								ShellExecuteA(NULL, "open", iter->second.filename.c_str() , NULL, NULL, SW_SHOW);
-							}
-							if (ImGui::IsItemHovered())
-								interacted = true;
-							ImGui::SameLine();
-							ImGui::TextWrapped(iter->second.msg.c_str());
-							ImGui::PopStyleColor();
-							ImGui::Text(std::to_string(iter->second.count).c_str());
-							ImGui::Separator();
-							ImGui::EndGroup();
-							ImGui::PopID();
-						}
+
+						if (ImGui::IsItemHovered())
+							interacted = true;
+						ImGui::SameLine();
+						ImGui::PushItemWidth(-50);
+						ImGui::TextWrapped(iter->second.msg.c_str());
+						ImGui::PopItemWidth();
+						ImGui::PopStyleColor();
+						ImGui::SameLine(textPosition,0);
+						ImGui::Text(std::to_string(iter->second.count).c_str());
+						ImGui::EndGroup();
+						ImGui::PopID();
+						ImGui::Separator();
 						if (counter >= clipper.DisplayEnd)
 							break;
 					}
@@ -202,7 +221,7 @@ void LoggingView::AddItem(const std::string& str,char type,const std::string& fi
 
 	if (s_messageCollection.find(hash) == s_messageCollection.end())
 	{
-		s_messageCollection[hash] = { 0,type, str,filename};
+		s_messageCollection[hash] = { 1,type, str,filename};
 	}
 	else
 		s_messageCollection[hash].count += 1;

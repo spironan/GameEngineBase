@@ -234,23 +234,31 @@ bool ProjectFolderView::IconButtons(const std::string& ext , float imgsize)
 		engine::utility::StringHash(".wav"),
 		engine::utility::StringHash(".mp3"),
 		engine::utility::StringHash(".prefab")
-
 	};
+	bool selected;
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 	if (ext.empty())
-		return ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Folder").id, {imgsize, imgsize});
+	{
+		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Folder").id, {imgsize, imgsize});
+		ImGui::PopStyleColor();
+		return selected;
+	}
 	
 	engine::utility::StringHash::size_type curr_item = engine::utility::StringHash(ext);
 
 	if(curr_item == ext_hash[0])
-		return ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_PNG").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_PNG").id, { imgsize, imgsize });
 	else if(curr_item == ext_hash[1])
-		return ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_WAV").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_WAV").id, { imgsize, imgsize });
 	else if (curr_item == ext_hash[2])
-		return ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_MP3").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_MP3").id, { imgsize, imgsize });
 	else if (curr_item == ext_hash[3])
-		return ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id, { imgsize, imgsize });
 	else
-		return ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_GenericFile").id, { imgsize, imgsize });
+		selected = ImGui::ImageButton((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_GenericFile").id, { imgsize, imgsize });
+
+	ImGui::PopStyleColor();
+	return selected;
 }
 
 void ProjectFolderView::TextProcessing(std::string& str, float windowSize)
