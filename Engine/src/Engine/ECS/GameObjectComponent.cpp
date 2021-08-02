@@ -23,11 +23,16 @@ namespace engine
      @brief     Used to register for RTTR Specifically to display the relevant
                 information that will be displayed to the editor
     *//*********************************************************************************/
-    RTTR_REGISTRATION
-    {
-        using namespace rttr;
-        registration::class_<GameObjectComponent>("GameObject")
-            .property("Active", &GameObjectComponent::ActiveSelf)
-            .property("Name", &GameObjectComponent::Name);
-    }
+	RTTR_REGISTRATION
+	{
+		using namespace rttr;
+		registration::class_<engine::GameObjectComponent>("GameObject")
+			.property("Active", &GameObjectComponent::ActiveSelf)
+			.property("Name", &GameObjectComponent::Name);
+	}
+	GameObjectComponent::GameObjectComponent()
+	{
+
+	}
+
 }
