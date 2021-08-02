@@ -163,7 +163,7 @@ public:
             cam.update_mouse_relative(mDelta.first, mDelta.second);
         }	
 
-        cam.update_camera(dt);    
+		cam.update_camera((float)dt);
        
     }
 

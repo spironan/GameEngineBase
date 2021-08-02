@@ -94,27 +94,27 @@ void LoggingView::Show(bool* active)
 						{
 						case 0://trace
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.2f,0.5f,0.2f,1 });
-							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
+							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id), { imageSize,imageSize });
 							break;
 						case 1://debug
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,0.5f,1 });
-							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
+							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id), { imageSize,imageSize });
 							break;
 						case 2://info
 							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,1,1 });
-							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
+							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id), { imageSize,imageSize });
 							break;
 						case 3://warn
 							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 }); 
-							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Warning_Icon_Yellow").id, { imageSize,imageSize });
+							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Warning_Icon_Yellow").id), { imageSize,imageSize });
 							break;
 						case 4://err
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0,0,1 }); 
-							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id, { imageSize,imageSize });
+							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id), { imageSize,imageSize });
 							break;
 						case 5://critical
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 });
-							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id, { imageSize,imageSize });
+							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id), { imageSize,imageSize });
 							break;
 						}
 						ImGui::SameLine();
