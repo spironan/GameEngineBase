@@ -64,11 +64,9 @@ void LoggingView::Show(bool* active)
 		}
 		ImGui::EndMenuBar();
 	}
-	ImVec2 textSize = ImGui::CalcTextSize("a");
-	size_t textCount = static_cast<size_t>(std::floorf( ((ImGui::GetContentRegionAvail().x - imageSize)) / (textSize.x) * (imageSize / textSize.y - 1)));
-	std::string msg_processor;
-	msg_processor.resize(textCount +10);
+
 	//draw ui here
+	float textPosition = ImGui::GetContentRegionAvail().x - ImGui::GetFontSize() *5;//support for 5 chars
 	if (ImGui::BeginChild("LogView Child"))
 	{
 		if (m_collapse_similar)
@@ -94,27 +92,27 @@ void LoggingView::Show(bool* active)
 						{
 						case 0://trace
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.2f,0.5f,0.2f,1 });
-							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id), { imageSize,imageSize });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
 							break;
 						case 1://debug
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,0.5f,1 });
-							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id), { imageSize,imageSize });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
 							break;
 						case 2://info
 							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,1,1 });
-							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id), { imageSize,imageSize });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Log_Icon_Black").id, { imageSize,imageSize });
 							break;
 						case 3://warn
 							ImGui::PushStyleColor(ImGuiCol_Text, { 1,1,0,1 }); 
-							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Warning_Icon_Yellow").id), { imageSize,imageSize });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Warning_Icon_Yellow").id, { imageSize,imageSize });
 							break;
 						case 4://err
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0,0,1 }); 
-							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id), { imageSize,imageSize });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id, { imageSize,imageSize });
 							break;
 						case 5://critical
 							ImGui::PushStyleColor(ImGuiCol_Text, { 0.5f,0.5f,1,1 });
-							ImGui::Image(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id), { imageSize,imageSize });
+							ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Error_Icon_Red").id, { imageSize,imageSize });
 							break;
 						}
 						ImGui::SameLine();
@@ -123,17 +121,12 @@ void LoggingView::Show(bool* active)
 						if (ImGui::IsItemHovered())
 							interacted = true;
 						ImGui::SameLine();
-
-						if (iter->second.msg.size() > textCount)
-						{
-							msg_processor = iter->second.msg.substr(0, textCount);
-							msg_processor += "...";
-							ImGui::TextWrapped(msg_processor.c_str());
-						}
-						else
-							ImGui::TextWrapped(iter->second.msg.c_str());
+						ImGui::PushItemWidth(-50);
+						ImGui::TextWrapped(iter->second.msg.c_str());
+						ImGui::PopItemWidth();
 						ImGui::PopStyleColor();
-						ImGui::Text("Count: %d \t\t File:: %s", iter->second.count,iter->second.filename.c_str());
+						ImGui::SameLine(textPosition,0);
+						ImGui::Text(std::to_string(iter->second.count).c_str());
 						ImGui::EndGroup();
 						ImGui::PopID();
 						ImGui::Separator();
@@ -228,7 +221,7 @@ void LoggingView::AddItem(const std::string& str,char type,const std::string& fi
 
 	if (s_messageCollection.find(hash) == s_messageCollection.end())
 	{
-		s_messageCollection[hash] = { 1,type ,str,filename};
+		s_messageCollection[hash] = { 1,type, str,filename};
 	}
 	else
 		s_messageCollection[hash].count += 1;
