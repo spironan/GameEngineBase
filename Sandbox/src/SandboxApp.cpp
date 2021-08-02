@@ -42,7 +42,7 @@ public:
 
     EditorLayer() : Layer{"EditorLayer"}
     {
-		LOG_WARN("super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text super long text ");
+		LOG_WARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		using namespace engine;
 		TextureDatabase::AddTexture("Ouroboros_Folder",TextureLoader::LoadFromFilePath("Icons/Ouroboros_Folder.png"));
 		TextureDatabase::AddTexture("Ouroboros_GenericFile", TextureLoader::LoadFromFilePath("Icons/Ouroboros_GenericFile.png"));

@@ -38,7 +38,7 @@ private:
 	static bool s_newItemAdded;
 	static bool s_paused;
 
-	bool m_collapse_similar = false;
+	bool m_collapse_similar = true;
 };
 
 

@@ -64,9 +64,11 @@ void LoggingView::Show(bool* active)
 		}
 		ImGui::EndMenuBar();
 	}
-
+	ImVec2 textSize = ImGui::CalcTextSize("a");
+	size_t textCount = static_cast<size_t>(std::floorf( ((ImGui::GetContentRegionAvail().x - imageSize)) / (textSize.x) * (imageSize / textSize.y - 1)));
+	std::string msg_processor;
+	msg_processor.resize(textCount +10);
 	//draw ui here
-	float textPosition = ImGui::GetContentRegionAvail().x - ImGui::GetFontSize() *5;//support for 5 chars
 	if (ImGui::BeginChild("LogView Child"))
 	{
 		if (m_collapse_similar)
@@ -121,12 +123,17 @@ void LoggingView::Show(bool* active)
 						if (ImGui::IsItemHovered())
 							interacted = true;
 						ImGui::SameLine();
-						ImGui::PushItemWidth(-50);
-						ImGui::TextWrapped(iter->second.msg.c_str());
-						ImGui::PopItemWidth();
+
+						if (iter->second.msg.size() > textCount)
+						{
+							msg_processor = iter->second.msg.substr(0, textCount);
+							msg_processor += "...";
+							ImGui::TextWrapped(msg_processor.c_str());
+						}
+						else
+							ImGui::TextWrapped(iter->second.msg.c_str());
 						ImGui::PopStyleColor();
-						ImGui::SameLine(textPosition,0);
-						ImGui::Text(std::to_string(iter->second.count).c_str());
+						ImGui::Text("Count: %d \t\t File:: %s", iter->second.count,iter->second.filename.c_str());
 						ImGui::EndGroup();
 						ImGui::PopID();
 						ImGui::Separator();
@@ -221,7 +228,7 @@ void LoggingView::AddItem(const std::string& str,char type,const std::string& fi
 
 	if (s_messageCollection.find(hash) == s_messageCollection.end())
 	{
-		s_messageCollection[hash] = { 1,type, str,filename};
+		s_messageCollection[hash] = { 1,type ,str,filename};
 	}
 	else
 		s_messageCollection[hash].count += 1;
