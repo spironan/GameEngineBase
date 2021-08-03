@@ -1,18 +1,32 @@
+/************************************************************************************//*!
+\file          Renderer2D.cpp
+\project       <PROJECT_NAME>
+\author        Jamie Kong, j.kong , 390004720
+\par           email: j.kong\@digipen.edu
+\date          August 1, 2021
+\brief         File contains implementation of a 2D renderer implemented with OpenGL 4.5
+
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #include "pch.h"
 #include "Renderer2D.h"
 
 #include <glad/glad.h>
-//#define GL_VERSION_4_3
-//#include "GL/glcorearb.h"
-//#include "GL/gl3w.h"
-//#include "sdl2/SDL_opengl.h
 
 #include "Engine/Core/Log.h"
+#include "Engine/Core/Assert.h"
 
 #include "Engine/Memory/MemoryCommon.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Engine/Renderer/Shader.h"
+#include "Engine/Platform/OpenGL/OpenGLShader.h"
 
 namespace engine
 {
@@ -29,6 +43,12 @@ namespace engine
 		//QuadVertex(glm::vec3 p, glm::vec4 col, glm::vec2 tex) :position{ p }, colour{col}, texCoord{tex}{}
 	};
 
+	struct LineVertex
+	{
+		glm::vec4 position{};
+		glm::vec4 colour{};
+	};
+
 
 	struct Renderer2DData
 	{
@@ -40,12 +60,11 @@ namespace engine
 		//Ref<VertexArray> QuadVertexArray;
 		//Ref<VertexBuffer> QuadVertexBuffer;
 		//Ref<Shader> TextureShader;
-		GLuint WhiteTexture{};
-		GLuint vaoid{};
-		GLuint shaderid{};
 
-		GLuint batchVAO{};
-		GLuint batchBuffer{};
+		GLuint WhiteTexture{};
+
+		GLuint quadBatchVAO{};
+		GLuint quadBatchBuffer{};
 
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;
@@ -58,12 +77,26 @@ namespace engine
 
 		Renderer2D::BatchRenderStats Stats;
 
+		static const uint32_t MaxLines = 20000;
+		static const uint32_t MaxLineVertice = MaxLines * 2;
+		GLuint lineBatchVAO{};
+		GLuint lineBatchBuffer{};
+
+		static const uint32_t CircleNumSegments= 32;
+		uint32_t LineIndexCount = 0;
+		LineVertex* LineVertexBufferBase = nullptr;
+		LineVertex* LineVertexBufferPtr = nullptr;
+		std::array<glm::vec4, CircleNumSegments> LineVertexPositions;
+
 		struct CameraData
 		{
 			glm::mat4 ViewProjection{ 1.0f };
 		};
 		CameraData CameraBuffer;
 		//Ref<UniformBuffer> CameraUniformBuffer;
+
+		std::shared_ptr<Shader> TextureQuadsShader;
+		std::shared_ptr<Shader> linesShader;
 	};
 
 	static Renderer2DData s_Data;
@@ -71,94 +104,42 @@ namespace engine
 
 void engine::Renderer2D::Init()
 {
-#if 1
-	std::array<QuadVertex, 4> vertices{
-	};
-		//					position    colour,  uv			
-	vertices[0] = { glm::vec4{ -0.5f,-0.5f, 1.0f,1.0f }, glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f }, glm::vec2{ 0.0f, 0.0f }, 1.0f };
-	vertices[1] = { glm::vec4{ 0.5f,-0.5f, 1.0f,1.0f} , glm::vec4{0.0f, 1.0f, 0.0f, 1.0f},glm::vec2{1.0f, 0.0f},1.0f };
-	vertices[2] = { glm::vec4{-0.5f, 0.5f, 1.0f,1.0f} , glm::vec4{1.0f, 0.0f, 1.0f, 1.0f},glm::vec2{0.0f, 1.0f},1.0f };
-	vertices[3] = { glm::vec4{ 0.5f, 0.5f, 1.0f,1.0f} , glm::vec4{0.0f, 0.0f, 1.0f, 1.0f},glm::vec2{1.0f, 1.0f},1.0f };
 
-
-	// Get a buffer handle
-	GLuint vbo_hdl;
-	glCreateBuffers(1, &vbo_hdl);
-	//creates and initializes a buffer object
-	glNamedBufferStorage(vbo_hdl,
-						 sizeof(QuadVertex) * vertices.size(),
-						 vertices.data(), GL_DYNAMIC_STORAGE_BIT);
-
-	glCreateVertexArrays(1, &  s_Data.vaoid);
-							   
-	glVertexArrayVertexBuffer( s_Data.vaoid, 8, vbo_hdl, 0, sizeof(QuadVertex));
-	glEnableVertexArrayAttrib( s_Data.vaoid, 0);
-	glVertexArrayAttribFormat( s_Data.vaoid, 0, 4, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, position));
-	glVertexArrayAttribBinding(s_Data.vaoid, 0, 8);
-							  
-	glEnableVertexArrayAttrib( s_Data.vaoid, 1);
-	glVertexArrayAttribFormat( s_Data.vaoid, 1, 4, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, colour));
-	glVertexArrayAttribBinding(s_Data.vaoid, 1, 8);
-							  
-	glEnableVertexArrayAttrib(s_Data.vaoid, 2);
-	glVertexArrayAttribFormat(s_Data.vaoid, 2, 2, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, texCoord));
-	glVertexArrayAttribBinding(s_Data.vaoid, 2, 8);
-
-	glEnableVertexArrayAttrib(s_Data.vaoid, 4);
-	glVertexArrayAttribFormat(s_Data.vaoid, 4, 1, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, TilingFactor));
-	glVertexArrayAttribBinding(s_Data.vaoid, 4, 8);
-	// indices array
-	std::array<GLushort, 4> idx_vtx{
-		2,0,3,1
-	};
-	
-	//create one buffer
-	GLuint e_hdl{};
-	glCreateBuffers(1, &e_hdl);
-	// index buffer ofject
-	glNamedBufferStorage(e_hdl,
-						 sizeof(GLushort) * idx_vtx.size(),
-						 reinterpret_cast<GLvoid*>(idx_vtx.data()),
-						 GL_DYNAMIC_STORAGE_BIT);
-	
-	//link the vao to the indices array
-	glVertexArrayElementBuffer(s_Data.vaoid, e_hdl);
-
-#endif
+	//Initilization of quad buffer
+	{
 
 	s_Data.QuadVertexPositions[0] = { -0.5f,-0.5f, 0.0f, 1.0f };
 	s_Data.QuadVertexPositions[1] = { -0.5f, 0.5f, 0.0f, 1.0f };
 	s_Data.QuadVertexPositions[2] = {  0.5f, 0.5f, 0.0f, 1.0f };
 	s_Data.QuadVertexPositions[3] = {  0.5f,-0.5f, 0.0f, 1.0f };
 
-
 	size_t bufferSize = sizeof(QuadVertex) * s_Data.MaxVertices;
-	glCreateBuffers(1, &s_Data.batchBuffer);
-	glNamedBufferStorage(s_Data.batchBuffer, bufferSize, NULL, GL_DYNAMIC_STORAGE_BIT);
+	glCreateBuffers(1, &s_Data.quadBatchBuffer);
+	glNamedBufferStorage(s_Data.quadBatchBuffer, bufferSize, NULL, GL_DYNAMIC_STORAGE_BIT);
 	
-	glCreateVertexArrays(1, &s_Data.batchVAO);
+	glCreateVertexArrays(1, &s_Data.quadBatchVAO);
 
-	glVertexArrayVertexBuffer(s_Data.batchVAO, 8, s_Data.batchBuffer, 0, sizeof(QuadVertex));
-	glEnableVertexArrayAttrib(s_Data.batchVAO, 0);
-	glVertexArrayAttribFormat(s_Data.batchVAO, 0, 4, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, position));
-	glVertexArrayAttribBinding(s_Data.batchVAO, 0, 8);
+	glVertexArrayVertexBuffer(s_Data.quadBatchVAO, 8, s_Data.quadBatchBuffer, 0, sizeof(QuadVertex));
+	glEnableVertexArrayAttrib(s_Data.quadBatchVAO, 0);
+	glVertexArrayAttribFormat(s_Data.quadBatchVAO, 0, 4, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, position));
+	glVertexArrayAttribBinding(s_Data.quadBatchVAO, 0, 8);
 
-	glEnableVertexArrayAttrib(s_Data.batchVAO, 1);
-	glVertexArrayAttribFormat(s_Data.batchVAO, 1, 4, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, colour));
-	glVertexArrayAttribBinding(s_Data.batchVAO, 1, 8);
+	glEnableVertexArrayAttrib(s_Data.quadBatchVAO, 1);
+	glVertexArrayAttribFormat(s_Data.quadBatchVAO, 1, 4, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, colour));
+	glVertexArrayAttribBinding(s_Data.quadBatchVAO, 1, 8);
 
-	glEnableVertexArrayAttrib(s_Data.batchVAO, 2);
-	glVertexArrayAttribFormat(s_Data.batchVAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, texCoord));
-	glVertexArrayAttribBinding(s_Data.batchVAO, 2, 8);
+	glEnableVertexArrayAttrib(s_Data.quadBatchVAO, 2);
+	glVertexArrayAttribFormat(s_Data.quadBatchVAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, texCoord));
+	glVertexArrayAttribBinding(s_Data.quadBatchVAO, 2, 8);
 
-	glEnableVertexArrayAttrib(s_Data.batchVAO, 3);
-	glVertexArrayAttribFormat(s_Data.batchVAO, 3, 1, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, TexIndex));
-	glVertexArrayAttribBinding(s_Data.batchVAO, 3, 8);
+	glEnableVertexArrayAttrib(s_Data.quadBatchVAO, 3);
+	glVertexArrayAttribFormat(s_Data.quadBatchVAO, 3, 1, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, TexIndex));
+	glVertexArrayAttribBinding(s_Data.quadBatchVAO, 3, 8);
 	
-	glEnableVertexArrayAttrib(s_Data.batchVAO, 4);
-	glVertexArrayAttribFormat(s_Data.batchVAO, 4, 1, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, TilingFactor));
-	glVertexArrayAttribBinding(s_Data.batchVAO, 4, 8);
-
+	glEnableVertexArrayAttrib(s_Data.quadBatchVAO, 4);
+	glVertexArrayAttribFormat(s_Data.quadBatchVAO, 4, 1, GL_FLOAT, GL_FALSE, offsetof(QuadVertex, TilingFactor));
+	glVertexArrayAttribBinding(s_Data.quadBatchVAO, 4, 8);
+	}
 	
 	s_Data.QuadVertexBufferBase = OONEW QuadVertex[s_Data.MaxVertices];
 	s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
@@ -187,12 +168,10 @@ void engine::Renderer2D::Init()
 						 reinterpret_cast<GLvoid*>(quadIndices),
 						 GL_DYNAMIC_STORAGE_BIT);
 	//link the vao to the indices array
-	glVertexArrayElementBuffer(s_Data.batchVAO, ebo_hdl);
-
-	delete[] quadIndices;
-
+	glVertexArrayElementBuffer(s_Data.quadBatchVAO, ebo_hdl);
 	glBindVertexArray(0);
 
+	delete[] quadIndices;
 
 	// 1x1 white texture
 	{
@@ -218,135 +197,58 @@ void engine::Renderer2D::Init()
 	}
 
 
-
-	//mdl.primative_type = GL_TRIANGLE_STRIP;
-	//mdl.draw_cnt = vertices.size();
-	//mdl.primative_cnt = mdl.draw_cnt;
-	//mdl.index_cnt = idx_vtx.size();
-
-	std::string vShader = R"raw(
-#version 450
-
-layout(location = 0) in vec4 pos;
-layout(location = 1) in vec4 col;
-layout(location = 2) in vec2 tex;
-layout(location = 3) in float a_TexIndex;
-layout(location = 4) in float a_tiling;
-
-layout(location = 1)out vec4 fCol;
-layout(location = 2)out vec2 TexCoord;
-layout(location = 3)out float f_TexIndex;
-
-//uniform mat4 uModel_xform;
-uniform mat4 uViewProj_xform;
-
-void main()
-{
-//gl_Position = uViewProj_xform* uModel_xform *  pos;
-gl_Position = uViewProj_xform*  pos;
-fCol = col;
-TexCoord = tex;
-f_TexIndex = a_TexIndex;
-}
-)raw";
-
-	std::string fShader = R"raw(
-#version 450
-
-layout(location = 1)in vec4 colour;
-layout(location = 2)in vec2 TexCoord;
-layout(location = 3)in float v_TexIndex;
-
-out vec4 FragColour;
-
-uniform sampler2D uTex2d[32];
-
-void main()
-{
-   int index =  int(v_TexIndex);
-    FragColour = texture(uTex2d[index], TexCoord)* colour;
-	//FragColour = vec4(1.0f,0,0,1.0f);
-})raw";
-
-	s_Data.shaderid = glCreateProgram();
-	const GLchar* ptr = vShader.c_str();
-	GLint  len = static_cast<GLint>(vShader.length());
-	GLuint vertShad = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertShad, 1,&(ptr), &len);
-	glCompileShader(vertShad);
+	//Line vertices 
 	{
-		GLint result = 0;
-		GLchar eLog[1024] = { 0 };
-		glGetShaderiv(vertShad, GL_COMPILE_STATUS, &result);
-		if (!result)
+		constexpr float theta = 2.0f * glm::pi<float>() / static_cast<float>(s_Data.CircleNumSegments);
+		float c = cosf(theta);//precalculate the sine and cosine
+		float s = sinf(theta);
+		float t{};
+
+		float radius = 0.5f;
+		float x = radius;//we start at angle = 0 
+		float y{};
+
+		for (int ii = 0; ii < s_Data.CircleNumSegments; ii++)
 		{
-			glGetShaderInfoLog(vertShad, sizeof(eLog), NULL, eLog);
-		#if defined(DEBUG) | defined(_DEBUG)
-				printf("Error compiling the %d shader : '%s' \n", GL_VERTEX_SHADER, eLog);
-		#endif
-			return;
+			s_Data.LineVertexPositions[ii] = { x + c * x , y + c * y, 0.0f, 1.0f };
+			//apply the rotation matrix
+			t = x;
+			x = c * x - s * y;
+			y = s * t + c * y;
 		}
 	}
 
-	ptr = fShader.c_str();
-    len = fShader.length();
-	GLuint fragShad = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragShad, 1, &(ptr), &len);
-	glCompileShader(fragShad);
-	{
-		GLint result = 0;
-		GLchar eLog[1024] = { 0 };
-		glGetShaderiv(fragShad, GL_COMPILE_STATUS, &result);
-		if (!result)
-		{
-			glGetShaderInfoLog(fragShad, sizeof(eLog), NULL, eLog);
-		#if defined(DEBUG) | defined(_DEBUG)
-					printf("Error compiling the %d shader : '%s' \n", GL_FRAGMENT_SHADER, eLog);
-		#endif
-			return;
-		}
-	}
+	s_Data.LineVertexBufferBase = OONEW LineVertex[s_Data.MaxLineVertice];
+	s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 
-	glAttachShader(s_Data.shaderid, vertShad);
-	glAttachShader(s_Data.shaderid, fragShad);
+	size_t lineBufferSize = sizeof(LineVertex) * s_Data.MaxLineVertice;
+	glCreateBuffers(1, &s_Data.lineBatchBuffer);
+	glNamedBufferStorage(s_Data.lineBatchBuffer, lineBufferSize, NULL, GL_DYNAMIC_STORAGE_BIT);
 
-	glLinkProgram(s_Data.shaderid);
-	{
-			GLint result = 0;
-			GLchar eLog[1024] = { 0 };
-		glGetProgramiv(s_Data.shaderid, GL_LINK_STATUS, &result);
-		if (!result)
-		{
-			glGetProgramInfoLog(s_Data.shaderid, sizeof(eLog), NULL, eLog);
-			#if defined(DEBUG) | defined(_DEBUG)
-					printf("Error linking program: '%s' \n", eLog);
-			#endif
-			return;
-		}
-	}
+	glCreateVertexArrays(1, &s_Data.lineBatchVAO);
 
-	glValidateProgram(s_Data.shaderid);
-	{
-		GLint result = 0;
-		GLchar eLog[1024] = { 0 };
-		glGetProgramiv(s_Data.shaderid, GL_VALIDATE_STATUS, &result);
-		if (!result)
-		{
-			glGetProgramInfoLog(s_Data.shaderid, sizeof(eLog), NULL, eLog);
-#if defined(DEBUG) | defined(_DEBUG)
-			printf("Error validating program: '%s' \n", eLog);
-#endif
-			return;
-		}
-	}
+	glVertexArrayVertexBuffer(s_Data.lineBatchVAO, 8, s_Data.lineBatchBuffer, 0, sizeof(LineVertex));
+	glEnableVertexArrayAttrib(s_Data.lineBatchVAO, 0);
+	glVertexArrayAttribFormat(s_Data.lineBatchVAO, 0, 4, GL_FLOAT, GL_FALSE, offsetof(LineVertex,position));
+	glVertexArrayAttribBinding(s_Data.lineBatchVAO, 0, 8);
+
+	glEnableVertexArrayAttrib(s_Data.lineBatchVAO, 1);
+	glVertexArrayAttribFormat(s_Data.lineBatchVAO, 1, 4, GL_FLOAT, GL_FALSE, offsetof(LineVertex, colour));
+	glVertexArrayAttribBinding(s_Data.lineBatchVAO, 1, 8);
+
+	s_Data.TextureQuadsShader = Shader::Create(R"(..\Engine\assets\shaders\quadShader.glsl)");
+	s_Data.linesShader = Shader::Create(R"(..\Engine\assets\shaders\linesShader.glsl)");
 
 }
 
 void engine::Renderer2D::Shutdown()
 {
-	glDeleteVertexArrays(1,&s_Data.batchVAO);
+	glDeleteVertexArrays(1,&s_Data.quadBatchVAO);
 	glDeleteTextures(1, &s_Data.WhiteTexture);
 	delete[] s_Data.QuadVertexBufferBase;
+
+	glDeleteVertexArrays(1,&s_Data.lineBatchVAO);
+	delete[] s_Data.LineVertexBufferBase;
 }
 
 
@@ -357,51 +259,67 @@ void engine::Renderer2D::BeginScene(const OrthographicCamera& camera)
 	s_Data.QuadIndexCount = 0;
 	s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 	s_Data.TextureSlotIndex = 1;
-
-	//for (uint32_t i = 1; i < s_Data.TextureSlots.size(); i++)
-	//	s_Data.TextureSlots[i] = nullptr;
-
 }
 
 void engine::Renderer2D::EndScene()
 {
 	FlushAndReset();
+	FlushAndResetLines();
 }
 
 void Renderer2D::Flush()
 {
-
 	size_t dataSize = ((char*)s_Data.QuadVertexBufferPtr - (char*)s_Data.QuadVertexBufferBase);
+	glNamedBufferSubData(s_Data.quadBatchBuffer, 0, dataSize, s_Data.QuadVertexBufferBase);
 	
-		glNamedBufferSubData(s_Data.batchBuffer, 0, dataSize, s_Data.QuadVertexBufferBase);
+	glBindVertexArray(s_Data.quadBatchVAO);
 
-		glBindVertexArray(s_Data.batchVAO);
+	auto qShdr = std::dynamic_pointer_cast<OpenGLShader>(s_Data.TextureQuadsShader);
 
-		glUseProgram(s_Data.shaderid);
+	qShdr->Bind();
 
-		int samplers[32];
-		for (size_t i = 0; i < 32; i++)
-		{
-			samplers[i] = i;
-		}
-		GLuint tex_loc = glGetUniformLocation(s_Data.shaderid, "uTex2d");
-		glUniform1iv(tex_loc, 32, samplers);
+	int samplers[32];
+	for (int i = 0; i < 32; i++)
+	{
+		samplers[i] = i;
+	}
 
-		//// Bind textures
-		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-		{
-			glBindTextureUnit(i, s_Data.TextureSlots[i]);
-		}
+	qShdr->SetUniform("uTex2d", 32, samplers);
+	qShdr->SetUniform("uViewProj_xform", s_Data.CameraBuffer.ViewProjection);
 
-		GLuint task_loc = glGetUniformLocation(s_Data.shaderid, "uViewProj_xform");
-		glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(s_Data.CameraBuffer.ViewProjection));
+	//// Bind textures
+	for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+	{
+		glBindTextureUnit(i, s_Data.TextureSlots[i]);
+	}
 
-		glDrawElements(GL_TRIANGLES, s_Data.QuadIndexCount, GL_UNSIGNED_SHORT, NULL);
+
+	glDrawElements(GL_TRIANGLES, s_Data.QuadIndexCount, GL_UNSIGNED_SHORT, NULL);
 		
-	//glUseProgram(0);
 	//Renderer::DrawIndexed(s_Data->QuadIndexCount, false);
 	s_Data.Stats.DrawCalls++;
 	s_Data.Stats.QuadCount += s_Data.QuadIndexCount/6;
+}
+
+void Renderer2D::FlushLines()
+{
+	size_t dataSize = ((char*)s_Data.LineVertexBufferPtr - (char*)s_Data.LineVertexBufferBase);
+	glNamedBufferSubData(s_Data.lineBatchBuffer, 0, dataSize, s_Data.LineVertexBufferBase);
+
+	glBindVertexArray(s_Data.lineBatchVAO);
+
+	auto lShdr = std::dynamic_pointer_cast<OpenGLShader>(s_Data.linesShader);
+
+	lShdr->Bind();
+
+	lShdr->SetUniform("uViewProj_xform", s_Data.CameraBuffer.ViewProjection);
+
+	glLineWidth(1.0f);
+	glDrawArrays(GL_LINES,0, s_Data.LineIndexCount);
+
+	//Renderer::DrawIndexed(s_Data->QuadIndexCount, false);
+	//s_Data.Stats.DrawCalls++;
+	//s_Data.Stats.QuadCount += s_Data.QuadIndexCount / 6;
 }
 
 void engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -440,24 +358,6 @@ void engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& si
 	}
 
 	s_Data.QuadIndexCount += 6;
-
-#if old
-	//glBindVertexArray(s_Data.vaoid);
-	//glUseProgram(s_Data.shaderid);
-	//GLuint task_loc = glGetUniformLocation(s_Data.shaderid, "uViewProj_xform");
-	//glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(s_Data.CameraBuffer.ViewProjection));
-
-	//task_loc = glGetUniformLocation(s_Data.shaderid, "uModel_xform");
-	//glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(mdl_xform));
-
-	//task_loc = glGetUniformLocation(s_Data.shaderid, "col");
-	//glUniform4fv(task_loc, 1, glm::value_ptr(color));
-
-	//glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, NULL);
-	//glUseProgram(0);
-	//glBindVertexArray(0);
-	////shd_ref->second.UnUse();
-#endif
 }
 
 void engine::Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
@@ -496,26 +396,6 @@ void engine::Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::v
 	}
 
 	s_Data.QuadIndexCount += 6;
-
-
-
-#ifdef old
-	glBindVertexArray(s_Data.vaoid);
-	glUseProgram(s_Data.shaderid);
-	GLuint task_loc = glGetUniformLocation(s_Data.shaderid, "uViewProj_xform");
-	glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(s_Data.CameraBuffer.ViewProjection));
-
-	task_loc = glGetUniformLocation(s_Data.shaderid, "uModel_xform");
-	glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(mdl_xform));
-
-	task_loc = glGetUniformLocation(s_Data.shaderid, "col");
-	glUniform4fv(task_loc, 1, glm::value_ptr(color));
-
-	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, NULL);
-	glUseProgram(0);
-	glBindVertexArray(0);
-#endif
-
 }
 
 void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const ooTexID& texture, float tilingFactor, const glm::vec4& tintColor)
@@ -541,7 +421,6 @@ void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& siz
 	if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 		FlushAndReset();
 
-
 	float textureIndex = 0.0f;
 	//check for valid texture
 	if (texture == static_cast<uint32_t>(-1))
@@ -565,12 +444,11 @@ void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& siz
 				FlushAndReset();
 
 			textureIndex = (float)s_Data.TextureSlotIndex;
+			ENGINE_ASSERT(s_Data.TextureSlotIndex < Renderer2DData::MaxTextureSlots)
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 		}
 	}
-	
-	
 
 	for (size_t i = 0; i < quadVertexCount; i++)
 	{
@@ -582,27 +460,48 @@ void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& siz
 		s_Data.QuadVertexBufferPtr++;
 	}
 	s_Data.QuadIndexCount += 6;
+}
 
-	/* 
-	glBindVertexArray(s_Data.vaoid);
-	glUseProgram(s_Data.shaderid);
+void Renderer2D::DrawCircle(const glm::vec3& position, float rotation, float radius, const glm::vec4& color)
+{
+	GLfloat rot = glm::radians(rotation);
+	glm::mat4 mdl_xform = {
+		 cosf(rot)* radius,		sinf(rot)* radius,	0.0f,		0.0f,
+		 -sinf(rot) * radius,	cosf(rot)* radius,		0.0f,		0.0f,
+		 0.0f,		0.0f,		0.0f,		0.0f,
+		 position.x,position.y, 0.0f,		1.0f
+	};
 
+	glm::vec4 firstLine0 = mdl_xform * glm::vec4{0,0,0,1.0f};
+	glm::vec4 firstLine1 = mdl_xform * s_Data.LineVertexPositions[0];
+	DrawLine(firstLine0, firstLine1, color);
+	for (size_t i = 0; i < s_Data.CircleNumSegments -1; i++)
+	{
+		glm::vec4 p0 = mdl_xform * s_Data.LineVertexPositions[i];
+		glm::vec4 p1 = mdl_xform * s_Data.LineVertexPositions[i+1];
+		DrawLine(p0, p1, color);
+	}
+	glm::vec4 p0 = mdl_xform * s_Data.LineVertexPositions[s_Data.CircleNumSegments-1];
+	glm::vec4 p1 = mdl_xform * s_Data.LineVertexPositions[0];
+	DrawLine(p0, p1, color);
+}
 
-	glBindTextureUnit(1, texture);
-	GLuint tex_loc = glGetUniformLocation(s_Data.shaderid, "uTex2d");
+void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
+{
+	if (s_Data.LineIndexCount >= Renderer2DData::MaxLineVertice)
+		FlushAndResetLines();
 
-	GLuint task_loc = glGetUniformLocation(s_Data.shaderid, "uViewProj_xform");
-	glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(s_Data.CameraBuffer.ViewProjection));
+	s_Data.LineVertexBufferPtr->position = glm::vec4{ p0 ,1.0f};
+	s_Data.LineVertexBufferPtr->colour = color;
+	s_Data.LineVertexBufferPtr++;
 
-	task_loc = glGetUniformLocation(s_Data.shaderid, "uModel_xform");
-	glUniformMatrix4fv(task_loc, 1, false, glm::value_ptr(mdl_xform));
+	s_Data.LineVertexBufferPtr->position = glm::vec4{ p1, 1.0f };
+	s_Data.LineVertexBufferPtr->colour = color;
+	s_Data.LineVertexBufferPtr++;
 
-	task_loc = glGetUniformLocation(s_Data.shaderid, "col");
-	glUniform4fv(task_loc, 1, glm::value_ptr(tintColor));
+	s_Data.LineIndexCount += 2;
 
-	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, NULL);
-	glUseProgram(0);
-	glBindVertexArray(0);*/
+	//s_Data.Stats.LineCount++;
 }
 
 void Renderer2D::ResetStats()
@@ -624,6 +523,14 @@ void Renderer2D::FlushAndReset()
 	s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 		  
 	s_Data.TextureSlotIndex = 1;
+}
+
+void Renderer2D::FlushAndResetLines()
+{
+	FlushLines();
+
+	s_Data.LineIndexCount = 0;
+	s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 }
 
 

@@ -1,3 +1,16 @@
+/************************************************************************************//*!
+\file          Sprite2D.h
+\project       <PROJECT_NAME>
+\author        Jamie Kong, j.kong , 390004720
+\par           email: j.kong\@digipen.edu
+\date          August 1, 2021
+\brief         File contains API for a Sprite2D component. 
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 
 #include "Engine/ECS/Component.h"
@@ -46,27 +59,62 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
+
+        /*********************************************************************************//*!
+        \brief    Returns the raw value of the texture to use for rendering
+         
+        \return   rendering texture ID
+        *//**********************************************************************************/
         ooTexID GetTexture() { return m_texture; }
+
+        /*********************************************************************************//*!
+        \brief    Gets the colour tint of the texture
+         
+        \return   Colour
+        *//**********************************************************************************/
         glm::vec4 GetColor() { return m_color; }
 
         /*-----------------------------------------------------------------------------*/
         /* Setter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
+
+        /*********************************************************************************//*!
+        \brief    Sets the texture ID using a raw texture value
+         
+        \param    textureID raw rendering texture value
+        *//**********************************************************************************/
         void SetTexture(ooTexID textureID);
-        void SetTexture(Texture tex); 
+
+        /*********************************************************************************//*!
+        \brief    Sets the texture ID using a texture asset
+
+        \param    Texture asset
+        *//**********************************************************************************/
+        void SetTexture(Texture tex);
+
+        /*********************************************************************************//*!
+        \brief    Sets the colour tint
+         
+        \param    col tint to set
+        *//**********************************************************************************/
         void SetColor(glm::vec4 col) { m_color = col; }
+
+        /*********************************************************************************//*!
+        \brief    Sets the colour tint to the RGBA value
+         
+        \param    r red val
+        \param    g green val
+        \param    b blue val
+        \param    alpha transparency value
+        *//**********************************************************************************/
         void SetColor(float r, float g, float b, float alpha = 1.0f) { m_color.r = r; m_color.g = g; m_color.b = b; m_color.a = alpha;}
 
         //const bool   IsDirty()           const { return m_dirty; }
         //const bool   HasChanged()        const { return m_hasChanged; }
 
-
-
         /*-----------------------------------------------------------------------------*/
         /* Member Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-
-
 
         //RTTR_ENABLE();
 

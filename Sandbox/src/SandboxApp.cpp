@@ -25,6 +25,7 @@ Technology is prohibited.
 #include "TestLayers/TransformTestLayer.h"
 #include "TestLayers/GameObjectTestLayer.h"
 #include "TestLayers/PhysicsTestLayer.h"
+#include "TestLayers/RenderingTestLayer.h"
 
 #include "Engine/Platform/Vulkan/VulkanContext.h"
 #include "Engine/Debug/cvars.h"
@@ -214,7 +215,7 @@ public:
     EditorSceneLayer() 
         : Layer{ "EditorSceneLayer" }
         , m_world(engine::WorldManager::CreateWorld())
-        , m_root {}
+        , m_root {m_world.CreateEntity()}
     {
         engine::WorldManager::SetActiveWorld(m_world.GetID());
 
@@ -256,8 +257,10 @@ public:
         PushLayer(new ExampleLayer());      // contains ability to quit progrom with esc
         PushOverlay(new ExampleLayer());
 
+        PushLayer(new RenderingTestLayer());
+
         //Actual Scene Layer
-        PushLayer(new EditorSceneLayer());
+        //PushLayer(new EditorSceneLayer());
         PushOverlay(new EditorLayer());
 
         // DEBUG/TEST LAYERS

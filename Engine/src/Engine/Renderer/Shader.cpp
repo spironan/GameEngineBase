@@ -1,10 +1,10 @@
 /************************************************************************************//*!
-\file          Sprite2D.cpp
+\file          Shader.cpp
 \project       <PROJECT_NAME>
 \author        Jamie Kong, j.kong , 390004720
 \par           email: j.kong\@digipen.edu
-\date          August 1, 2021
-\brief         File contains implementation of a Sprite2D component.
+\date          August 3, 2021
+\brief         File contains a interface selector for shaders
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -12,27 +12,18 @@ without the prior written consent of DigiPen Institute of
 Technology is prohibited.
 *//*************************************************************************************/
 #include "pch.h"
-#include "Sprite2D.h"
+#include "Shader.h"
+
+#include "Engine/Platform/OpenGL/OpenGLShader.h"
 
 namespace engine
 {
 
 
-Sprite2D::Sprite2D(Entity _entityID, bool _active): 
-    Component{ _entityID, _active },
-    m_texture{ std::numeric_limits<uint32_t>::max() },
-    m_color{ 1.0f,1.0f,1.0f,1.0f }
+std::shared_ptr<Shader> Shader::Create(const std::string& filepath)
 {
-}
-
-void Sprite2D::SetTexture(ooTexID textureID)
-{
-     m_texture = textureID; 
-}
-
-void Sprite2D::SetTexture(Texture tex)
-{
-    m_texture = tex.id;
+	// can check if we are on vulkan/opengl here before returning
+	return std::make_shared<OpenGLShader>(OpenGLShader(std::forward<const std::string&>(filepath)));
 }
 
 }

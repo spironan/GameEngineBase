@@ -1,3 +1,16 @@
+/************************************************************************************//*!
+\file          AssetsManager.h
+\project       <PROJECT_NAME>
+\author        Jamie Kong, j.kong , 390004720
+\par           email: j.kong\@digipen.edu
+\date          August 1, 2021
+\brief         This file contains API of an Asset manager for loading engine assets 
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 #include <map>
 #include <functional>
@@ -26,6 +39,12 @@ namespace engine
 			m_idToName[tex.id] = name;
 		}
 
+		/*********************************************************************************//*!
+		\brief    Registers a raw texture ID to the database
+		 
+		\param    name Name of the texture
+		\param    id raw id of texture
+		*//**********************************************************************************/
 		static void AddTexture(const std::string& name, ooTexID id)
 		{
 			Texture tex{};
@@ -35,10 +54,35 @@ namespace engine
 			m_idToName[tex.id] = name;
 		}
 
+		/*********************************************************************************//*!
+		\brief    Updates the manager with a new texture of an existing entry
+		 
+		\param    name Existing entry
+		\param    id new ID
+		*//**********************************************************************************/
 		static void UpdateTexture(engine::utility::StringHash name, ooTexID id) { m_nameToTexture[name].id = id; }
 
+		/*********************************************************************************//*!
+		\brief    De-registers a texture from the manager
+		 
+		\param    name Name of the texture to de-register
+		*//**********************************************************************************/
 		static void RemoveTexture(engine::utility::StringHash name) { m_nameToTexture[name].id = 0; }
+
+		/*********************************************************************************//*!
+		\brief    Gets the Texture asset stored using a name
+		 
+		\param    name Name of the texture
+		\return   Texture asset
+		*//**********************************************************************************/
 		static Texture GetTexture(engine::utility::StringHash name) { return m_nameToTexture[name]; }
+
+		/*********************************************************************************//*!
+		\brief    Gets a texture asset's name using its texture ID
+		 
+		\param    id texture ID
+		\return   name of the texture
+		*//**********************************************************************************/
 		static const std::string& GetName(ooTexID id) { return m_idToName[id]; }
 
 		// TODO:

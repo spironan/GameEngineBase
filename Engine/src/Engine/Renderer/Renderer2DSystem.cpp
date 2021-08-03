@@ -1,3 +1,19 @@
+/************************************************************************************//*!
+\file          Renderer2DSystem.cpp
+\project       <PROJECT_NAME>
+\author        Jamie Kong, j.kong , 390004720
+\par           email: j.kong\@digipen.edu
+\date          August 1, 2021
+\brief         File contains the implementation of the rendering 2D
+				system which renders quads to screen in batch using ECS systems
+
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
+
 #include "pch.h"
 #include "Renderer2DSystem.h"
 
@@ -29,6 +45,11 @@ void Renderer2DSystem::Update()
 									transform.GetGlobalRotationDeg(),
 									sprite.GetTexture(),1.0f,
 									sprite.GetColor());
+
+		Renderer2D::DrawCircle(transform.GetGlobalPosition(),
+							   transform.GetGlobalRotationDeg(),
+							   transform.GetGlobalScale().x/2.f,
+							   sprite.GetColor());
 	}
 	engine::Renderer2D::EndScene();
 }

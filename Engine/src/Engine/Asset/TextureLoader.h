@@ -1,3 +1,16 @@
+/************************************************************************************//*!
+\file          TextureLoader.h
+\project       <PROJECT_NAME>
+\author        Jamie Kong, j.kong , 390004720
+\par           email: j.kong\@digipen.edu
+\date          August 1, 2021
+\brief         This file contains interface for loading textures from file path into rendering system
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 #include "AssetTypes.h"
 namespace engine{
