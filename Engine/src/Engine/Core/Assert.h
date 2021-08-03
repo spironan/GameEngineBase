@@ -30,11 +30,11 @@ Technology is prohibited.
     *//*****************************************************************************/
     #define ENGINE_ASSERT(x)                        { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed!"); __debugbreak();}}
     #define ENGINE_ASSERT_MSG(x, ...)               { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed : {0}", __VA_ARGS__); __debugbreak();}}
-    #define ENGINE_ASSERT_CUSTOM_MSG(x, msg, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed!" + msg, __VA_ARGS__); __debugbreak();}}
+    #define ENGINE_ASSERT_CUSTOM_MSG(x, msg, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed! " + std::string(msg), __VA_ARGS__); __debugbreak();}}
 
     #define ENGINE_VERIFY(x)                        { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed!"); __debugbreak();} }
     #define ENGINE_VERIFY_MSG(x, ...)               { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed : {0}", __VA_ARGS__); __debugbreak();} }
-    #define ENGINE_VERIFY_CUSTOM_MSG(x, msg, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed!" + msg, __VA_ARGS__); __debugbreak();} }
+    #define ENGINE_VERIFY_CUSTOM_MSG(x, msg, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed! " + std::string(msg), __VA_ARGS__); __debugbreak();} }
     
 #else
     #define ENGINE_ASSERT(x)                        
