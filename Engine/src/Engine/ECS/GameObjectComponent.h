@@ -18,7 +18,7 @@ Technology is prohibited.
 
 namespace engine
 {
-    class GameObjectComponent final
+    struct GameObjectComponent final
     {
 	public:
         GameObjectComponent();
