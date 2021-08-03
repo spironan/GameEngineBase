@@ -23,6 +23,7 @@ Technology is prohibited.
 #include "Rigidbody.h"
 
 #include "BoxCollider.h"
+#include "CircleCollider.h"
 
 #include "Engine/Transform/TransformSystem.h"
 
@@ -86,7 +87,7 @@ namespace engine
             m_accumulator -= FixedDeltaTime;
         }
 
-        const double alpha = m_accumulator / FixedDeltaTime;
+        double alpha = m_accumulator / FixedDeltaTime;
 
         // Update dynamics
         auto& container = m_ECS_Manager.GetComponentDenseArray<Rigidbody2D>();
@@ -113,14 +114,17 @@ namespace engine
         //Generate Manifold : Rigidbody only. If trigger : 2 flags and set them
         //_mm_rsqrt_ss
 
-        auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, BoxCollider2D>();
+        auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, CircleCollider2D>();
+        //auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, BoxCollider2D>();
 
         for (auto& ent : view)
         {
-            auto& collider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
+            //auto& collider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
+            auto& collider = m_ECS_Manager.GetComponent<CircleCollider2D>(ent);
             for (auto& ent2 : view)
             {
-                auto& collider2 = m_ECS_Manager.GetComponent<BoxCollider2D>(ent2);
+                //auto& collider2 = m_ECS_Manager.GetComponent<BoxCollider2D>(ent2);
+                auto& collider2 = m_ECS_Manager.GetComponent<CircleCollider2D>(ent2);
                 if (collider.GetEntity() == collider2.GetEntity()) break;
 
                 /*if(collider.TestCollision(&collider2))
@@ -141,7 +145,7 @@ namespace engine
     {
         //Resolve all the collision
         for (auto* solver : m_solvers) {
-            solver->Solve(m_collisions, dt);
+            solver->Solve(m_collisions, static_cast<float>(dt));
         }
         
         m_collisions.clear();

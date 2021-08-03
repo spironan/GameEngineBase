@@ -50,6 +50,16 @@ namespace engine
 
     }
 
+    void Rigidbody2D::SetAutoMass(bool useAutoMass)
+    {
+        UseAutoMass = useAutoMass;
+        if (UseAutoMass)    // if Use Auto Mass is set to true.
+        {
+            // Use Density for now, should be Mass = Density * Volume
+            SetMass(m_material.Density);
+        }
+    }
+
     void Rigidbody2D::Interpolate(float alpha)
     {
         Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform;
@@ -69,6 +79,8 @@ namespace engine
     {
         m_linearVelocity += (m_force * m_data.InverseMass) * static_cast<float>(dt);
 
+        //m_angularVelocity += m_torque * m_data.InverseInertia * static_cast<float>(dt);
+
         //m_linearVelocity *= 1.f - DynamicFriction;  // is this correct for dynamic friction?
     }
 
@@ -77,6 +89,8 @@ namespace engine
         Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform;
         //m_previoiusPosition = trans.GetPosition();
         trans.Position() += glm::vec3{ m_linearVelocity, 0.f } * static_cast<float>(dt);
+
+        //m_orientation += m_angularVelocity * static_cast<float>(dt);
     }
 
 }

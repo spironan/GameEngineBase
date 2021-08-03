@@ -21,7 +21,7 @@ private:
     engine::World& m_world;
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
     int width{}, height{};
-    engine::GameObject m_root, /*m_second,*/ m_floor;
+    engine::GameObject m_root, m_second/*, m_floor*/;
 
     oom::vec2 upperbounds, lowerbounds;
 public:
@@ -44,33 +44,35 @@ public:
         {
             m_root.Transform.Scale() = { 50.f, 50.f, 1.0f };
             m_root.AddComponent<engine::Sprite2D>();
-            m_root.AddComponent<engine::BoxCollider2D>();
+            //m_root.AddComponent<engine::BoxCollider2D>();
+            m_root.AddComponent<engine::CircleCollider2D>();
             auto& pc = m_root.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
-            pc.GravityScale = 1.0f;
+            pc.GravityScale = 0.0f;
         }
         
-        /*{
+        {
             m_second.Transform.Position() = { 100.f, 0.f, 0.f };
             m_second.Transform.Scale() = { 50.f, 50.f, 1.0f };
             m_second.AddComponent<engine::Sprite2D>();
-            m_second.AddComponent<engine::BoxCollider2D>();
+            //m_second.AddComponent<engine::BoxCollider2D>();
+            m_second.AddComponent<engine::CircleCollider2D>();
             auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
             pc.GravityScale = 0.0f;
-        }*/
-
-        //Ground
-        {
-            m_floor.Transform.Position() = { 0.f, -150.f, 0.f };
-            m_floor.Transform.Scale() = { 1000.f, 5.f, 1.0f };
-            m_floor.AddComponent<engine::Sprite2D>();
-            m_floor.AddComponent<engine::BoxCollider2D>();
-            auto& pc = m_floor.AddComponent<engine::Rigidbody2D>();
-            /*pc.SetMass(1.f);*/
-            pc.BodyType = engine::BodyType::STATIC;
-            pc.GravityScale = 0.0f;
         }
+
+        ////Ground
+        //{
+        //    m_floor.Transform.Position() = { 0.f, -150.f, 0.f };
+        //    m_floor.Transform.Scale() = { 1000.f, 5.f, 1.0f };
+        //    m_floor.AddComponent<engine::Sprite2D>();
+        //    m_floor.AddComponent<engine::BoxCollider2D>();
+        //    auto& pc = m_floor.AddComponent<engine::Rigidbody2D>();
+        //    /*pc.SetMass(1.f);*/
+        //    pc.BodyType = engine::BodyType::STATIC;
+        //    pc.GravityScale = 0.0f;
+        //}
 
     }
 

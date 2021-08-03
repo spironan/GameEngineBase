@@ -140,26 +140,21 @@ namespace engine
         void SetMaterial(PhysicsMaterial material) { m_material = material; }
         PhysicsMaterial GetMaterial() const { return m_material; }
 
-        void SetAutoMass(bool useAutoMass) 
-        {
-            UseAutoMass = useAutoMass; 
-            if (UseAutoMass)    // if Use Auto Mass is set to true.
-            {
-                // Use Density for now, should be Mass = Density * Volume
-                SetMass(m_material.Density);
-            }
-        }
+        void SetAutoMass(bool useAutoMass);
+        
     private:
 
         PhysicsMaterial m_material;
 
         MassData m_data;
 
-        /*float m_mass = 1.0f;
-        float m_inverseMass = 1.0f / m_mass;*/
-
         glm::vec2 m_linearVelocity;
         glm::vec2 m_force;
+
+        //// Angular components
+        //float m_orientation;
+        //float m_angularVelocity;
+        //float m_torque;
 
         glm::vec3 m_prevPos;
 
