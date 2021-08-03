@@ -3,6 +3,7 @@
 #include "ScriptUtility.h"
 
 #include "Engine/ECS/WorldManager.h"
+#include "Engine/ECS/GameObject.h"
 
 namespace engine
 {
@@ -333,6 +334,11 @@ namespace engine
 
     }
 
+    Scripting::~Scripting()
+    {
+        StopPlay();
+    }
+
     /*-----------------------------------------------------------------------------*/
     /* Script Functions                                                            */
     /*-----------------------------------------------------------------------------*/
@@ -492,6 +498,9 @@ namespace engine
 
     void Scripting::StopPlay()
     {
+        if (gameObjPtr == 0)
+            return;
+
         for (unsigned int i = 0; i < scriptList.size(); ++i)
         {
             mono_gchandle_free(scriptList[i]);
@@ -514,6 +523,14 @@ namespace engine
                 continue;
             mono_runtime_invoke(method, script, NULL, NULL);
         }
+    }
+
+    /*-----------------------------------------------------------------------------*/
+    /* Getters                                                                     */
+    /*-----------------------------------------------------------------------------*/
+    uint32_t Scripting::GetGameObjectPtr()
+    {
+        return gameObjPtr;
     }
 
     /*-----------------------------------------------------------------------------*/
@@ -554,4 +571,18 @@ uint32_t GetScript(int id, const char* _namespace, const char* _type)
 void RemoveScript(int id, const char* _namespace, const char* _type)
 {
     engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(_namespace, _type);
+}
+
+uint32_t CreateEntity()
+{
+    engine::GameObject instance{ engine::WorldManager::GetActiveWorld().CreateEntity() };
+    auto& scripting = instance.AddComponent<engine::Scripting>();
+    scripting.SetUpPlay();
+    // scripting.StartPlay();
+    return scripting.GetGameObjectPtr();
+}
+
+__declspec(dllexport) void DestroyEntity(int id)
+{
+    engine::WorldManager::GetActiveWorld().DestroyEntity(id);
 }

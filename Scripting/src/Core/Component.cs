@@ -9,9 +9,6 @@ namespace Ouroboros
     {
         private GameObject _gameObject = null;
 
-        [DllImport("__Internal")]
-        private static extern IntPtr GetEntityFromID(int id);
-
         public GameObject gameObject
         {
             get

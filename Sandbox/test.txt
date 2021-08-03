@@ -1,8 +1,12 @@
+EnemyManager
+SCRIPTEND
+OBJECTEND
+
 PlayerScript
 SCRIPTEND
 
 HealthScript
-totalHealth 45
+totalHealth 75
 SCRIPTEND
 
 TweenScript

@@ -18,7 +18,7 @@ namespace engine
         Scripting(Scripting&&) = default;
         Scripting(Entity entityID, bool active = true);
 
-        virtual ~Scripting() override = default;
+        virtual ~Scripting() override;
 
         Scripting& operator=(Scripting const&) = default;
         Scripting& operator=(Scripting&&) = default;
@@ -51,6 +51,11 @@ namespace engine
         void InvokeFunctionAll(const char* functionName);
 
         /*-----------------------------------------------------------------------------*/
+        /* Getters                                                                     */
+        /*-----------------------------------------------------------------------------*/
+        uint32_t GetGameObjectPtr();
+
+        /*-----------------------------------------------------------------------------*/
         /* Debugging Tools                                                             */
         /*-----------------------------------------------------------------------------*/
         void DebugPrintInfo();
@@ -71,4 +76,7 @@ extern "C"
     __declspec(dllexport) uint32_t AddScript(int id, const char* _namespace, const char* _type);
     __declspec(dllexport) uint32_t GetScript(int id, const char* _namespace, const char* _type);
     __declspec(dllexport) void RemoveScript(int id, const char* _namespace, const char* _type);
+
+    __declspec(dllexport) uint32_t CreateEntity();
+    __declspec(dllexport) void DestroyEntity(int id);
 }

@@ -195,6 +195,7 @@ public:
     virtual void OnUpdate(engine::Timestep dt) override
     {
         engine::WorldManager::SetActiveWorld(m_world.GetID());
+        m_world.GetSystem<engine::ScriptSystem>()->InvokeFunctionAll("Update");
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::SPACE))
         {

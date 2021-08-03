@@ -11,11 +11,6 @@ namespace Ouroboros
     {
         private int instanceID = -1;
 
-        public void DebugPrint()
-        {
-            Console.WriteLine("GAMEOBJECT " + instanceID);
-        }
-
         #region Create/Destroy
 
         [DllImport("__Internal")]
