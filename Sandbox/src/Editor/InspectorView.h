@@ -74,11 +74,11 @@ private:
 			}
 			else if (id == m_tracked_ids[type_BOOL])
 			{
-				bool value = element.get_value(component).get_value<bool>();
-				current_value = value;
-				if (ImGui::RadioButton(element.get_name().c_str(), &value))
+				bool s_value = element.get_value(component).get_value<bool>();
+				current_value = s_value;
+				if (ImGui::RadioButton(element.get_name().c_str(), s_value))
 				{
-					element.set_value(component, value);
+					element.set_value(component, !s_value);
 				}
 			}
 			else if (id == m_tracked_ids[type_ENTITY])

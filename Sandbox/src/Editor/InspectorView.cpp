@@ -35,8 +35,6 @@ void InspectorView::Show()
 			auto& go = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject);
 			
 			ImGui::Text("Name :  %s", go.Name().c_str());
-			engine::GameObjectComponent t;
-			std::cout<<t.get_type().get_name() << std::endl;
 			if(go.TryGetComponent<engine::GameObjectComponent>())
 				ReadComponents(go.GetComponent<engine::GameObjectComponent>());
 			if(go.TryGetComponent<engine::Transform3D>())
