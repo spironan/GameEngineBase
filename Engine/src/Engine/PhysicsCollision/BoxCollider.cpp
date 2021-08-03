@@ -3,11 +3,13 @@
 
 #include "Engine/PhysicsCollision/Algorithms/Collision.h"
 
-#include "CircleCollider.h"
+//#include "CircleCollider.h"
 
 #include "Engine/PhysicsCollision/Manifold.h"
 
 #include "Engine/ECS/GameObject.h"
+
+#include "Engine/PhysicsCollision/RigidBody.h"
 
 namespace engine
 {
@@ -41,19 +43,14 @@ namespace engine
 
         if (!Collision::Test2DAABBAABB(aabb, aabb2))
         {
-            return Manifold2D
-            {
-                static_cast<GameObject>(GetEntity()).GetComponent<Rigidbody2D>(),
-                static_cast<GameObject>(boxCollider2D->GetEntity()).GetComponent<Rigidbody2D>(),
-                {},{}/*,{},{}*/,false
-            };
+            return Manifold2D{};    // empty manifold, no collision.
         }
 
 
         Manifold2D result
         {
-            static_cast<GameObject>(GetEntity()).GetComponent<Rigidbody2D>(),
-            static_cast<GameObject>(boxCollider2D->GetEntity()).GetComponent<Rigidbody2D>(),
+            static_cast<GameObject>(GetEntity()).TryGetComponent<Rigidbody2D>(),
+            static_cast<GameObject>(boxCollider2D->GetEntity()).TryGetComponent<Rigidbody2D>(),
             /*{ aabb.max.x - aabb2.min.x, aabb.max.y - aabb2.min.y },
             { aabb2.min.x - aabb.max.x, aabb2.min.y - aabb.min.y },
             glm::normalize(result.B - result.A),
@@ -82,7 +79,9 @@ namespace engine
         if (x_overlap < y_overlap)
         {
             // Point towards B knowing that n points from A to B
-            if (n.x < 0)
+            result.Normal = n.x < 0 ? vec2{ -1, 0 } : vec2{ 1, 0 };
+            result.PenetrationDepth = x_overlap;
+            /*if (n.x < 0)
             {
                 result.Normal = vec2(-1, 0);
             }
@@ -90,12 +89,14 @@ namespace engine
             {
                 result.Normal = vec2(1, 0);
                 result.PenetrationDepth = x_overlap;
-            }
+            }*/
         }
         else
         {
             // Point toward B knowing that n points from A to B
-            if (n.y < 0)
+            result.Normal = n.y < 0 ? vec2{ 0, -1 } : vec2{ 0, 1 };
+            result.PenetrationDepth = y_overlap;
+            /*if (n.y < 0)
             {
                 result.Normal = vec2(0, -1);
             }
@@ -103,7 +104,7 @@ namespace engine
             {
                 result.Normal = vec2(0, 1);
                 result.PenetrationDepth = y_overlap;
-            }
+            }*/
         }
         
         result.HasCollision = true;
@@ -111,8 +112,10 @@ namespace engine
         return result;
     }
 
-    //Manifold2D BoxCollider2D::TestCollision(CircleCollider2D const* circleCollider2D) const
-    //{
-    //    //return circleCollider2D->TestCollision(this);
-    //}
+    Manifold2D BoxCollider2D::TestCollision(CircleCollider2D const* circleCollider2D) const
+    {
+        //return circleCollider2D->TestCollision(this);
+        return Manifold2D{};    // empty manifold, not handled yet.
+    }
+
 }

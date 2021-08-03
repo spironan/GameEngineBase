@@ -11,7 +11,7 @@ namespace engine
     public:
         virtual Manifold2D TestCollision(Collider2D const* collider) const = 0;
         virtual Manifold2D TestCollision(BoxCollider2D const* boxCollider2D) const = 0;
-        //virtual Manifold2D TestCollision(CircleCollider2D const* circleCollider2D) const = 0;
+        virtual Manifold2D TestCollision(CircleCollider2D const* circleCollider2D) const = 0;
 
     public:
         bool IsTrigger;

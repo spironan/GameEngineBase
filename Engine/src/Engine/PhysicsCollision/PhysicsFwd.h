@@ -9,6 +9,8 @@ namespace engine
     using mat2 = glm::mat2;
     using mat3 = glm::mat3;
 
+    class Rigidbody2D;
+
     class Collider2D;
     class BoxCollider2D;
     class CircleCollider2D;
@@ -17,5 +19,6 @@ namespace engine
     struct PhysicsMaterial;
     struct MassData;
 
-    class ImpulseSolver;
+    struct Solver;
+    struct ImpulseSolver;
 }

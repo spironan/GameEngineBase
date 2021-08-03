@@ -9,14 +9,14 @@
 
 namespace engine
 {
-    void ImpulseSolver::Solve(std::vector<Manifold2D> manifolds, float dt)
+    void ImpulseSolver::Solve(std::vector<Manifold2D>& manifolds, float dt)
     {
         for (Manifold2D& manifold : manifolds)
         {
-            // Replaces non dynamic objects with default values.
-
-            Rigidbody2D* aBody = manifold.ObjA.IsDynamic() ? &manifold.ObjA : nullptr;
-            Rigidbody2D* bBody = manifold.ObjB.IsDynamic() ? &manifold.ObjB : nullptr;
+            //Replaces non dynamic objects with default values.
+            
+            Rigidbody2D* aBody = manifold.ObjA->IsDynamic() ? manifold.ObjA : nullptr;
+            Rigidbody2D* bBody = manifold.ObjB->IsDynamic() ? manifold.ObjB : nullptr;
 
             glm::vec2 aVel = aBody ? aBody->GetVelocity() : glm::vec2{ 0.0f };
             glm::vec2 bVel = bBody ? bBody->GetVelocity() : glm::vec2{ 0.0f };
@@ -26,6 +26,7 @@ namespace engine
             float aInvMass = aBody ? aBody->GetInverseMass() : 1.0f;
             float bInvMass = bBody ? bBody->GetInverseMass() : 1.0f;
 
+            
             // Impluse
 
             // This is important for convergence
@@ -33,6 +34,7 @@ namespace engine
             if (velAlongNormal >= 0)
                 continue;
 
+            // restitution
             float e = (aBody ? aBody->GetMaterial().Restitution : 1.0f) * (bBody ? bBody->GetMaterial().Restitution : 1.0f);
 
             float j = -(1.0f + e) * velAlongNormal / (aInvMass + bInvMass);
@@ -84,12 +86,14 @@ namespace engine
                 bBody->SetVelocity(bVel + friction * bInvMass);
             }
 
-            // testing positional correction
-            const float percent = 0.2f; // usually 20% to 80%
-            const float slop = 0.01f; // usually 0.01 to 0.1
-            vec2 correction = std::fmaxf(manifold.PenetrationDepth - slop, 0.0f) / (aInvMass + bInvMass)* percent* manifold.Normal;
-            if(aBody) aBody->GetComponent<Transform3D>().Position() -= glm::vec3{ aInvMass * correction , 0.f};
-            if(bBody) bBody->GetComponent<Transform3D>().Position() += glm::vec3{ bInvMass * correction , 0.f};
+            // Naive positional correction.
+            {
+                const float percent = 0.8f; // usually 20% to 80%
+                const float slop = 0.01f; // usually 0.01 to 0.1
+                vec2 correction = std::fmaxf(manifold.PenetrationDepth - slop, 0.0f) / (aInvMass + bInvMass)* percent* manifold.Normal;
+                if(aBody) aBody->GetComponent<Transform3D>().Position() -= glm::vec3{ aInvMass * correction , 0.f};
+                if(bBody) bBody->GetComponent<Transform3D>().Position() += glm::vec3{ bInvMass * correction , 0.f};
+            }
         }
     }
 

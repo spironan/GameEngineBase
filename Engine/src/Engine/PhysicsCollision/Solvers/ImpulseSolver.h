@@ -4,19 +4,8 @@
 
 namespace engine
 {
-    class ImpulseSolver : public Solver
+    struct ImpulseSolver final : public Solver
     {
-    public:
-        /*-----------------------------------------------------------------------------*/
-        /* Constructors and Destructors                                                */
-        /*-----------------------------------------------------------------------------*/
-        ImpulseSolver()                                 = default;
-        ImpulseSolver(ImpulseSolver const&)             = default;
-        ImpulseSolver(ImpulseSolver &&)                 = default;
-        ImpulseSolver& operator=(ImpulseSolver const&)  = default;
-        ImpulseSolver& operator=(ImpulseSolver &&)      = default;
-        ~ImpulseSolver()                                = default;
-
-        void Solve(std::vector<Manifold2D> manifolds, float dt);
+        virtual void Solve(std::vector<Manifold2D>& manifolds, float dt) override;
     };
 }

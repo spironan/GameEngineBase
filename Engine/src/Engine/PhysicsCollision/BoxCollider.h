@@ -9,7 +9,7 @@ namespace engine
     public:
         virtual Manifold2D TestCollision(Collider2D const* collider) const;
         virtual Manifold2D TestCollision(BoxCollider2D const* boxCollider2D) const;
-        //virtual Manifold2D TestCollision(CircleCollider2D const* circleCollider2D) const;
+        virtual Manifold2D TestCollision(CircleCollider2D const* circleCollider2D) const;
 
     private:
         AABB2D m_bounds;
