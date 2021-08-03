@@ -28,13 +28,19 @@ Technology is prohibited.
                 whereas verify still calls the original function (x).
                 Use at own discretion.
     *//*****************************************************************************/
-    #define ENGINE_ASSERT(x)            { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed"); __debugbreak();}}
-    #define ENGINE_ASSERT_MSG(x, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed : {0}", __VA_ARGS__); __debugbreak();}}
-    #define ENGINE_VERIFY(x)            { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed"); __debugbreak();} }
-    #define ENGINE_VERIFY_MSG(x, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed : {0}", __VA_ARGS__); __debugbreak();} }
+    #define ENGINE_ASSERT(x)                        { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed!"); __debugbreak();}}
+    #define ENGINE_ASSERT_MSG(x, ...)               { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed : {0}", __VA_ARGS__); __debugbreak();}}
+    #define ENGINE_ASSERT_CUSTOM_MSG(x, msg, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Assertion Failed!" + msg, __VA_ARGS__); __debugbreak();}}
+
+    #define ENGINE_VERIFY(x)                        { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed!"); __debugbreak();} }
+    #define ENGINE_VERIFY_MSG(x, ...)               { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed : {0}", __VA_ARGS__); __debugbreak();} }
+    #define ENGINE_VERIFY_CUSTOM_MSG(x, msg, ...)   { if(!(x)) {LOG_ENGINE_ERROR("Verification Failed!" + msg, __VA_ARGS__); __debugbreak();} }
+    
 #else
-    #define ENGINE_ASSERT(x)            
-    #define ENGINE_ASSERT_MSG(x, ...)   
-    #define ENGINE_VERIFY(x)            x
-    #define ENGINE_VERIFY_MSG(x, ...)   x
+    #define ENGINE_ASSERT(x)                        
+    #define ENGINE_ASSERT_MSG(x, ...)               
+    #define ENGINE_ASSERT_CUSTOM_MSG(x, msg, ...)   
+    #define ENGINE_VERIFY(x)                        x
+    #define ENGINE_VERIFY_MSG(x, ...)               x
+    #define ENGINE_VERIFY_CUSTOM_MSG(x, msg, ...)   x
 #endif
