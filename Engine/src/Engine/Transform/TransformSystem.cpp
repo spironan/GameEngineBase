@@ -17,7 +17,6 @@ Technology is prohibited.
 #include "Transform3D.h"
 #include "TransformSystem.h"
 
-#include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/ComponentManager.h"
 #include "Engine/ECS/ECS_Manager.h"
 
@@ -177,21 +176,25 @@ namespace engine
               2. you're not trying to attach oneself to itself
               3. youre not trying to attach oneself to your own children.
     *//*****************************************************************************/
-    bool TransformSystem::Attach(GameObject const& child, GameObject const& parent)
+    bool TransformSystem::Attach(Entity child, Entity parent)
     {
         int child_idx   = static_cast<int>(m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(child));
         int parent_idx  = static_cast<int>(m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(parent));
 
         if (child_idx == parent_idx) return false;    // attempting to add oneself to itself.
         
+        Transform3D& childTf = m_ECS_Manager.GetComponent<Transform3D>(child);
+
         // Child's number of Child
-        int child_childCount = child.Transform().GetChildCount();
+        int child_childCount = childTf.GetChildCount();
         // Perform a check to see if your'e attaching to a parent that is a child of child : 
         // Reject this , you cannot add a parent as a child to its child.
         if (child_idx < parent_idx && child_idx + child_childCount >= parent_idx) return false;
 
+        Transform3D& parentTf = m_ECS_Manager.GetComponent<Transform3D>(parent);
+
         // set child's parent to be parent transform
-        child.Transform().SetParent(parent.Transform());
+        childTf.SetParent(parentTf);
 
         // difference between their positions
         int diff = child_idx - parent_idx;

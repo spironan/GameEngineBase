@@ -19,7 +19,6 @@ Technology is prohibited.
 namespace engine 
 {
     //forward declaration
-    class GameObject;
     class Transform3D;
 
     /********************************************************************************//*!
@@ -74,9 +73,9 @@ namespace engine
         /****************************************************************************//*!
          @brief     Attaches child GameObject to Parent GameObject in a scenegraph manner
 
-         @param[in] child
+         @param     child
                 the node that will potential become a child if operation succeed.
-         @param[in] parent
+         @param     parent
                 the node that will potentially become a parent node if operation succeed.
 
          @return    Returns true if the attach succeeded. False otherwise.
@@ -85,7 +84,7 @@ namespace engine
                     2. you're not trying to attach oneself to itself
                     3. youre not trying to attach oneself to your own children.
         *//*****************************************************************************/
-        bool Attach(GameObject const& child, GameObject const& parent);
+        bool Attach(Entity child, Entity parent);
 
       private:
         /****************************************************************************//*!
