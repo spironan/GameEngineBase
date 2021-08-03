@@ -60,7 +60,7 @@ public:
         engine::TextureDatabase::AddTexture("ogre", tex);
 
         //base world scaling
-        m_root.Transform.Scale() = { scaling, scaling, 1.0f };
+        m_root.Transform().Scale() = { scaling, scaling, 1.0f };
 
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
@@ -77,7 +77,7 @@ public:
             m_gos.emplace_back(ent);
 
             //ent.Transform.Position() = { -1.f, -1.f, 1.f };
-            ent.Transform.RotationAngle() += 90.f;
+            ent.Transform().RotationAngle() += 90.f;
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
             objSprite.SetTexture(tex);
 
@@ -117,35 +117,35 @@ public:
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
         {
-            m_controller->Transform.Position().y += MOVESPEED * deltaTime;
+            m_controller->Transform().Position().y += MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
         {
-            m_controller->Transform.Position().y -= MOVESPEED * deltaTime;
+            m_controller->Transform().Position().y -= MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
         {
-            m_controller->Transform.Position().x -= MOVESPEED * deltaTime;
+            m_controller->Transform().Position().x -= MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
         {
-            m_controller->Transform.Position().x += MOVESPEED * deltaTime;
+            m_controller->Transform().Position().x += MOVESPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_Z))
         {
-            m_controller->Transform.RotationAngle() -= ROTATIONSPEED * deltaTime;
+            m_controller->Transform().RotationAngle() -= ROTATIONSPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_X))
         {
-            m_controller->Transform.RotationAngle() += ROTATIONSPEED * deltaTime;
+            m_controller->Transform().RotationAngle() += ROTATIONSPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_C))
         {
-            m_controller->Transform.Scale() -= SCALINGSPEED * deltaTime;
+            m_controller->Transform().Scale() -= SCALINGSPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_V))
         {
-            m_controller->Transform.Scale() += SCALINGSPEED * deltaTime;
+            m_controller->Transform().Scale() += SCALINGSPEED * deltaTime;
         }
         if (engine::Input::IsKeyPressed(ENGINE_KEY_S))
         {
@@ -168,9 +168,9 @@ public:
 
         if (engine::Input::IsKeyPressed(ENGINE_KEY_R))
         {
-            m_root.Transform.Position() = { 0.f, 0.f, 0.f };
-            m_root.Transform.RotationAngle() = 0.f;
-            m_root.Transform.Scale() = { scaling, scaling, 1.f };
+            m_root.Transform().Position() = { 0.f, 0.f, 0.f };
+            m_root.Transform().RotationAngle() = 0.f;
+            m_root.Transform().Scale() = { scaling, scaling, 1.f };
         }
 
 

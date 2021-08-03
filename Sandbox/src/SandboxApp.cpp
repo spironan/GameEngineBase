@@ -257,7 +257,7 @@ public:
         PushLayer(new ExampleLayer());      // contains ability to quit progrom with esc
         PushOverlay(new ExampleLayer());
 
-        PushLayer(new RenderingTestLayer());
+        //PushLayer(new RenderingTestLayer());
 
         //Actual Scene Layer
         //PushLayer(new EditorSceneLayer());
