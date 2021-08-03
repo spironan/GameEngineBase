@@ -135,6 +135,9 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 	writer.StartArray();
 	writer.Uint(go.GetID());
 	writer.Uint(go.GetComponent<engine::Transform3D>().GetParentId());//parent id first
+
+	if (go.TryGetComponent<engine::GameObjectComponent>())
+		SaveComponent<engine::GameObjectComponent>(go.GetComponent<engine::GameObjectComponent>(), writer);
 	if (go.TryGetComponent<engine::Transform3D>())
 		SaveComponent<engine::Transform3D>(go.GetComponent<engine::Transform3D>(), writer);
 	writer.EndArray();
@@ -147,9 +150,16 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& 
 	for (int count = 2; count < arr.Size(); ++count)
 	{
 		component = arr[count].GetString();
-		if (component == "Transform3D")
+		++count;
+		if (component == rttr::type::get<engine::GameObjectComponent>().get_name())
 		{
-			++count;
+			auto& component_data = arr[count].GetArray();
+			engine::GameObjectComponent& goComponent = go.GetComponent<engine::GameObjectComponent>();
+			goComponent.ActiveSelf = component_data[0].GetBool();
+			goComponent.Name = component_data[1].GetString();
+		}
+		if (component == rttr::type::get<engine::Transform3D>().get_name())
+		{
 			auto& trans = arr[count].GetArray();
 			engine::Transform3D& transform = go.GetComponent<engine::Transform3D>();
 
