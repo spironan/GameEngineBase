@@ -139,7 +139,7 @@ void HierarchyView::ListHierarchy()
 	int treePop = 0;
 	std::vector<std::uint32_t> depth;
 	engine::Entity root = 0;//todo use scenemanager to get rootnode after its ready
-	depth.emplace_back(root);//root
+	//depth.emplace_back(root);//root
 	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
 	
 	//display the root node
