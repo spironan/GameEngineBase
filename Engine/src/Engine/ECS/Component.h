@@ -26,7 +26,7 @@ namespace engine
         {
             return T2::GetActiveWorld().GetComponent<T>(m_entity);
         }
-        
+
         template<typename T, typename T2 = engine::WorldManager>
         T* TryGetComponent() const
         {
