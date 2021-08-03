@@ -14,11 +14,11 @@ namespace engine
 
     glm::vec2 Collider2D::WorldPosition() const
     {
-        return static_cast<GameObject>(GetEntity()).Transform.GetGlobalPosition();
+        return static_cast<GameObject>(GetEntity()).Transform().GetGlobalPosition();
     }
 
     glm::vec2 Collider2D::WorldScale() const
     {
-        return static_cast<GameObject>(GetEntity()).Transform.GetGlobalScale();
+        return static_cast<GameObject>(GetEntity()).Transform().GetGlobalScale();
     }
 }

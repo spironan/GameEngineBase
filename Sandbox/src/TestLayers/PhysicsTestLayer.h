@@ -21,7 +21,7 @@ private:
     engine::World& m_world;
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
     int width{}, height{};
-    engine::GameObject m_root, m_second/*, m_floor*/;
+    engine::GameObject m_root, m_second, m_third/*, m_floor*/;
 
     oom::vec2 upperbounds, lowerbounds;
 public:
@@ -32,6 +32,8 @@ public:
         , upperbounds { 500,  200 }
         , lowerbounds {-500, -200 }
     {
+        engine::WorldManager::SetActiveWorld(m_world.GetID());
+
         engine::Window& x = engine::Application::Get().GetWindow();
         width = x.GetSize().first;
         height = x.GetSize().second;
@@ -42,24 +44,26 @@ public:
         auto& ps = m_world.RegisterSystem<engine::PhysicsSystem>();
 
         {
-            m_root.Transform.Scale() = { 50.f, 50.f, 1.0f };
-            m_root.AddComponent<engine::Sprite2D>();
-            //m_root.AddComponent<engine::BoxCollider2D>();
-            m_root.AddComponent<engine::CircleCollider2D>();
-            auto& pc = m_root.AddComponent<engine::Rigidbody2D>();
-            pc.SetMass(1.f);
-            pc.GravityScale = 0.0f;
-        }
-        
-        {
-            m_second.Transform.Position() = { 100.f, 0.f, 0.f };
-            m_second.Transform.Scale() = { 50.f, 50.f, 1.0f };
+            m_second.Transform().Scale() = { 50.f, 50.f, 1.0f };
             m_second.AddComponent<engine::Sprite2D>();
             //m_second.AddComponent<engine::BoxCollider2D>();
             m_second.AddComponent<engine::CircleCollider2D>();
             auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
             pc.GravityScale = 0.0f;
+            m_root.AddChild(m_second);
+        }
+        
+        {
+            m_third.Transform().Position() = { 100.f, 0.f, 0.f };
+            m_third.Transform().Scale() = { 50.f, 50.f, 1.0f };
+            m_third.AddComponent<engine::Sprite2D>();
+            //m_second.AddComponent<engine::BoxCollider2D>();
+            m_third.AddComponent<engine::CircleCollider2D>();
+            auto& pc = m_third.AddComponent<engine::Rigidbody2D>();
+            pc.SetMass(1.f);
+            pc.GravityScale = 0.0f;
+            m_root.AddChild(m_third);
         }
 
         ////Ground
@@ -79,6 +83,7 @@ public:
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+        engine::WorldManager::SetActiveWorld(m_world.GetID());
         m_world.GetSystem<engine::TransformSystem>()->Update();
         m_world.GetSystem<engine::PhysicsSystem>()->Update(dt);
 
@@ -87,30 +92,30 @@ public:
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, force });
+            m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, force });
         }
         
         if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, -force });
+            m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, -force });
         }
         
         if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ force, 0 });
+            m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ force, 0 });
         }
         
         if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ -force, 0 });
+            m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ -force, 0 });
         }
 
         if (engine::Input::IsKeyPressed(ENGINE_KEY_SPACE))
         {
-            m_root.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, jumpforce });
+            m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, jumpforce });
         }
 
-        /*auto rootsForce = m_root.GetComponent<engine::Rigidbody2D>().GetForce();
+        /*auto rootsForce = m_second.GetComponent<engine::Rigidbody2D>().GetForce();
         LOG_TRACE("{0}{1}", rootsForce.x, rootsForce.y );*/
 
         // transform objects
@@ -140,6 +145,7 @@ public:
 
     virtual void OnImGuiRender() override
     {
+        engine::WorldManager::SetActiveWorld(m_world.GetID());
         m_world.GetSystem<engine::Renderer2DSystem>()->Update();
     }
 

@@ -28,7 +28,7 @@ namespace engine
         , m_data { }
         , m_linearVelocity { }
         , m_force { }
-        , m_prevPos { static_cast<GameObject>(entity).Transform.GetPosition() }
+        , m_prevPos { static_cast<GameObject>(entity).Transform().GetPosition() }
     {
     }
 
@@ -62,7 +62,7 @@ namespace engine
 
     void Rigidbody2D::Interpolate(float alpha)
     {
-        Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform;
+        Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform();
         glm::vec3 previous = m_prevPos * alpha;
         glm::vec3 current = trans.GetPosition() * (1.f - alpha);
         trans.Position() = previous + current;
@@ -86,7 +86,7 @@ namespace engine
 
     void Rigidbody2D::UpdatePosition(Timestep dt)
     {
-        Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform;
+        Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform();
         //m_previoiusPosition = trans.GetPosition();
         trans.Position() += glm::vec3{ m_linearVelocity, 0.f } * static_cast<float>(dt);
 
