@@ -1,3 +1,17 @@
+/************************************************************************************//*!
+\file           ScriptInfo.cpp
+\project        <PROJECT_NAME>
+\author         Solomon Tan Teng Shue, t.tengshuesolomon, 620010020
+\par            email: t.tengshuesolomon\@digipen.edu
+\date           August 4, 2021
+\brief          Defines the functions declared in ScriptInfo.h to set and retrieve
+                info of C# script instances that will be created during play mode
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #include "pch.h"
 #include "ScriptInfo.h"
 #include "ScriptUtility.h"
@@ -11,6 +25,16 @@ namespace engine
     // forward declaration
     ScriptFieldValue const GetMonoObjectValue(MonoObject* object);
 
+    /*********************************************************************************//*!
+    \brief      gets the value of a specific field in a C# object as a ScriptFieldValue
+     
+    \param      object
+            the MonoObject to get the value from
+    \param      field
+            the specific MonoClassField of the MonoObject to get the value from
+    
+    \return     the value of the MonoField as a ScriptFieldValue
+    *//**********************************************************************************/
     ScriptFieldValue const GetMonoFieldValue(MonoObject* object, MonoClassField* field)
     {
         MonoType* type = mono_field_get_type(field);
@@ -114,6 +138,14 @@ namespace engine
         return ScriptFieldValue();
     }
 
+    /*********************************************************************************//*!
+    \brief      gets the value boxed in a given MonoObject pointer as a ScriptFieldValue
+     
+    \param      object
+            the MonoObject containing the desired value
+    
+    \return     the value of the MonoObject as a ScriptFieldValue
+    *//**********************************************************************************/
     ScriptFieldValue const GetMonoObjectValue(MonoObject* object)
     {
         MonoClass* objClass = mono_object_get_class(object);

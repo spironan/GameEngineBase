@@ -1,3 +1,17 @@
+/************************************************************************************//*!
+\file           ScriptingTestLayer.h
+\project        <PROJECT_NAME>
+\author         Solomon Tan Teng Shue, t.tengshuesolomon, 620010020
+\par            email: t.tengshuesolomon\@digipen.edu
+\date           August 3, 2021
+\brief          Test scene for testing scripting functionality between C# and C++
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
+
 #pragma once
 
 #include <Engine.h>
@@ -6,10 +20,11 @@ class ScriptingTestLayer : public engine::Layer
 {
 private:
     engine::World& m_world;
+    engine::GameObject m_root;
     std::vector<engine::GameObject> goList;
     bool isPlaying;
 
-    // Helper Function For Testing
+    // Helper Function For temporary text file editor
     void SetScriptFieldValueFromString(engine::ScriptFieldValue& value, std::string stringValue)
     {
         engine::ScriptValueType type = value.GetValueType();
@@ -81,6 +96,9 @@ public:
         auto& ss = m_world.RegisterSystem<engine::ScriptSystem>();
         ss->Compile();
 
+        //m_root.AddComponent<engine::Scripting>();
+
+        // read values from temporary text file editor to initialize objects
         std::fstream file("test.txt");
         if (!file)
         {
@@ -88,7 +106,9 @@ public:
             return;
         }
         std::string line;
-        goList.push_back(engine::GameObject{ m_world.CreateEntity() });
+        engine::GameObject m_obj{};
+        m_root.AddChild(m_obj);
+        goList.emplace_back(m_obj);
         engine::Scripting* entityScripting = &(goList[0].AddComponent<engine::Scripting>());
         engine::ScriptInfo* scriptInfo = nullptr;
         engine::ScriptFieldInfo* multiLineField = nullptr;
@@ -99,7 +119,9 @@ public:
 
             if (line == "OBJECTEND")
             {
-                goList.push_back(engine::GameObject{ m_world.CreateEntity() });
+                engine::GameObject new_obj{};
+                m_root.AddChild(new_obj);
+                goList.push_back(new_obj);
                 entityScripting = &(goList[goList.size() - 1].AddComponent<engine::Scripting>());
                 scriptInfo = nullptr;
                 multiLineField = nullptr;
@@ -195,6 +217,7 @@ public:
     virtual void OnUpdate(engine::Timestep dt) override
     {
         engine::WorldManager::SetActiveWorld(m_world.GetID());
+        m_world.GetSystem<engine::TransformSystem>()->Update();
         m_world.GetSystem<engine::ScriptSystem>()->InvokeFunctionAll("Update");
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::SPACE))
@@ -218,6 +241,7 @@ public:
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::BACKSPACE))
         {
+            // re-read and apply changed values from temporary text file editor
             std::fstream file("test.txt");
             if (!file)
             {
@@ -229,7 +253,9 @@ public:
             engine::Scripting* entityScripting = nullptr;
             if (goList.size() <= 0)
             {
-                goList.push_back(engine::GameObject{ m_world.CreateEntity() });
+                engine::GameObject new_obj{};
+                m_root.AddChild(new_obj);
+                goList.push_back(new_obj);
                 entityScripting = &(goList[0].AddComponent<engine::Scripting>());
             }
             entityScripting = &(goList[0].GetComponent<engine::Scripting>());
@@ -246,7 +272,7 @@ public:
                     ++goIndex;
                     if (goIndex >= goList.size())
                     {
-                        goList.push_back(engine::GameObject{ m_world.CreateEntity() });
+                        goList.push_back(engine::GameObject{});
                         entityScripting = &(goList[goIndex].AddComponent<engine::Scripting>());
                     }
                     else

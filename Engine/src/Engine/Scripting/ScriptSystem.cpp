@@ -1,3 +1,17 @@
+/************************************************************************************//*!
+\file           ScriptSystem.cpp
+\project        <PROJECT_NAME>
+\author         Solomon Tan Teng Shue, t.tengshuesolomon, 620010020
+\par            email: t.tengshuesolomon\@digipen.edu
+\date           August 4, 2021
+\brief          Defines the Script System that is responsible for C# compiling during runtime
+                and for executing instructions for all scripts in all existing GameObjects
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #include "pch.h"
 
 #include "ScriptUtility.h"
@@ -8,7 +22,8 @@
 namespace fs = std::filesystem;
 
 #include "Engine/Core/Log.h"
-#include "Engine/ECS/ECS_Manager.h"
+#include "Engine/ECS/WorldManager.h"
+#include "Engine/ECS/GameObject.h"
 
 namespace engine
 {
@@ -143,6 +158,7 @@ namespace engine
         {
             scripting.StartPlay();
         }
+        isPlaying = true;
     }
 
     void ScriptSystem::StopPlay()
@@ -153,6 +169,7 @@ namespace engine
         {
             scripting.StopPlay();
         }
+        isPlaying = false;
     }
 
     /*-----------------------------------------------------------------------------*/
@@ -184,5 +201,23 @@ namespace engine
             scripting.DebugPrint();
         }
         std::cout << std::endl;
+    }
+
+    /*-----------------------------------------------------------------------------*/
+    /* Entity Functions for C#                                                     */
+    /*-----------------------------------------------------------------------------*/
+
+    uint32_t CreateEntity()
+    {
+        engine::GameObject instance{ engine::WorldManager::GetActiveWorld().CreateEntity() };
+        auto& scripting = instance.AddComponent<engine::Scripting>();
+        scripting.SetUpPlay();
+        // scripting.StartPlay();
+        return scripting.GetGameObjectPtr();
+    }
+
+    void DestroyEntity(int id)
+    {
+        engine::WorldManager::GetActiveWorld().DestroyEntity(id);
     }
 }

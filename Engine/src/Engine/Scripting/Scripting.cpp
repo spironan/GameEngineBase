@@ -1,9 +1,22 @@
+/************************************************************************************//*!
+\file           Scripting.cpp
+\project        <PROJECT_NAME>
+\author         Solomon Tan Teng Shue, t.tengshuesolomon, 620010020
+\par            email: t.tengshuesolomon\@digipen.edu
+\date           August 4, 2021
+\brief          Defines a Scripting Component, which allows GameObjects to be attached
+                with C# scripts written by users
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #include "pch.h"
 #include "Scripting.h"
 #include "ScriptUtility.h"
 
 #include "Engine/ECS/WorldManager.h"
-#include "Engine/ECS/GameObject.h"
 
 namespace engine
 {
@@ -11,6 +24,16 @@ namespace engine
     /* Helper Functions                                                            */
     /*-----------------------------------------------------------------------------*/
 
+    /*********************************************************************************//*!
+    \brief      sets the value of the field of a C# object to the given ScriptFieldValue value
+     
+    \param      obj
+            the pointer to the MonoObject to edit
+    \param      field
+            the pointer to the specific MonoClassField of the MonoObject to edit
+    \param      value
+            the ScriptFieldValue containg the new field value to set
+    *//**********************************************************************************/
     static void OverrideMonoField(MonoObject* obj, MonoClassField* field, ScriptFieldValue const& value)
     {
         switch (value.GetValueType())
@@ -116,6 +139,15 @@ namespace engine
         }
     }
 
+    /*********************************************************************************//*!
+    \brief      outputs the names and values of all the public fields of a given C# object
+                to the standard output stream for Debugging purposes
+
+    \param      object
+            the MonoObject to print values of
+    \param      depth
+            the number of indentations to add
+    *//**********************************************************************************/
     static void DebugPrintObjectFields(MonoObject* object, unsigned int depth)
     {
         MonoClass* compClass = mono_object_get_class(object);
@@ -553,36 +585,22 @@ namespace engine
             DebugPrintObjectFields(script, 1);
         }
     }
-}
 
-/*-----------------------------------------------------------------------------*/
-/* Script Functions for C#                                                     */
-/*-----------------------------------------------------------------------------*/
-uint32_t AddScript(int id, const char* _namespace, const char* _type)
-{
-    return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(_namespace, _type);
-}
+    /*-----------------------------------------------------------------------------*/
+    /* Script Functions for C#                                                     */
+    /*-----------------------------------------------------------------------------*/
+    uint32_t AddScript(int id, const char* _namespace, const char* _type)
+    {
+        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(_namespace, _type);
+    }
 
-uint32_t GetScript(int id, const char* _namespace, const char* _type)
-{
-    return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(_namespace, _type);
-}
+    uint32_t GetScript(int id, const char* _namespace, const char* _type)
+    {
+        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(_namespace, _type);
+    }
 
-void RemoveScript(int id, const char* _namespace, const char* _type)
-{
-    engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(_namespace, _type);
-}
-
-uint32_t CreateEntity()
-{
-    engine::GameObject instance{ engine::WorldManager::GetActiveWorld().CreateEntity() };
-    auto& scripting = instance.AddComponent<engine::Scripting>();
-    scripting.SetUpPlay();
-    // scripting.StartPlay();
-    return scripting.GetGameObjectPtr();
-}
-
-__declspec(dllexport) void DestroyEntity(int id)
-{
-    engine::WorldManager::GetActiveWorld().DestroyEntity(id);
+    void RemoveScript(int id, const char* _namespace, const char* _type)
+    {
+        engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(_namespace, _type);
+    }
 }

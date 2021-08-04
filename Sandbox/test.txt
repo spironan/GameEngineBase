@@ -6,7 +6,7 @@ PlayerScript
 SCRIPTEND
 
 HealthScript
-totalHealth 75
+totalHealth 50
 SCRIPTEND
 
 TweenScript
