@@ -193,7 +193,12 @@ namespace engine
 			GetContainer().Swap(index1, index2);
 		}
 
-
+		template<typename T>
+		bool IsRegistered()
+		{
+			const char* typeName = typeid(T).name();
+			return m_ComponentTypes.find(typeName) != m_ComponentTypes.end();
+		}
 	private:
 		TypeContainer m_ComponentTypes{};
 		ComponentContainer m_ComponentArrays{};
@@ -211,11 +216,6 @@ namespace engine
 			return std::static_pointer_cast<ComponentArray<T>>(m_ComponentArrays[typeName]);
 		}
 
-		template<typename T>
-		bool IsRegistered()
-		{
-			const char* typeName = typeid(T).name();
-			return m_ComponentTypes.find(typeName) != m_ComponentTypes.end();
-		}
+		
 	};
 }
