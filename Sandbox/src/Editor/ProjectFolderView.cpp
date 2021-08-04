@@ -80,7 +80,7 @@ void ProjectFolderView::ProjectView()
 		return;
 	
 	//show directory (recursive function)
-	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvail().x ,30 }, true);
+	ImGui::BeginChild("preview_directory", { ImGui::GetContentRegionAvail().x ,35 }, true);
 	PathDir(std::filesystem::path(FileGroup::s_CurrentPath), FileGroup::s_CurrentPath);
 	ImGui::EndChild();
 	//search bar
@@ -167,25 +167,35 @@ void ProjectFolderView::ProjectView()
 
 void ProjectFolderView::PathDir(std::filesystem::path& entry, std::string& path)
 {
-	static int count = 0;
-	bool selected = false;
 
-	if (entry.has_parent_path() && count < 5)
+	static engine::utility::StringHash::size_type strhash = engine::utility::StringHash(FileGroup::s_rootPath);
+	static char count = 0;
+	static float fontWidth = ImGui::CalcTextSize("a").x;
+	bool selected = false;
+	if (count == 0)
+	{
+		if(ImGui::Button("Home"))
+			path = FileGroup::s_rootPath;
+		ImGui::SameLine();
+	}
+
+	if (engine::utility::StringHash(entry.u8string().c_str()) != strhash && 
+		entry.has_parent_path())
 	{
 		++count;
-		PathDir(entry.parent_path(), path);
-		//it is currently hardcoded
-		ImGui::Selectable(entry.filename().generic_u8string().c_str(), &selected, 0, { 7.0f * entry.filename().generic_u8string().size(),13 });
+		if (count < 5)
+			PathDir(entry.parent_path(), path);
+		std::string temp = entry.stem().u8string();
+		ImGui::Selectable(temp.c_str(), &selected, 0, { fontWidth * temp.size(),0 });
 		ImGui::SameLine();
 		ImGui::Bullet();
-	}
-	if (count)//exception for the last object
-	{
 		--count;
-		ImGui::SameLine();
+		if(selected)
+			path = entry.u8string();
 	}
-	if (selected)
-		path = entry.generic_u8string().c_str();
+
+
+	
 }
 
 void ProjectFolderView::SearchFilter()
@@ -193,7 +203,7 @@ void ProjectFolderView::SearchFilter()
 	static char buffer[100];
 
 	ImGui::BeginChild("Search", { ImGui::GetContentRegionAvail().x * 0.4f,30});
-	if (ImGui::InputText("##Filter", buffer, sizeof(buffer),ImGuiInputTextFlags_AutoSelectAll))
+	if (ImGui::InputText("Search", buffer, sizeof(buffer),ImGuiInputTextFlags_AutoSelectAll))
 	{
 		m_filtering = true;
 		m_filter = buffer;
