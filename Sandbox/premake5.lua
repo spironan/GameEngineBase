@@ -73,8 +73,10 @@ project "Sandbox"
         postbuildcommands
         {
             {"{COPY} %{wks.location}Engine/vendor/sdl2/lib/x64/SDL2.dll ../bin/" .. outputdir .. "/Sandbox"},
-            {"{COPY} %{wks.location}Engine/vendor/mono/lib/mono ../bin/" .. outputdir .. "/Sandbox"},
-            {"{COPY} %{wks.location}Engine/vendor/mono/dll/mono-2.0-sgen.dll ../bin/" .. outputdir .. "/Sandbox"}
+            {"{COPY} %{wks.location}Engine/vendor/mono/lib/ ../bin/" .. outputdir .. "/lib"},
+            {"{COPY} %{wks.location}Engine/vendor/mono/dll/mono-2.0-sgen.dll ../bin/" .. outputdir .. "/Sandbox"},
+            {"{COPY} %{wks.location}Sandbox/test.txt ../bin/" .. outputdir .. "/Sandbox"},
+            {"{COPY} %{wks.location}Scripting/ ../bin/" .. outputdir .. "/Scripting"}
         }
 
     filter "configurations:Debug"
