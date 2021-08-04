@@ -56,6 +56,12 @@ Editor::Editor(const std::string& root)
 	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTFOLDERVIEW_ACTIVE);
 	m_activeFlagGUI |= static_cast<int>(GUIACTIVE_FLAGS::PROJECTVIEW_ACTIVE);
 
+//setting the root path of the project view
+#ifdef SANDBOX_PLATFORM_WINDOWS
+	char exePath[1000];
+	GetModuleFileNameA(NULL, exePath, 1000);
+	FileGroup::ReassignRootPath(exePath);
+#endif // SANDBOX_PLATFORM_WINDOWS
 }
 
 Editor::~Editor()

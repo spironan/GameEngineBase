@@ -22,8 +22,9 @@
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
 
-
-/**
+#include <Windows.h>
+#include <shellapi.h>
+ /**
  * \brief
  *		main function to display the Project Folder window.
  * 
@@ -137,7 +138,7 @@ void ProjectFolderView::ProjectView()
 				//can open c# file here
 				else if (entry.path().has_extension())
 				{
-					std::string a = entry.path().generic_u8string().c_str();
+					InteractionWithFile(entry.path());
 				}
 			}
 			else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
@@ -236,6 +237,29 @@ void ProjectFolderView::FileBeginDrag(const std::filesystem::path& path)
 		ImGui::EndDragDropSource();
 	}
 }
+
+void ProjectFolderView::InteractionWithFile(const std::filesystem::path& path)
+{
+	using HashType = engine::utility::StringHash::size_type;
+	static HashType extHash[] = {	engine::utility::StringHash(".prefab"),
+									engine::utility::StringHash(".ini")
+								};
+	HashType ht = engine::utility::StringHash(path.extension().u8string().c_str());
+	if (ht == extHash[0])
+	{
+
+	}
+	else if (ht == extHash[1])
+	{
+
+	}
+	else
+	{
+		std::string temp = path.u8string();
+		ShellExecuteA(NULL, "open" ,temp.c_str(), NULL, NULL, SW_SHOW);
+	}
+}
+
 
 bool ProjectFolderView::IconButtons(const std::string& ext , float imgsize)
 {

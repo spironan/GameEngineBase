@@ -1,3 +1,4 @@
+
 /*****************************************************************//**
  * \file   ProjectFolderView.h
  * \brief  Display the items inside the selected folder from
@@ -29,10 +30,14 @@ public:
 	void Show();
 
 private:
+	//internal for ProjectFolderView::Show()
 	void ProjectView();
 	void PathDir(std::filesystem::path&, std::string&);
 	void SearchFilter();
 	void FileBeginDrag(const std::filesystem::path&);
+	void InteractionWithFile(const std::filesystem::path&);
+
+	//helpers
 	bool IconButtons(const std::string&,float imgsize);
 	void TextProcessing(std::string& string,float windowSize);
 private:

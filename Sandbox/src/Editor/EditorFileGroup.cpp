@@ -84,6 +84,14 @@ void FileGroup::KeyshortCuts()
 	}
 }
 
+void FileGroup::ReassignRootPath(const std::string& exePath)
+{
+	std::filesystem::path newPath(exePath);
+	const_cast<std::string&>(s_rootPath) = newPath.parent_path().generic_u8string();
+	s_CurrentPath = s_rootPath;
+	s_hoveredPath = s_rootPath;
+}
+
 ///**
 //* \brief
 //* after setting current path call this function to preload all the filenames

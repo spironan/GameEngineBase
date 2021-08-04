@@ -51,6 +51,13 @@ public:
 	*/
 	static void KeyshortCuts();
 
+	/*********************************************************************************//*!
+	\brief    Reassigns the root path using the executable path
+	 
+	\param    .exe path
+	
+	*//**********************************************************************************/
+	static void ReassignRootPath(const std::string& exePath);
 
 	///**
 	//* \brief

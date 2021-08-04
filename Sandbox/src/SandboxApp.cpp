@@ -16,10 +16,9 @@ Technology is prohibited.
 // single-include file to get all the relevant functions from our engine.
 #include "Engine.h" 
 #include "Engine/ECS/ECS_Test.h"
-#include <iostream>
-
 #include "Editor/Editor.h"
-
+//for getting filepath
+#include "Editor/EditorFileGroup.h"
 //TestLayers
 #include "TestLayers/InputDebugLayer.h"
 #include "TestLayers/TransformTestLayer.h"
@@ -56,6 +55,7 @@ public:
 		TextureDatabase::AddTexture("Ouroboros_Log_Icon_Black", TextureLoader::LoadFromFilePath("Icons/Ouroboros_Log_Icon_Black.png"));
 		TextureDatabase::AddTexture("Ouroboros_Warning_Icon_Yellow", TextureLoader::LoadFromFilePath("Icons/Ouroboros_Warning_Icon_Yellow.png"));
 		TextureDatabase::AddTexture("Ouroboros_Error_Icon_Red", TextureLoader::LoadFromFilePath("Icons/Ouroboros_Error_Icon_Red.png"));
+
 	}
 
     virtual void OnUpdate(engine::Timestep dt) override
