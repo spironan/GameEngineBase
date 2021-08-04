@@ -20,3 +20,6 @@ bin-int/
 *.ini
 *.prefab
 Sandbox/imgui.ini
+
+#scripts
+scripting.dll
