@@ -35,11 +35,11 @@ public:
 
     ~SceneBaseLayer()
     {
-        engine::SceneManager::RemoveScene(m_scene.GetSceneName());
+        m_scene.Unload();
     }
+
     virtual void OnUpdate(engine::Timestep dt) override
     {
-        m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
     }
 
     virtual void OnImGuiRender() override
@@ -85,5 +85,14 @@ protected:
     virtual void SaveSceneToFile(std::string const& filename)
     {
         m_scene.SaveToFileName(filename);
+    }
+    /*********************************************************************************//*!
+    \brief    Sets this layer's scene as the active scene
+     
+    
+    *//**********************************************************************************/
+    virtual void SetSceneAsActive()
+    {
+        engine::SceneManager::SetActiveScene(m_scene.GetID());
     }
 };
