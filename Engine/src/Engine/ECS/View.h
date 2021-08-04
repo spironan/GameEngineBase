@@ -171,6 +171,11 @@ namespace engine
 		template<typename Aux_type, typename Type, typename... Args>
 		void SetSignature(ComponentManager& componentManager)
 		{
+			if (componentManager.IsRegistered<Type>() == false)
+			{
+				m_begin = m_end;
+				return;
+			}
 			m_signature.set(componentManager.GetComponentID<Type>(), true);
 			//LOG_ENGINE_TRACE("View set signature");
 			//LOG_ENGINE_TRACE(componentManager.GetComponentID<Type>());
