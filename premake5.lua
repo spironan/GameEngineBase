@@ -43,3 +43,4 @@ group ""
 
 include "Engine"
 include "Sandbox"
+include "Scripting"

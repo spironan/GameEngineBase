@@ -49,6 +49,7 @@ project "Engine"
         "%{IncludeDir.vma}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.mono}"
     }
 
     -- library diretories
