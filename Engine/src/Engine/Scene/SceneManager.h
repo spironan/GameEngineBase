@@ -14,15 +14,15 @@ Technology is prohibited.
  *********************************************************************/
 #pragma once
 #include "Scene.h"
+#include "Utility/Hash.h"
 #include <vector>
 namespace engine
 {
 	class SceneManager
 	{
 	public:
-		using container_type = std::list<Scene>;
-		using iterator = container_type::iterator;
-		
+		using key_type = Scene::ID_type;
+		using container_type = std::unordered_map<key_type,Scene>;
 	private:
 		SceneManager() = default;
 		~SceneManager() = default;
@@ -35,7 +35,7 @@ namespace engine
 
 	private:
 		container_type m_scenes{};
-		iterator active_scene = m_scenes.end();
+		key_type m_active_scene_id;
 
 	public:
 		/*********************************************************************************//*!
@@ -47,17 +47,22 @@ namespace engine
 		\return   
 			the added scene
 		*//**********************************************************************************/
-		static Scene& AddScene(std::string filename)
+		static Scene& AddScene(std::string filename, bool active = false)
 		{
-			auto& scene = GetInstance().m_scenes.emplace_back(filename);
+			auto result = GetInstance().m_scenes.emplace(std::make_pair(utility::StringHash::GenerateFNV1aHash(filename), filename));
+			ENGINE_VERIFY(result.second);
+			auto& scene = (*(result.first)).second;
+			scene.SetID(result.first->first);
 			if (GetInstance().m_scenes.size() == 1)
 			{
-				GetInstance().active_scene = GetInstance().m_scenes.begin();
+				GetInstance().m_active_scene_id = scene.GetID();
 			}
+
+
 			return scene;
 		}
 		/*********************************************************************************//*!
-		\brief    Same as AddScene but also loads the scene
+		\brief    Same as AddScene but also loads the scene and set it as the active scene
 
 		\param    filename 
 			filename of the scene file this scene uses
@@ -66,8 +71,9 @@ namespace engine
 		*//**********************************************************************************/
 		static Scene& CreateScene(std::string filename)
 		{
-			auto& temp = GetInstance().AddScene(filename);
+			auto& temp = GetInstance().AddScene(filename, true);
 			temp.Load();
+
 			return temp;
 		}
 		/*********************************************************************************//*!
@@ -78,9 +84,8 @@ namespace engine
 		*//**********************************************************************************/
 		static Scene& GetActiveScene()
 		{
-			ENGINE_ASSERT(GetInstance().m_scenes.empty());
-			ENGINE_ASSERT(GetInstance().active_scene != GetInstance().m_scenes.end());
-			return *GetInstance().active_scene;
+			ENGINE_VERIFY(GetInstance().m_scenes.find(GetInstance().m_active_scene_id) != GetInstance().m_scenes.end());
+			return GetInstance().m_scenes.find(GetInstance().m_active_scene_id)->second;
 
 		}
 		/*********************************************************************************//*!
@@ -91,15 +96,10 @@ namespace engine
 		\return   
 			the scene with the specified filename, if not found, returns the first scene
 		*//**********************************************************************************/
-		static Scene& GetScene(std::string filename)
+		static Scene& GetScene(key_type id)
 		{
-			ENGINE_ASSERT(GetInstance().m_scenes.empty());
-			for (auto& i : GetInstance().m_scenes)
-			{
-				if (i.m_filename == filename)
-					return i;
-			}
-			return *GetInstance().m_scenes.begin();
+			ENGINE_VERIFY(GetInstance().m_scenes.find(id) != GetInstance().m_scenes.end());
+			return GetInstance().m_scenes.find(id)->second;
 
 		}
 		/*********************************************************************************//*!
@@ -109,15 +109,10 @@ namespace engine
 		\return   current active scene after it has been set
 		
 		*//**********************************************************************************/
-		static Scene& SetActiveScene(std::string filename)
+		static Scene& SetActiveScene(key_type id)
 		{
-			for (iterator i = GetInstance().m_scenes.begin(); i != GetInstance().m_scenes.end(); ++i)
-			{
-				if (i->m_filename == filename)
-				{
-					GetInstance().active_scene = i;
-				}
-			}
+			ENGINE_VERIFY(GetInstance().m_scenes.find(id) != GetInstance().m_scenes.end());
+			GetInstance().m_active_scene_id = id;
 		}
 		/*********************************************************************************//*!
 		\brief    Gets the world of the current active scene
@@ -141,12 +136,12 @@ namespace engine
 			return GetActiveScene().GetRoot();
 		}
 		/*********************************************************************************//*!
-		\brief    Removes a scene from the scene manager
+		\brief    Removes a scene from the scene manager, currently disabled
 		 
 		\param    filename filename of the scene to remove
 		
 		*//**********************************************************************************/
-		static void RemoveScene(std::string filename)
+		/*static void RemoveScene(std::string filename)
 		{
 			for (iterator i = GetInstance().m_scenes.begin(); i != GetInstance().m_scenes.end(); ++i)
 			{
@@ -156,7 +151,7 @@ namespace engine
 					return;
 				}
 			}
-		}
+		}*/
 	};
 
 }

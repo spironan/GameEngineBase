@@ -18,6 +18,7 @@ Technology is prohibited.
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/ECS/GameObject.h"
 #include <string>
+#include "Utility/Hash.h"
 namespace engine
 {
 	class SceneManager;
@@ -25,11 +26,20 @@ namespace engine
 	{
 		friend class SceneManager;
 	private:
+		using ID_type = utility::StringHash::size_type;
+
+
 		std::string m_filename{};
 		World* m_world = nullptr;
 		//GameObject m_root{};
 		GameObject m_root{ Entity{0} };
+		ID_type m_id{0};
 		//SparseContainer<GameObject,MAX_ENTITY> gameobjects{};
+
+		void SetID(ID_type id)
+		{
+			m_id = id;
+		}
 	public:
 		explicit Scene(std::string filename) : m_filename{ std::move(filename) } 
 		{ 
@@ -95,6 +105,16 @@ namespace engine
 			GameObject temp{ GetWorld().CreateEntity() };
 			m_root.AddChild(temp);
 			return temp;
+		}
+
+		void SetWorldAsActive()
+		{
+			WorldManager::SetActiveWorld(m_world->GetID());
+		}
+
+		ID_type GetID()
+		{
+			return m_id;
 		}
 	};
 }
