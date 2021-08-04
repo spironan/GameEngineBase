@@ -46,8 +46,8 @@ public:
         {
             m_second.Transform().Scale() = { 50.f, 50.f, 1.0f };
             m_second.AddComponent<engine::Sprite2D>();
-            //m_second.AddComponent<engine::BoxCollider2D>();
-            m_second.AddComponent<engine::CircleCollider2D>();
+            m_second.AddComponent<engine::BoxCollider2D>();
+            //m_second.AddComponent<engine::CircleCollider2D>();
             auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
             pc.GravityScale = 0.0f;
@@ -58,8 +58,8 @@ public:
             m_third.Transform().Position() = { 100.f, 0.f, 0.f };
             m_third.Transform().Scale() = { 50.f, 50.f, 1.0f };
             m_third.AddComponent<engine::Sprite2D>();
-            //m_second.AddComponent<engine::BoxCollider2D>();
-            m_third.AddComponent<engine::CircleCollider2D>();
+            m_third.AddComponent<engine::BoxCollider2D>();
+            //m_third.AddComponent<engine::CircleCollider2D>();
             auto& pc = m_third.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
             pc.GravityScale = 0.0f;

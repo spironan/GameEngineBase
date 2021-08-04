@@ -29,7 +29,6 @@ namespace engine
         virtual ~BoxCollider2D() override               = default;
 
         AABB2D GetGlobalBounds() const;
-
     };
 
 }

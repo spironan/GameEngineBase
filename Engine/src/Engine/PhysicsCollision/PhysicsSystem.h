@@ -25,6 +25,21 @@ Technology is prohibited.
 
 namespace engine
 {
+
+    struct SortSweepCompare
+    {
+        ECS_Manager& Manager;
+        int Axis;
+
+        SortSweepCompare(ECS_Manager& ecsManager, int axis)
+            : Manager{ ecsManager }
+            , Axis{ axis }
+        {};
+
+        bool operator()(Entity a, Entity b);
+        
+    };
+
     class PhysicsSystem : public System
     {
     public:
@@ -53,6 +68,12 @@ namespace engine
         void UpdateDynamics(Timestep deltaTime);
         void UpdatePhysicsCollision();
         void UpdatePhysicsResolution(Timestep deltaTime);
+
+        void BroadPhase();
+        SortSweepCompare m_broadphaseCompare;
+
+        void NarrowPhase();
+        std::vector<std::pair<Entity,Entity>> m_narrowPhase;
 
         double m_accumulator;
 
