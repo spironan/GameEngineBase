@@ -11,9 +11,9 @@ namespace oom
     struct point
     {
         using value_type        = T;
+        using reference         = value_type&;
         using const_value       = value_type const;
         using const_reference   = value_type const&;
-        using reference         = value_type&;
 
         using size_type         = size_t;
         
@@ -81,7 +81,7 @@ namespace oom
         {
             for (int i = 0; i < Size; ++i)
             {
-                if (!maths_utils::approx_equal(val[i], other[i])) return false;
+                if (!approx_equal(val[i], other[i])) return false;
             }
 
             return true;

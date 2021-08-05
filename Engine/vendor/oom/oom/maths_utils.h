@@ -29,61 +29,61 @@ namespace oom
         static constexpr T degrees(T radians) { return radians * deg2rad; }
 
 
-        ///**
-        // * Return the smaller of the given values.
-        // * @tparam T Value type.
-        // * @param _a First value to compare.
-        // * @param _b Second value to compare.
-        // * @return The smaller of _a and _b. If the values are equivalent, returns _a.
-        // */
-        //template<class T>
-        //static const T& min(const T& _a, const T& _b)
-        //{
-        //    return (_b < _a) ? _b : _a;
-        //}
+        /**
+         * Return the smaller of the given values.
+         * @tparam T Value type.
+         * @param _a First value to compare.
+         * @param _b Second value to compare.
+         * @return The smaller of _a and _b. If the values are equivalent, returns _a.
+         */
+        template<class T>
+        static const T& min(const T& _a, const T& _b)
+        {
+            return (_b < _a) ? _b : _a;
+        }
 
-        ///**
-        // * Return the smaller of the given values.
-        // * @tparam T Value type.
-        // * @tparam Args Variadic template type.
-        // * @param _a First value to compare.
-        // * @param _b Second value to compare.
-        // * @param _args The third to nth number to compare.
-        // * @return The smaller of _a and _b. If the values are equivalent, returns _a.
-        // */
-        //template<class T, class ...Args>
-        //static const T& min(const T& _a, const T& _b, Args&& ... _args)
-        //{
-        //    return maths_utils::min<T>(_a, maths_utils::min<T>(_b, std::forward<Args>(_args)...));
-        //}
+        /**
+         * Return the smaller of the given values.
+         * @tparam T Value type.
+         * @tparam Args Variadic template type.
+         * @param _a First value to compare.
+         * @param _b Second value to compare.
+         * @param _args The third to nth number to compare.
+         * @return The smaller of _a and _b. If the values are equivalent, returns _a.
+         */
+        template<class T, class ...Args>
+        static const T& min(const T& _a, const T& _b, Args&& ... _args)
+        {
+            return min<T>(_a, min<T>(_b, std::forward<Args>(_args)...));
+        }
 
-        ///**
-        // * Return the larger of the given values.
-        // * @tparam T Value type.
-        // * @param _a First value to compare.
-        // * @param _b Second value to compare.
-        // * @return The larger of _a and _b. If the values are equivalent, returns _a.
-        // */
-        //template<class T>
-        //static const T& max(const T& _a, const T& _b)
-        //{
-        //    return (_a < _b) ? _b : _a;
-        //}
+        /**
+         * Return the larger of the given values.
+         * @tparam T Value type.
+         * @param _a First value to compare.
+         * @param _b Second value to compare.
+         * @return The larger of _a and _b. If the values are equivalent, returns _a.
+         */
+        template<class T>
+        static const T& max(const T& _a, const T& _b)
+        {
+            return (_a < _b) ? _b : _a;
+        }
 
-        ///**
-        // * Return the larger of the given values.
-        // * @tparam T Value type.
-        // * @tparam Args Variadic template type.
-        // * @param _a First value to compare.
-        // * @param _b Second value to compare.
-        // * @param _args The third to nth number to compare.
-        // * @return The larger of _a and _b. If the values are equivalent, returns _a.
-        // */
-        //template<class T, class ...Args>
-        //static const T& max(const T& _a, const T& _b, Args&& ... _args)
-        //{
-        //    return maths_utils::max<T>(_a, maths_utils::max<T>(_b, std::forward<Args>(_args)...));
-        //}
+        /**
+         * Return the larger of the given values.
+         * @tparam T Value type.
+         * @tparam Args Variadic template type.
+         * @param _a First value to compare.
+         * @param _b Second value to compare.
+         * @param _args The third to nth number to compare.
+         * @return The larger of _a and _b. If the values are equivalent, returns _a.
+         */
+        template<class T, class ...Args>
+        static const T& max(const T& _a, const T& _b, Args&& ... _args)
+        {
+            return max<T>(_a, max<T>(_b, std::forward<Args>(_args)...));
+        }
 
         /**
          * Checks if 2 floating Point numbers are approximately equal. Useful for dealing with floating Point errors.
@@ -111,8 +111,8 @@ namespace oom
         static std::enable_if_t<!std::numeric_limits<T>::is_integer, bool>
             approx_equal(const T& _a, const T& _b, Args&& ... _args)
         {
-            return std::fabs(maths_utils::max<T>(_a, _b, std::forward<Args>(_args)...) -
-                maths_utils::min<T>(_a, _b, std::forward<Args>(_args)...)) <= std::numeric_limits<T>::epsilon();
+            return std::fabs(max<T>(_a, _b, std::forward<Args>(_args)...) -
+                min<T>(_a, _b, std::forward<Args>(_args)...)) <= std::numeric_limits<T>::epsilon();
         }
     /*};*/
 }

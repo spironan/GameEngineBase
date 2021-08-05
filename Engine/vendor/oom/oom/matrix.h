@@ -12,11 +12,15 @@ namespace oom
     class matrix
     {
     public:
-        using value_type    = T;
-        using pointer       = value_type*;
-        using size_type     = std::size_t;
+        using value_type        = T;
+        using const_value       = value_type const;
+        using reference         = value_type &;
+        using const_reference   = value_type const&;
 
-        using container     = std::array<value_type, Columns* Rows>;
+        using pointer           = value_type*;
+        using size_type         = std::size_t;
+
+        using container         = std::array<value_type, Columns* Rows>;
 
         static constexpr bool is_square_matrix = (Columns == Rows);
         static constexpr size_type num_elements = Columns * Rows;
@@ -127,28 +131,28 @@ namespace oom
         }
         
 
-        bool operator==(const matrix& rhs) const
+        bool operator==(matrix const& rhs) const
         {
             for (size_type i = 0; i < num_elements; i++) {
-                if (!maths_utils::approx_equal(values[i], rhs.values[i])) {
+                if (!approx_equal(values[i], rhs.values[i])) {
                     return false;
                 }
             }
             return true;
         }
 
-        bool operator!=(const matrix& rhs) const { return !(*this == rhs); }
+        bool operator!=(matrix const& rhs) const { return !(*this == rhs); }
 
-        matrix operator+(value_type const scalar) const
+        /*matrix operator+(const_value scalar) const
         {
             matrix result{ *this };
             for (size_type i = 0; i < num_elements; ++i) {
                 result[i] += scalar;
             }
             return result;
-        }
+        }*/
 
-        matrix operator+(const matrix& rhs) const
+        matrix operator+(matrix const& rhs) const
         {
             matrix result;
             for (size_type i = 0; i < num_elements; ++i) {
@@ -157,13 +161,21 @@ namespace oom
             return result;
         }
 
-        matrix& operator+=(const matrix& rhs)
+        matrix& operator+=(matrix const& rhs)
         {
             *this = (*this) + rhs;
             return *this;
         }
+        
+        matrix& operator+=(const_value scalar)
+        {
+            for (size_type i = 0; i < num_elements; ++i) {
+                values[i] += scalar;
+            }
+            return *this;
+        }
 
-        matrix operator-(const matrix& rhs) const
+        matrix operator-(matrix const& rhs) const
         {
             matrix result;
             for (size_type i = 0; i < num_elements; ++i) {
@@ -172,13 +184,19 @@ namespace oom
             return result;
         }
 
-        matrix& operator-=(const matrix& rhs)
+        matrix& operator-=(matrix const& rhs)
         {
             *this = (*this) - rhs;
             return *this;
         }
 
-        matrix operator*(value_type scalar) const
+        matrix& operator-=(const_value rhs)
+        {
+            *this = (*this) - rhs;
+            return *this;
+        }
+
+        matrix operator*(const_value scalar) const
         {
             matrix result;
             for (size_type i = 0; i < num_elements; ++i) {
@@ -187,7 +205,7 @@ namespace oom
             return result;
         }
 
-        matrix& operator*=(value_type scalar)
+        matrix& operator*=(const_value scalar)
         {
             *this = (*this) * scalar;
             return *this;
@@ -201,7 +219,7 @@ namespace oom
 
             for (size_type i = 0; i < Columns; ++i)
             {
-                result[i][0] = trans.cols[i].Dot(rhs);
+                result[i][0] = trans.cols[i].dot(rhs);
             }
         }
 
@@ -214,7 +232,7 @@ namespace oom
 
             for (size_type i = 0; i < Columns; ++i)
             {
-                result[i][0] = trans.cols[i].Dot(converted);
+                result[i][0] = trans.cols[i].dot(converted);
             }
         }
 
@@ -233,7 +251,7 @@ namespace oom
         }
 
         template<size_type Size = Columns>
-        std::enable_if_t <is_square_matrix, matrix&> operator*=(const matrix& rhs)
+        std::enable_if_t <is_square_matrix, matrix&> operator*=(matrix const& rhs)
         {
             *this = (*this) * rhs;
             return *this;

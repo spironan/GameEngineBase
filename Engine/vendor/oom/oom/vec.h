@@ -3,6 +3,7 @@
 #include "fwd.h"
 
 #include <array>
+#include <cmath>
 
 namespace oom
 {
@@ -10,9 +11,8 @@ namespace oom
     struct vec
     {
         using value_type        = T;
-        using const_value       = value_type const;
-        using const_reference   = value_type const&;
         using reference         = value_type &;
+        using const_value       = value_type const;
         using const_reference   = value_type const&;
         
         using size_type         = size_t;
@@ -102,7 +102,7 @@ namespace oom
         {
             for (size_type i = 0; i < Size; ++i)
             {
-                if (!maths_utils::approx_equal(val[i], other.val[i])) return false;
+                if (!approx_equal(val[i], other.val[i])) return false;
             }
 
             return true;
@@ -137,6 +137,16 @@ namespace oom
         vec<Size, value_type>& operator+=(vec<Size, value_type> const& other)
         {
             *this = *this + other;
+            return *this;
+        }
+
+        vec<Size, value_type>& operator+=(const_value other)
+        {
+            for (size_type i = 0; i < Size; ++i)
+            {
+                val[i] += other;
+            }
+
             return *this;
         }
 
@@ -188,6 +198,16 @@ namespace oom
             return *this;
         }
 
+        vec<Size, value_type>& operator-=(const_value other)
+        {
+            for (size_type i = 0; i < Size; ++i)
+            {
+                val[i] -= other;
+            }
+
+            return *this;
+        }
+
         vec<Size, value_type> operator-() const
         {
             vec<Size, value_type> res{ *this };
@@ -196,7 +216,7 @@ namespace oom
             return res;
         }
 
-        point<Size, value_type> ConvertToPoint() const
+        point<Size, value_type> convert_to_point() const
         {
             return point<Size, value_type> { val };
         }
@@ -204,7 +224,7 @@ namespace oom
         // implicit cast to become a point3
         explicit operator point<Size, value_type>() const
         {
-            return ConvertToPoint();
+            return convert_to_point();
         };
 
         // implicit homogenous conversion
@@ -213,7 +233,7 @@ namespace oom
             return vec<Size + 1, value_type>{ val };
         }
 
-        value_type Dot(vec<Size, value_type> const& other) const
+        value_type dot(vec<Size, value_type> const& other) const
         {
             value_type result {0};
             for (size_type i = 0; i < Size; ++i)
@@ -224,13 +244,13 @@ namespace oom
         }
 
         template<std::size_t U = Size>
-        std::enable_if_t<U == VEC2, float> Cross(vec<VEC2, value_type> const& other) const noexcept
+        std::enable_if_t<U == VEC2, float> cross(vec<VEC2, value_type> const& other) const noexcept
         {
             return val[0] * other.val[1] - val[1] * other.val[0];
         }
 
         template<std::size_t U = Size>
-        std::enable_if_t<U == VEC3, vec<VEC3, value_type>> Cross(vec<VEC3, value_type> const& other) const noexcept
+        std::enable_if_t<U == VEC3, vec<VEC3, value_type>> cross(vec<VEC3, value_type> const& other) const noexcept
         {
             vec<VEC3, value_type> result{};
 
@@ -241,19 +261,19 @@ namespace oom
             return result;
         }
 
-        value_type LengthSquared() const 
+        value_type lengthsqr() const 
         {
-            return Dot(*this);
+            return dot(*this);
         }
 
-        value_type Length() const
+        value_type length() const
         {
-            return std::sqrtf(LengthSquared());
+            return std::sqrtf(lengthsqr());
         }
 
         vec<Size, value_type> Normalized() const
         {
-            return *this / Length();
+            return *this / length();
         }
 
         vec<Size, value_type>& Normalize()

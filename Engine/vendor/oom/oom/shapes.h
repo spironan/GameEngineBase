@@ -1,6 +1,7 @@
 #pragma once
 #include "vec.h"
 #include "matrix.h"
+#include "point.h"
 
 namespace oom
 {
@@ -87,7 +88,7 @@ namespace oom
         // the value also corresponds to six times the signed volume of the tetrahedron formed by the four points.
         static float Orient3D(point3 const& a, point3 const& b, point3 const& c, point3 const& d)
         {
-            return (a - d).Dot((b - d).Cross(c - d));
+            return (a - d).dot((b - d).cross(c - d));
         }
 
 

@@ -259,7 +259,7 @@ namespace oom
         template<size_t Size>
         static bool has_inverse(const mat<Size>& matrix)
         {
-            return !maths_utils::approx_equal(determinant(matrix), 0.0f);
+            return !approx_equal(determinant(matrix), 0.0f);
         }
 
         /*template<size_t Size>

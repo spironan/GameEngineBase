@@ -256,9 +256,9 @@ namespace oom
 
     mat4 view(const vec3& _forward, const vec3& _up, const vec3& _position)
     {
-        //_forward.Cross(_up);
+        //_forward.cross(_up);
         
-        vec3 right = _forward.Cross(_up);
+        vec3 right = _forward.cross(_up);
         
         /**
          * translation * orientation matrix  = homogeneous matrix
