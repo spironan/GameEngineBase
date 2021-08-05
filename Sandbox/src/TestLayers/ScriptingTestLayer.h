@@ -42,6 +42,9 @@ private:
         case engine::ScriptValueType::STRING:
             value.SetValue<std::string>(stringValue);
             break;
+        case engine::ScriptValueType::GAMEOBJECT:
+            value.SetValue<engine::Entity>((engine::Entity)(std::atoi(stringValue.c_str())));
+            break;
         case engine::ScriptValueType::CLASS:
         {
             std::vector<engine::ScriptFieldInfo> convertedValue = value.GetValue<std::vector<engine::ScriptFieldInfo>>();

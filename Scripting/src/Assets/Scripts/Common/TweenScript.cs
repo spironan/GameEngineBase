@@ -28,6 +28,8 @@ public class TweenScript : MonoBehaviour
 {
     public string enableTweenName = "ENABLE";
     public List<TweenValue> tweenList = new List<TweenValue>();
+    public TweenValue[] tweenArray = new TweenValue[5];
+    public Dictionary<string, TweenValue> testDictionary;
     // public Dictionary<string, float> test = new Dictionary<string, float>();
     //public TweenValue[] tweenArray = new TweenValue[5];
     //public TweenValue testValue;

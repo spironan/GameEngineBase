@@ -62,6 +62,21 @@ namespace engine
             mono_field_set_value(obj, field, fieldValue);
         }
         break;
+        case ScriptValueType::GAMEOBJECT:
+        {
+            GameObject gameObject{ value.GetValue<Entity>() };
+            Scripting* scripting = gameObject.TryGetComponent<Scripting>();
+            if (scripting != nullptr)
+            {
+                MonoObject* monoGameObject = mono_gchandle_get_target(scripting->GetGameObjectPtr());
+                mono_field_set_value(obj, field, monoGameObject);
+            }
+            else
+            {
+                mono_field_set_value(obj, field, nullptr);
+            }
+        }
+        break;
         case ScriptValueType::CLASS:
         {
             MonoClass* classField = mono_type_get_class(mono_field_get_type(field));
@@ -167,15 +182,16 @@ namespace engine
             MonoClass* typeClass = mono_type_get_class(type);
             int typeEnum = mono_type_get_type(type);
 
-            for (unsigned int i = 0; i < depth + 1; ++i)
-                std::cout << "\t";
-            std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
             switch (typeEnum)
             {
             case MONO_TYPE_BOOLEAN: // bool
             {
                 bool fieldValue;
                 mono_field_get_value(object, compField, &fieldValue);
+
+                for (unsigned int i = 0; i < depth + 1; ++i)
+                    std::cout << "\t";
+                std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
                 std::cout << fieldValue << std::endl;
             }
             break;
@@ -183,6 +199,10 @@ namespace engine
             {
                 int fieldValue;
                 mono_field_get_value(object, compField, &fieldValue);
+
+                for (unsigned int i = 0; i < depth + 1; ++i)
+                    std::cout << "\t";
+                std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
                 std::cout << fieldValue << std::endl;
             }
             break;
@@ -190,6 +210,10 @@ namespace engine
             {
                 float fieldValue;
                 mono_field_get_value(object, compField, &fieldValue);
+
+                for (unsigned int i = 0; i < depth + 1; ++i)
+                    std::cout << "\t";
+                std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
                 std::cout << fieldValue << std::endl;
             }
             break;
@@ -197,6 +221,10 @@ namespace engine
             {
                 MonoString* fieldValue;
                 mono_field_get_value(object, compField, &fieldValue);
+
+                for (unsigned int i = 0; i < depth + 1; ++i)
+                    std::cout << "\t";
+                std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
                 std::cout << std::string(mono_string_to_utf8(fieldValue)) << std::endl;
             }
             break;
@@ -210,6 +238,10 @@ namespace engine
                 mono_field_get_value(object, compField, &fieldValue);
                 if (ScriptUtility::CheckBaseClass(typeClass, GameObjectClass)) // is a GameObject
                 {
+                    for (unsigned int i = 0; i < depth + 1; ++i)
+                        std::cout << "\t";
+                    std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
+
                     if (fieldValue != nullptr)
                     {
                         MonoClassField* idField = mono_class_get_field_from_name(typeClass, "instanceID");
@@ -224,6 +256,10 @@ namespace engine
                 }
                 else if (ScriptUtility::CheckBaseClass(typeClass, ComponentClass)) // is a GameObject Component
                 {
+                    for (unsigned int i = 0; i < depth + 1; ++i)
+                        std::cout << "\t";
+                    std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
+
                     if (fieldValue != nullptr)
                     {
                         MonoClassField* goField = mono_class_get_field_from_name(typeClass, "_gameObject");
@@ -243,7 +279,11 @@ namespace engine
                 }
                 else // is a container for info
                 {
+                    for (unsigned int i = 0; i < depth + 1; ++i)
+                        std::cout << "\t";
+                    std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
                     std::cout << std::endl;
+
                     if (fieldValue == nullptr)
                     {
                         fieldValue = ScriptUtility::MonoObjectNew(typeClass);
@@ -259,6 +299,9 @@ namespace engine
                 {
                     MonoObject* fieldValue;
                     mono_field_get_value(object, compField, &fieldValue);
+                    for (unsigned int i = 0; i < depth + 1; ++i)
+                        std::cout << "\t";
+                    std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
                     std::cout << std::endl;
                     if (fieldValue != nullptr)
                     {
@@ -318,6 +361,10 @@ namespace engine
                 void* args[1];
                 args[0] = mono_type_get_object(ScriptUtility::g_SystemInfo.domain, type);
                 MonoArray* enumNames = (MonoArray*)mono_runtime_invoke(GetEnumNames, NULL, args, NULL);
+
+                for (unsigned int i = 0; i < depth + 1; ++i)
+                    std::cout << "\t";
+                std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
                 std::cout << mono_string_to_utf8(mono_array_get(enumNames, MonoString*, fieldValue)) << std::endl;
                 //std::cout << "All Possible Values: " << std::endl << "{" << std::endl;
                 //unsigned int nameCount = (unsigned int)mono_array_length(enumNames);

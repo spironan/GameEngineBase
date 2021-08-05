@@ -75,7 +75,11 @@ namespace engine
                 MonoClass* GameObjectClass = ScriptUtility::GetGameObjectMonoClass();
                 MonoClass* ComponentClass = ScriptUtility::GetBaseComponentMonoClass();
 
-                if (ScriptUtility::CheckBaseClass(typeClass, GameObjectClass) || ScriptUtility::CheckBaseClass(typeClass, ComponentClass)) // is a GameObject or Component
+                if (ScriptUtility::CheckBaseClass(typeClass, GameObjectClass)) // is a GameObject
+                {
+                    return ScriptFieldValue((Entity)-1);
+                }
+                else if (ScriptUtility::CheckBaseClass(typeClass, ComponentClass)) // is a Component
                 {
                     return ScriptFieldValue();
                 }
@@ -171,7 +175,11 @@ namespace engine
                 MonoClass* GameObjectClass = ScriptUtility::GetGameObjectMonoClass();
                 MonoClass* ComponentClass = ScriptUtility::GetBaseComponentMonoClass();
 
-                if (ScriptUtility::CheckBaseClass(objClass, GameObjectClass) || ScriptUtility::CheckBaseClass(objClass, ComponentClass)) // is a GameObject or Component
+                if (ScriptUtility::CheckBaseClass(objClass, GameObjectClass)) // is a GameObject
+                {
+                    return ScriptFieldValue((Entity)-1);
+                }
+                else if (ScriptUtility::CheckBaseClass(objClass, ComponentClass)) // is a Component
                 {
                     return ScriptFieldValue();
                 }
@@ -333,6 +341,7 @@ namespace engine
         case ScriptValueType::INT: os << "Int"; break;
         case ScriptValueType::FLOAT: os << "Float"; break;
         case ScriptValueType::STRING: os << "String"; break;
+        case ScriptValueType::GAMEOBJECT: os << "GameObject"; break;
         case ScriptValueType::CLASS: os << "Class"; break;
         case ScriptValueType::LIST: os << "List"; break;
         }
@@ -348,6 +357,15 @@ namespace engine
         case ScriptValueType::INT: os << value.GetValue<int>(); break;
         case ScriptValueType::FLOAT: os << value.GetValue<float>(); break;
         case ScriptValueType::STRING: os << value.GetValue<std::string>(); break;
+        case ScriptValueType::GAMEOBJECT:
+        {
+            Entity entityValue = value.GetValue<Entity>();
+            if (entityValue == (Entity)-1)
+                os << "null";
+            else
+                os << "GAMEOBJECT " << entityValue;
+        }
+        break;
         case ScriptValueType::CLASS:
         {
             std::vector<ScriptFieldInfo> const& fieldValue = value.GetValue<std::vector<ScriptFieldInfo>>();

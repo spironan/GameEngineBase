@@ -19,6 +19,8 @@ Technology is prohibited.
 #include <vector>
 #include <variant>
 
+#include "Engine/ECS/GameObject.h"
+
 namespace engine
 {
     // forward declaration
@@ -31,6 +33,7 @@ namespace engine
         int,
         float,
         std::string,
+        Entity,
         std::vector<ScriptFieldInfo>,
         std::vector<ScriptFieldValue>
     > ScriptValue;
@@ -42,6 +45,7 @@ namespace engine
         INT,
         FLOAT,
         STRING,
+        GAMEOBJECT,
         CLASS,
         LIST,
     };

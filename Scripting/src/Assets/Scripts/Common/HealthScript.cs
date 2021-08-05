@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using Ouroboros;
 
-class HealthScript : MonoBehaviour
+public class HealthScript : MonoBehaviour
 {
     public int totalHealth = 100;
-    public GameObject healthbar = null;
+    public GameObject healthbar;
 
     private int currHealth = 0;
+
+    private void Awake()
+    {
+
+    }
 
     public void TakeDamage(int dmg)
     {
