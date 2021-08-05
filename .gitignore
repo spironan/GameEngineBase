@@ -17,8 +17,8 @@ bin-int/
 */EngineProfile-Runtime.json
 */EngineProfile-Shutdown.json
 
-*.ini
-*.prefab
+**.ini
+**.prefab
 Sandbox/imgui.ini
 
 #scripts

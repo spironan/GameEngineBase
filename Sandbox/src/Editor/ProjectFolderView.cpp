@@ -16,11 +16,11 @@
 #include "Engine/Asset/AssetsManager.h"
 #include "Utility/Hash.h"
 
-#include <imgui.h>
 #include <string>
+
+#include <imgui.h>
+
 #include <filesystem>
-#include <rapidjson/ostreamwrapper.h>
-#include <rapidjson/prettywriter.h>
 
 #include <Windows.h>
 #include <shellapi.h>
@@ -157,7 +157,9 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-			Serializer::SaveObject(engine::GameObject(ObjectGroup::s_FocusedObject).Name()+".prefab");
+			std::string filename = engine::GameObject(ObjectGroup::s_FocusedObject).Name() + ".prefab";
+
+			Serializer::SaveObject(FileGroup::s_CurrentPath +'/' + filename);
 		}
 		ImGui::EndDragDropTarget();
 	}

@@ -45,6 +45,9 @@ public:
     EditorLayer() : Layer{"EditorLayer"}
     {
 		LOG_WARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		LOG_ERROR("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+		LOG_TRACE("cccccccccccccccccccccccccccccccccccccc");
+
 		using namespace engine;
 		TextureDatabase::AddTexture("Ouroboros_Folder",TextureLoader::LoadFromFilePath("Icons/Ouroboros_Folder.png"));
 		TextureDatabase::AddTexture("Ouroboros_GenericFile", TextureLoader::LoadFromFilePath("Icons/Ouroboros_GenericFile.png"));
