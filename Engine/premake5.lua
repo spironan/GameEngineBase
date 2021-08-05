@@ -43,6 +43,7 @@ project "Engine"
         "%{IncludeDir.rttr}",
         "%{IncludeDir.glad}",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.oom}", --custom math library.
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.vkbootstrap}",
         "%{IncludeDir.tinyobjloader}",

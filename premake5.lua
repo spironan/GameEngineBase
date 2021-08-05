@@ -39,6 +39,7 @@ group "Dependencies"
 --    include "Engine/vendor/sdl2"
 include "Engine/vendor/ImGui"
 include "Engine/vendor/glad"
+include "Engine/vendor/oom/oom"
 group ""
 
 include "Engine"
