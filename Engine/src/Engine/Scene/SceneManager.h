@@ -109,7 +109,7 @@ namespace engine
 		\return   current active scene after it has been set
 		
 		*//**********************************************************************************/
-		static Scene& SetActiveScene(key_type id)
+		static void SetActiveScene(key_type id)
 		{
 			ENGINE_VERIFY(GetInstance().m_scenes.find(id) != GetInstance().m_scenes.end());
 			GetInstance().m_active_scene_id = id;

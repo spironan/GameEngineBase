@@ -102,7 +102,7 @@ namespace engine
 		GameObject CreateGameObject()
 		{
 			ENGINE_ASSERT(IsLoaded());
-			GameObject temp{ GetWorld().CreateEntity() };
+			GameObject temp{};
 			m_root.AddChild(temp);
 			return temp;
 		}
