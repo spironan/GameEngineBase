@@ -71,9 +71,9 @@ namespace engine
 
 		template<typename T, typename... args>
 		std::enable_if_t<std::is_base_of_v<Component, T> == true, T&>
-			EmplaceComponent(Entity entity, bool active = true, args&&... arguementList)
+			EmplaceComponent(Entity entity, args&&... arguementList)
 		{
-			auto& comp = m_ComponentManager->EmplaceComponent<T>(entity, entity, active, std::forward<args>( arguementList)...);
+			auto& comp = m_ComponentManager->EmplaceComponent<T>(entity, entity, std::forward<args>( arguementList)...);
 
 			auto signature = m_EntityManager->GetSignature(entity);
 			signature.set(m_ComponentManager->GetComponentID<T>(), true);
@@ -100,6 +100,7 @@ namespace engine
 		template<typename T>
 		void RemoveComponent(Entity entity)
 		{
+			ENGINE_ASSERT(m_EntityManager->Valid(entity));
 			m_ComponentManager->RemoveComponent<T>(entity);
 
 			auto signature = m_EntityManager->GetSignature(entity);
@@ -112,7 +113,15 @@ namespace engine
 		template<typename T>
 		T& GetComponent(Entity entity)
 		{
+			ENGINE_ASSERT(m_EntityManager->Valid(entity));
 			return m_ComponentManager->GetComponent<T>(entity);
+		}
+		
+		template<typename... Component>
+		decltype(auto) GetComponents(Entity entity)
+		{
+			ENGINE_ASSERT(m_EntityManager->Valid(entity));
+			return m_ComponentManager->GetComponents<Component...>(entity);
 		}
 
 		template<typename T>

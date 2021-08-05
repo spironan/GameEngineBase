@@ -25,7 +25,7 @@ namespace engine
 	{
 		friend class ECS_Manager;
 	public:
-		template<typename T>
+		template<typename T, typename... Components>
 		class Iterator
 		{
 		public:
@@ -37,9 +37,11 @@ namespace engine
 			Signature m_signature;
 			T m_first, m_last, m_curr;
 			EntityManager& m_entityManager;
+			ComponentManager& m_componentManager;
 
-			Iterator(EntityManager& entityManager, Signature signature, T first, T last, T curr) :
+			Iterator(EntityManager& entityManager, ComponentManager& componentManager, Signature signature, T first, T last, T curr) :
 				m_entityManager(entityManager),
+				m_componentManager(componentManager),
 				m_signature(signature),
 				m_first(first),
 				m_last(last),
@@ -152,18 +154,19 @@ namespace engine
 				return &*m_curr;
 			}
 
-			reference operator*() const 
+			decltype(auto) operator*() const 
 			{
-				return *operator->();
+				return std::forward_as_tuple(m_componentManager.GetComponent<Components>(*m_curr)...);
 			}
 		};
 	public:
 		using iterator = typename EntityManager::iterator;
-		using view_iterator = Iterator<iterator>;
+		using view_iterator = Iterator<iterator, Args...>;
 	private:
 		Signature m_signature;
 		iterator m_begin, m_end;
 		EntityManager& m_entityManager;
+		ComponentManager& m_componentManager;
 
 		template<typename Aux_type>
 		void SetSignature(ComponentManager& componentManager){}
@@ -187,7 +190,8 @@ namespace engine
 		explicit ComponentView(ComponentManager& componentManager, EntityManager& entityManager) : 
 			m_begin(entityManager.begin()),
 			m_end(entityManager.end()),
-			m_entityManager(entityManager)
+			m_entityManager(entityManager),
+			m_componentManager(componentManager)
 		{
 			SetSignature<void, Args...>(componentManager);
 		}
@@ -195,8 +199,8 @@ namespace engine
 		ComponentView(ComponentView const&) = default;
 		~ComponentView() = default;
 
-		view_iterator begin() { return view_iterator(m_entityManager, m_signature, m_begin, m_end, m_begin); }
-		view_iterator end() { return view_iterator(m_entityManager, m_signature, m_begin, m_end, m_end); }
+		view_iterator begin() { return view_iterator(m_entityManager, m_componentManager, m_signature, m_begin, m_end, m_begin); }
+		view_iterator end() { return view_iterator(m_entityManager, m_componentManager, m_signature, m_begin, m_end, m_end); }
 
 
 		//operator bool() {};

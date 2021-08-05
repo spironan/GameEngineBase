@@ -114,6 +114,17 @@ namespace engine
 			return GetComponentArray<T>()->GetData(entity);
 		}
 
+		template<typename... Component>
+		decltype(auto) GetComponents(Entity entity)
+		{
+			if constexpr (sizeof...(Component) == 1) 
+			{
+				return GetComponentArray<Component>()->GetData(entity);
+			}
+
+			return std::forward_as_tuple(GetComponentArray<Component>()->GetData(entity)...);
+		}
+
 		template<typename T>
 		T* TryGetComponent(Entity entity)
 		{

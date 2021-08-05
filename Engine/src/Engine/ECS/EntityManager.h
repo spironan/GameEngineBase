@@ -23,6 +23,7 @@ namespace engine
 {
 	class EntityManager
 	{
+		friend class ECS_Manager;
 	public:
 		using available_entity_container = std::queue<Entity>;
 		using used_entity_container = std::set<Entity>;
@@ -85,6 +86,13 @@ namespace engine
 
 		iterator begin() { return m_UsedEntities.begin(); }
 		iterator end() { return m_UsedEntities.end(); }
+
+	private:
+		bool Valid(Entity entity)
+		{
+			return entity < MAX_ENTITY;
+		}
+
 
 	private:
 		available_entity_container m_AvailableEntities{};
