@@ -107,6 +107,9 @@ namespace engine
             }
         case MONO_TYPE_GENERICINST: // List
             {
+                if (!ScriptUtility::IsMonoTypeGenericList(type))
+                    return ScriptFieldValue();
+
                 MonoObject* fieldValue;
                 mono_field_get_value(object, field, &fieldValue);
 
@@ -192,6 +195,9 @@ namespace engine
             }
         case MONO_TYPE_GENERICINST: // List
             {
+                if (!ScriptUtility::IsMonoTypeGenericList(mono_class_get_type(objClass)))
+                    return ScriptFieldValue();
+
                 std::vector<ScriptFieldValue> resultList;
 
                 MonoProperty* countProperty = mono_class_get_property_from_name(objClass, "Count");
@@ -268,7 +274,10 @@ namespace engine
                 continue;
             std::string fieldName(mono_field_get_name(field));
             ScriptFieldValue fieldValue = GetMonoFieldValue(sample, field);
-            resultList.push_back({ fieldName, fieldValue });
+            if (!fieldValue.IsNullType())
+            {
+                resultList.push_back({ fieldName, fieldValue });
+            }
         }
         return resultList;
     }

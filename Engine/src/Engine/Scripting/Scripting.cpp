@@ -255,52 +255,55 @@ namespace engine
             break;
             case MONO_TYPE_GENERICINST: // List
             {
-                MonoObject* fieldValue;
-                mono_field_get_value(object, compField, &fieldValue);
-                std::cout << std::endl;
-                if (fieldValue != nullptr)
+                if (ScriptUtility::IsMonoTypeGenericList(type))
                 {
-                    MonoClass* fieldClass = mono_object_get_class(fieldValue);
-                    MonoProperty* countProperty = mono_class_get_property_from_name(fieldClass, "Count");
-                    int count = *((int*)mono_object_unbox(mono_property_get_value(countProperty, fieldValue, NULL, NULL)));
-
-                    MonoProperty* accessProperty = mono_class_get_property_from_name(fieldClass, "Item");
-                    MonoMethod* accessMethod = mono_property_get_get_method(accessProperty);
-
-                    int i = 0;
-                    void* args[1];
-                    args[0] = &i;
-                    for (i = 0; i < count; ++i)
+                    MonoObject* fieldValue;
+                    mono_field_get_value(object, compField, &fieldValue);
+                    std::cout << std::endl;
+                    if (fieldValue != nullptr)
                     {
-                        MonoObject* item = mono_runtime_invoke(accessMethod, fieldValue, args, NULL);
-                        MonoClass* itemClass = mono_object_get_class(item);
-                        if (itemClass == mono_get_boolean_class())
+                        MonoClass* fieldClass = mono_object_get_class(fieldValue);
+                        MonoProperty* countProperty = mono_class_get_property_from_name(fieldClass, "Count");
+                        int count = *((int*)mono_object_unbox(mono_property_get_value(countProperty, fieldValue, NULL, NULL)));
+
+                        MonoProperty* accessProperty = mono_class_get_property_from_name(fieldClass, "Item");
+                        MonoMethod* accessMethod = mono_property_get_get_method(accessProperty);
+
+                        int i = 0;
+                        void* args[1];
+                        args[0] = &i;
+                        for (i = 0; i < count; ++i)
                         {
-                            for (unsigned int j = 0; j < depth + 2; ++j)
-                                std::cout << "\t";
-                            std::cout << *(bool*)mono_object_unbox(item) << std::endl;
-                        }
-                        else if (itemClass == mono_get_int32_class())
-                        {
-                            for (unsigned int j = 0; j < depth + 2; ++j)
-                                std::cout << "\t";
-                            std::cout << *(int*)mono_object_unbox(item) << std::endl;
-                        }
-                        else if (itemClass == mono_get_single_class())
-                        {
-                            for (unsigned int j = 0; j < depth + 2; ++j)
-                                std::cout << "\t";
-                            std::cout << *(float*)mono_object_unbox(item) << std::endl;
-                        }
-                        else if (itemClass == mono_get_string_class())
-                        {
-                            for (unsigned int j = 0; j < depth + 2; ++j)
-                                std::cout << "\t";
-                            std::cout << mono_string_to_utf8(mono_object_to_string(item, NULL)) << std::endl;
-                        }
-                        else
-                        {
-                            DebugPrintObjectFields(item, depth + 2);
+                            MonoObject* item = mono_runtime_invoke(accessMethod, fieldValue, args, NULL);
+                            MonoClass* itemClass = mono_object_get_class(item);
+                            if (itemClass == mono_get_boolean_class())
+                            {
+                                for (unsigned int j = 0; j < depth + 2; ++j)
+                                    std::cout << "\t";
+                                std::cout << *(bool*)mono_object_unbox(item) << std::endl;
+                            }
+                            else if (itemClass == mono_get_int32_class())
+                            {
+                                for (unsigned int j = 0; j < depth + 2; ++j)
+                                    std::cout << "\t";
+                                std::cout << *(int*)mono_object_unbox(item) << std::endl;
+                            }
+                            else if (itemClass == mono_get_single_class())
+                            {
+                                for (unsigned int j = 0; j < depth + 2; ++j)
+                                    std::cout << "\t";
+                                std::cout << *(float*)mono_object_unbox(item) << std::endl;
+                            }
+                            else if (itemClass == mono_get_string_class())
+                            {
+                                for (unsigned int j = 0; j < depth + 2; ++j)
+                                    std::cout << "\t";
+                                std::cout << mono_string_to_utf8(mono_object_to_string(item, NULL)) << std::endl;
+                            }
+                            else
+                            {
+                                DebugPrintObjectFields(item, depth + 2);
+                            }
                         }
                     }
                 }
@@ -325,34 +328,29 @@ namespace engine
                 //std::cout << "}" << std::endl;
             }
             break;
-            case MONO_TYPE_SZARRAY: // Array
-            {
-                MonoArray* fieldValue;
-                mono_field_get_value(object, compField, &fieldValue);
-                std::cout << std::endl;
-                if (fieldValue != nullptr)
-                {
-                    uintptr_t arrayLength = mono_array_length(fieldValue);
-                    for (uintptr_t i = 0; i < arrayLength; ++i)
-                    {
-                        MonoObject* obj = mono_array_get(fieldValue, MonoObject*, i);
-                        if (obj == nullptr)
-                        {
-                            for (unsigned int j = 0; j < depth + 2; ++j)
-                                std::cout << "\t";
-                            std::cout << "ELEMENT (" << i << "): NULL" << std::endl;
-                            continue;
-                        }
-                        DebugPrintObjectFields(obj, depth + 2);
-                    }
-                }
-            }
-            break;
-            default:
-            {
-                std::cout << "UNKNOWN" << std::endl;
-            }
-            break;
+            //case MONO_TYPE_SZARRAY: // Array
+            //{
+            //    MonoArray* fieldValue;
+            //    mono_field_get_value(object, compField, &fieldValue);
+            //    std::cout << std::endl;
+            //    if (fieldValue != nullptr)
+            //    {
+            //        uintptr_t arrayLength = mono_array_length(fieldValue);
+            //        for (uintptr_t i = 0; i < arrayLength; ++i)
+            //        {
+            //            MonoObject* obj = mono_array_get(fieldValue, MonoObject*, i);
+            //            if (obj == nullptr)
+            //            {
+            //                for (unsigned int j = 0; j < depth + 2; ++j)
+            //                    std::cout << "\t";
+            //                std::cout << "ELEMENT (" << i << "): NULL" << std::endl;
+            //                continue;
+            //            }
+            //            DebugPrintObjectFields(obj, depth + 2);
+            //        }
+            //    }
+            //}
+            //break;
             }
         }
     }

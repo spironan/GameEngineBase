@@ -32,9 +32,10 @@ namespace engine
         {
             MonoDomain* domain;
             MonoImage* scripting;
+            MonoImage* mscorlib;
             std::vector<ScriptClassInfo> classInfoList;
 
-            inline ScriptSystemInfo() : domain{ nullptr }, scripting{ nullptr } {};
+            inline ScriptSystemInfo() : domain{ nullptr }, scripting{ nullptr }, mscorlib{ nullptr } {};
 
             /*********************************************************************************//*!
             \brief      initializes all script system info using the dll at the indicated path for later use
@@ -151,6 +152,16 @@ namespace engine
         \return     true if the given class inherits from the given base class, else false
         *//**********************************************************************************/
         bool CheckBaseClass(MonoClass* klass, MonoClass* desiredBase);
+
+        /*********************************************************************************//*!
+        \brief      Helper function to check if a given C# type is a generic C# list
+
+        \param      type
+                the pointer to the MonoType to check
+
+        \return     true if the given class is a generic C# list, else false
+        *//**********************************************************************************/
+        bool IsMonoTypeGenericList(MonoType* type);
 
         /*********************************************************************************//*!
         \brief      Helper function to get a function from a given C# object's class by name, if any

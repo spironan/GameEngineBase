@@ -94,6 +94,16 @@ namespace engine
             return std::holds_alternative<T>(value);
         }
 
+        /*********************************************************************************//*!
+        \brief      checks if the field value was not assigned a type
+        
+        \return     true if the field value has no type, else false
+        *//**********************************************************************************/
+        inline bool IsNullType()
+        {
+            return value.index() == 0;
+        }
+
         /*-----------------------------------------------------------------------------*/
         /* getter and setter                                                           */
         /*-----------------------------------------------------------------------------*/

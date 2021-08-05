@@ -46,6 +46,7 @@ namespace engine
             }
 
             scripting = mono_assembly_get_image(assembly);
+            mscorlib = mono_class_get_image(mono_get_boolean_class());
 
             // get all script class info
             MonoClass* baseScriptClass = GetBaseScriptMonoClass();
@@ -82,6 +83,7 @@ namespace engine
             }
             domain = nullptr;
             scripting = nullptr;
+            mscorlib = nullptr;
             classInfoList.clear();
         }
 
@@ -140,6 +142,23 @@ namespace engine
                 klass = mono_class_get_parent(klass);
             }
             return false;
+        }
+
+        bool IsMonoTypeGenericList(MonoType* type)
+        {
+            MonoObject* typeObj = (MonoObject*)mono_type_get_object(g_SystemInfo.domain, type);
+            MonoClass* typeClass = mono_object_get_class(typeObj);
+
+            MonoProperty* genericProperty = mono_class_get_property_from_name(typeClass, "IsGenericType");
+            bool isGenericType = *(bool*)mono_property_get_value(genericProperty, typeObj, NULL, NULL);
+            if (!isGenericType)
+                return false;
+
+            MonoClass* listClass = mono_class_from_name(g_SystemInfo.mscorlib, "System.Collections.Generic", "List`1");
+            MonoMethod* defMethod = mono_class_get_method_from_name(typeClass, "GetGenericTypeDefinition", 0);
+            MonoReflectionType* result = (MonoReflectionType*)mono_runtime_invoke(defMethod, typeObj, NULL, NULL);
+            MonoClass* resultClass = mono_type_get_class(mono_reflection_type_get_type(result));
+            return listClass == resultClass;
         }
 
         MonoMethod* FindFunction(MonoObject* obj, const char* functionName)
