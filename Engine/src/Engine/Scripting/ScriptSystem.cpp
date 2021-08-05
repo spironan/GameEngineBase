@@ -54,18 +54,7 @@ namespace engine
             return;
         }
 
-        // unload current app domain
-        MonoDomain* oldDomain = mono_domain_get();
-        if (oldDomain != nullptr && oldDomain != mono_get_root_domain())
-        {
-            if (!mono_domain_set(mono_get_root_domain(), false))
-            {
-                LOG_ENGINE_ERROR("Script Compiling Error: failed to set root domain");
-            }
-            mono_domain_unload(oldDomain);
-            // Trigger C# garbage collection, not necessary but good point to clean up stuff
-            mono_gc_collect(mono_gc_max_generation());
-        }
+        // unload current system info, needed to allow for rebuild
         ScriptUtility::g_SystemInfo.Reset();
 
         // get all script filenames
@@ -103,44 +92,8 @@ namespace engine
             fclose(result);
         }
 
-        // load scripting dll
-        if (mono_domain_get() == nullptr)
-        {
-            MonoDomain* rootDomain = mono_jit_init("root");
-            mono_thread_set_main(mono_thread_current());
-        }
-        ScriptUtility::g_SystemInfo.domain = mono_domain_create_appdomain((char*)"scripts", NULL);
-        if (!mono_domain_set(ScriptUtility::g_SystemInfo.domain, false))
-        {
-            LOG_ENGINE_ERROR("Script Loading Error: failed to set scripting domain");
-        }
-
-        ScriptUtility::g_SystemInfo.assembly = mono_domain_assembly_open(ScriptUtility::g_SystemInfo.domain, s_OutputDir.c_str());
-        if (ScriptUtility::g_SystemInfo.assembly == nullptr)
-        {
-            LOG_ENGINE_ERROR("Script Loading Error: failed to open assembly using " + s_OutputDir);
-            ScriptUtility::g_SystemInfo.Reset();
-            return;
-        }
-        ScriptUtility::g_SystemInfo.image = mono_assembly_get_image(ScriptUtility::g_SystemInfo.assembly);
-
-        // get all script class info
-        MonoClass* baseScriptClass = ScriptUtility::GetBaseScriptMonoClass();
-        const MonoTableInfo* tableInfo = mono_image_get_table_info(ScriptUtility::g_SystemInfo.image, MONO_TABLE_TYPEDEF);
-        unsigned int tableRows = mono_table_info_get_rows(tableInfo);
-        for (unsigned int i = 1; i < tableRows; ++i)
-        {
-            uint32_t cols[MONO_TYPEDEF_SIZE];
-            mono_metadata_decode_row(tableInfo, i, cols, MONO_TYPEDEF_SIZE);
-            const char* name = mono_metadata_string_heap(ScriptUtility::g_SystemInfo.image, cols[MONO_TYPEDEF_NAME]);
-            const char* name_space = mono_metadata_string_heap(ScriptUtility::g_SystemInfo.image, cols[MONO_TYPEDEF_NAMESPACE]);
-            MonoClass* _class = mono_class_from_name(ScriptUtility::g_SystemInfo.image, name_space, name);
-
-            if (_class != baseScriptClass && ScriptUtility::CheckBaseClass(_class, baseScriptClass))
-            {
-                ScriptUtility::g_SystemInfo.classInfoList.push_back(ScriptClassInfo(name_space, name));
-            }
-        }
+        // load all system info for later use
+        ScriptUtility::g_SystemInfo.Initialize(s_OutputDir.c_str());
     }
 
     /*-----------------------------------------------------------------------------*/

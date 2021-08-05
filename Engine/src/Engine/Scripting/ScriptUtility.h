@@ -31,29 +31,31 @@ namespace engine
         struct ScriptSystemInfo
         {
             MonoDomain* domain;
-            MonoAssembly* assembly;
-            MonoImage* image;
+            MonoImage* scripting;
             std::vector<ScriptClassInfo> classInfoList;
 
-            inline ScriptSystemInfo() : domain{ nullptr }, assembly{ nullptr }, image{ nullptr } {};
+            inline ScriptSystemInfo() : domain{ nullptr }, scripting{ nullptr } {};
 
             /*********************************************************************************//*!
-            \brief      Resets all current system info, usually used when recompiling
+            \brief      initializes all script system info using the dll at the indicated path for later use
+             
+            \param      dllPath
+                    the file path to the scripting dll
+            
             *//**********************************************************************************/
-            inline void Reset()
-            {
-                domain = nullptr;
-                assembly = nullptr;
-                image = nullptr;
-                classInfoList.clear();
-            }
+            void Initialize(const char* dllPath);
+
+            /*********************************************************************************//*!
+            \brief      Resets all current system info, usually used to enable recompiling
+            *//**********************************************************************************/
+            void Reset();
 
             /*********************************************************************************//*!
             \brief      Checks if the necessary system information has been set up yet
              
             \return     true if it has been set up and is ready for use, else false
             *//**********************************************************************************/
-            inline bool IsSetUp() { return image != nullptr; }
+            inline bool IsSetUp() { return scripting != nullptr; }
         };
 
         extern ScriptSystemInfo g_SystemInfo;

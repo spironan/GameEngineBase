@@ -15,6 +15,7 @@ Technology is prohibited.
 
 #include "pch.h"
 #include "ScriptUtility.h"
+#include "Engine/Core/Log.h"
 
 namespace engine
 {
@@ -22,33 +23,95 @@ namespace engine
     {
         ScriptSystemInfo g_SystemInfo;
 
+        void ScriptSystemInfo::Initialize(const char* dllPath)
+        {
+            // load scripting dll
+            if (mono_domain_get() == nullptr)
+            {
+                MonoDomain* rootDomain = mono_jit_init("root");
+                mono_thread_set_main(mono_thread_current());
+            }
+            domain = mono_domain_create_appdomain((char*)"scripts", NULL);
+            if (!mono_domain_set(domain, false))
+            {
+                LOG_ENGINE_ERROR("Script Loading Error: failed to set scripting domain");
+            }
+
+            MonoAssembly* assembly = mono_domain_assembly_open(domain, dllPath);
+            if (assembly == nullptr)
+            {
+                LOG_ENGINE_ERROR("Script Loading Error: failed to open assembly using " + std::string(dllPath));
+                domain = nullptr;
+                return;
+            }
+
+            scripting = mono_assembly_get_image(assembly);
+
+            // get all script class info
+            MonoClass* baseScriptClass = GetBaseScriptMonoClass();
+            const MonoTableInfo* tableInfo = mono_image_get_table_info(scripting, MONO_TABLE_TYPEDEF);
+            unsigned int tableRows = mono_table_info_get_rows(tableInfo);
+            for (unsigned int i = 1; i < tableRows; ++i)
+            {
+                uint32_t cols[MONO_TYPEDEF_SIZE];
+                mono_metadata_decode_row(tableInfo, i, cols, MONO_TYPEDEF_SIZE);
+                const char* name = mono_metadata_string_heap(scripting, cols[MONO_TYPEDEF_NAME]);
+                const char* name_space = mono_metadata_string_heap(scripting, cols[MONO_TYPEDEF_NAMESPACE]);
+                MonoClass* _class = mono_class_from_name(scripting, name_space, name);
+
+                if (_class != baseScriptClass && CheckBaseClass(_class, baseScriptClass))
+                {
+                    classInfoList.push_back(ScriptClassInfo(name_space, name));
+                }
+            }
+        }
+
+        void ScriptSystemInfo::Reset()
+        {
+            // unload current app domain
+            MonoDomain* oldDomain = mono_domain_get();
+            if (oldDomain != nullptr && oldDomain != mono_get_root_domain())
+            {
+                if (!mono_domain_set(mono_get_root_domain(), false))
+                {
+                    LOG_ENGINE_ERROR("Script Compiling Error: failed to set root domain");
+                }
+                mono_domain_unload(oldDomain);
+                // Trigger C# garbage collection, not necessary but good point to clean up stuff
+                mono_gc_collect(mono_gc_max_generation());
+            }
+            domain = nullptr;
+            scripting = nullptr;
+            classInfoList.clear();
+        }
+
         /*-----------------------------------------------------------------------------*/
         /* Helper Functions                                                            */
         /*-----------------------------------------------------------------------------*/
         
         MonoClass* GetMonoClass(const char* name_space, const char* name)
         {
-            return mono_class_from_name(g_SystemInfo.image, name_space, name);
+            return mono_class_from_name(g_SystemInfo.scripting, name_space, name);
         }
 
         MonoClass* GetMonoClass(ScriptClassInfo const& classInfo)
         {
-            return mono_class_from_name(g_SystemInfo.image, classInfo.name_space.c_str(), classInfo.name.c_str());
+            return mono_class_from_name(g_SystemInfo.scripting, classInfo.name_space.c_str(), classInfo.name.c_str());
         }
 
         MonoClass* GetGameObjectMonoClass()
         {
-            return mono_class_from_name(g_SystemInfo.image, "Ouroboros", "GameObject");
+            return mono_class_from_name(g_SystemInfo.scripting, "Ouroboros", "GameObject");
         }
 
         MonoClass* GetBaseComponentMonoClass()
         {
-            return mono_class_from_name(g_SystemInfo.image, "Ouroboros", "Component");
+            return mono_class_from_name(g_SystemInfo.scripting, "Ouroboros", "Component");
         }
 
         MonoClass* GetBaseScriptMonoClass()
         {
-            return mono_class_from_name(g_SystemInfo.image, "Ouroboros", "MonoBehaviour");
+            return mono_class_from_name(g_SystemInfo.scripting, "Ouroboros", "MonoBehaviour");
         }
         
         MonoObject* MonoObjectNew(MonoClass* klass)
