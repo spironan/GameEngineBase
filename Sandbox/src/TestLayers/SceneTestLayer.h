@@ -15,7 +15,20 @@ Technology is prohibited.
 
 #include <Engine.h>
 #include "UtilityLayers/SceneBaseLayer.h"
+struct A
+{
+    int i = 1;
+};
 
+struct B
+{
+    int i = 2;
+};
+
+struct C
+{
+    int i = 3;
+};
 class SceneTestLayer : public SceneBaseLayer
 {
 public:
@@ -25,6 +38,24 @@ public:
     {
         engine::GameObject testGO = CreateGameObject();
         engine::GameObject testrootGO = RootGameObject();
+
+        std::vector<engine::GameObject> entities;
+
+        for (int i = 0; i < 100; i++)
+        {
+            auto go = CreateGameObject();
+            go.AddComponent<A>();
+            go.AddComponent<B>();
+            go.AddComponent<C>();
+            entities.emplace_back(go);
+        }
+
+        for (auto i : entities)
+        {
+            auto [compA,compB] = m_scene.GetWorld().GetComponents<A, B>(i.GetID());
+            auto temp = compA.i;
+            temp = compB.i;
+        }
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
