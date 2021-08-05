@@ -51,9 +51,9 @@ namespace engine
             return mono_class_from_name(g_SystemInfo.image, "Ouroboros", "MonoBehaviour");
         }
         
-        MonoObject* MonoObjectNew(MonoClass* _class)
+        MonoObject* MonoObjectNew(MonoClass* klass)
         {
-            return mono_object_new(g_SystemInfo.domain, _class);
+            return mono_object_new(g_SystemInfo.domain, klass);
         }
 
         MonoString* MonoStringNew(const char* text)
@@ -68,13 +68,13 @@ namespace engine
             return mono_method_can_access_field(testMethod, field);
         }
 
-        bool CheckBaseClass(MonoClass* _class, MonoClass* desiredBase)
+        bool CheckBaseClass(MonoClass* klass, MonoClass* desiredBase)
         {
-            while (_class != nullptr)
+            while (klass != nullptr)
             {
-                if (_class == desiredBase)
+                if (klass == desiredBase)
                     return true;
-                _class = mono_class_get_parent(_class);
+                klass = mono_class_get_parent(klass);
             }
             return false;
         }

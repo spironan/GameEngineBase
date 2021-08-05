@@ -374,14 +374,14 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Script Functions                                                            */
     /*-----------------------------------------------------------------------------*/
-    uint32_t Scripting::AddScript(const char* _namespace, const char* _type, bool callAwake)
+    uint32_t Scripting::AddScript(const char* name_space, const char* name, bool callAwake)
     {
         if (!ScriptUtility::g_SystemInfo.IsSetUp() || gameObjPtr == 0)
             return 0;
 
         // create script instance
-        MonoClass* _class = ScriptUtility::GetMonoClass(_namespace, _type);
-        MonoObject* script = ScriptUtility::MonoObjectNew(_class);
+        MonoClass* klass = ScriptUtility::GetMonoClass(name_space, name);
+        MonoObject* script = ScriptUtility::MonoObjectNew(klass);
         uint32_t scriptPtr = mono_gchandle_new(script, false);
         scriptList.push_back(scriptPtr);
 
@@ -389,7 +389,7 @@ namespace engine
         mono_runtime_object_init(script);
 
         // set gameObject field
-        MonoClassField* gameObjectField = mono_class_get_field_from_name(_class, "_gameObject");
+        MonoClassField* gameObjectField = mono_class_get_field_from_name(klass, "_gameObject");
         MonoObject* gameObject = mono_gchandle_get_target(gameObjPtr);
         mono_field_set_value(script, gameObjectField, gameObject);
 
@@ -405,12 +405,12 @@ namespace engine
         return scriptPtr;
     }
 
-    uint32_t Scripting::GetScript(const char* _namespace, const char* _type)
+    uint32_t Scripting::GetScript(const char* name_space, const char* name)
     {
         if (!ScriptUtility::g_SystemInfo.IsSetUp() || gameObjPtr == 0)
             return 0;
 
-        MonoClass* targetClass = ScriptUtility::GetMonoClass(_namespace, _type);
+        MonoClass* targetClass = ScriptUtility::GetMonoClass(name_space, name);
         if (targetClass == nullptr)
             return 0;
 
@@ -424,12 +424,12 @@ namespace engine
         return 0;
     }
 
-    void Scripting::RemoveScript(const char* _namespace, const char* _type)
+    void Scripting::RemoveScript(const char* name_space, const char* name)
     {
         if (!ScriptUtility::g_SystemInfo.IsSetUp() || gameObjPtr == 0)
             return;
 
-        MonoClass* targetClass = ScriptUtility::GetMonoClass(_namespace, _type);
+        MonoClass* targetClass = ScriptUtility::GetMonoClass(name_space, name);
         if (targetClass == nullptr)
             return;
 
@@ -589,18 +589,18 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Script Functions for C#                                                     */
     /*-----------------------------------------------------------------------------*/
-    uint32_t AddScript(int id, const char* _namespace, const char* _type)
+    uint32_t AddScript(int id, const char* name_space, const char* name)
     {
-        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(_namespace, _type);
+        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(name_space, name);
     }
 
-    uint32_t GetScript(int id, const char* _namespace, const char* _type)
+    uint32_t GetScript(int id, const char* name_space, const char* name)
     {
-        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(_namespace, _type);
+        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(name_space, name);
     }
 
-    void RemoveScript(int id, const char* _namespace, const char* _type)
+    void RemoveScript(int id, const char* name_space, const char* name)
     {
-        engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(_namespace, _type);
+        engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(name_space, name);
     }
 }

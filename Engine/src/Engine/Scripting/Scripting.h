@@ -57,16 +57,16 @@ namespace engine
                     creates an instance of a script in C# side, which will break if
                     a recompile is triggered
          
-        \param      _namespace
+        \param      name_space
                 the namespace of the desired script (nested namespaces separated by '.')
-        \param      _type
+        \param      name
                 the name of the desired script (nested classes won't work)
         \param      callAwake
                 determines if the script's Awake function is to be called
         
         \return     the IntPtr to the newly created script
         *//**********************************************************************************/
-        uint32_t AddScript(const char* _namespace, const char* _type, bool callAwake = true);
+        uint32_t AddScript(const char* name_space, const char* name, bool callAwake = true);
 
         /*********************************************************************************//*!
         \brief      gets a script instance of a given C# class from the GameObject, if any
@@ -74,14 +74,14 @@ namespace engine
         \warning    this function should only be called during play mode as script instances
                     are only created during play mode, since it will break if a recompile is triggered
 
-        \param      _namespace
+        \param      name_space
                 the namespace of the desired script (nested namespaces separated by '.')
-        \param      _type
+        \param      name
                 the name of the desired script (nested classes won't work)
 
         \return     the IntPtr to the desired script instance, 0 if not found
         *//**********************************************************************************/
-        uint32_t GetScript(const char* _namespace, const char* _type);
+        uint32_t GetScript(const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      deletes and removes a script instance of a given C# class from the GameObject, if any
@@ -89,12 +89,12 @@ namespace engine
         \warning    this function should only be called during play mode as script instances
                     are only created during play mode, since it will break if a recompile is triggered
          
-        \param      _namespace
+        \param      name_space
                 the namespace of the desired script (nested namespaces separated by '.')
-        \param      _type
+        \param      name
                 the name of the desired script (nested classes won't work)
         *//**********************************************************************************/
-        void RemoveScript(const char* _namespace, const char* _type);
+        void RemoveScript(const char* name_space, const char* name);
 
         /*-----------------------------------------------------------------------------*/
         /* Script Info Functions                                                       */
@@ -249,14 +249,14 @@ namespace engine
 
         \param      id
                 the entity id of the target GameObject
-        \param      _namespace
+        \param      name_space
                 the namespace of the desired script (nested namespaces separated by '.')
-        \param      _type
+        \param      name
                 the name of the desired script (nested classes won't work)
 
         \return     the IntPtr to the newly created script
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t AddScript(int id, const char* _namespace, const char* _type);
+        __declspec(dllexport) uint32_t AddScript(int id, const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      gets a script instance of a given C# class from the GameObject, if any.
@@ -268,14 +268,14 @@ namespace engine
         
         \param      id
                 the entity id of the target GameObject
-        \param      _namespace
+        \param      name_space
                 the namespace of the desired script (nested namespaces separated by '.')
-        \param      _type
+        \param      name
                 the name of the desired script (nested classes won't work)
 
         \return     the IntPtr to the desired script instance, 0 if not found
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t GetScript(int id, const char* _namespace, const char* _type);
+        __declspec(dllexport) uint32_t GetScript(int id, const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      deletes and removes a script instance of a given C# class from the GameObject, if any.
@@ -287,11 +287,11 @@ namespace engine
 
         \param      id
                 the entity id of the target GameObject
-        \param      _namespace
+        \param      name_space
                 the namespace of the desired script (nested namespaces separated by '.')
-        \param      _type
+        \param      name
                 the name of the desired script (nested classes won't work)
         *//**********************************************************************************/
-        __declspec(dllexport) void RemoveScript(int id, const char* _namespace, const char* _type);
+        __declspec(dllexport) void RemoveScript(int id, const char* name_space, const char* name);
     }
 }

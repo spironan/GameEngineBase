@@ -111,12 +111,12 @@ namespace engine
         /*********************************************************************************//*!
         \brief      Helper function to create a new instance of a given class in C# side
          
-        \param      _class
+        \param      klass
                 the pointer to the MonoClass of the new object
 
         \return     the pointer to the newly created MonoObject (C# object)
         *//**********************************************************************************/
-        MonoObject* MonoObjectNew(MonoClass* _class);
+        MonoObject* MonoObjectNew(MonoClass* klass);
 
         /*********************************************************************************//*!
         \brief      Helper function to create a new string in C# side
@@ -141,14 +141,14 @@ namespace engine
         /*********************************************************************************//*!
         \brief      Helper function to check if a given C# class inherits from another C# class
 
-        \param      _class
+        \param      klass
                 the pointer to the MonoClass to check
                     desiredBase
-                the pointer to the desired base MonoClass that _class may inherit from
+                the pointer to the desired base MonoClass that klass may inherit from
 
         \return     true if the given class inherits from the given base class, else false
         *//**********************************************************************************/
-        bool CheckBaseClass(MonoClass* _class, MonoClass* desiredBase);
+        bool CheckBaseClass(MonoClass* klass, MonoClass* desiredBase);
 
         /*********************************************************************************//*!
         \brief      Helper function to get a function from a given C# object's class by name, if any
