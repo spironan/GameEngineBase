@@ -202,9 +202,9 @@ public:
 
         auto view = m_world.GetComponentView<engine::Transform3D>();
 
-        for (auto& ent : view)
+        for (auto[transform] : view)
         {
-            auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
+            //auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
 
             /*LOG_INFO("ent {0}: position ({1},{2})  parent : {3} childs : {4}"
                 , ent

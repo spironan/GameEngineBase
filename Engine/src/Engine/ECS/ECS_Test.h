@@ -37,9 +37,9 @@ namespace engine
 		void Run()
 		{
 			auto view = m_ECS_Manager.GetComponentView<Test_Transform>();
-			for (auto it : view)
+			for (auto [transform] : view)
 			{
-				auto transform = m_ECS_Manager.GetComponent<Test_Transform>(it);
+				//auto transform = m_ECS_Manager.GetComponent<Test_Transform>(it);
 				transform.x += 1.f;
 			}
 			LOG_TRACE("success {0}", success_times++);

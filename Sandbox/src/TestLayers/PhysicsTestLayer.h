@@ -59,9 +59,9 @@ public:
         
         // transform objects
         auto view = m_world.GetComponentView<engine::Transform3D>();
-        for (auto& ent : view)
+        for (auto[transform] : view)
         {
-            auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
+            //auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
             if (transform.Position().y < lowerbounds.y)
             {
                 transform.Position().y = upperbounds.y;
