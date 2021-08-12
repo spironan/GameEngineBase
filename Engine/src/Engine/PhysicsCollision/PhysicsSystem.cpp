@@ -189,7 +189,7 @@ namespace engine
             maxVarAxis = 1;
         }
         
-        std::sort(view.begin(), view.end(), m_broadphaseCompare);
+        //std::sort(view.begin(), view.end(), m_broadphaseCompare);
 
         for (auto iterA = view.begin(); iterA != view.end(); ++iterA)
         {
