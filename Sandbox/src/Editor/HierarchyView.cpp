@@ -16,9 +16,13 @@ Technology is prohibited.
 #include "EditorFileGroup.h"
 #include "Editor.h"
 #include "Engine/Scene/SceneManager.h"
-#include "Engine/ECS/WorldManager.h"
 
 #include "Seralizer.h"
+
+//action stack stuff
+#include "ActionStack/EditorActionStack.h"//add and remove action
+#include "ActionStack/ParentActionStack.h"
+
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -72,7 +76,7 @@ void HierarchyView::ShowHierarchy()
 		bool activated = false;
 		ImGuiTreeNodeFlags flag;
 		std::vector<std::uint32_t> depth;
-		depth.emplace_back(0);//root
+		depth.emplace_back(engine::SceneManager::GetActiveRoot());//root
 		int treePop = 0;// cleanly pops the tree at the end if there is any poping required
 
 		for (size_t i = 0; i < m_filterlist.size(); ++i)
@@ -138,9 +142,9 @@ void HierarchyView::ListHierarchy()
 	ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_DefaultOpen ;
 	int treePop = 0;
 	std::vector<std::uint32_t> depth;
-	engine::Entity root = 0;//todo use scenemanager to get rootnode after its ready
+	engine::Entity root = engine::SceneManager::GetActiveRoot();//todo use scenemanager to get rootnode after its ready
 	//depth.emplace_back(root);//root
-	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
+	auto& transformList = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
 	
 	//display the root node
 	if (transformList.size())
@@ -204,9 +208,9 @@ void HierarchyView::ListHierarchy()
 		else
 		{
 			flag |=	 ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-			ImGui::PushID(transform.GetEntity());
-			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
+			engine::Entity tempid = transform.GetEntity();
+			ImGui::PushID(tempid);
+			activated = ImGui::TreeNodeEx(engine::GameObject(tempid).Name().c_str(), flag);
 			ImGui::PopID();
 		}
 		if (ImGui::IsItemClicked())
@@ -259,7 +263,7 @@ void HierarchyView::Search()
 void HierarchyView::FilterByName(const std::string& target)
 {
 	m_filterlist.clear();
-	auto& transformList = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
+	auto& transformList = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
 	for (engine::Transform3D& transform : transformList)
 	{
 		engine::GameObject& ent = static_cast<engine::GameObject>(transform.GetEntity());
@@ -287,6 +291,8 @@ bool HierarchyView::SetParent(engine::Entity entt)
 		if (payload)
 		{
 			m_dragging = false;
+			engine::Entity parent_id = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).GetComponent<engine::Transform3D>().GetParentId();
+			ActionStack::AllocateInBuffer(new ParentActionStack(ObjectGroup::s_FocusedObject, parent_id, entt));
 			static_cast<engine::GameObject>(entt).AddChild(ObjectGroup::s_FocusedObject);
 			ImGui::EndDragDropTarget();
 			return true;

@@ -12,7 +12,7 @@
 #include <unordered_map>
 
 
-#include "Engine/ECS/WorldManager.h"
+#include "Engine/Scene/SceneManager.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/ECS/GameObject.h"
 
@@ -66,7 +66,7 @@ void Serializer::SaveWorld(const std::string& path)
 	rapidjson::OStreamWrapper osw(stream);
 	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 	writer.StartObject();
-	auto& list = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
+	auto& list = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
 	for (engine::Transform3D& t3d : list)
 	{
 		SaveItem(static_cast<engine::GameObject>(t3d.GetEntity()), writer);
@@ -112,7 +112,7 @@ void Serializer::LoadWorld(const std::string& path)
 
 void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
-	auto& list = engine::WorldManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
+	auto& list = engine::SceneManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
 	engine::Entity id = go.GetID();
 	int count = 0;
 	//TODO rework this(line 80 - 90)

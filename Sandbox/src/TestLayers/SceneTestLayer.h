@@ -38,10 +38,10 @@ public:
     {
         engine::GameObject testGO = CreateGameObject();
         engine::GameObject testrootGO = RootGameObject();
-
+		testrootGO.Name() = "Scene";
         std::vector<engine::GameObject> entities;
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10; i++)
         {
             auto go = CreateGameObject();
             go.AddComponent<A>();
