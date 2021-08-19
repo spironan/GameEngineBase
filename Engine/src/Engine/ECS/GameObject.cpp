@@ -21,20 +21,14 @@ namespace engine
 {
     // order matters! dont switch it!
     GameObject::GameObject()
-        : m_entity      { WorldManager::GetActiveWorld().CreateEntity() }
-        /*, ActiveSelf    { AddComponent<GameObjectComponent>().ActiveSelf }
-        , Name          { GetComponent<GameObjectComponent>().Name }
-        , Transform     { AddComponent<Transform3D>() }*/
+        : m_entity  { WorldManager::GetActiveWorld().CreateEntity() }
     {
         AddComponent<Transform3D>();
         AddComponent<GameObjectComponent>();
     }
 
     GameObject::GameObject(Entity entt)
-        : m_entity      { entt }
-        /*, ActiveSelf    { GetComponent<GameObjectComponent>().ActiveSelf }
-        , Name          { GetComponent<GameObjectComponent>().Name }
-        , Transform     { GetComponent<Transform3D>() }*/
+        : m_entity  { entt }
     {
     }
 
@@ -47,19 +41,8 @@ namespace engine
         WorldManager::GetActiveWorld().DestroyEntity(m_entity);
     }
 
-    //GameObject& GameObject::operator=(GameObject const& other)
-    //{
-    //    //What happens if im another entity before assignment?
-    //    //1. do i destroy the previous gameobject?
 
-    //    m_entity = other.m_entity;
-    //    /*Transform = other.Transform;
-    //    ActiveSelf = other.ActiveSelf;*/
-
-    //    return *this;
-    //}
-
-    void GameObject::AddChild(GameObject const& child, bool preserveTransforms)
+    void GameObject::AddChild(GameObject const& child, bool preserveTransforms) const
     {
         // Flag coordinates to be converted when parented
         if (preserveTransforms)
@@ -70,22 +53,25 @@ namespace engine
         WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Attach(child, *this);
     }
 
-    void GameObject::AddChild(std::initializer_list<GameObject> gos, bool preserveTransforms)
+    void GameObject::AddChild(std::initializer_list<GameObject> gos, bool preserveTransforms) const
     {
-        for (auto  go : gos)
+        for (auto go : gos)
         {
             AddChild(go, preserveTransforms);
         }
     }
 
+    std::vector<Entity> GameObject::GetChildren() const
+    {
+        auto const& childTfs = WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetChildren(Transform());
+        std::vector<Entity> entities;
+        for (auto const& childTf : childTfs) entities.emplace_back(childTf.GetEntity());
+        return entities;
+    }
+
     //void GameObject::RemoveChild(GameObject* gameObj)
     //{
     //    //children.erase(std::find(children.begin(), children.end(), gameObj));
-    //}
-
-    //std::vector<GameObject*> const& GameObject::GetChildren() const
-    //{
-    //    //return children;
     //}
 
     // CAN BE DONE BUT NOT REQUIRED RIGHT NOW
