@@ -52,11 +52,12 @@ namespace engine
         //implicit cast operator
         operator Entity() const { return m_entity; }
 
-        void AddChild(GameObject const& gameObj, bool preserveTransforms = false);
-        void AddChild(std::initializer_list<GameObject> gameObjs, bool preserveTransforms = false);
+        void AddChild(GameObject const& gameObj, bool preserveTransforms = true) const;
+        void AddChild(std::initializer_list<GameObject> gameObjs, bool preserveTransforms = false) const;
+
+        std::vector<Entity> GetChildren() const;
 
         //void RemoveChild(GameObject* gameObj);
-        //std::vector<GameObject*> const& GetChildren() const; -- straight up not needed anymore
 
         // CAN BE DONE BUT NOT REQUIRED RIGHT NOW
         //GameObject* FindGameObjectInChildrenByName(std::string const& name);
