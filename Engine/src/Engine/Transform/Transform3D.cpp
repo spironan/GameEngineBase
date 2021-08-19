@@ -24,9 +24,6 @@ Technology is prohibited.
 #include <rttr/registration>
 #include "Engine/ECS/GameObject.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>   // for now
-
 namespace engine 
 {
     /********************************************************************************//*!
@@ -46,7 +43,8 @@ namespace engine
             .property_readonly("No Of Childs", &Transform3D::GetChildCount)
             .property_readonly("Local Matrix", &Transform3D::GetLocalMatrix)
             .property_readonly("Global Matrix", &Transform3D::GetGlobalMatrix)
-            .property_readonly("Global Rotation", &Transform3D::GetGlobalRotationDeg);
+            .property_readonly("Global Rotation", &Transform3D::GetGlobalRotationDeg)
+            .property_readonly("Conversion Matrix", &Transform3D::GetConversionMatrix); //added readonly for debugging purposes
     }
 
     /********************************************************************************//*!
@@ -81,10 +79,14 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::Recalculate()
     {
-        m_localTransform = glm::scale(glm::rotate(glm::translate(glm::mat4{ 1.f }, m_position), m_rotationAngle, m_rotationAxis), m_scale);
+        glm::mat4 scale = glm::scale(glm::mat4{ 1.f }, m_scale);
+        glm::mat4 rot = glm::rotate(glm::mat4{ 1.f }, m_rotationAngle, m_rotationAxis);
+        glm::mat4 trans = glm::translate(glm::mat4{ 1.f }, m_position);
+
+        m_localTransform = trans * rot * scale;
 
         //Apply conversion everytime upon calculation
-        m_conversionMatrix *= m_localTransform;
+        m_localTransform = m_conversionMatrix * m_localTransform;
 
         //it is now recalculated and clean.
         m_dirty = false;
@@ -160,13 +162,24 @@ namespace engine
      @param    childCount
                 the number of children to decrement the new parent's child count by.
     *//**********************************************************************************/
-    void engine::Transform3D::DecrementChildCount(int childCount)
+    void Transform3D::DecrementChildCount(int childCount)
     {
         m_childCount -= childCount;
         if (m_parentId != m_entity)
         {
             static_cast<engine::GameObject>(m_parentId).Transform().DecrementChildCount(childCount);
         }
+    }
+
+    /****************************************************************************//*!
+     @brief     Copies the relevant data of transform component while retaining
+                its entityID to be of prior gameobject before this operation.
+    *//*****************************************************************************/
+    void Transform3D::CopyComponent(Transform3D const& transform)
+    {
+        Entity id = m_entity;
+        *this = transform;
+        m_entity = id;
     }
 
     /****************************************************************************//*!
@@ -186,27 +199,10 @@ namespace engine
         result[3] = glm::vec4{ 0.f, 0.f, 0.f, 1.0f };
         glm::vec3 scalar{ GetGlobalScale() };
 
-        /*
-        * Have not been tested but should work better
         result[0] /= scalar[0];
         result[1] /= scalar[1];
         result[2] /= scalar[2];
 
-        return glm::transpose(result);*/
-
-        //TAKE NOTE OF THE AXIS IT MULTIPLIES BY ( EACH ROW MULTIPLY BY THAT ROW's SCALAR)
-        result[0][0] /= scalar[0];
-        result[1][0] /= scalar[0];
-        result[2][0] /= scalar[0];
-
-        result[0][1] /= scalar[1];
-        result[1][1] /= scalar[1];
-        result[2][1] /= scalar[1];
-
-        result[0][2] /= scalar[2];
-        result[1][2] /= scalar[2];
-        result[2][2] /= scalar[2];
-        
         return result;
     }
     
@@ -226,7 +222,7 @@ namespace engine
     *//*****************************************************************************/
     float Transform3D::GetGlobalRotationDeg() const
     {
-        return GetGlobalRotationRad() * 180.f / static_cast<float>(M_PI);
+        return  GetGlobalRotationRad() * 180.f / glm::pi<float>();
     }
 
     /****************************************************************************//*!
@@ -243,9 +239,9 @@ namespace engine
     *//*****************************************************************************/
     float Transform3D::GetGlobalRotationRad() const
     {
+        glm::mat4 rotMat = GetGlobalRotationMatrix();
         //this should be of atan2 of either -b/a or c/d,
-        //not sure why its b/a now instead.
-        return std::atan2f(m_globalTransform[0][1], m_globalTransform[0][0]);
+        return std::atan2f(-rotMat[1][0], rotMat[0][0]);
     }
 
     /****************************************************************************//*!
@@ -263,14 +259,7 @@ namespace engine
     {
         //calculate global scale by calculating the length of each row which represents
         //the scale of that particular axis.
-        glm::vec3 vecX { m_globalTransform[0][0], m_globalTransform[1][0], m_globalTransform[2][0] };
-        glm::vec3 vecY { m_globalTransform[0][1], m_globalTransform[1][1], m_globalTransform[2][1] };
-        glm::vec3 vecZ { m_globalTransform[0][1], m_globalTransform[1][1], m_globalTransform[2][2] };
-        return glm::vec3{ glm::length(vecX), glm::length(vecY), glm::length(vecZ) };
-        
-        // Havent test but should be a better version below
-        //glm::transpose(globalTransform);
-        //return glm::vec3{ globalTransform[0].length(), globalTransform[1].length(), globalTransform[2].length() };
+        return glm::vec3{ glm::length(m_globalTransform[0]), glm::length(m_globalTransform[1]), glm::length(m_globalTransform[2]) };
     }
 
 } // namespace engine
