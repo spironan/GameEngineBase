@@ -18,7 +18,6 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/Component.h"
-//#include "Engine/ECS/ComponentMk2.h"
 #include <glm/glm.hpp>
 
 #include <rttr/type>
@@ -51,7 +50,7 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        float     const& GetRotationAngle()    const    { return m_rotationAngle; }
+        float     const& GetRotationAngle()    const    { return glm::degrees(m_rotationAngle); }
         glm::vec3 const& GetPosition()         const    { return m_position; }
         glm::vec3 const& GetRotationAxis()     const    { return m_rotationAxis; }
         glm::vec3 const& GetScale()            const    { return m_scale;    }
@@ -73,9 +72,16 @@ namespace engine
 
         void SetPosition(glm::vec3 const& pos)          { m_dirty = true; m_position = pos; }
         void SetRotationAxis(glm::vec3 const& rotAxis)  { m_dirty = true; m_rotationAxis = rotAxis; }
-        void SetRotationAngle(float const& angle)       { m_dirty = true; m_rotationAngle = angle; }
+        void SetRotationAngle(float const& angle)       { m_dirty = true; m_rotationAngle = glm::radians(angle); }
         void SetScale(glm::vec3 const& scale)           { m_dirty = true; m_scale = scale; }
+        
+        glm::mat4 const& GetConversionMatrix() { return m_conversionMatrix; }
 
+        /****************************************************************************//*!
+         @brief     Copies the relevant data of transform component while retaining
+                    its entityID to be of prior gameobject before this operation.
+        *//*****************************************************************************/
+        void CopyComponent(Transform3D const& transform);
 
         /****************************************************************************//*!
          @brief     Retrieves the global position of this Component from the global
