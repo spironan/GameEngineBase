@@ -34,48 +34,6 @@ namespace engine
         // 2. Transform cannot actually "detach from parent" Transform always need to attach to something (to "detach" == attach to root node).
         // 3. If parent dies all residue children dies.
         // Sparse Set be ordered in the depth-first hierarchy, thus every add/remove of transform will need to adjust the sparse array
-        // Position:    0      1       2        3
-        // Example : [ root, child1, child1, child2]
-        //                    ^parent       ^newly added child             
-        // When attaching to initial parent : swap with index + 1 of the parent and the last position 
-        // Position:    0      1       2        3
-        // Example : [ root, child1, child2, child1 ]
-        //                                  ^swapped child
-        // 
-        // Position:    0      1       2        3      4       5
-        // Example : [ root, child1, child2, child3, child4, child1 ]
-        //             ^parent        ^swapping to be child of root
-        // When attaching to root : swap index of the index + 1 of the parent(1) with its current index, and then continue doing that number of childrens times.
-        // therefore : 1 swap with 2, 2 swap with 3, 3 swap with 4. swapping n times where n = number of children + 1.
-        // Example : [ root, child1, child2, child3, child1, child1 ]
-        //                   ^swapped child2         ^ the previous parent
-        // 
-        // Position:    0      1       2        3      4       5       6
-        // Example : [ root, child1, child2, child3, child1, child2, child3 ]
-        //                                    ^ new parent   ^child
-        // When attaching from one sub-branch to another : swap index of the parent + 1 with its current index, and then continue doing that number of childrens times.
-        // therefore : 4 swap with 5, swap 5 with 6
-        // Example : [ root, child1, child2, child3, child4, child5, child1 ]
-        //                                   ^parent  ^old child2
-        // 
-        // Position:    0      1       2        3      4       5       6
-        // Example : [ root, child1, child2, child3, child1, child2, child3 ]
-        //                                   ^child          ^ new parent         
-        // When attaching from one node to the LAST node : swap index of child + 1 with child index, and then continue doing so until child index > parent index
-        // therefore : 4 swap with 5, swap 5 with 6
-        // Example : [ root, child1, child2, child1, child2, child3, child3 ]
-        //                                   ^ parent         ^ old child3
-        //
-        // Position:    0      1       2        3      4       5       6
-        // Example : [ root, child1, child2, child3, child1, child2, child3 ]
-        //                          ^child                            ^ new parent
-        // When attaching from one node to the LAST node : swap index of child + 1 with child index, and then continue doing so until child index > parent index
-        // therefore : 4 swap with 5, swap 5 with 6
-        // Example : [ root, child1, child2, child1, child2, child3, child3 ]
-        //                                   ^ parent         ^ old child3
-        // 
-        // Special case 1 : When Attempting to add parent which it already is of, dont do anything.
-        // 
         // Therefore from observation : 
         // 1. Should keep track of number of childrens
         // 2. transform MUST keep track of its parent's ID.
@@ -138,6 +96,16 @@ namespace engine
             currTransform.SetGlobalMatrix();
         }
 
+    }
+
+    std::vector<Transform3D> TransformSystem::GetChildren(Transform3D const& transform) const
+    {
+        //seems like possible performance dip? idk or visual studio being visual studio
+        // [TODO] REMEMBER TO change to const&
+        auto& sparseSetContainer = m_ECS_Manager.GetComponentContainer<Transform3D>();
+        size_t startIdx = sparseSetContainer.GetIndex(transform.m_entity) + 1;
+        size_t endIdx = startIdx + transform.GetChildCount();
+        return std::vector<Transform3D>(sparseSetContainer.begin() + startIdx, sparseSetContainer.begin() + endIdx);
     }
 
     void TransformSystem::UpdateTransform()

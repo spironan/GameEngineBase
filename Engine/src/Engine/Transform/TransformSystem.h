@@ -48,22 +48,16 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Lifecycle Functions                                                         */
         /*-----------------------------------------------------------------------------*/
-        /****************************************************************************//*!
-         @brief    Function that defines the initialization required for the
-                   Runtime to function.
-        *//*****************************************************************************/
-        //void Init() /*override*/;
-
+   
         /****************************************************************************//*!
          @brief    Function that defines the per-frame updates for the Runtime.
         *//*****************************************************************************/
-        void Update() /*override*/;
+        void Update();
 
         /****************************************************************************//*!
-         @brief    Function that defines the clean up required for the Runtime
-                   to close cleanly.
+         @brief    Retrieves all transform components of a given transform
         *//*****************************************************************************/
-        //void Exit() /*override*/;
+        std::vector<Transform3D> GetChildren(Transform3D const& transform) const;
 
         /****************************************************************************//*!
          @brief    Updates all transforms in a scene-graph manner recursively
@@ -85,20 +79,6 @@ namespace engine
                     3. youre not trying to attach oneself to your own children.
         *//*****************************************************************************/
         bool Attach(Entity child, Entity parent);
-
-      private:
-        /****************************************************************************//*!
-         @brief    private helper function that recursively updates all gameobjects in
-                   a scene-graph(parent-child) manner.
-
-         @param[in]    _go 
-            the gameobject to update its local/global matrix and its children
-         @param[in]    _parentTransform 
-            the transform of the parent gameobject that will be used for global matrix
-            calculations
-        *//*****************************************************************************/
-        //void updateTransform(GameObject& _go, glm::mat4 const * const _parentTransform);
-
     };
 
 } // namespace engine
