@@ -2,7 +2,7 @@
 #include "ActionBehaviour.h"
 #include "Engine/ECS/ECS_Utility.h"//entity
 #include "Engine/ECS/GameObject.h"//gameobject
-engine::Entity;
+
 class ParentActionStack:public ActionBehaviour
 {
 public:

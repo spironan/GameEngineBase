@@ -51,7 +51,7 @@ void Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 
 void Serializer::SaveObject(const std::string& prefab)
 {
-	std::ofstream stream(prefab);
+	std::ofstream stream(prefab, std::ios::trunc);
 	rapidjson::OStreamWrapper osw(stream);
 	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 	writer.StartObject();
@@ -62,14 +62,14 @@ void Serializer::SaveObject(const std::string& prefab)
 
 void Serializer::SaveWorld(const std::string& path)
 {
-	std::ofstream stream(path);
+	std::ofstream stream(path,std::ios::trunc);
 	rapidjson::OStreamWrapper osw(stream);
 	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 	writer.StartObject();
 	auto& list = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
-	for (engine::Transform3D& t3d : list)
+	for (size_t i = 1; i < list.size() ; ++i)//skip the root node
 	{
-		SaveItem(static_cast<engine::GameObject>(t3d.GetEntity()), writer);
+		SaveItem(static_cast<engine::GameObject>(list[i].GetEntity()), writer);
 	}
 	writer.EndObject();
 	stream.close();

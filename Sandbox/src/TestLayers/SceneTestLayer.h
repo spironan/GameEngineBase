@@ -14,6 +14,7 @@ Technology is prohibited.
 #pragma once
 
 #include <Engine.h>
+#include "Seralizer.h"
 #include "UtilityLayers/SceneBaseLayer.h"
 struct A
 {
@@ -33,31 +34,19 @@ class SceneTestLayer : public SceneBaseLayer
 {
 public:
 
-    SceneTestLayer(std::string scene_name)
-        : SceneBaseLayer{ "SceneBaseLayer" }
+    SceneTestLayer(std::string scene_path)
+        : SceneBaseLayer{ "SceneBaseLayer" },m_scene_path(scene_path)
     {
-        engine::GameObject testGO = CreateGameObject();
         engine::GameObject testrootGO = RootGameObject();
 		testrootGO.Name() = "Scene";
         std::vector<engine::GameObject> entities;
 
-        for (int i = 0; i < 10; i++)
-        {
-            auto go = CreateGameObject();
-            go.AddComponent<A>();
-            go.AddComponent<B>();
-            go.AddComponent<C>();
-            entities.emplace_back(go);
-        }
-
-        for (auto i : entities)
-        {
-            auto [compA,compB] = m_scene.GetWorld().GetComponents<A, B>(i.GetID());
-            auto temp = compA.i;
-            temp = compB.i;
-        }
+		Serializer::LoadWorld(scene_path);
     }
-
+	~SceneTestLayer()
+	{
+		Serializer::SaveWorld(m_scene_path);
+	}
     virtual void OnUpdate(engine::Timestep dt) override
     {
         SceneBaseLayer::OnUpdate(dt);
@@ -68,5 +57,5 @@ public:
     }
 
 protected:
-   
+	std::string m_scene_path;
 };

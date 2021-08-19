@@ -232,7 +232,7 @@ void ProjectFolderView::FileBeginDrag(const std::filesystem::path& path)
 		std::string temp = path.extension().u8string();
 		if (temp == ".prefab")
 		{
-			temp = path.u8string();
+			temp = path.u8string() + '\0';
 			ImGui::SetDragDropPayload("PREFAB_OBJ", temp.c_str(), temp.size());
 			ImGui::Text("%s", temp.c_str());
 		}

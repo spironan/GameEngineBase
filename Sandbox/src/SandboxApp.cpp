@@ -263,8 +263,8 @@ public:
         PushOverlay(new ExampleLayer());
 
         //Actual Scene Layer
-        PushLayer(new SceneTestLayer("SceneTestLayer"));
         PushOverlay(new EditorLayer());
+        PushLayer(new SceneTestLayer("D:/GameEngine/bin/Debug-OpenGL-windows-x86_64/Sandbox/New folder/Scene"));
 
         // DEBUG/TEST LAYERS
         //PushLayer(new EditorSceneLayer());

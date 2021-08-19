@@ -13,3 +13,4 @@ Technology is prohibited.
 #include "EditorObjectGroup.h"
 
 std::uint32_t ObjectGroup::s_FocusedObject = 0;
+

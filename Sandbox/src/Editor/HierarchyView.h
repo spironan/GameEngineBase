@@ -31,7 +31,10 @@ private:
 	void FilterByName(const std::string& target);
 	void ToggleLockUI();
 	bool SetParent(engine::Entity entt);
+
+	void CtrlKeyModsAction(engine::Entity entt);
 private:
+
 
 	bool m_dragging;
 	bool m_editing;
@@ -40,6 +43,9 @@ private:
 	char m_Buffer[100];
 	char m_filterBuffer[100];
 
+
+	engine::Entity m_CopyTarget = 0;//for ctrl + c 
 	std::vector<engine::Entity> m_filterlist;
+
 };
 

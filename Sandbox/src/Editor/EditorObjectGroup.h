@@ -13,11 +13,12 @@ Technology is prohibited.
  *********************************************************************/
 #pragma once
 #include "testclass.h"//remove this once ecs is done
-
+#include "Engine/ECS/ECS_Utility.h"//entity
 
 class ObjectGroup
 {
 public:
-	static std::uint32_t s_FocusedObject;
+	static engine::Entity s_FocusedObject;
+
 };
 
