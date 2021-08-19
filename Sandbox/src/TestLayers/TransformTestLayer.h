@@ -15,18 +15,15 @@ Technology is prohibited.
 #pragma once
 
 #include <Engine.h>
+#include "UtilityLayers/SceneBaseLayer.h"
 
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components 
             and Systems Functionality with ECS and Gameobjects.
 *//*****************************************************************************/
-class TransformTestLayer : public engine::Layer
+class TransformTestLayer : public SceneBaseLayer
 {
 private:
-    engine::World& m_world;
-    engine::GameObject m_root;
-    engine::GameObject m_child;
-    
     std::vector<engine::GameObject> m_gos;
     std::vector<engine::GameObject>::iterator m_controller;
     std::vector<engine::GameObject>::iterator m_target;
@@ -34,37 +31,32 @@ private:
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
 
     static constexpr float scaling = 50.f;
-    static constexpr float TARGET_ROTATION = 90.f;
 
 public:
 
     TransformTestLayer() 
-        : Layer    { "TransformTestLayer" }
-        , m_world  { engine::WorldManager::CreateWorld() }
-        , m_root   { }
-        , m_child  { }
+        : SceneBaseLayer{ "TransformTestLayer" }
     {
         engine::Window& x = engine::Application::Get().GetWindow();
         int width = x.GetSize().first;
         int height = x.GetSize().second;
         cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
-        auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
-        auto& rs = m_world.RegisterSystem<engine::Renderer2DSystem>(cam);
+        auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
 
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
-
+        
         /*auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
         rootSpr.SetTexture(tex);
         m_gos.emplace_back(m_root);*/
-        m_root.Transform().Scale() = { scaling, scaling, 1.0f };
-
-        //m_child.Transform().Position() = { 1.f, 1.f, 1.f };
-        //m_child.Transform().RotationAngle() = 90.f;
+        RootGameObject().Transform().Scale() = { scaling, scaling, 1.0f };
+        
+        engine::GameObject m_child = CreateGameObject();
+        m_child.Transform().Scale() = { 1.f, 1.f, 1.0f };
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
-        m_root.AddChild(m_child);
+        RootGameObject().AddChild(m_child, false);
 
         m_gos.emplace_back(m_child);
 
@@ -72,43 +64,29 @@ public:
 
         for (int i = 1; i < 10; ++i)
         {
-            engine::GameObject ent{ };
+            engine::GameObject ent = CreateGameObject();
 
             m_gos.emplace_back(ent);
 
-            //ent.Transform().Scale() = { childScale, childScale, 1.f };
-            ent.Transform().Position() = { 1.f, 1.f, 1.f };
-            //ent.Transform().RotationAngle() = i * 36.f;
+            ent.Transform().Position() = { 1.f, 1.f, 0.f };
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
-            objSprite.SetTexture(tex);
+            //objSprite.SetTexture(tex);
             
             //Nested Add child
-            static_cast<engine::GameObject>(prev).AddChild(ent);
+            static_cast<engine::GameObject>(prev).AddChild(ent, false);
             prev = ent;
         }
 
-        //m_target->Transform().RotationAngle() += 90;
-        //m_target->Transform().RotationAngle() += TARGET_ROTATION;
-
-        /*engine::GameObject m_child2 {};
-        m_child2.Transform().Position() = { -1.f, -1.f, 1.f };
-        auto& secondChild = m_child2.AddComponent<engine::Sprite2D>();
-        childSpr.SetTexture(tex);
-        m_root.AddChild(m_child2);
-        m_gos.emplace_back(m_child2);*/
-
         for (int i = 1; i < 10; ++i)
         {
-            engine::GameObject ent{};
+            engine::GameObject ent = CreateGameObject();
             m_gos.emplace_back(ent);
 
-            //ent.Transform().Position() = { -1.f, -1.f, 1.f };
-            ent.Transform().RotationAngle() += 90.f;
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
             objSprite.SetTexture(tex);
 
             //Nested Add child
-            m_root.AddChild(ent);
+            RootGameObject().AddChild(ent, false);
         }
 
         // set default controller
@@ -120,12 +98,10 @@ public:
     
     void SelectNewTarget()
     {
-        /*m_target->Transform().RotationAngle() += TARGET_ROTATION;*/
         ++m_target;
         if (m_target == m_gos.end())
         {
             m_target = m_gos.begin();
-            /*m_target->Transform().RotationAngle() -= TARGET_ROTATION;*/
         }
     }
 
@@ -137,9 +113,9 @@ public:
     {
         float deltaTime = static_cast<float>(dt);
 
-        engine::WorldManager::SetActiveWorld(m_world.GetID());
+        engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
         
-        m_world.GetSystem<engine::TransformSystem>()->Update();
+        m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
         {
@@ -167,12 +143,21 @@ public:
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_C))
         {
-            m_controller->Transform().Scale() -= SCALINGSPEED * deltaTime;
+            m_controller->Transform().Scale().x -= SCALINGSPEED * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_V))
         {
-            m_controller->Transform().Scale() += SCALINGSPEED * deltaTime;
+            m_controller->Transform().Scale().x += SCALINGSPEED * deltaTime;
         }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_B))
+        {
+            m_controller->Transform().Scale().y -= SCALINGSPEED * deltaTime;
+        }
+        if (engine::Input::IsKeyDown(ENGINE_KEY_N))
+        {
+            m_controller->Transform().Scale().y += SCALINGSPEED * deltaTime;
+        }
+
         if (engine::Input::IsKeyPressed(ENGINE_KEY_S))
         {
             if (m_controller == m_gos.begin())
@@ -194,46 +179,24 @@ public:
 
         if (engine::Input::IsKeyPressed(ENGINE_KEY_R))
         {
-            m_root.Transform().Position() = { 0.f, 0.f, 0.f };
-            m_root.Transform().RotationAngle() = 0.f;
-            m_root.Transform().Scale() = { scaling, scaling, 1.f };
+            RootGameObject().Transform().Position() = { 0.f, 0.f, 0.f };
+            RootGameObject().Transform().RotationAngle() = 0.f;
+            RootGameObject().Transform().Scale() = { scaling, scaling, 1.f };
         }
 
-
-        auto view = m_world.GetComponentView<engine::Transform3D>();
-
-        for (auto[transform] : view)
+        if (engine::Input::IsKeyPressed(ENGINE_KEY_P))
         {
-            //auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
-
-            /*LOG_INFO("ent {0}: position ({1},{2})  parent : {3} childs : {4}"
-                , ent
-                , transform.GetGlobalPosition().x
-                , transform.GetGlobalPosition().y
-                , static_cast<engine::GameObject>(transform.GetParentId()).GetID()
-                , transform.GetChildCount());*/
-
-            /*LOG_INFO("ent {0}: rotation : {1},  globalRotation : {2}"
-                , ent
-                , transform.GetRotationAngle()
-                , transform.GetGlobalRotationDeg()
-                );*/
-
-            /*LOG_INFO("ent {0}: scale ({1},{2}) "
-                , ent
-                , transform.GetGlobalScale().x
-                , transform.GetGlobalScale().y
-            );*/
-
-            // rttr code below
-            //auto rttrProps = transform.get_type().get_properties();
-            //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
+            auto vec = RootGameObject().GetChildren();
+            for (auto res : vec)
+            {
+                LOG_INFO(res);
+            }
         }
     }
 
     virtual void OnImGuiRender() override
     {
-        m_world.GetSystem<engine::Renderer2DSystem>()->Update();
+        m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
         ImGui::Begin("OgreImage");
         ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("ogre").id, { 200.0f, 200.0f });
         ImGui::End();
