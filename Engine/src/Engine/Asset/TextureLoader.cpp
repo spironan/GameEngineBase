@@ -41,7 +41,7 @@ Texture TextureLoader::LoadFromFilePath(const std::string& fileName)
 	if (!texData)
 	{
 		LOG_ENGINE_ERROR("Failed to load image at filepath:{0}", fileName);
-		texture.id = engine::ooTexID{ 0 };
+		texture.id = engine::ooRendererID{ 0 };
 		return texture;
 	}
 
@@ -64,7 +64,7 @@ Texture TextureLoader::LoadFromFilePath(const std::string& fileName)
 	return texture;
 }
 
-void engine::TextureLoader::DestroyTexture(ooTexID id)
+void engine::TextureLoader::DestroyTexture(ooRendererID id)
 {
 	glDeleteTextures(1, &id);
 }

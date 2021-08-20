@@ -55,7 +55,6 @@ namespace engine
         *//*****************************************************************************/
         Sprite2D(Entity _entityID, bool _active = true);
 
-
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
@@ -65,7 +64,7 @@ namespace engine
          
         \return   rendering texture ID
         *//**********************************************************************************/
-        ooTexID GetTexture() { return m_texture; }
+        ooRendererID GetTexture() { return m_texture; }
 
         /*********************************************************************************//*!
         \brief    Gets the colour tint of the texture
@@ -83,7 +82,7 @@ namespace engine
          
         \param    textureID raw rendering texture value
         *//**********************************************************************************/
-        void SetTexture(ooTexID textureID);
+        void SetTexture(ooRendererID textureID);
 
         /*********************************************************************************//*!
         \brief    Sets the texture ID using a texture asset
@@ -116,7 +115,7 @@ namespace engine
         /* Member Functions                                                            */
         /*-----------------------------------------------------------------------------*/
 
-        //RTTR_ENABLE();
+        RTTR_ENABLE();
 
     private:
 

@@ -907,24 +907,36 @@ namespace ImGuizmo
 
    void BeginFrame()
    {
-      const ImU32 flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus;
+      const ImU32 flags = ImGuiWindowFlags_NoTitleBar 
+          | ImGuiWindowFlags_NoResize 
+          | ImGuiWindowFlags_NoScrollbar 
+          | ImGuiWindowFlags_NoInputs 
+          | ImGuiWindowFlags_NoSavedSettings 
+          //| ImGuiWindowFlags_NoFocusOnAppearing 
+          //| ImGuiWindowFlags_NoBringToFrontOnFocus
+          ;
 
 #ifdef IMGUI_HAS_VIEWPORT
-      ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
-      ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
+      //ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
+      //ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
 #else
-      ImGuiIO& io = ImGui::GetIO();
-      ImGui::SetNextWindowSize(io.DisplaySize);
-      ImGui::SetNextWindowPos(ImVec2(0, 0));
+      //ImGuiIO& io = ImGui::GetIO();
+      //ImGui::SetNextWindowSize(io.DisplaySize);
+      //ImGui::SetNextWindowPos(ImVec2(0, 0));
 #endif
 
       ImGui::PushStyleColor(ImGuiCol_WindowBg, 0);
       ImGui::PushStyleColor(ImGuiCol_Border, 0);
       ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 
-      ImGui::Begin("gizmo", NULL, flags);
+      //ImGui::Begin("gizmo", NULL, flags);
+      // Im editing this because we are using docking branch and i want this functionality.
+      ImGui::BeginChild("gizmo", {gContext.mWidth,gContext.mHeight}, false, flags);
       gContext.mDrawList = ImGui::GetWindowDrawList();
-      ImGui::End();
+      //gContext.mDrawList = ImGui::GetBackgroundDrawList(ImGui::GetMainViewport());
+      //ImGui::End();
+      // so we need this
+      ImGui::EndChild();
       ImGui::PopStyleVar();
       ImGui::PopStyleColor(2);
    }

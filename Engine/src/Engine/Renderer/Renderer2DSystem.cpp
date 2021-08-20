@@ -20,18 +20,35 @@ Technology is prohibited.
 #include "Renderer2D.h"
 
 #include "Engine/ECS/ECS.h"
+#include "Engine/ECS/WorldManager.h"
 
 #include "Engine/Renderer/Sprite2D.h"
 
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Transform/TransformSystem.h"
+#include "engine/PhysicsCollision/PhysicsCollision.h"
 
 namespace engine
 {
+	void Renderer2DSystem::SetCamera(const Camera& cam,const glm::vec3& position)
+	{
+		m_cam = &cam;
 
-void Renderer2DSystem::Update()
-{
-	auto view = m_ECS_Manager.GetComponentView<Transform3D,Sprite2D>();
+		m_projection = m_cam->GetProjection();
+		//auto transform = WorldManager::GetActiveWorld().GetComponent<Transform3D>(cam.GetEntity());
+		
+		//glm::vec3 pos = m_transform->GetGlobalPosition();
+		m_view = {
+			1.0f,	0.0f,	0.0f,	0.0f,
+			0.0f,	1.0f,	0.0f,	0.0f,
+			0.0f,	0.0f,	1.0f,	0.0f,
+			-position.x, -position.y,	-position.z,	1.0f
+		};
+
+		//m_view = glm::inverse(glm::translate(glm::mat4{ 1.0f },m_transform->GetGlobalPosition()) * m_transform->GetGlobalRotationMatrix());
+		//m_view = glm::inverse(m_transform->GetGlobalMatrix());
+		m_viewProj = m_projection* m_view;
+	}
 
 	engine::Renderer2D::BeginScene(m_orthoCam);
 	for (auto [transform, sprite] : view)
@@ -67,7 +84,5 @@ void Renderer2DSystem::Update()
 
 		*/
 	}
-	engine::Renderer2D::EndScene();
-}
 
 };

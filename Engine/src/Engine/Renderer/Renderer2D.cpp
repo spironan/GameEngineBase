@@ -25,7 +25,12 @@ Technology is prohibited.
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Engine/ECS/WorldManager.h"
+#include "Engine/Transform/Transform3D.h"
+
 #include "Engine/Renderer/Shader.h"
+#include "Engine/Renderer/Framebuffer.h"
+#include "Engine/Renderer/RenderPass.h"
 #include "Engine/Platform/OpenGL/OpenGLShader.h"
 
 namespace engine
@@ -61,6 +66,8 @@ namespace engine
 		//Ref<VertexBuffer> QuadVertexBuffer;
 		//Ref<Shader> TextureShader;
 
+		std::shared_ptr<Framebuffer> frameBuffer;
+
 		GLuint WhiteTexture{};
 
 		GLuint quadBatchVAO{};
@@ -90,6 +97,8 @@ namespace engine
 
 		struct CameraData
 		{
+			glm::mat4 View{ 1.0f };
+			glm::mat4 Projection{ 1.0f };
 			glm::mat4 ViewProjection{ 1.0f };
 		};
 		CameraData CameraBuffer;
@@ -104,6 +113,24 @@ namespace engine
 
 void engine::Renderer2D::Init()
 {
+
+	FramebufferSpecification fbSpec{};
+	fbSpec.DebugName = "Renderer2D_FB";
+	fbSpec.Attachments = { ImageFormat::RGBA32F, ImageFormat::Depth };
+	fbSpec.Samples = 1;
+	fbSpec.ClearOnLoad = false;
+	fbSpec.SwapChainTarget = false;
+	fbSpec.ClearColor = { 0.18 , 0.04, 0.14, 1.0 };
+
+	s_Data.frameBuffer = Framebuffer::Create(fbSpec);
+
+	FramebufferPool::Add("2D_Framebuffer", s_Data.frameBuffer);
+
+	RenderPassSpecification rpSpec{};
+	rpSpec.DebugName = "Renderer2D_RP";
+	rpSpec.TargetFramebuffer = s_Data.frameBuffer;
+
+	std::shared_ptr RenderPass = RenderPass::Create(rpSpec);
 
 	//Initilization of quad buffer
 	{
@@ -251,24 +278,37 @@ void engine::Renderer2D::Shutdown()
 	delete[] s_Data.LineVertexBufferBase;
 }
 
-
-void engine::Renderer2D::BeginScene(const OrthographicCamera& camera)
+void Renderer2D::BeginScene(const glm::mat4& viewProj, const glm::mat4& view)
 {
-	s_Data.CameraBuffer.ViewProjection = camera.GetViewProjectionMatrix();
+	s_Data.CameraBuffer.View = view;
+	s_Data.CameraBuffer.ViewProjection = viewProj;
+	glEnable(GL_DEPTH_TEST);
+
+	s_Data.frameBuffer->Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	s_Data.QuadIndexCount = 0;
 	s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 	s_Data.TextureSlotIndex = 1;
 }
 
+
 void engine::Renderer2D::EndScene()
 {
 	FlushAndReset();
 	FlushAndResetLines();
+
+	//make mipmaps for framebuffer XD
+	// TODO: FIX THIS SHIT
+	glGenerateTextureMipmap(s_Data.frameBuffer->GetRendererID());
+
+	s_Data.frameBuffer->Unbind();
 }
 
 void Renderer2D::Flush()
 {
+
+
 	size_t dataSize = ((char*)s_Data.QuadVertexBufferPtr - (char*)s_Data.QuadVertexBufferBase);
 	glNamedBufferSubData(s_Data.quadBatchBuffer, 0, dataSize, s_Data.QuadVertexBufferBase);
 	
@@ -295,7 +335,7 @@ void Renderer2D::Flush()
 
 
 	glDrawElements(GL_TRIANGLES, s_Data.QuadIndexCount, GL_UNSIGNED_SHORT, NULL);
-		
+
 	//Renderer::DrawIndexed(s_Data->QuadIndexCount, false);
 	s_Data.Stats.DrawCalls++;
 	s_Data.Stats.QuadCount += s_Data.QuadIndexCount/6;
@@ -303,6 +343,9 @@ void Renderer2D::Flush()
 
 void Renderer2D::FlushLines()
 {
+	//Drawing lines dont need depth ?? maybe??
+	glDisable(GL_DEPTH_TEST);
+
 	size_t dataSize = ((char*)s_Data.LineVertexBufferPtr - (char*)s_Data.LineVertexBufferBase);
 	glNamedBufferSubData(s_Data.lineBatchBuffer, 0, dataSize, s_Data.LineVertexBufferBase);
 
@@ -333,7 +376,7 @@ void engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& si
 		 size.x,	0.0f,		0.0f,		0.0f,
 		 0.0f,		size.y,		0.0f,		0.0f,
 		 0.0f,		0.0f,		0.0f,		0.0f,
-		 position.x,position.y, 0.0f,		1.0f
+		 position.x,position.y, position.z,	1.0f
 	};
 
 	constexpr size_t quadVertexCount = 4;
@@ -369,10 +412,10 @@ void engine::Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::v
 {
 	GLfloat rot = glm::radians(rotation);
 	glm::mat4 mdl_xform = {
-		cosf(rot) * size.x,		sinf(rot) * size.x,	0.0f, 0.0f,
-		-sinf(rot) * size.y,	cosf(rot) * size.y,	0.0f, 0.0f,
-		 0.0f,					0.0f,				0.0f, 0.0f,
-		position.x,				position.y,			0.0f, 1.0f
+		cosf(rot) * size.x,		sinf(rot) * size.x,	0.0f,		0.0f,
+		-sinf(rot) * size.y,	cosf(rot) * size.y,	0.0f,		0.0f,
+		 0.0f,					0.0f,				0.0f,		0.0f,
+		position.x,				position.y,			position.z, 1.0f
 	};
 
 	constexpr size_t quadVertexCount = 4;
@@ -398,19 +441,19 @@ void engine::Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::v
 	s_Data.QuadIndexCount += 6;
 }
 
-void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const ooTexID& texture, float tilingFactor, const glm::vec4& tintColor)
+void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor, const glm::vec4& tintColor)
 {																										
 	DrawRotatedQuad({ position.x,position.y,0.0f }, size, rotation,texture, tilingFactor, tintColor);
 }
 
-void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const ooTexID& texture, float tilingFactor, const glm::vec4& tintColor)
+void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor, const glm::vec4& tintColor)
 {
 	GLfloat rot = glm::radians(rotation);
 	glm::mat4 mdl_xform = {
-		cosf(rot) * size.x,		sinf(rot) * size.x,	0.0f, 0.0f,
-		-sinf(rot) * size.y,	cosf(rot) * size.y,	0.0f, 0.0f,
-		 0.0f,					0.0f,				0.0f, 0.0f,
-		position.x,				position.y,			0.0f, 1.0f
+		cosf(rot) * size.x,		sinf(rot) * size.x,	0.0f,		0.0f,
+		-sinf(rot) * size.y,	cosf(rot) * size.y,	0.0f,		0.0f,
+		 0.0f,					0.0f,				0.0f,		0.0f,
+		position.x,				position.y,			position.z, 1.0f
 	};
 
 	constexpr size_t quadVertexCount = 4;
@@ -469,7 +512,7 @@ void Renderer2D::DrawCircle(const glm::vec3& position, float rotation, float rad
 		 cosf(rot)* radius,		sinf(rot)* radius,	0.0f,		0.0f,
 		 -sinf(rot) * radius,	cosf(rot)* radius,		0.0f,		0.0f,
 		 0.0f,		0.0f,		0.0f,		0.0f,
-		 position.x,position.y, 0.0f,		1.0f
+		 position.x,position.y, position.z,		1.0f
 	};
 
 	glm::vec4 firstLine0 = mdl_xform * glm::vec4{0,0,0,1.0f};

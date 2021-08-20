@@ -19,7 +19,7 @@ Technology is prohibited.
 namespace engine
 {
 	std::unordered_map<int32_t, Texture> TextureDatabase::m_nameToTexture;
-	std::unordered_map<ooTexID, std::string> TextureDatabase::m_idToName; 
+	std::unordered_map<ooRendererID, std::string> TextureDatabase::m_idToName; 
 	
 
 	//void AssetsManager::SubscribeToTexture(void* objectpointer, std::function<void(ooTexID)> updateFunction, ooTexKey texKey)

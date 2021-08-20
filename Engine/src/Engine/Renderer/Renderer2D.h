@@ -4,7 +4,11 @@
 \author        Jamie Kong, j.kong , 390004720
 \par           email: j.kong\@digipen.edu
 \date          August 1, 2021
-\brief         File contains API of a 2D renderer
+\brief         File contains API of a 2D renderer.
+				Commands to the renderer are performed by first 
+				1. BeginScene
+				2. Draw commands
+				3. Render
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -13,7 +17,7 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "Engine/Asset/AssetTypes.h"
 #include "Engine/Renderer/DebugCamera.h"
-#include "Engine/Renderer/OrthographicCamera.h"
+#include "Engine/Renderer/Camera.h"
 
 
 namespace engine
@@ -22,17 +26,36 @@ namespace engine
 	class Renderer2D
 	{
 	public:
+
+		/*********************************************************************************//*!
+		\brief    Initializes the host and device data required for the rendering system
+		 
+		*//**********************************************************************************/
 		static void Init();
+
+		/*********************************************************************************//*!
+		\brief    Releases the host and device data required for the rendering system
+
+		*//**********************************************************************************/
 		static void Shutdown();
 
-		//static void BeginScene(const Camera& camera, const glm::mat4& transform);
+		/*********************************************************************************//*!
+		\brief    Begins the rendering batch using a projection and viewpoint
+		 
+		\param    viewProj viewprojection of the scene
+		\param    view view of the scene
+		*//**********************************************************************************/
+		static void BeginScene(const glm::mat4& viewProj, const glm::mat4& view);
 		//static void BeginScene(const EditorCamera& camera);
-		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
+
+		/*********************************************************************************//*!
+		\brief    Ends the scene and submits the call to the device
+		 
+		*//**********************************************************************************/
 		static void EndScene();
-		static void Flush();
-		static void FlushLines();
 
 		// Primitives
+
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 		//static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
@@ -43,8 +66,8 @@ namespace engine
 
 		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
 		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color);
-		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const ooTexID& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
-		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const ooTexID& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 
 		static void DrawCircle(const glm::vec3& p0, float rotation, float radius, const glm::vec4& color);
 		//static void FillCircle(const glm::vec2& p0, float radius, const glm::vec4& color, float thickness = 0.05f);
@@ -69,7 +92,26 @@ namespace engine
 		static BatchRenderStats GetStats();
 
 	private:
+		/*********************************************************************************//*!
+		\brief    Helper function to flush the data in the quad buffer, drawing to render target
+		 
+		*//**********************************************************************************/
+		static void Flush();
+		/*********************************************************************************//*!
+		\brief    Helper function to flush the data in the lines buffer, drawing to render target
+
+		*//**********************************************************************************/
+		static void FlushLines();
+
+		/*********************************************************************************//*!
+		\brief    Flushes the data in the buffer, drawing to render target. This resets the buffers
+
+		*//**********************************************************************************/
 		static void FlushAndReset();
+		/*********************************************************************************//*!
+		\brief    Flushes the data in the lines buffer, drawing to render target. This resets the buffers
+
+		*//**********************************************************************************/
 		static void FlushAndResetLines();
 	};
 

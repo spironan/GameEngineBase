@@ -36,7 +36,6 @@ public:
         engine::Window& x = engine::Application::Get().GetWindow();
         width = x.GetSize().first;
         height = x.GetSize().second;
-        cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
         auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
         auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();

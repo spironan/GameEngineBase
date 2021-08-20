@@ -14,14 +14,21 @@ Technology is prohibited.
 #pragma once
 namespace engine
 {
-	using ooTexID = uint32_t;
+	using ooRendererID = uint32_t;
+
+	enum class AssetType : uint16_t
+	{
+		None = 0,
+		Texture = 1,
+		RenderTarget = 2,
+	};
 
 	/**
 	 * Data structure for handling Texture assets.
 	*/
 	struct Texture //: public Asset
 	{
-		ooTexID id{};
+		ooRendererID id{};
 		int32_t width{}, height{};
 		int32_t bitDepth{};
 		std::string name{};

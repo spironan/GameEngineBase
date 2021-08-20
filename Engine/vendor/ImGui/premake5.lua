@@ -28,6 +28,8 @@ project "ImGui"
         "imgui_impl_opengl3.cpp",
         "imgui_impl_sdl.h",
         "imgui_impl_sdl.cpp",
+        "ImGuizmo.h",
+        "ImGuizmo.cpp",
     }
 
     includedirs

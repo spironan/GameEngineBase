@@ -36,7 +36,6 @@ uniform sampler2D uTex2d[32];
 
 void main()
 {
-   int index =  int(v_TexIndex);
+    int index =  int(v_TexIndex);
     FragColour = texture(uTex2d[index], TexCoord)* colour;
-	//FragColour = vec4(1.0f,0,0,1.0f);
 }

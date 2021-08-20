@@ -45,7 +45,7 @@ namespace engine
 		\param    name Name of the texture
 		\param    id raw id of texture
 		*//**********************************************************************************/
-		static void AddTexture(const std::string& name, ooTexID id)
+		static void AddTexture(const std::string& name, ooRendererID id)
 		{
 			Texture tex{};
 			tex.id = id;
@@ -60,7 +60,7 @@ namespace engine
 		\param    name Existing entry
 		\param    id new ID
 		*//**********************************************************************************/
-		static void UpdateTexture(engine::utility::StringHash name, ooTexID id) { m_nameToTexture[name].id = id; }
+		static void UpdateTexture(engine::utility::StringHash name, ooRendererID id) { m_nameToTexture[name].id = id; }
 
 		/*********************************************************************************//*!
 		\brief    De-registers a texture from the manager
@@ -83,7 +83,7 @@ namespace engine
 		\param    id texture ID
 		\return   name of the texture
 		*//**********************************************************************************/
-		static const std::string& GetName(ooTexID id) { return m_idToName[id]; }
+		static const std::string& GetName(ooRendererID id) { return m_idToName[id]; }
 
 		// TODO:
 		static std::vector<std::pair<Texture, std::string>> GetAllTextures()
@@ -98,7 +98,7 @@ namespace engine
 
 	private:
 		static std::unordered_map<int32_t, Texture> m_nameToTexture;
-		static std::unordered_map<ooTexID, std::string> m_idToName;
+		static std::unordered_map<ooRendererID, std::string> m_idToName;
 	};
 
 //class AssetsManager

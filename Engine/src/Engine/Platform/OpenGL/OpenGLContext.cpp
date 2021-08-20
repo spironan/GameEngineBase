@@ -58,14 +58,14 @@ namespace engine
         LOG_ENGINE_INFO("  Vendor   : {0}", glGetString(GL_VENDOR));
         LOG_ENGINE_INFO("  Renderer : {0}", glGetString(GL_RENDERER));
         LOG_ENGINE_INFO("  Version  : {0}", glGetString(GL_VERSION));
-        engine::Renderer2D::Init();
         //set clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1);
     }
 
     void OpenGLContext::OnUpdateBegin()
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT); 
+        glClear(GL_DEPTH_BUFFER_BIT);
     }
 
     void OpenGLContext::SwapBuffers()

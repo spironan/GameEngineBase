@@ -18,6 +18,7 @@ Technology is prohibited.
 #include "Engine/Core/Input.h"
 
 #include "Engine/Renderer/GraphicsContext.h"
+#include "Engine/Renderer/Renderer2D.h"
 
 namespace engine
 {
@@ -32,6 +33,9 @@ namespace engine
         ENGINE_ASSERT_MSG(!s_instance, "Application already exist!");
         s_instance = this;
         m_window = Window::Create(WindowProperties{ name });
+
+        engine::Renderer2D::Init();
+
         //Binds window callback to call Application::OnEvent
         m_window->SetEventCallback(ENGINE_BIND_EVENT_FN(Application::OnEvent));
         //Retrieve renderer from window

@@ -15,7 +15,8 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/System.h"
-#include "Engine/Renderer/OrthographicCamera.h"
+#include "Engine/Transform/Transform3D.h"
+#include "Engine/Renderer/Camera.h"
 
 namespace engine
 {
@@ -42,8 +43,9 @@ public:
     /*-----------------------------------------------------------------------------*/
     /* Explicit Constructor                                                        */
     /*-----------------------------------------------------------------------------*/
-    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager) : System{ _ECS_Manager }, m_orthoCam{-1,1,-1,1} {};
-    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager, OrthographicCamera cam) : System{ _ECS_Manager }, m_orthoCam{ cam } {};
+    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager) : System{ _ECS_Manager }, m_projection{glm::ortho(-1,1,-1,1)} {};
+    //explicit Renderer2DSystem(ECS_Manager& _ECS_Manager,const OrthographicCamera& cam) : System{ _ECS_Manager }, m_orthoCam{ cam } {};
+    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager, const Camera& cam) : System{ _ECS_Manager }, m_cam{ &cam } {SetCamera(cam, {0,0,0}); };
 
     /*********************************************************************************//*!
     \brief    Updates the rendering system to use the specified camera as the viewpoint
@@ -51,7 +53,7 @@ public:
     \param    cam Copy of the camera
     
     *//**********************************************************************************/
-    void SetOrthographicCamera(const OrthographicCamera& cam) { m_orthoCam = cam; }
+    void SetCamera(const Camera& cam,const glm::vec3& position);
 
     /*********************************************************************************//*!
     \brief    Updates the rendering system to display to screen
@@ -62,7 +64,11 @@ public:
 
 private:
 
-    OrthographicCamera m_orthoCam;
+    const Camera* m_cam;
+    const Transform3D* m_transform;
+    glm::mat4 m_projection;
+    glm::mat4 m_view;
+    glm::mat4 m_viewProj;
 };
 
 }// namespace engine

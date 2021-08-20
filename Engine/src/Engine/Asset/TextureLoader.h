@@ -31,7 +31,7 @@ public:
  *
  * \param ooTexID id of the texture
 *//**********************************************************************************/
-	static void DestroyTexture(ooTexID id); 
+	static void DestroyTexture(ooRendererID id); 
 
 /*********************************************************************************//*!
  * \brief Releases the texture from gpu memory.

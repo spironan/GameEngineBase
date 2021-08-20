@@ -14,8 +14,18 @@ Technology is prohibited.
 #include "pch.h"
 #include "Sprite2D.h"
 
+#include <rttr/registration>
+
 namespace engine
 {
+
+    RTTR_REGISTRATION
+    {
+        using namespace rttr;
+        registration::class_<Sprite2D>("Sprite2D")
+        .property("Texture", &Sprite2D::GetTexture, select_overload<void(ooRendererID)>(&Sprite2D::SetTexture))
+        .property("Colour", &Sprite2D::GetColor, select_overload<void(glm::vec4)>(&Sprite2D::SetColor));
+    }
 
 
 Sprite2D::Sprite2D(Entity _entityID, bool _active): 
@@ -25,7 +35,7 @@ Sprite2D::Sprite2D(Entity _entityID, bool _active):
 {
 }
 
-void Sprite2D::SetTexture(ooTexID textureID)
+void Sprite2D::SetTexture(ooRendererID textureID)
 {
      m_texture = textureID; 
 }

@@ -14,7 +14,33 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "Engine.h"
+
+#include "../glm/glm/gtc/type_ptr.hpp"
+//#include "../ImGui/ImGuizmo.h"
+#include "Engine/Core/Base.h"
+
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Layer.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/Assert.h"
+
+#include "Engine/Core/Timestep.h"
+
+
+#include "Engine/Core/Input.h"
+
+// -- ECS
+#include "Engine/ECS/GameObject.h"
+#include "Engine/ECS/ECS.h"
+#include "Engine/Transform/Transform.h"
+#include "Engine/PhysicsCollision/PhysicsCollision.h"
+
+//Scene
+#include "Engine/Scene/SceneManager.h"
+
+// -- Rendering
+#include "Engine/Renderer/2DRendering.h"
+
 
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components
@@ -26,12 +52,12 @@ private:
     engine::World& m_world;
     engine::GameObject m_root;
     engine::GameObject m_child;
+    engine::GameObject m_camera;
 
     std::vector<engine::GameObject> m_gos;
     std::vector<engine::GameObject>::iterator m_controller;
     std::vector<engine::GameObject>::iterator m_target;
 
-    engine::OrthographicCamera cam{ -1, 1, -1, 1 };
 
     static constexpr float scaling = 50.f;
     static constexpr float TARGET_ROTATION = 90.f;
@@ -43,33 +69,37 @@ public:
         , m_world{ engine::WorldManager::CreateWorld() }
         , m_root{ }
         , m_child{ }
+        , m_camera{ }
     {
-
-
-        {// initilization of camera
-            engine::Window& x = engine::Application::Get().GetWindow();
-            int width = x.GetSize().first;
-            int height = x.GetSize().second;
-            cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
-        }
-
+        // initilization of camera
+        engine::Window& x = engine::Application::Get().GetWindow();
+        int width = x.GetSize().first;
+        int height = x.GetSize().second;
+        float ar = (float)width / height;
+        //auto& cam = m_camera.AddComponent<engine::Camera>(true, -100*ar,100*ar,-100,100);
+        auto& cam = m_camera.AddComponent<engine::SceneCamera>();
+        cam.UpdateViewportSize(width, height);
+        //cam.SetOrthographic(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
+        
+        LOG_ENGINE_INFO(cam.GetEntity());
         auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
         auto& rs = m_world.RegisterSystem<engine::Renderer2DSystem>(cam);
+        m_root.AddChild(m_camera);
 
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
 
         //base world scaling
-        m_root.Transform().Scale() = { scaling, scaling, 1.0f };
+        //m_root.Transform().Scale() = { scaling, scaling, 1.0f };
 
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
+        m_child.Transform().Scale() = { scaling, scaling, 1.0f };
         m_root.AddChild(m_child);
 
         m_gos.emplace_back(m_child);
 
         engine::Entity prev = m_child;
-
 
         for (int i = 1; i < 10; ++i)
         {
@@ -78,6 +108,7 @@ public:
 
             //ent.Transform.Position() = { -1.f, -1.f, 1.f };
             ent.Transform().RotationAngle() += 90.f;
+            ent.Transform().Scale() = { scaling, scaling, 1.0f };
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
             objSprite.SetTexture(tex);
 
@@ -170,7 +201,7 @@ public:
         {
             m_root.Transform().Position() = { 0.f, 0.f, 0.f };
             m_root.Transform().RotationAngle() = 0.f;
-            m_root.Transform().Scale() = { scaling, scaling, 1.f };
+            m_root.Transform().Scale() = { 1.0f, 1.0f, 1.f };
         }
 
 
@@ -205,9 +236,7 @@ public:
         }
     }
 
-    virtual void OnImGuiRender() override
-    {
-        m_world.GetSystem<engine::Renderer2DSystem>()->Update();
-    }
+    virtual void OnImGuiRender() override;
+    
 };
 
