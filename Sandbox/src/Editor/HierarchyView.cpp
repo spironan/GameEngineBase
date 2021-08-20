@@ -33,19 +33,12 @@ Technology is prohibited.
  */
 void HierarchyView::Show()
 {
-	ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });//only works when undocked
+	//ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });//only works when undocked
 	ImGui::Begin("Hierarchy");
 
-	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
-		ImGui::OpenPopup("HierarchyViewPopUp");
-
-	if (ImGui::BeginPopup("HierarchyViewPopUp"))
-	{
-		HierarchyPopUp();
-		ImGui::EndPopup();
-	}
 	Search();
 	ShowHierarchy();
+
 	ImGui::End();
 }
 
@@ -59,11 +52,15 @@ void HierarchyView::HierarchyPopUp()
 	}
 	if (ImGui::MenuItem("Copy"))
 	{
-
+		Copy(ObjectGroup::s_FocusedObject);
 	}
 	if (ImGui::MenuItem("Paste"))
 	{
-
+		Paste();
+	}
+	if (ImGui::MenuItem("Delete"))
+	{
+		static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Destroy();
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Toggle lock UI"))
@@ -103,7 +100,7 @@ void HierarchyView::ShowHierarchy()
 				}
 			}
 			//check if theres an error here TODO
-			while (depth.back() != transform.GetParentId())
+			while (!depth.empty() && depth.back() != transform.GetParentId())
 			{
 				std::uint32_t temp = depth.back();
 				depth.pop_back();
@@ -130,7 +127,7 @@ void HierarchyView::ShowHierarchy()
 				ImGui::PopID();
 			}
 
-			if (ImGui::IsItemClicked())
+			if (ImGui::IsItemClicked() || ImGui::IsItemClicked(ImGuiMouseButton_Right))
 				ObjectGroup::s_FocusedObject = transform.GetEntity();
 		}
 		//clear up the remaining branching 
@@ -138,6 +135,14 @@ void HierarchyView::ShowHierarchy()
 		{
 			--treePop;
 			ImGui::TreePop();
+		}
+
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
+			ImGui::OpenPopup("HierarchyViewPopUp");
+		if (ImGui::BeginPopup("HierarchyViewPopUp"))
+		{
+			HierarchyPopUp();
+			ImGui::EndPopup();
 		}
 	}
 }
@@ -195,7 +200,6 @@ void HierarchyView::ListHierarchy()
 		if (transform.GetChildCount())
 		{
 			flag |= ImGuiTreeNodeFlags_OpenOnArrow;
-			
 			ImGui::PushID(transform.GetEntity());
 			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
 			ImGui::PopID();
@@ -211,10 +215,9 @@ void HierarchyView::ListHierarchy()
 			activated = ImGui::TreeNodeEx(engine::GameObject(tempid).Name().c_str(), flag);
 			ImGui::PopID();
 		}
-		if (ImGui::IsItemClicked())
+		if (ImGui::IsItemClicked() || ImGui::IsItemClicked(ImGuiMouseButton_Right))
 			ObjectGroup::s_FocusedObject = transform.GetEntity();
-		if (ImGui::IsItemHovered())
-			CtrlKeyModsAction(transform.GetEntity());
+
 		//drop
 		if (SetParent(transform.GetEntity()))
 			break;
@@ -234,8 +237,20 @@ void HierarchyView::ListHierarchy()
 		--treePop;
 		ImGui::TreePop();
 	}
+
+	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
+		ImGui::OpenPopup("HierarchyViewPopUp");
+	if (ImGui::BeginPopup("HierarchyViewPopUp"))
+	{
+		HierarchyPopUp();
+		ImGui::EndPopup();
+	}
+
 	ImGui::EndChild();
-	SetParent(0);
+
+	SetParent(root);
+	KeyCopy(ObjectGroup::s_FocusedObject);
+	KeyPaste();
 }
 
 void HierarchyView::Search()
@@ -315,91 +330,103 @@ bool HierarchyView::SetParent(engine::Entity entt)
 	return false;
 }
 
-void HierarchyView::CtrlKeyModsAction(engine::Entity entt)
+void HierarchyView::KeyCopy(engine::Entity ent)
 {
-	if (ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)))
+	if (ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::C)))
 	{
-		if (ImGui::IsKeyPressed(static_cast<int>(engine::Key::C)))
+		Copy(ent);
+	}
+}
+
+void HierarchyView::KeyPaste()
+{
+	if (ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::V)))
+	{
+		Paste();
+	}
+}
+
+void HierarchyView::Copy(engine::Entity entt)
+{
+	m_CopyTarget = entt;
+}
+
+void HierarchyView::Paste()
+{
+	if (m_CopyTarget == 0)
+		return;
+	engine::Transform3D targetTransform = static_cast<engine::GameObject>(m_CopyTarget).GetComponent<engine::Transform3D>();
+
+	int childcount = targetTransform.GetChildCount();
+	//create the parent node first
+	engine::GameObject parent;
+	parent.Name() += "-Copy";
+
+	//update this once the function is done TODO
+	auto& trans = parent.GetComponent<engine::Transform3D>();
+	trans.SetPosition(targetTransform.GetPosition());
+	trans.SetScale(targetTransform.GetScale());
+	trans.SetRotationAngle(targetTransform.GetRotationAngle());
+	trans.SetRotationAxis(targetTransform.GetRotationAxis());
+	/** *********************************************************** */
+	if (childcount == 0)
+		return;
+
+	auto& tranformList = engine::SceneManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
+	//change this later on once this the Function to get all childs are done TODO
+	size_t iter = 0;
+	while (++iter != tranformList.size())//skip the first node since its the root node
+	{
+		if (tranformList[iter].GetEntity() == m_CopyTarget)
+			break;
+	}
+	/** **************************************************************************/
+	engine::Entity prevParent = parent;
+	std::vector<std::pair<engine::Entity, engine::Entity>> hierarchy;
+	engine::Entity entID = engine::SceneManager::GetActiveRoot();
+	for (iter += 1; iter < tranformList.size(); ++iter)//increase iter by 1 to skip the parent node
+	{
+		engine::GameObject child;
+		auto& trans = child.GetComponent<engine::Transform3D>();
+		auto& newTrans = tranformList[iter];
 		{
-			m_CopyTarget = entt;
+			trans.SetPosition(newTrans.GetPosition());
+			trans.SetScale(newTrans.GetScale());
+			trans.SetRotationAngle(newTrans.GetRotationAngle());
+			trans.SetRotationAxis(newTrans.GetRotationAxis());
 		}
-		else if (ImGui::IsKeyPressed(static_cast<int>(engine::Key::V)))
 		{
-			if (m_CopyTarget == 0)
-				return;
-			engine::Transform3D targetTransform = static_cast<engine::GameObject>(m_CopyTarget).GetComponent<engine::Transform3D>();
-
-			int childcount = targetTransform.GetChildCount();
-			//create the parent node first
-			engine::GameObject parent;
-			parent.Name() += "-Copy";
-
-			auto& trans = parent.GetComponent<engine::Transform3D>();
-			trans.SetPosition(targetTransform.GetPosition());
-			trans.SetScale(targetTransform.GetScale());
-			trans.SetRotationAngle(targetTransform.GetRotationAngle());
-			trans.SetRotationAxis(targetTransform.GetRotationAxis());
-
-			if (childcount == 0)
-				return;
-			
-			auto& tranformList = engine::SceneManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
-//change this later on once this the Function to get all childs are done TODO
-			size_t iter = 0;
-			while (++iter != tranformList.size())//skip the first node since its the root node
+			const engine::Entity parentid = newTrans.GetParentId();
+			while (true)
 			{
-				if (tranformList[iter].GetEntity() == m_CopyTarget)
+				if (hierarchy.empty())
+				{
+					prevParent = parent;
 					break;
-			}
-/** **************************************************************************/
-			engine::Entity prevParent = parent;
-			std::vector<std::pair<engine::Entity,engine::Entity>> hierarchy;
-			engine::Entity entID = engine::SceneManager::GetActiveRoot();
-			for (iter += 1; iter < tranformList.size(); ++iter)//increase iter by 1 to skip the parent node
-			{
-				engine::GameObject child;
-				auto& trans = child.GetComponent<engine::Transform3D>();
-				auto& newTrans = tranformList[iter];
-				{
-					trans.SetPosition(newTrans.GetPosition());
-					trans.SetScale(newTrans.GetScale());
-					trans.SetRotationAngle(newTrans.GetRotationAngle());
-					trans.SetRotationAxis(newTrans.GetRotationAxis());
 				}
+				else
 				{
-					const engine::Entity parentid = newTrans.GetParentId();
-					while (true)
+					if (parentid != hierarchy.back().second)
+						hierarchy.pop_back();
+					else
 					{
-						if (hierarchy.empty())
-						{
-							prevParent = parent;
-							break;
-						}
-						else
-						{
-							if (parentid != hierarchy.back().second)
-								hierarchy.pop_back();
-							else
-							{
-								prevParent = hierarchy.back().first;
-								break;
-							}
-						}
+						prevParent = hierarchy.back().first;
+						break;
 					}
 				}
-				static_cast<engine::GameObject>(prevParent).AddChild(child);
-				if (newTrans.GetChildCount())
-				{
-					hierarchy.emplace_back(child.GetID(), newTrans.GetID());
-					prevParent = child;
-				}
-				--childcount;
-				if (childcount == 0)
-					break;
 			}
-			engine::SceneManager::GetActiveRoot().AddChild(parent);
 		}
+		static_cast<engine::GameObject>(prevParent).AddChild(child);
+		if (newTrans.GetChildCount())
+		{
+			hierarchy.emplace_back(child.GetID(), newTrans.GetID());
+			prevParent = child;
+		}
+		--childcount;
+		if (childcount == 0)
+			break;
 	}
+	engine::SceneManager::GetActiveRoot().AddChild(parent);
 }
 
 

@@ -32,7 +32,10 @@ private:
 	void ToggleLockUI();
 	bool SetParent(engine::Entity entt);
 
-	void CtrlKeyModsAction(engine::Entity entt);
+	void KeyCopy(engine::Entity);
+	void KeyPaste();
+	void Copy(engine::Entity entt);
+	void Paste();
 private:
 
 
