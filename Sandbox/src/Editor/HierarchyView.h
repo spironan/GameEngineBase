@@ -27,6 +27,7 @@ private:
 
 	void ShowHierarchy();
 	void ListHierarchy();
+	void ListFiltered();
 	void Search();
 	void FilterByName(const std::string& target);
 	void ToggleLockUI();

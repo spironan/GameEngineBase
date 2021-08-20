@@ -10,6 +10,7 @@
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/Transform/Transform3D.h"
+
 //libs
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -39,7 +40,8 @@ void InspectorView::Show()
 				ReadComponents(go.GetComponent<engine::GameObjectComponent>());
 			if(go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>());
-			ImGui::Button("Add Component");
+			
+			AddComponentButton();
 			ImGui::EndChild();
 		}
 	}
@@ -62,6 +64,27 @@ void InspectorView::Show()
 	}
 	ImGui::EndChild();
 	ImGui::End();
+}
+
+void InspectorView::AddComponentButton()
+{
+	static bool pressed = false;
+	static const ImVec2 buttonSize = { 150,30 };
+	ImGui::NewLine();
+	ImGui::SameLine((ImGui::GetContentRegionAvail().x - buttonSize.x) * 0.5f);
+	if (ImGui::Button("Add Component",buttonSize))
+	{
+		pressed = !pressed;
+	}
+	if (pressed)
+	{
+		ImGui::NewLine();
+		ImGui::SameLine((ImGui::GetContentRegionAvail().x - buttonSize.x) * 0.5f);
+
+		ImGui::BeginListBox("Component", { buttonSize.x ,0 });
+
+		ImGui::EndListBox();
+	}
 }
 
 

@@ -15,7 +15,7 @@ public:
 	void Show();
 
 private:
-
+	void AddComponentButton();
 	template<typename Component>
 	void ReadComponents(Component& component)
 	{

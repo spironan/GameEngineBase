@@ -104,7 +104,7 @@ void Serializer::LoadWorld(const std::string& path)
 		else
 		{
 			//root
-			engine::GameObject(0).AddChild(hierarchyItem.second.first);
+			engine::GameObject(engine::SceneManager::GetActiveRoot()).AddChild(hierarchyItem.second.first);
 		}
 	}
 	ifs.close();
@@ -115,18 +115,13 @@ void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<r
 	auto& list = engine::SceneManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
 	engine::Entity id = go.GetID();
 	int count = 0;
-	//TODO rework this(line 80 - 90)
-	for (count = 0;count < list.size();++count)
+
+	auto& childrenList = go.GetChildren();
+	SaveItem(go, writer); 
+	for (engine::Entity gobj : childrenList)
 	{
-		if (list[count].GetEntity() == id)
-			break;
+		SaveItem(static_cast<engine::GameObject>(gobj), writer);
 	}
-	SaveItem(go, writer);
-	for (int i = 1; i < go.GetComponent<engine::Transform3D>().GetChildCount()+1; ++i)
-	{
-		SaveItem((engine::GameObject)list[count+i].GetEntity(),writer);
-	}
-	///////////////////////////////////
 }
  
 void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
