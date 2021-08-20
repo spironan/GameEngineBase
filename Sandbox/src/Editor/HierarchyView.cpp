@@ -46,7 +46,6 @@ void HierarchyView::Show()
 	}
 	Search();
 	ShowHierarchy();
-
 	ImGui::End();
 }
 
@@ -154,7 +153,7 @@ void HierarchyView::ListHierarchy()
 	engine::Entity root = engine::SceneManager::GetActiveRoot();//todo use scenemanager to get rootnode after its ready
 	//depth.emplace_back(root);//root
 	auto& transformList = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
-	
+	ImGui::BeginChild("##ListHierarchy");
 	//display the root node
 	if (transformList.size())
 	{
@@ -162,17 +161,7 @@ void HierarchyView::ListHierarchy()
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 1.0f,0.5f,0.5f,1.0f });
 		showTree = ImGui::TreeNodeEx(engine::GameObject(root).Name().c_str(), flag);
 		SetParent(root);
-		if (ImGui::BeginDragDropTarget())
-		{
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("PREFAB_OBJ");
-			if (payload)
-			{
-				std::string temp;
-				temp =  reinterpret_cast<char*>(payload->Data);
-				Serializer::LoadObject(temp.c_str());
-			}
-			ImGui::EndDragDropTarget();
-		}
+
 		ImGui::PopStyleColor();
 		ImGui::Separator();
 
@@ -245,6 +234,8 @@ void HierarchyView::ListHierarchy()
 		--treePop;
 		ImGui::TreePop();
 	}
+	ImGui::EndChild();
+	SetParent(0);
 }
 
 void HierarchyView::Search()
@@ -298,6 +289,7 @@ bool HierarchyView::SetParent(engine::Entity entt)
 {
 	if (ImGui::BeginDragDropTarget())
 	{
+		//hierarchy object payload
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
@@ -305,6 +297,16 @@ bool HierarchyView::SetParent(engine::Entity entt)
 			engine::Entity parent_id = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).GetComponent<engine::Transform3D>().GetParentId();
 			ActionStack::AllocateInBuffer(new ParentActionStack(ObjectGroup::s_FocusedObject, parent_id, entt));
 			static_cast<engine::GameObject>(entt).AddChild(ObjectGroup::s_FocusedObject);
+			ImGui::EndDragDropTarget();
+			return true;
+		}
+		//prefab payload
+		payload = ImGui::AcceptDragDropPayload("PREFAB_OBJ");
+		if (payload)
+		{
+			std::string temp;
+			temp = reinterpret_cast<char*>(payload->Data);
+			Serializer::LoadObject(temp.c_str(),entt);
 			ImGui::EndDragDropTarget();
 			return true;
 		}
