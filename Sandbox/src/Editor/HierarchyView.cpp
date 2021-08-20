@@ -54,13 +54,14 @@ void HierarchyView::HierarchyPopUp()
 	{
 		Copy(ObjectGroup::s_FocusedObject);
 	}
-	if (ImGui::MenuItem("Paste"))
+	if (ImGui::MenuItem("Paste",nullptr,nullptr, m_CopyTarget))
 	{
 		Paste();
 	}
-	if (ImGui::MenuItem("Delete"))
+	if (ImGui::MenuItem("Delete",nullptr,nullptr,ObjectGroup::s_FocusedObject))
 	{
 		static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Destroy();
+		ObjectGroup::s_FocusedObject = 0;
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Toggle lock UI"))
