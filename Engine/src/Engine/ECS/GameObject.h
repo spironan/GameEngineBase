@@ -52,7 +52,7 @@ namespace engine
         //implicit cast operator
         operator Entity() const { return m_entity; }
 
-        void AddChild(GameObject const& gameObj, bool preserveTransforms = true) const;
+        void AddChild(GameObject const& gameObj, bool preserveTransforms = false) const;
         void AddChild(std::initializer_list<GameObject> gameObjs, bool preserveTransforms = false) const;
 
         std::vector<Entity> GetChildren() const;

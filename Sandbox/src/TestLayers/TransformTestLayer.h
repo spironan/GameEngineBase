@@ -50,13 +50,13 @@ public:
         /*auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
         rootSpr.SetTexture(tex);
         m_gos.emplace_back(m_root);*/
-        RootGameObject().Transform().Scale() = { scaling, scaling, 1.0f };
+        //RootGameObject().Transform().Scale() = { scaling, scaling, 1.0f };
         
         engine::GameObject m_child = CreateGameObject();
-        m_child.Transform().Scale() = { 1.f, 1.f, 1.0f };
+        m_child.Transform().Scale() = { scaling, scaling, 1.0f };
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
-        RootGameObject().AddChild(m_child, false);
+        RootGameObject().AddChild(m_child, true);
 
         m_gos.emplace_back(m_child);
 
@@ -67,27 +67,27 @@ public:
             engine::GameObject ent = CreateGameObject();
 
             m_gos.emplace_back(ent);
-
-            ent.Transform().Position() = { 1.f, 1.f, 0.f };
+            
+            ent.Transform().SetPosition({ 1, 1, 0.f });
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
-            //objSprite.SetTexture(tex);
+            objSprite.SetTexture(tex);
             
             //Nested Add child
-            static_cast<engine::GameObject>(prev).AddChild(ent, false);
+            static_cast<engine::GameObject>(prev).AddChild(ent);
             prev = ent;
         }
 
-        for (int i = 1; i < 10; ++i)
-        {
-            engine::GameObject ent = CreateGameObject();
-            m_gos.emplace_back(ent);
+        //for (int i = 1; i < 10; ++i)
+        //{
+        //    engine::GameObject ent = CreateGameObject();
+        //    m_gos.emplace_back(ent);
 
-            auto& objSprite = ent.AddComponent<engine::Sprite2D>();
-            objSprite.SetTexture(tex);
+        //    auto& objSprite = ent.AddComponent<engine::Sprite2D>();
+        //    objSprite.SetTexture(tex);
 
-            //Nested Add child
-            RootGameObject().AddChild(ent, false);
-        }
+        //    //Nested Add child
+        //    RootGameObject().AddChild(ent, false);
+        //}
 
         // set default controller
         m_controller = m_gos.begin();

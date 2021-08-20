@@ -116,7 +116,7 @@ namespace engine
             m_dirty       = true;
             m_conversion  = false;
         }
-
+        
         m_globalTransform = parentMtx * m_localTransform;
     }
 
