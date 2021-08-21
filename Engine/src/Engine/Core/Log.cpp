@@ -67,4 +67,32 @@ namespace engine
         return oss;
     }
 
+    /*-----------------------------------------------------------------------------*/
+    /* Debug Functions for C#                                                      */
+    /*-----------------------------------------------------------------------------*/
+
+    void Log(const char* msg)
+    {
+        LOG_TRACE(msg);
+    }
+
+    void LogInfo(const char* msg)
+    {
+        LOG_INFO(msg);
+    }
+
+    void LogWarning(const char* msg)
+    {
+        LOG_WARN(msg);
+    }
+
+    void LogError(const char* msg)
+    {
+        LOG_ERROR(msg);
+    }
+
+    void LogCritical(const char* msg)
+    {
+        LOG_CRITICAL(msg);
+    }
 }

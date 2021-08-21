@@ -71,6 +71,51 @@ namespace engine
 		//callback sink
     };
 
+    /*-----------------------------------------------------------------------------*/
+    /* Debug Functions for C#                                                      */
+    /*-----------------------------------------------------------------------------*/
+    extern "C"
+    {
+        /*********************************************************************************//*!
+        \brief      This function's main purpose is to allow C# scripts to log traces to the engine.
+
+        \param      msg
+                the string to output to the engine console
+        *//**********************************************************************************/
+        __declspec(dllexport) void Log(const char* msg);
+
+        /*********************************************************************************//*!
+        \brief      This function's main purpose is to allow C# scripts to log info to the engine.
+
+        \param      msg
+                the string to output to the engine console
+        *//**********************************************************************************/
+        __declspec(dllexport) void LogInfo(const char* msg);
+
+        /*********************************************************************************//*!
+        \brief      This function's main purpose is to allow C# scripts to log warnings to the engine.
+
+        \param      msg
+                the string to output to the engine console
+        *//**********************************************************************************/
+        __declspec(dllexport) void LogWarning(const char* msg);
+
+        /*********************************************************************************//*!
+        \brief      This function's main purpose is to allow C# scripts to log errors to the engine.
+
+        \param      msg
+                the string to output to the engine console
+        *//**********************************************************************************/
+        __declspec(dllexport) void LogError(const char* msg);
+
+        /*********************************************************************************//*!
+        \brief      This function's main purpose is to allow C# scripts to log critical errors to the engine.
+
+        \param      msg
+                the string to output to the engine console
+        *//**********************************************************************************/
+        __declspec(dllexport) void LogCritical(const char* msg);
+    }
 }
 
 /****************************************************************************//*!
