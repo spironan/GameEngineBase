@@ -36,6 +36,7 @@ void HierarchyView::Show()
 	//ImGui::SetNextWindowSizeConstraints({ 350,350 }, { 1280,1080 });//only works when undocked
 	ImGui::Begin("Hierarchy");
 
+	Rename();//popup
 	Search();
 	ShowHierarchy();
 
@@ -183,7 +184,7 @@ void HierarchyView::ListHierarchy()
 
 	KeyCopy(ObjectGroup::s_FocusedObject);
 	KeyPaste();
-
+	KeyRename();
 	ImGui::EndChild();//end of child window
 
 	SetParent(root);
@@ -363,6 +364,17 @@ void HierarchyView::KeyPaste()
 	}
 }
 /*********************************************************************************//*!
+\brief
+ rename Items
+*//**********************************************************************************/
+void HierarchyView::KeyRename()
+{
+	if (ImGui::IsKeyPressed(static_cast<int>(engine::KeyCode::F2)))
+	{
+		m_rename = true;
+	}
+}
+/*********************************************************************************//*!
 \brief    
 Store m_CopyTarget
  
@@ -461,6 +473,26 @@ void HierarchyView::Paste()
 	}
 	engine::SceneManager::GetActiveRoot().AddChild(parent);
 
+}
+
+void HierarchyView::Rename()
+{
+	if (m_rename && ObjectGroup::s_FocusedObject)//need to be valid o
+	{
+		ImGui::OpenPopup("RenameItem");
+		m_rename = false;
+		strcpy(m_Buffer, static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name().c_str());
+	}
+	if (ImGui::BeginPopup("RenameItem"))
+	{
+		if (ImGui::InputText("##rename", m_Buffer, sizeof(m_Buffer), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name() = m_Buffer;
+			m_Buffer[0] = '/0';
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 }
 
 

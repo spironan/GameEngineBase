@@ -19,7 +19,13 @@ Technology is prohibited.
 class HierarchyView
 {
 public: 
-	HierarchyView() : m_dragging{ false }, m_editing{ false }, m_filtered{ false }, m_Buffer{ "" }, m_filterBuffer{ "" }{}
+	HierarchyView() : m_dragging{ false },
+		m_editing{ false },
+		m_filtered{ false },
+		m_rename{ false },
+		m_Buffer{ "" }, m_filterBuffer{ "" }
+	{
+	};
 	void Show();
 
 private:
@@ -35,14 +41,17 @@ private:
 
 	void KeyCopy(engine::Entity);
 	void KeyPaste();
+	void KeyRename();
 	void Copy(engine::Entity entt);
 	void Paste();
+	void Rename();
 private:
 
 
 	bool m_dragging;
 	bool m_editing;
 	bool m_filtered;
+	bool m_rename;
 
 	char m_Buffer[100];
 	char m_filterBuffer[100];
