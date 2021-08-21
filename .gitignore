@@ -22,4 +22,4 @@ bin-int/
 Sandbox/imgui.ini
 
 #scripts
-scripting.dll
+Sandbox/scripting
