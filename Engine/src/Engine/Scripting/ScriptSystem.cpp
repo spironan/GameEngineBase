@@ -84,17 +84,17 @@ namespace engine
         fgets(buffer, 1024, msbuildPathFile);
         std::string msbuildPath(buffer);
         msbuildPath = msbuildPath.substr(0, msbuildPath.size() - 1);
-        fclose(msbuildPathFile);
+        _pclose(msbuildPathFile);
 
         // execute build command
-        std::string command("\"\"" + msbuildPath + "\" " + s_ProjDir + " -noLogo -verbosity:quiet -t:Build -fl1 -flp1:logfile=" + s_ErrorsLogFile + ";errorsonly -fl2 -flp2:logfile=" + s_WarningsLogFile + ";warningsonly -p:Configuration=\"Debug OpenGL\";Platform=x64;OutputPath=" + s_OutputDir + ";AssemblyName=" + s_OutputFileName + "\"");
+        std::string command("\"\"" + msbuildPath + "\" " + s_ProjDir + " -noLogo -verbosity:quiet -t:Clean;Build -fl1 -flp1:logfile=" + s_ErrorsLogFile + ";errorsonly -fl2 -flp2:logfile=" + s_WarningsLogFile + ";warningsonly -p:Configuration=\"Debug OpenGL\";Platform=x64;OutputPath=" + s_OutputDir + ";AssemblyName=" + s_OutputFileName + "\"");
         FILE* compileResult = _popen(command.c_str(), "r");
         if (!compileResult)
         {
             LOG_ERROR("Script Compiling Error: failed to build");
             return;
         }
-        fclose(compileResult);
+        _pclose(compileResult);
 
         std::string line;
 
@@ -156,15 +156,15 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Mode Functions                                                              */
     /*-----------------------------------------------------------------------------*/
-    void ScriptSystem::StartPlay()
+    bool ScriptSystem::StartPlay()
     {
         if (!ScriptUtility::g_SystemInfo.IsSetUp())
         {
             LOG_ERROR("Fix Compile Time Errors before entering play mode");
-            return;
+            return false;
         }
         if (isPlaying)
-            return;
+            return false;
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
             scripting.SetUpPlay();
@@ -174,17 +174,19 @@ namespace engine
             scripting.StartPlay();
         }
         isPlaying = true;
+        return true;
     }
 
-    void ScriptSystem::StopPlay()
+    bool ScriptSystem::StopPlay()
     {
         if (!isPlaying)
-            return;
+            return false;
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
             scripting.StopPlay();
         }
         isPlaying = false;
+        return true;
     }
 
     /*-----------------------------------------------------------------------------*/

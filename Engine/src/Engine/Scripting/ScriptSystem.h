@@ -51,13 +51,17 @@ namespace engine
 
         /*********************************************************************************//*!
         \brief      executes the necessary functions in all Scripting components to initiate play mode
+
+        \return     true if play mode was successfully initiated, else false
         *//**********************************************************************************/
-        void StartPlay();
+        bool StartPlay();
 
         /*********************************************************************************//*!
         \brief      executes the necessary functions in all Scripting components to stop play mode
+
+        \return     true if play mode was successfully stopped, else false
         *//**********************************************************************************/
-        void StopPlay();
+        bool StopPlay();
 
         /*-----------------------------------------------------------------------------*/
         /* Function Invoking                                                           */
