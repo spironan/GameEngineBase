@@ -22,13 +22,18 @@ Technology is prohibited.
 namespace fs = std::filesystem;
 
 #include "Engine/Core/Log.h"
+#include "Engine/Core/Input.h"
+
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/ECS/GameObject.h"
 
 namespace engine
 {
-    static std::string s_AssetDir = "../Scripting/src";
-    static std::string s_OutputDir = "scripting.dll";
+    static std::string s_ProjDir = "../Scripting/Scripting.csproj";
+    static std::string s_OutputDir = "../Sandbox/scripting";
+    static std::string s_OutputFileName = "scripting";
+    static std::string s_ErrorsLogFile = "../Sandbox/scripting/errors.log";
+    static std::string s_WarningsLogFile = "../Sandbox/scripting/warnings.log";
 
     ScriptSystem::~ScriptSystem()
     {
@@ -48,9 +53,9 @@ namespace engine
             return;
         }
 
-        if (!fs::exists(s_AssetDir))
+        if (!fs::exists(s_ProjDir))
         {
-            LOG_ERROR("Script Compiling Error: Expected Scripting folder \"" + s_AssetDir + "\" does not exist");
+            LOG_ERROR("Script Compiling Error: Expected Scripting project at \"" + s_ProjDir + "\" does not exist");
             return;
         }
 
@@ -58,42 +63,94 @@ namespace engine
         ScriptUtility::g_SystemInfo.Reset();
 
         // get all script filenames
-        std::string scriptNames = "";
-        for (const auto& entry : fs::recursive_directory_iterator(s_AssetDir))
+        //std::string scriptNames = "";
+        //for (const auto& entry : fs::recursive_directory_iterator(s_AssetDir))
+        //{
+        //    // std::cout << entry.path().generic_string() << std::endl;
+        //    if (entry.path().extension() == ".cs")
+        //    {
+        //        scriptNames += " " + entry.path().parent_path().generic_string() + "\\" + entry.path().filename().generic_string();
+        //    }
+        //}
+        
+        // find msbuild path
+        FILE* msbuildPathFile = _popen("\"C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe", "r");
+        if (msbuildPathFile == nullptr)
         {
-            // std::cout << entry.path().generic_string() << std::endl;
-            if (entry.path().extension() == ".cs")
-            {
-                scriptNames += " " + entry.path().parent_path().generic_string() + "\\" + entry.path().filename().generic_string();
-            }
+            LOG_ERROR("Script Compiling Error: failed to find msbuild");
+            return;
         }
+        char buffer[1024];
+        fgets(buffer, 1024, msbuildPathFile);
+        std::string msbuildPath(buffer);
+        msbuildPath = msbuildPath.substr(0, msbuildPath.size() - 1);
+        fclose(msbuildPathFile);
 
         // execute build command
-        std::string command = "C:\\Windows\\Microsoft.NET\\Framework64\\v3.5\\csc.exe /t:library /out:" + s_OutputDir + scriptNames;
-        FILE* result = _popen(command.c_str(), "r");
-        if (result != nullptr)
+        std::string command("\"\"" + msbuildPath + "\" " + s_ProjDir + " -noLogo -verbosity:quiet -t:Build -fl1 -flp1:logfile=" + s_ErrorsLogFile + ";errorsonly -fl2 -flp2:logfile=" + s_WarningsLogFile + ";warningsonly -p:Configuration=\"Debug OpenGL\";Platform=x64;OutputPath=" + s_OutputDir + ";AssemblyName=" + s_OutputFileName + "\"");
+        FILE* compileResult = _popen(command.c_str(), "r");
+        if (!compileResult)
         {
-            char buffer[1024];
-            //ignore copyright message
-            for (unsigned int i = 0; i < 4; ++i)
-            {
-                fgets(buffer, 1024, result);
-            }
-            bool compileError = false;
-            while (fgets(buffer, 1024, result))
-            {
-                LOG_ERROR(buffer);
-                compileError = true;
-            }
-            if (!compileError)
-            {
-                LOG_ENGINE_TRACE("Script Compiling Successful");
-            }
-            fclose(result);
+            LOG_ERROR("Script Compiling Error: failed to build");
+            return;
         }
+        fclose(compileResult);
+
+        std::string line;
+
+        std::ifstream ifsWarnings(s_WarningsLogFile);
+        if (!ifsWarnings)
+        {
+            LOG_ERROR("Script Compiling Error: Warning log file not generated");
+            return;
+        }
+        while (std::getline(ifsWarnings, line))
+        {
+            LOG_WARN(line);
+        }
+        ifsWarnings.close();
+
+        std::ifstream ifsErrors(s_ErrorsLogFile);
+        if (!ifsErrors)
+        {
+            LOG_ERROR("Script Compiling Error: Error log file not generated");
+            return;
+        }
+        bool hasError = false;
+        while (std::getline(ifsErrors, line))
+        {
+            LOG_ERROR(line);
+            hasError = true;
+        }
+        ifsErrors.close();
+        if (hasError)
+            return;
+
+        //FILE* result = _popen(command.c_str(), "r");
+        //if (result == nullptr)
+        //{
+        //    LOG_ERROR("Script Compiling Error: failed to build scripting.dll");
+        //    return;
+        //}
+
+        //bool hasError = false;
+        //while (fgets(buffer, 1024, result))
+        //{
+        //    LOG_ERROR(buffer);
+        //    hasError = true;
+        //}
+        //fclose(result);
+        //if (hasError)
+        //    return;
 
         // load all system info for later use
-        ScriptUtility::g_SystemInfo.Initialize(s_OutputDir.c_str());
+        LOG_ENGINE_TRACE("Script Compiling Successful");
+        ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str());
+    }
+
+    bool ScriptSystem::IsSetUp()
+    {
+        return ScriptUtility::g_SystemInfo.IsSetUp();
     }
 
     /*-----------------------------------------------------------------------------*/
@@ -101,6 +158,11 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     void ScriptSystem::StartPlay()
     {
+        if (!ScriptUtility::g_SystemInfo.IsSetUp())
+        {
+            LOG_ERROR("Fix Compile Time Errors before entering play mode");
+            return;
+        }
         if (isPlaying)
             return;
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
@@ -172,5 +234,83 @@ namespace engine
     void DestroyEntity(int id)
     {
         engine::WorldManager::GetActiveWorld().DestroyEntity(id);
+    }
+
+    /*-----------------------------------------------------------------------------*/
+    /* Input Functions for C#                                                      */
+    /*-----------------------------------------------------------------------------*/
+
+    bool AnyKey()
+    {
+        return Input::IsAnyKeyDown();
+    }
+
+    bool AnyKeyDown()
+    {
+        return Input::IsAnyKeyPressed();
+    }
+
+    bool AnyKeyUp()
+    {
+        return Input::IsAnyKeyReleased();
+    }
+
+    bool GetKey(int key)
+    {
+        return Input::IsKeyDown(static_cast<KeyCode>(key));
+    }
+
+    bool GetKeyDown(int key)
+    {
+        return Input::IsKeyPressed(static_cast<KeyCode>(key));
+    }
+
+    bool GetKeyUp(int key)
+    {
+        return Input::IsKeyReleased(static_cast<KeyCode>(key));
+    }
+
+    void GetMousePosition(int* x, int* y)
+    {
+        std::pair<int, int> mousePos = Input::GetMousePosition();
+        *x = mousePos.first;
+        *y = mousePos.second;
+    }
+
+    void GetMouseDelta(int* x, int* y)
+    {
+        std::pair<int, int> mouseDelta = Input::GetMouseDelta();
+        *x = mouseDelta.first;
+        *y = mouseDelta.second;
+    }
+
+    bool AnyMouseButton()
+    {
+        return Input::IsAnyMouseButtonDown();
+    }
+
+    bool AnyMouseButtonDown()
+    {
+        return Input::IsAnyMouseButtonPressed();
+    }
+
+    bool AnyMouseButtonUp()
+    {
+        return Input::IsAnyMouseButtonReleased();
+    }
+
+    bool GetMouseButton(int button)
+    {
+        return Input::IsMouseButtonDown(static_cast<MouseCode>(button));
+    }
+
+    bool GetMouseButtonDown(int button)
+    {
+        return Input::IsMouseButtonPressed(static_cast<MouseCode>(button));
+    }
+
+    bool GetMouseButtonUp(int button)
+    {
+        return Input::IsMouseButtonReleased(static_cast<MouseCode>(button));
     }
 }

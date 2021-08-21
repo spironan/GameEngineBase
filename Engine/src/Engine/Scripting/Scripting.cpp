@@ -225,7 +225,10 @@ namespace engine
                 for (unsigned int i = 0; i < depth + 1; ++i)
                     std::cout << "\t";
                 std::cout << "variable: " << mono_field_get_name(compField) << " (" << mono_type_get_name(type) << ", " << typeEnum << "): ";
-                std::cout << std::string(mono_string_to_utf8(fieldValue)) << std::endl;
+                if (fieldValue != nullptr)
+                    std::cout << std::string(mono_string_to_utf8(fieldValue)) << std::endl;
+                else
+                    std::cout << std::endl;
             }
             break;
             case MONO_TYPE_CLASS:
@@ -598,7 +601,34 @@ namespace engine
             MonoMethod* method = ScriptUtility::FindFunction(script, functionName);
             if (method == nullptr)
                 continue;
-            mono_runtime_invoke(method, script, NULL, NULL);
+
+            //std::cout << "GAMEOBJECT " << m_entity << " " << scriptInfoList[i].classInfo.name << ": " << functionName << std::endl;
+
+            MonoObject* exception = nullptr;
+            mono_runtime_invoke(method, script, NULL, (MonoObject**)&exception);
+            if (exception)
+            {
+                MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
+                MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
+
+                LOG_CRITICAL(mono_string_to_utf8(excMsg));
+                // mono_print_unhandled_exception(exception);
+            }
+            //__try
+            //{
+            //    mono_runtime_invoke(method, script, NULL, (MonoObject**)&exception);
+            //}
+            //__finally
+            //{
+            //    //std::cout << "SOMETHING" << std::endl;
+            //    if (exception)
+            //    {
+            //        MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
+            //        MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
+            //        LOG_ERROR(mono_string_to_utf8(excMsg));
+            //        mono_print_unhandled_exception(exception);
+            //    }
+            //}
         }
     }
 

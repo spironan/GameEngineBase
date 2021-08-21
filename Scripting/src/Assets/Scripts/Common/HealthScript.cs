@@ -12,7 +12,7 @@ public class HealthScript : MonoBehaviour
 
     private void Awake()
     {
-
+        currHealth = totalHealth;
     }
 
     public void TakeDamage(int dmg)

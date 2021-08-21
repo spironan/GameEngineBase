@@ -7,5 +7,10 @@ project "Scripting"
 
 	files 
 	{
-		"**.cs", 
+		"src/**.cs", 
+	}
+	
+	links
+	{
+		"System.Numerics",
 	}

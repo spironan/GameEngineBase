@@ -9,10 +9,10 @@ public class EnemyManager : MonoBehaviour
     private void Awake()
     {
         enemyList = new List<EnemyScript>();
-        for(int i = 0; i < 10; ++i)
-        {
-            InstantiateEnemy();
-        }
+        //for(int i = 0; i < 10; ++i)
+        //{
+        //    InstantiateEnemy();
+        //}
     }
 
     private EnemyScript InstantiateEnemy()

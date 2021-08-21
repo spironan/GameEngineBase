@@ -35,18 +35,49 @@ namespace engine
             if (!mono_domain_set(domain, false))
             {
                 LOG_ENGINE_ERROR("Script Loading Error: failed to set scripting domain");
-            }
-
-            MonoAssembly* assembly = mono_domain_assembly_open(domain, dllPath);
-            if (assembly == nullptr)
-            {
-                LOG_ENGINE_ERROR("Script Loading Error: failed to open assembly using " + std::string(dllPath));
-                domain = nullptr;
                 return;
             }
 
+            std::ifstream ifsDll(dllPath, std::ifstream::binary);
+            if (!ifsDll)
+            {
+                LOG_ENGINE_ERROR("Script Loading Error: failed to open dll file");
+                return;
+            }
+            ifsDll.seekg(0, ifsDll.end);
+            size_t dllLength = ifsDll.tellg();
+            ifsDll.seekg(0, ifsDll.beg);
+            std::vector<char> dllData(dllLength);
+            ifsDll.read(&dllData[0], dllLength);
+            ifsDll.close();
+
+            MonoImageOpenStatus status;
+            MonoImage* image = mono_image_open_from_data_full(&dllData[0], dllData.size(), true, &status, false);
+            if (image == nullptr || status != MONO_IMAGE_OK)
+            {
+                LOG_ENGINE_ERROR("Script Loading Error: failed to set load image from memory");
+                Reset();
+                return;
+            }
+            MonoAssembly* assembly = mono_assembly_load_from_full(image, dllPath, &status, false);
+            mono_image_close(image);
+            if (assembly == nullptr || status != MONO_IMAGE_OK)
+            {
+                LOG_ENGINE_ERROR("Script Loading Error: failed to set load assembly from image");
+                Reset();
+                return;
+            }
+
+            //MonoAssembly* assembly = mono_domain_assembly_open(domain, dllPath);
+            //if (assembly == nullptr)
+            //{
+            //    LOG_ENGINE_ERROR("Script Loading Error: failed to open assembly using " + std::string(dllPath));
+            //    domain = nullptr;
+            //    return;
+            //}
+
+            mono_set_dirs("../Engine/vendor/mono/lib/mono/4.5", NULL);
             scripting = mono_assembly_get_image(assembly);
-            mscorlib = mono_class_get_image(mono_get_boolean_class());
 
             // get all script class info
             MonoClass* baseScriptClass = GetBaseScriptMonoClass();
@@ -83,7 +114,6 @@ namespace engine
             }
             domain = nullptr;
             scripting = nullptr;
-            mscorlib = nullptr;
             classInfoList.clear();
         }
 
@@ -154,7 +184,7 @@ namespace engine
             if (!isGenericType)
                 return false;
 
-            MonoClass* listClass = mono_class_from_name(g_SystemInfo.mscorlib, "System.Collections.Generic", "List`1");
+            MonoClass* listClass = mono_class_from_name(mono_get_corlib(), "System.Collections.Generic", "List`1");
             MonoMethod* defMethod = mono_class_get_method_from_name(typeClass, "GetGenericTypeDefinition", 0);
             MonoReflectionType* result = (MonoReflectionType*)mono_runtime_invoke(defMethod, typeObj, NULL, NULL);
             MonoClass* resultClass = mono_type_get_class(mono_reflection_type_get_type(result));

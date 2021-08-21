@@ -32,10 +32,9 @@ namespace engine
         {
             MonoDomain* domain;
             MonoImage* scripting;
-            MonoImage* mscorlib;
             std::vector<ScriptClassInfo> classInfoList;
 
-            inline ScriptSystemInfo() : domain{ nullptr }, scripting{ nullptr }, mscorlib{ nullptr } {};
+            inline ScriptSystemInfo() : domain{ nullptr }, scripting{ nullptr } {};
 
             /*********************************************************************************//*!
             \brief      initializes all script system info using the dll at the indicated path for later use

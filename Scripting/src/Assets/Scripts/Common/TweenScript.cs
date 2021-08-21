@@ -34,8 +34,15 @@ public class TweenScript : MonoBehaviour
     //public TweenValue[] tweenArray = new TweenValue[5];
     //public TweenValue testValue;
 
+    private List<TweenValue> temp;
+
     private void Awake()
     {
-
+        //int zero = 0;
+        //int i = 5 / zero;
+        //temp.Add(new TweenValue());
+        //TweenValue value = null;
+        //value.duration = 0;
+        //tweenList.Add(new TweenValue());
     }
 }
