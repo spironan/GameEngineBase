@@ -181,11 +181,13 @@ void HierarchyView::ListHierarchy()
 		ImGui::EndPopup();
 	}
 
-	ImGui::EndChild();
-
-	SetParent(root);
 	KeyCopy(ObjectGroup::s_FocusedObject);
 	KeyPaste();
+
+	ImGui::EndChild();//end of child window
+
+	SetParent(root);
+
 }
 
 void HierarchyView::ListFiltered()
@@ -247,7 +249,7 @@ void HierarchyView::ListFiltered()
 		--treePop;
 		ImGui::TreePop();
 	}
-
+	
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
 		ImGui::OpenPopup("HierarchyViewPopUp");
 	if (ImGui::BeginPopup("HierarchyViewPopUp"))
@@ -333,28 +335,49 @@ bool HierarchyView::SetParent(engine::Entity entt)
 	}
 	return false;
 }
-
+/*********************************************************************************//*!
+\brief
+Copy with keypress check
+ 
+\param    ent
+for the function Copy()
+*//**********************************************************************************/
 void HierarchyView::KeyCopy(engine::Entity ent)
 {
-	if (ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::C)))
+	if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::C)))
 	{
 		Copy(ent);
 	}
 }
+/*********************************************************************************//*!
+\brief    
+ Does Paste with keypress checks
 
+*//**********************************************************************************/
 void HierarchyView::KeyPaste()
 {
-	if (ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::V)))
+
+	if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::V)))
 	{
 		Paste();
 	}
 }
-
+/*********************************************************************************//*!
+\brief    
+Store m_CopyTarget
+ 
+\param    entt
+For m_CopyTarget
+*//**********************************************************************************/
 void HierarchyView::Copy(engine::Entity entt)
 {
 	m_CopyTarget = entt;
 }
+/*********************************************************************************//*!
+\brief    
+ Copies and Create a new Enitity base on (m_copyTarget)
 
+*//**********************************************************************************/
 void HierarchyView::Paste()
 {
 	if (m_CopyTarget == 0)
@@ -367,14 +390,15 @@ void HierarchyView::Paste()
 	parent.Name() = targetGameObject.Name() + "-Copy";
 	parent.ActiveSelf() = static_cast<bool>(targetGameObject.ActiveSelf());
 
-	//update this once the function is done TODO
 	auto& trans = parent.GetComponent<engine::Transform3D>();
 	auto& targetTransfom = targetGameObject.GetComponent<engine::Transform3D>();
+	//update this once the function is done TODO
+	//trans.CopyComponent(targetTransfom);
 	trans.SetPosition(targetTransfom.GetPosition());
 	trans.SetScale(targetTransfom.GetScale());
 	trans.SetRotationAngle(targetTransfom.GetRotationAngle());
 	trans.SetRotationAxis(targetTransfom.GetRotationAxis());
-	/** *********************************************************** */
+
 
 	if (childcount == 0)
 		return;
@@ -382,7 +406,12 @@ void HierarchyView::Paste()
 	auto& tranformList = static_cast<engine::GameObject>(m_CopyTarget).GetChildren();
 
 	engine::Entity prevParent = parent;
-	std::vector<std::pair<engine::Entity, engine::Entity>> hierarchy;
+	//the 2 hierarchy stacks
+	std::vector<engine::Entity> hierarchy;
+	hierarchy.resize(childcount);
+	std::vector<engine::Entity> currentHierarchy;
+	currentHierarchy.resize(childcount);
+
 	engine::Entity entID = engine::SceneManager::GetActiveRoot();
 	for (size_t iter = 0; iter < tranformList.size(); ++iter)//increase iter by 1 to skip the parent node
 	{
@@ -393,9 +422,10 @@ void HierarchyView::Paste()
 		child.Name() = copyObject.Name();
 		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
 
-		{
+		{//TODO fix this once its done
 			engine::Transform3D & newTrans = static_cast<engine::GameObject>(tranformList[iter]).GetComponent<engine::Transform3D>();
 			engine::Transform3D& childTrans = child.GetComponent<engine::Transform3D>();
+			//childTrans.CopyComponent(newTrans);
 			childTrans.SetPosition(newTrans.GetPosition());
 			childTrans.SetScale(newTrans.GetScale());
 			childTrans.SetRotationAngle(newTrans.GetRotationAngle());
@@ -403,29 +433,26 @@ void HierarchyView::Paste()
 		}
 
 		const engine::Entity parentid = copyTransform.GetParentId();
-		while (true)
+
 		{
-			if (hierarchy.empty())
+			auto& iter = std::find(hierarchy.begin(),hierarchy.end(),parentid);
+			if (iter != hierarchy.end())//means there is a result
 			{
-				prevParent = parent;
-				break;
+				hierarchy.erase(++iter, hierarchy.end());
+				currentHierarchy.resize(hierarchy.size());
+				prevParent = currentHierarchy.back();
 			}
 			else
 			{
-				if (parentid != hierarchy.back().second)
-					hierarchy.pop_back();
-				else
-				{
-					prevParent = hierarchy.back().first;
-					break;
-				}
+				prevParent = parent;
 			}
 		}
 
 		static_cast<engine::GameObject>(prevParent).AddChild(child);
 		if (copyTransform.GetChildCount())
 		{
-			hierarchy.emplace_back(child.GetID(), copyTransform.GetID());
+			hierarchy.emplace_back(copyTransform.GetID());
+			currentHierarchy.emplace_back(child.GetID());
 			prevParent = child;
 		}
 		--childcount;
@@ -433,6 +460,7 @@ void HierarchyView::Paste()
 			break;
 	}
 	engine::SceneManager::GetActiveRoot().AddChild(parent);
+
 }
 
 
