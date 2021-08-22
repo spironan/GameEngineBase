@@ -14,13 +14,11 @@ Technology is prohibited.
 
 #pragma once
 
-#include <Engine.h>
+#include "UtilityLayers/SceneBaseLayer.h"
 
-class ScriptingTestLayer : public engine::Layer
+class ScriptingTestLayer : public SceneBaseLayer
 {
 private:
-    engine::World& m_world;
-    engine::GameObject m_root;
     std::vector<engine::GameObject> goList;
     bool isPlaying;
 
@@ -90,13 +88,16 @@ private:
     }
 
 public:
-    ScriptingTestLayer() :
-        Layer{ "ScriptingTestLayer" },
-        m_world{ engine::WorldManager::CreateWorld() },
-        isPlaying{ false }
+    ScriptingTestLayer() 
+        : SceneBaseLayer{ "ScriptingTestLayer" }
+        //, m_scene.GetWorld(){ engine::WorldManager::CreateWorld() }
+        , isPlaying{ false }
     {
-        auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
-        auto& ss = m_world.RegisterSystem<engine::ScriptSystem>();
+    }
+
+    void Init() final override
+    {
+        auto& ss = m_scene.GetWorld().RegisterSystem<engine::ScriptSystem>();
         ss->Compile();
 
         //m_root.AddComponent<engine::Scripting>();
@@ -110,7 +111,7 @@ public:
         }
         std::string line;
         engine::GameObject m_obj{};
-        m_root.AddChild(m_obj);
+        RootGameObject().AddChild(m_obj);
         goList.emplace_back(m_obj);
         engine::Scripting* entityScripting = &(goList[0].AddComponent<engine::Scripting>());
         engine::ScriptInfo* scriptInfo = nullptr;
@@ -123,7 +124,7 @@ public:
             if (line == "OBJECTEND")
             {
                 engine::GameObject new_obj{};
-                m_root.AddChild(new_obj);
+                RootGameObject().AddChild(new_obj);
                 goList.push_back(new_obj);
                 entityScripting = &(goList[goList.size() - 1].AddComponent<engine::Scripting>());
                 scriptInfo = nullptr;
@@ -219,25 +220,25 @@ public:
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
-        engine::WorldManager::SetActiveWorld(m_world.GetID());
-        m_world.GetSystem<engine::TransformSystem>()->Update();
-        m_world.GetSystem<engine::ScriptSystem>()->InvokeFunctionAll("Update");
+        engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
+        m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
+        m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->InvokeFunctionAll("Update");
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::SPACE))
         {
-            m_world.GetSystem<engine::ScriptSystem>()->Compile();
+            m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->Compile();
         }
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::ENTER))
         {
             if (!isPlaying)
             {
-                m_world.GetSystem<engine::ScriptSystem>()->StartPlay();
+                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->StartPlay();
                 isPlaying = true;
             }
             else
             {
-                m_world.GetSystem<engine::ScriptSystem>()->StopPlay();
+                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->StopPlay();
                 isPlaying = false;
             }
         }
@@ -257,7 +258,7 @@ public:
             if (goList.size() <= 0)
             {
                 engine::GameObject new_obj{};
-                m_root.AddChild(new_obj);
+                RootGameObject().AddChild(new_obj);
                 goList.push_back(new_obj);
                 entityScripting = &(goList[0].AddComponent<engine::Scripting>());
             }
@@ -417,9 +418,9 @@ public:
         if (engine::Input::IsKeyPressed(engine::KeyCode::TAB))
         {
             if (isPlaying)
-                m_world.GetSystem<engine::ScriptSystem>()->DebugPrint();
+                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->DebugPrint();
             else
-                m_world.GetSystem<engine::ScriptSystem>()->DebugPrintInfo();
+                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->DebugPrintInfo();
         }
     }
 };
