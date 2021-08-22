@@ -27,6 +27,9 @@ Technology is prohibited.
 
 #include "Engine/ImGui/ImGuiLayer.h"
 
+#include <deque>
+#include <queue>
+
 //forward declare main
 int main(int argc, char** argv);
 
@@ -89,7 +92,7 @@ namespace engine
 
          @return    returns a generic window reference
         *//*****************************************************************************/
-        Window& GetWindow() { return *m_window; }
+        Window& GetWindow() const { return *m_window; }
         /****************************************************************************//*!
          @brief     Retrieve the command line arguments passed to the application.
 
@@ -128,11 +131,16 @@ namespace engine
         *//*****************************************************************************/
         void PushOverlay(Layer* overlay);
 
+        void PopLayer(Layer* layer);
+        void PopOverlay(Layer* overlay);
+
     private:
         /****************************************************************************//*!
          @brief     Describes the applications core run loop
         *//*****************************************************************************/
         void Run();
+
+        void ProcessLayers();
 
         bool OnWindowClose(WindowCloseEvent& e);
 
@@ -144,6 +152,11 @@ namespace engine
         ImGuiLayer* m_imGuiLayer;
         LayerStack m_layerStack;
         
+        std::queue<Layer*> m_addLayerQueue;
+        std::queue<Layer*> m_addOverlayQueue;
+        std::queue<Layer*> m_removeLayerQueue;
+        std::queue<Layer*> m_removeOverlayQueue;
+
         static Application* s_instance;
         friend int ::main(int argc, char** argv);
     };

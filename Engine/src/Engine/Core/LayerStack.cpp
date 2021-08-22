@@ -30,11 +30,13 @@ namespace engine
     void LayerStack::PushLayer(Layer* layer)
     {
         m_layers.emplace(m_layers.begin() + m_layerInsertIndex++, layer);
+        layer->OnAttach();
     }
 
     void LayerStack::PushOverlay(Layer* overlay)
     {
         m_layers.emplace_back(overlay);
+        overlay->OnAttach();
     }
 
     void LayerStack::PopLayer(Layer* layer)

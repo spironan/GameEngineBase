@@ -49,7 +49,9 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         virtual void OnAttach() {}
         virtual void OnDetach() {}
+        virtual void OnUpdateBegin(Timestep dt) {}
         virtual void OnUpdate(Timestep dt) {}
+        virtual void OnUpdateEnd(Timestep dt) {}
         virtual void OnImGuiRender() {}
         virtual void OnEvent(Event& event) {}
 

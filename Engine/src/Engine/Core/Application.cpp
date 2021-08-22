@@ -39,7 +39,8 @@ namespace engine
 
         //m_imGuiLayer = new ImGuiLayer();
         m_imGuiLayer = MemoryManager::NewOnStack<ImGuiLayer>();
-        PushOverlay(m_imGuiLayer);
+        m_layerStack.PushOverlay(m_imGuiLayer);
+        m_imGuiLayer->OnAttach();
 
         /*Initialize Input Management*/
         Input::Init();
@@ -254,6 +255,9 @@ namespace engine
         {
             ENGINE_PROFILE_SCOPE("Runloop");
 
+            // Process all adding and removing of layers
+            ProcessLayers();
+
             /*Calculate dt*/
             Timestep dt{ m_window->CalcDeltaTime() };
 
@@ -273,7 +277,9 @@ namespace engine
 
                 for (Layer* layer : m_layerStack)
                 {
+                    layer->OnUpdateBegin(dt);
                     layer->OnUpdate(dt);
+                    layer->OnUpdateEnd(dt);
                 }
             }
 
@@ -291,6 +297,7 @@ namespace engine
 
             m_window->SwapBuffers();
             //m_window->OnUpdate(dt);
+
         }
     }
 
@@ -321,18 +328,55 @@ namespace engine
 
     void Application::PushLayer(Layer* layer)
     {
-        ENGINE_PROFILE_FUNCTION();
-
-        m_layerStack.PushLayer(layer);
-        layer->OnAttach();
+        m_addLayerQueue.emplace(layer);
     }
 
     void Application::PushOverlay(Layer* overlay)
     {
+        m_addOverlayQueue.emplace(overlay);
+    }
+
+    void Application::PopLayer(Layer* layer)
+    {
+        m_removeLayerQueue.emplace(layer);
+    }
+
+    void Application::PopOverlay(Layer* overlay)
+    {
+        m_removeOverlayQueue.emplace(overlay);
+    }
+
+    void Application::ProcessLayers()
+    {
         ENGINE_PROFILE_FUNCTION();
 
-        m_layerStack.PushOverlay(overlay);
-        overlay->OnAttach();
+        while (!m_removeLayerQueue.empty())
+        {
+            auto& layer = m_removeLayerQueue.front();
+            m_layerStack.PopLayer(layer);
+            m_removeLayerQueue.pop();
+        }
+
+        while (!m_removeOverlayQueue.empty())
+        {
+            auto& layer = m_removeOverlayQueue.front();
+            m_layerStack.PopOverlay(layer);
+            m_removeOverlayQueue.pop();
+        }
+
+        while (!m_addLayerQueue.empty())
+        {
+            auto& layer = m_addLayerQueue.front();
+            m_layerStack.PushLayer(layer);
+            m_addLayerQueue.pop();
+        }
+
+        while (!m_addOverlayQueue.empty())
+        {
+            auto& layer = m_addOverlayQueue.front();
+            m_layerStack.PushOverlay(layer);
+            m_addOverlayQueue.pop();
+        }
     }
 
     bool Application::OnWindowClose(WindowCloseEvent& e)
