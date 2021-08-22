@@ -13,22 +13,23 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include <Engine.h>
+#include "UtilityLayers/SceneBaseLayer.h"
 
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components
             and Systems Functionality with ECS and Gameobjects.
 *//*****************************************************************************/
-class GameObjectTestLayer : public engine::Layer
+class GameObjectTestLayer : public SceneBaseLayer
 {
-private:
-    engine::World& m_world;
 
 public:
 
     GameObjectTestLayer()
-        : Layer{ "GameObjectTestLayer" }
-        , m_world{ engine::WorldManager::CreateWorld() }
+        : SceneBaseLayer{ "GameObjectTestLayer" }
+    {
+    }
+
+    void Init() final override
     {
         {
             // Creates an Entity : should not be allowed
@@ -48,7 +49,7 @@ public:
 
             //Copy Assignment
             engine::GameObject go3 = go1;
-            
+
             //Move Assignment
             engine::GameObject go4 = std::move(go1);
 
@@ -80,7 +81,6 @@ public:
         // Create Another GameObject
         engine::GameObject test{};
     }
-
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
