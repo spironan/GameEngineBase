@@ -13,55 +13,55 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include <Engine.h>
+#include "UtilityLayers/SceneBaseLayer.h"
 
-class PhysicsTestLayer : public engine::Layer
+class PhysicsTestLayer final : public SceneBaseLayer
 {
 private:
-    engine::World& m_world;
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
     int width{}, height{};
-    engine::GameObject m_root;
 
     glm::vec2 upperbounds, lowerbounds;
 public:
 
     PhysicsTestLayer()
-        : Layer{ "PhysicsTestLayer" }
-        , m_world{ engine::WorldManager::CreateWorld() }
-        , upperbounds { 200,  200 }
-        , lowerbounds {-200, -200 }
+        : SceneBaseLayer{ "PhysicsTestLayer" }
+        , upperbounds{ 200,  200 }
+        , lowerbounds{ -200, -200 }
+    {
+    }
+
+    void Init() final override
     {
         engine::Window& x = engine::Application::Get().GetWindow();
         width = x.GetSize().first;
         height = x.GetSize().second;
         cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
-        auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
-        auto& rs = m_world.RegisterSystem<engine::Renderer2DSystem>(cam);
-        auto& ps = m_world.RegisterSystem<engine::PhysicsSystem>();
+        auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
+        auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();
 
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
 
-        m_root.Transform().Scale() = { 50.f, 50.f, 1.0f };
-        auto& pc = m_root.AddComponent<engine::RigidBody>();
-        pc.SetMass(100.f);
-        auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
+        auto& go = CreateGameObject();
+        go.Transform().Scale() = { 50.f, 50.f, 1.0f };
+        auto& rb = go.AddComponent<engine::RigidBody>();
+        rb.SetMass(100.f);
+        auto& rootSpr = go.AddComponent<engine::Sprite2D>();
         rootSpr.SetTexture(tex);
     }
 
-
     virtual void OnUpdate(engine::Timestep dt) override
     {
-        m_world.GetSystem<engine::TransformSystem>()->Update();
-        m_world.GetSystem<engine::PhysicsSystem>()->Update(dt);
+        engine::SceneManager::SetActiveScene(m_scene.GetID());
+        m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
+        m_scene.GetWorld().GetSystem<engine::PhysicsSystem>()->Update(dt);
         
         // transform objects
-        auto view = m_world.GetComponentView<engine::Transform3D>();
-        for (auto[transform] : view)
+        auto view = m_scene.GetWorld().GetComponentView<engine::Transform3D>();
+        for (auto& [transform] : view)
         {
-            //auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
             if (transform.Position().y < lowerbounds.y)
             {
                 transform.Position().y = upperbounds.y;
@@ -84,7 +84,7 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        m_world.GetSystem<engine::Renderer2DSystem>()->Update();
+        m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
     }
 
 };
