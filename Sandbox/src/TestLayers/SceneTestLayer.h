@@ -30,23 +30,36 @@ struct C
 {
     int i = 3;
 };
+
 class SceneTestLayer : public SceneBaseLayer
 {
 public:
 
     SceneTestLayer(std::string scene_path)
-        : SceneBaseLayer{ "SceneBaseLayer" },m_scene_path(scene_path)
+        : SceneBaseLayer{ "Scene Test Layer" }
+        , m_scene_path(scene_path)
     {
+    }
+
+    void Init() final override
+    {
+
         engine::GameObject testrootGO = RootGameObject();
-		testrootGO.Name() = "Scene";
+        testrootGO.Name() = "Scene";
         std::vector<engine::GameObject> entities;
 
-		Serializer::LoadWorld(scene_path);
+        Serializer::LoadWorld(m_scene_path);
     }
-	~SceneTestLayer()
-	{
-		Serializer::SaveWorld(m_scene_path);
-	}
+
+    void Exit() final override
+    {
+        Serializer::SaveWorld(m_scene_path);
+    }
+
+    /*~SceneTestLayer()
+    {
+    }*/
+
     virtual void OnUpdate(engine::Timestep dt) override
     {
         SceneBaseLayer::OnUpdate(dt);
@@ -57,5 +70,5 @@ public:
     }
 
 protected:
-	std::string m_scene_path;
+    std::string m_scene_path;
 };
