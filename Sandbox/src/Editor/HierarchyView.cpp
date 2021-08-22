@@ -59,6 +59,10 @@ void HierarchyView::HierarchyPopUp()
 	{
 		Paste();
 	}
+	if (ImGui::MenuItem("Rename", nullptr, nullptr, ObjectGroup::s_FocusedObject))
+	{
+		m_rename = true;
+	}
 	if (ImGui::MenuItem("Delete",nullptr,nullptr,ObjectGroup::s_FocusedObject))
 	{
 		static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Destroy();
@@ -411,7 +415,6 @@ void HierarchyView::Paste()
 	trans.SetRotationAngle(targetTransfom.GetRotationAngle());
 	trans.SetRotationAxis(targetTransfom.GetRotationAxis());
 
-
 	if (childcount == 0)
 		return;
 
@@ -488,7 +491,7 @@ void HierarchyView::Rename()
 		if (ImGui::InputText("##rename", m_Buffer, sizeof(m_Buffer), ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name() = m_Buffer;
-			m_Buffer[0] = '/0';
+			m_Buffer[0] = char('/0');//clear buffer
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
