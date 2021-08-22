@@ -27,26 +27,42 @@ protected:
 public:
 
     SceneBaseLayer(std::string scene_name)
-        : Layer{ "SceneBaseLayer" }
-        , m_scene{ engine::SceneManager::CreateScene(scene_name) }{
-        m_scene.GetWorld().RegisterSystem<engine::TransformSystem>();
-    
+        : Layer { scene_name }
+        , m_scene { engine::SceneManager::CreateScene(scene_name) }
+    {
     }
 
     ~SceneBaseLayer()
     {
+        //m_scene.Unload();
+    }
+
+    engine::Scene::ID_type GetID() const
+    {
+        return m_scene.GetID();
+    }
+
+    void OnAttach() final override
+    {
+        engine::SceneManager::SetActiveScene(m_scene.GetID());
+        m_scene.Load();
+        m_scene.GetWorld().RegisterSystem<engine::TransformSystem>();
+        Init();
+    }
+
+    void OnDetach() final override
+    {
+        //engine::SceneManager::SetActiveScene(m_scene.GetID()); -- guaranteed to be exiting correctly
+        Exit();
         m_scene.Unload();
     }
 
-    virtual void OnUpdate(engine::Timestep dt) override
-    {
-    }
-
-    virtual void OnImGuiRender() override
-    {
-    }
-
 protected:
+    
+    virtual void Init() { };
+
+    virtual void Exit() { };
+
     /*********************************************************************************//*!
     \brief    Create a gameobject from the scene
      

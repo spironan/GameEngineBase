@@ -25,9 +25,10 @@ namespace engine
 	class Scene
 	{
 		friend class SceneManager;
-	private:
+	public:
 		using ID_type = utility::StringHash::size_type;
 
+	private:
 
 		std::string m_filename{};
 		World* m_world = nullptr;
@@ -40,7 +41,9 @@ namespace engine
 		{
 			m_id = id;
 		}
+
 	public:
+
 		explicit Scene(std::string filename) : m_filename{ std::move(filename) } 
 		{ 
 
