@@ -14,14 +14,13 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include <Engine.h>
 #include "UtilityLayers/SceneBaseLayer.h"
 
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components 
             and Systems Functionality with ECS and Gameobjects.
 *//*****************************************************************************/
-class TransformTestLayer : public SceneBaseLayer
+class TransformTestLayer final : public SceneBaseLayer
 {
 private:
     std::vector<engine::GameObject> m_gos;
@@ -32,10 +31,27 @@ private:
 
     static constexpr float scaling = 50.f;
 
+    static constexpr float MOVESPEED = 30.f;
+    static constexpr float ROTATIONSPEED = 10.f;
+    static constexpr float SCALINGSPEED = 20.f;
+
+    void SelectNewTarget()
+    {
+        ++m_target;
+        if (m_target == m_gos.end())
+        {
+            m_target = m_gos.begin();
+        }
+    }
+
 public:
 
     TransformTestLayer() 
         : SceneBaseLayer{ "TransformTestLayer" }
+    {
+    }
+
+    void Init() final override
     {
         engine::Window& x = engine::Application::Get().GetWindow();
         int width = x.GetSize().first;
@@ -46,12 +62,12 @@ public:
 
         engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
         engine::TextureDatabase::AddTexture("ogre", tex);
-        
+
         /*auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
         rootSpr.SetTexture(tex);
         m_gos.emplace_back(m_root);*/
         //RootGameObject().Transform().Scale() = { scaling, scaling, 1.0f };
-        
+
         engine::GameObject m_child = CreateGameObject();
         m_child.Transform().Scale() = { scaling, scaling, 1.0f };
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
@@ -67,11 +83,11 @@ public:
             engine::GameObject ent = CreateGameObject();
 
             m_gos.emplace_back(ent);
-            
+
             ent.Transform().SetPosition({ 1, 1, 0.f });
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
             objSprite.SetTexture(tex);
-            
+
             //Nested Add child
             static_cast<engine::GameObject>(prev).AddChild(ent);
             prev = ent;
@@ -94,20 +110,6 @@ public:
         // set target to be controller too.
         m_target = m_controller + 1;
     }
-
-    
-    void SelectNewTarget()
-    {
-        ++m_target;
-        if (m_target == m_gos.end())
-        {
-            m_target = m_gos.begin();
-        }
-    }
-
-    static constexpr float MOVESPEED = 30.f;
-    static constexpr float ROTATIONSPEED = 10.f;
-    static constexpr float SCALINGSPEED = 20.f;
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
@@ -197,8 +199,9 @@ public:
     virtual void OnImGuiRender() override
     {
         m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
-        ImGui::Begin("OgreImage");
+        /*ImGui::Begin("OgreImage");
         ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("ogre").id, { 200.0f, 200.0f });
-        ImGui::End();
+        ImGui::End();*/
     }
+
 };
