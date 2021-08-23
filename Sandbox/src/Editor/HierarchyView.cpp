@@ -185,12 +185,14 @@ void HierarchyView::ListHierarchy()
 		HierarchyPopUp();
 		ImGui::EndPopup();
 	}
-
+	
 	KeyCopy(ObjectGroup::s_FocusedObject);
 	KeyPaste();
 	KeyRename();
 	ImGui::EndChild();//end of child window
 
+	if (ImGui::IsItemClicked()) // simple deselect function
+		ObjectGroup::s_FocusedObject = root;
 	SetParent(root);
 
 }
