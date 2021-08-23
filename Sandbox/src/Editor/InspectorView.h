@@ -19,6 +19,9 @@ private:
 	void AddComponentButton();
 	void ShowGameObjectDetails(engine::GameObject& object);
 
+	void ComponentAddButton(float x ,float y);
+
+
 	template<typename Component>
 	void ReadComponents(Component& component)
 	{
@@ -149,8 +152,23 @@ private:
 		ImGui::PopID();
 	}
 	
+	template<typename Component>
+	bool ComponentAddOptions(engine::GameObject& go)
+	{
+		rttr::type t = rttr::type::get<Component>();
+		bool selected = false;
+		ImGui::Selectable(t.get_name().c_str(), &selected);
+		if (selected)
+		{
+			go.AddComponent<Component>();
+			return true;
+		}
+		return false;
+	}
+
 private:
 	bool m_showReadOnly; //editor settings
 	bool m_docked;
+	bool m_addComponent;
 };
 

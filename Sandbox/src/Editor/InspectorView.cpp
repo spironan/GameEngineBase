@@ -8,10 +8,12 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/WorldManager.h"
+#include "Engine/Asset/AssetsManager.h"
+//components
 #include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/Transform/Transform3D.h"
-#include "Engine/Asset/AssetsManager.h"
-
+#include "Engine/Renderer/Sprite2D.h"
+#include "Engine/PhysicsCollision/RigidBody.h"
 //libs
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -20,7 +22,7 @@
 
 using namespace rttr_type_ID;
 
-InspectorView::InspectorView() :m_showReadOnly{ false },m_docked {false}
+InspectorView::InspectorView() :m_showReadOnly{ false },m_docked {false},m_addComponent{false}
 {
 }
 void InspectorView::Show()
@@ -35,10 +37,13 @@ void InspectorView::Show()
 				m_docked = docknode->LocalFlags;
 			if(ImGui::MenuItem("Lock Window",nullptr,m_docked, docknode))
 			{
-				if (docknode && docknode->LocalFlags == 0)
-					docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
-				else
-					docknode->LocalFlags = 0;
+				if (docknode)
+				{
+					if (docknode->LocalFlags == 0)
+						docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
+					else
+						docknode->LocalFlags = 0;
+				}
 			}
 		}
 		if (ImGui::MenuItem("Show ReadOnly",nullptr,m_showReadOnly))
@@ -73,22 +78,19 @@ void InspectorView::Show()
 
 void InspectorView::AddComponentButton()
 {
-	static bool pressed = false;
 	static const ImVec2 buttonSize = { 150,30 };
 	ImGui::NewLine();
 	ImGui::SameLine((ImGui::GetContentRegionAvail().x - buttonSize.x) * 0.5f);
 	if (ImGui::Button("Add Component",buttonSize))
 	{
-		pressed = !pressed;
+		m_addComponent = !m_addComponent;
 	}
-	if (pressed)
+	if (m_addComponent)
 	{
 		ImGui::NewLine();
 		ImGui::SameLine((ImGui::GetContentRegionAvail().x - buttonSize.x) * 0.5f);
+		ComponentAddButton(buttonSize.x, buttonSize.y);
 
-		ImGui::BeginListBox("Component", { buttonSize.x ,0 });
-
-		ImGui::EndListBox();
 	}
 }
 
@@ -125,5 +127,21 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	}
 	ImGui::EndGroup();
 	ImGui::Separator();
+}
+
+void InspectorView::ComponentAddButton(float x ,float y)
+{
+	if (ImGui::BeginListBox("Component", { x ,0 }))
+	{
+		engine::GameObject go = ObjectGroup::s_FocusedObject;
+		bool AddComponent = false;
+		AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+		AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
+		AddComponent |= ComponentAddOptions<engine::RigidBody>(go);
+		if (AddComponent)
+			m_addComponent = false;
+		ImGui::EndListBox();
+	}
+	
 }
 
