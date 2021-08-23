@@ -7,14 +7,19 @@ namespace Ouroboros
 {
     public class Component
     {
-        private GameObject _gameObject = null;
+        private GameObject m_gameObject = null;
 
         public GameObject gameObject
         {
             get
             {
-                return _gameObject;
+                return m_gameObject;
             }
+        }
+
+        protected Component()
+        {
+
         }
     }
 }

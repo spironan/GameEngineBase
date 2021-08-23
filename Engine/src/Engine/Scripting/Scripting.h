@@ -47,6 +47,58 @@ namespace engine
         Scripting& operator=(Scripting&&) = default;
 
         /*-----------------------------------------------------------------------------*/
+        /* ECS Component Functions                                                     */
+        /*-----------------------------------------------------------------------------*/
+
+        /*********************************************************************************//*!
+        \brief      creates and attaches a new ECS component C# interface to the GameObject
+
+        \warning    this function should only be called during play mode as this actually
+                    creates an instance of an interface in C# side, which will break if
+                    a recompile is triggered
+
+        \note       this function does not add the actual ECS component itself
+
+        \param      name_space
+                the namespace of the desired component interface (nested namespaces separated by '.')
+        \param      name
+                the name of the desired component interface (nested classes won't work)
+
+        \return     the IntPtr to the newly created component interface
+        *//**********************************************************************************/
+        uint32_t AddComponentInterface(const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      gets the ECS Component's C# interface from the GameObject, if any
+
+        \warning    this function should only be called during play mode as component interface instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \param      name_space
+                the namespace of the desired component interface (nested namespaces separated by '.')
+        \param      name
+                the name of the desired component interface (nested classes won't work)
+
+        \return     the IntPtr to the desired component interface
+        *//**********************************************************************************/
+        uint32_t GetComponentInterface(const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      deletes and removes an ECS component C# interface from the GameObject, if any
+
+        \warning    this function should only be called during play mode as component interface instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \note       this function does not remove the actual ECS component itself
+
+        \param      name_space
+                the namespace of the desired interface (nested namespaces separated by '.')
+        \param      name
+                the name of the desired interface (nested classes won't work)
+        *//**********************************************************************************/
+        void RemoveComponentInterface(const char* name_space, const char* name);
+
+        /*-----------------------------------------------------------------------------*/
         /* Script Functions                                                            */
         /*-----------------------------------------------------------------------------*/
 
@@ -229,6 +281,7 @@ namespace engine
 
     private:
         uint32_t gameObjPtr;
+        std::vector<uint32_t> componentList;
         std::vector<uint32_t> scriptList;
         std::vector<ScriptInfo> scriptInfoList;
     };
@@ -239,13 +292,63 @@ namespace engine
     extern "C"
     {
         /*********************************************************************************//*!
+        \brief      gets the name of a GameObject specified by its entity id
+
+        \note       Mainly used for C# side calling
+
+        \param      id
+                the entity id of the target GameObject
+
+        \return     the IntPtr to the newly created MonoString (C# string) containing the name
+        *//**********************************************************************************/
+        __declspec(dllexport) uint32_t GameObject_GetName(int id);
+
+        /*********************************************************************************//*!
+        \brief      sets the name of a GameObject specified by its entity id
+
+        \note       Mainly used for C# side calling
+
+        \param      id
+                the entity id of the target GameObject
+
+        \param      newName
+                the GameObject's new name
+        *//**********************************************************************************/
+        __declspec(dllexport) void GameObject_SetName(int id, const char* newName);
+
+        /*********************************************************************************//*!
+        \brief      gets the active state of a GameObject specified by its entity id
+
+        \note       Mainly used for C# side calling
+
+        \param      id
+                the entity id of the target GameObject
+
+        \return     true if it is active, else false
+        *//**********************************************************************************/
+        __declspec(dllexport) bool GameObject_GetActive(int id);
+
+        /*********************************************************************************//*!
+        \brief      sets the active state of a GameObject specified by its entity id
+
+        \note       Mainly used for C# side calling
+
+        \param      id
+                the entity id of the target GameObject
+
+        \param     activeSelf
+                the desired active state of the GameObject
+        *//**********************************************************************************/
+        __declspec(dllexport) void GameObject_SetActive(int id, bool value);
+
+        /*********************************************************************************//*!
         \brief      creates and attaches a new script instance of a given C# class to a specific GameObject.
-                    This function's main purpose is to expose the Scripting component's 
-                    AddScript function to the C# side
 
         \warning    this function should only be called during play mode as this actually
                     creates an instance of a script in C# side, which will break if
                     a recompile is triggered
+
+        \note       Mainly used for C# side calling
 
         \param      id
                 the entity id of the target GameObject
@@ -260,12 +363,12 @@ namespace engine
 
         /*********************************************************************************//*!
         \brief      gets a script instance of a given C# class from the GameObject, if any.
-                    This function's main purpose is to expose the Scripting component's
-                    GetScript function to the C# side
 
         \warning    this function should only be called during play mode as script instances
                     are only created during play mode, since it will break if a recompile is triggered
         
+        \note       Mainly used for C# side calling
+
         \param      id
                 the entity id of the target GameObject
         \param      name_space
@@ -279,11 +382,11 @@ namespace engine
 
         /*********************************************************************************//*!
         \brief      deletes and removes a script instance of a given C# class from the GameObject, if any.
-                    This function's main purpose is to expose the Scripting component's
-                    RemoveScript function to the C# side
 
         \warning    this function should only be called during play mode as script instances
                     are only created during play mode, since it will break if a recompile is triggered
+
+        \note       Mainly used for C# side calling
 
         \param      id
                 the entity id of the target GameObject
@@ -293,5 +396,63 @@ namespace engine
                 the name of the desired script (nested classes won't work)
         *//**********************************************************************************/
         __declspec(dllexport) void RemoveScript(int id, const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      creates and attaches a new ECS component and its corresponding C# interface
+                    to a specific GameObject.
+
+        \warning    this function should only be called during play mode as this actually
+                    creates an instance of an interface in C# side, which will break if
+                    a recompile is triggered
+
+        \note       Mainly used for C# side calling
+
+        \param      id
+                the entity id of the target GameObject
+        \param      name_space
+                the namespace of the desired ECS Component's C# interface (nested namespaces separated by '.')
+        \param      name
+                the name of the desired ECS Component's C# interface (nested classes won't work)
+
+        \return     the IntPtr to the newly created component interface
+        *//**********************************************************************************/
+        __declspec(dllexport) uint32_t AddComponentFromScript(int id, const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      gets the ECS Component's C# interface from the GameObject, if any
+
+        \warning    this function should only be called during play mode as component interface instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \note       Mainly used for C# side calling
+
+        \param      id
+                the entity id of the target GameObject
+        \param      name_space
+                the namespace of the desired component interface (nested namespaces separated by '.')
+        \param      name
+                the name of the desired component interface (nested classes won't work)
+
+        \return     the IntPtr to the desired component interface
+        *//**********************************************************************************/
+        __declspec(dllexport) uint32_t GetComponentFromScript(int id, const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      deletes and removes an ECS component and its corresponding C# interface
+                    from the GameObject, if any
+
+        \warning    this function should only be called during play mode as component interface instances
+                    are only created during play mode, since it will break if a recompile is triggered
+        
+        \note       Mainly used for C# side calling
+
+        \param      id
+                the entity id of the target GameObject
+        \param      name_space
+                the namespace of the desired ECS Component's C# interface (nested namespaces separated by '.')
+        \param      name
+                the name of the desired ECS Component's C# interface (nested classes won't work)
+        *//**********************************************************************************/
+        __declspec(dllexport) void RemoveComponentFromScript(int id, const char* name_space, const char* name);
     }
 }

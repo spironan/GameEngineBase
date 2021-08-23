@@ -145,7 +145,7 @@ namespace engine
 
         // load all system info for later use
         LOG_ENGINE_TRACE("Script Compiling Successful");
-        ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str());
+        ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str(), componentMap);
     }
 
     bool ScriptSystem::IsSetUp()
@@ -168,6 +168,16 @@ namespace engine
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
             scripting.SetUpPlay();
+            for (auto const& component : componentMap)
+            {
+                if (component.second.Has(scripting.GetEntity()))
+                {
+                    std::string::size_type separator = component.first.find_last_of('.');
+                    std::string name = component.first.substr(separator + 1, component.first.size() - separator - 1);
+                    std::string name_space = component.first.substr(0, separator);
+                    scripting.AddComponentInterface(name_space.c_str(), name.c_str());
+                }
+            }
         }
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {

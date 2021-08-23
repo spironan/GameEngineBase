@@ -7,6 +7,9 @@ namespace Ouroboros
 {
     public class MonoBehaviour : Component
     {
+        protected MonoBehaviour()
+        {
 
+        }
     }
 }

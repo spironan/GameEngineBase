@@ -17,6 +17,7 @@ Technology is prohibited.
 #include "ScriptUtility.h"
 
 #include "Engine/ECS/WorldManager.h"
+#include "Engine/ECS/GameObjectComponent.h"
 
 namespace engine
 {
@@ -247,7 +248,7 @@ namespace engine
 
                     if (fieldValue != nullptr)
                     {
-                        MonoClassField* idField = mono_class_get_field_from_name(typeClass, "instanceID");
+                        MonoClassField* idField = mono_class_get_field_from_name(typeClass, "m_instanceID");
                         int instanceID = -1;
                         mono_field_get_value(fieldValue, idField, &instanceID);
                         std::cout << "GAMEOBJECT " << instanceID << std::endl;
@@ -265,12 +266,12 @@ namespace engine
 
                     if (fieldValue != nullptr)
                     {
-                        MonoClassField* goField = mono_class_get_field_from_name(typeClass, "_gameObject");
+                        MonoClassField* goField = mono_class_get_field_from_name(typeClass, "m_gameObject");
                         //std::cout << mono_field_get_name(goField);
                         MonoObject* go = nullptr;
                         mono_field_get_value(fieldValue, goField, &go);
                         //std::cout << mono_class_get_name(mono_object_get_class(go));
-                        MonoClassField* idField = mono_class_get_field_from_name(mono_object_get_class(go), "instanceID");
+                        MonoClassField* idField = mono_class_get_field_from_name(mono_object_get_class(go), "m_instanceID");
                         int instanceID = -1;
                         mono_field_get_value(go, idField, &instanceID);
                         std::cout << "GAMEOBJECT " << instanceID << std::endl;
@@ -420,6 +421,50 @@ namespace engine
     }
 
     /*-----------------------------------------------------------------------------*/
+    /* ECS Component Functions                                                     */
+    /*-----------------------------------------------------------------------------*/
+    uint32_t Scripting::AddComponentInterface(const char* name_space, const char* name)
+    {
+        // create Component interface
+        MonoClass* compClass = ScriptUtility::GetMonoClass(name_space, name);
+        MonoObject* component = ScriptUtility::MonoObjectNew(compClass);
+        uint32_t componentPtr = mono_gchandle_new(component, false);
+        mono_runtime_object_init(component);
+
+        // set Component's gameObject
+        MonoClassField* objField = mono_class_get_field_from_name(ScriptUtility::GetTransformMonoClass(), "m_gameObject");
+        MonoObject* gameObject = mono_gchandle_get_target(gameObjPtr);
+        mono_field_set_value(component, objField, gameObject);
+
+        // store ptr in componentList
+        size_t compID = ScriptUtility::GetRegisteredComponentID(mono_class_get_type(compClass));
+        if (compID >= componentList.size())
+            componentList.resize(compID + 1);
+        componentList[compID] = componentPtr;
+
+        return componentPtr;
+    }
+
+    uint32_t Scripting::GetComponentInterface(const char* name_space, const char* name)
+    {
+        MonoClass* compClass = ScriptUtility::GetMonoClass(name_space, name);
+        size_t compID = ScriptUtility::GetRegisteredComponentID(mono_class_get_type(compClass));
+        if (compID >= componentList.size())
+            return 0;
+        return componentList[compID];
+    }
+
+    void Scripting::RemoveComponentInterface(const char* name_space, const char* name)
+    {
+        MonoClass* compClass = ScriptUtility::GetMonoClass(name_space, name);
+        size_t compID = ScriptUtility::GetRegisteredComponentID(mono_class_get_type(compClass));
+        if (compID >= componentList.size() || componentList[compID] == 0)
+            return;
+        mono_gchandle_free(componentList[compID]);
+        componentList[compID] = 0;
+    }
+
+    /*-----------------------------------------------------------------------------*/
     /* Script Functions                                                            */
     /*-----------------------------------------------------------------------------*/
     uint32_t Scripting::AddScript(const char* name_space, const char* name, bool callAwake)
@@ -437,7 +482,7 @@ namespace engine
         mono_runtime_object_init(script);
 
         // set gameObject field
-        MonoClassField* gameObjectField = mono_class_get_field_from_name(klass, "_gameObject");
+        MonoClassField* gameObjectField = mono_class_get_field_from_name(klass, "m_gameObject");
         MonoObject* gameObject = mono_gchandle_get_target(gameObjPtr);
         mono_field_set_value(script, gameObjectField, gameObject);
 
@@ -540,14 +585,21 @@ namespace engine
         MonoClass* _class = ScriptUtility::GetGameObjectMonoClass();
         MonoObject* gameObject = ScriptUtility::MonoObjectNew(_class);
         gameObjPtr = mono_gchandle_new(gameObject, false);
-
-        // call default constructor
         mono_runtime_object_init(gameObject);
 
         // set GameObject instance id
-        MonoClassField* idField = mono_class_get_field_from_name(_class, "instanceID");
+        MonoClassField* idField = mono_class_get_field_from_name(_class, "m_instanceID");
         int id = GetEntity();
         mono_field_set_value(gameObject, idField, &id);
+
+        // create Transform interface
+        MonoClass* transformClass = ScriptUtility::GetTransformMonoClass();
+        uint32_t transformPtr = AddComponentInterface(mono_class_get_namespace(transformClass), mono_class_get_name(transformClass));
+        MonoObject* transform = mono_gchandle_get_target(transformPtr);
+
+        // set GameObject's transform
+        MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_transform");
+        mono_field_set_value(gameObject, transformField, transform);
 
         // create all script instances
         for (ScriptInfo const& scriptInfo : scriptInfoList)
@@ -586,6 +638,13 @@ namespace engine
             mono_gchandle_free(scriptList[i]);
         }
         scriptList.clear();
+        for (unsigned int i = 0; i < componentList.size(); ++i)
+        {
+            if (componentList[i] == 0)
+                continue;
+            mono_gchandle_free(componentList[i]);
+        }
+        componentList.clear();
         mono_gchandle_free(gameObjPtr);
         gameObjPtr = 0;
     }
@@ -605,7 +664,7 @@ namespace engine
             //std::cout << "GAMEOBJECT " << m_entity << " " << scriptInfoList[i].classInfo.name << ": " << functionName << std::endl;
 
             MonoObject* exception = nullptr;
-            mono_runtime_invoke(method, script, NULL, (MonoObject**)&exception);
+            mono_runtime_invoke(method, script, NULL, &exception);
             if (exception)
             {
                 MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
@@ -664,18 +723,73 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Script Functions for C#                                                     */
     /*-----------------------------------------------------------------------------*/
+    uint32_t GameObject_GetName(int id)
+    {
+        std::string const& name = WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).Name;
+        MonoString* string = ScriptUtility::MonoStringNew(name.c_str());
+        return mono_gchandle_new((MonoObject*)string, false);
+    }
+
+    void GameObject_SetName(int id, const char* newName)
+    {
+        WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).Name = newName;
+    }
+
+    bool GameObject_GetActive(int id)
+    {
+        return WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).ActiveSelf;
+    }
+
+    void GameObject_SetActive(int id, bool value)
+    {
+        WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).ActiveSelf = value;
+    }
+
+
+
     uint32_t AddScript(int id, const char* name_space, const char* name)
     {
-        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(name_space, name);
+        return WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(name_space, name);
     }
 
     uint32_t GetScript(int id, const char* name_space, const char* name)
     {
-        return engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(name_space, name);
+        return WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(name_space, name);
     }
 
     void RemoveScript(int id, const char* name_space, const char* name)
     {
-        engine::WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(name_space, name);
+        WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(name_space, name);
+    }
+
+
+
+    uint32_t AddComponentFromScript(int id, const char* name_space, const char* name)
+    {
+        uint32_t currPtr = WorldManager::GetActiveWorld().GetComponent<Scripting>(id).GetComponentInterface(name_space, name);
+        if (currPtr != 0)
+            return currPtr;
+
+        MonoType* type = mono_class_get_type(ScriptUtility::GetMonoClass(name_space, name));
+        ScriptSystem::RegisteredComponent const& component = ScriptUtility::GetRegisteredComponent(type);
+        component.Add(id);
+        return WorldManager::GetActiveWorld().GetComponent<Scripting>(id).AddComponentInterface(name_space, name);
+    }
+
+    uint32_t GetComponentFromScript(int id, const char* name_space, const char* name)
+    {
+        return WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetComponentInterface(name_space, name);
+    }
+
+    void RemoveComponentFromScript(int id, const char* name_space, const char* name)
+    {
+        uint32_t currPtr = WorldManager::GetActiveWorld().GetComponent<Scripting>(id).GetComponentInterface(name_space, name);
+        if (currPtr == 0)
+            return;
+
+        MonoType* type = mono_class_get_type(ScriptUtility::GetMonoClass(name_space, name));
+        ScriptSystem::RegisteredComponent const& component = ScriptUtility::GetRegisteredComponent(type);
+        component.Remove(id);
+        WorldManager::GetActiveWorld().GetComponent<Scripting>(id).RemoveComponentInterface(name_space, name);
     }
 }

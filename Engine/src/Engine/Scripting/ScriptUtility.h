@@ -17,6 +17,7 @@ Technology is prohibited.
 #pragma once
 
 #include "ScriptInfo.h"
+#include "ScriptSystem.h"
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
@@ -33,6 +34,8 @@ namespace engine
             MonoDomain* domain;
             MonoImage* scripting;
             std::vector<ScriptClassInfo> classInfoList;
+            std::unordered_map<MonoType*, ScriptSystem::RegisteredComponent> componentMap;
+            std::unordered_map<MonoType*, size_t> componentIDMap;
 
             inline ScriptSystemInfo() : domain{ nullptr }, scripting{ nullptr } {};
 
@@ -43,7 +46,7 @@ namespace engine
                     the file path to the scripting dll
             
             *//**********************************************************************************/
-            void Initialize(const char* dllPath);
+            void Initialize(const char* dllPath, std::unordered_map<std::string, ScriptSystem::RegisteredComponent> const& refMap);
 
             /*********************************************************************************//*!
             \brief      Resets all current system info, usually used to enable recompiling
@@ -111,6 +114,13 @@ namespace engine
         MonoClass* GetBaseScriptMonoClass();
 
         /*********************************************************************************//*!
+        \brief      Helper function to get the pointer to the C# Transform interface class
+
+        \return     the pointer to the C# Transform MonoClass
+        *//**********************************************************************************/
+        MonoClass* GetTransformMonoClass();
+
+        /*********************************************************************************//*!
         \brief      Helper function to create a new instance of a given class in C# side
          
         \param      klass
@@ -129,6 +139,26 @@ namespace engine
         \return     the pointer to the newly created MonoString (C# string)
         *//**********************************************************************************/
         MonoString* MonoStringNew(const char* text);
+
+        /*********************************************************************************//*!
+        \brief      Helper function to get the ScriptSystem's RegisteredComponent by C# Type
+
+        \param      type
+                the C# type of the desired registered component
+
+        \return     the RegisteredComponent from ScriptSystem of the desired type
+        *//**********************************************************************************/
+        ScriptSystem::RegisteredComponent const& GetRegisteredComponent(MonoType* type);
+
+        /*********************************************************************************//*!
+        \brief      Helper function to get the index of the ScriptSystem's RegisteredComponent by C# Type
+
+        \param      type
+                the C# type of the desired registered component
+
+        \return     the index of the RegisteredComponent from ScriptSystem of the desired type
+        *//**********************************************************************************/
+        size_t GetRegisteredComponentID(MonoType* type);
 
         /*********************************************************************************//*!
         \brief      Helper function to check if a given C# class field is marked public

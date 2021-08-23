@@ -16,11 +16,15 @@ Technology is prohibited.
 
 #include "Engine/ECS/System.h"
 #include "Scripting.h"
+#include "Engine/ECS/WorldManager.h"
+
+#include <functional>
 
 namespace engine
 {
     class ScriptSystem final : public System
     {
+
     public:
         /*-----------------------------------------------------------------------------*/
         /* Constructors & Destructor                                                   */
@@ -44,6 +48,46 @@ namespace engine
         \return     true if it has been set up and is ready for use, else false
         *//**********************************************************************************/
         bool IsSetUp();
+
+        /*-----------------------------------------------------------------------------*/
+        /* ECS Components                                                              */
+        /*-----------------------------------------------------------------------------*/
+        
+        struct RegisteredComponent
+        {
+        public:
+            std::function<void(Entity)> Add;
+            std::function<bool(Entity)> Has;
+            std::function<void(Entity)> Remove;
+        };
+
+        /*********************************************************************************//*!
+        \brief      Registers an ECS Component with its corresponding C# interface class name
+                    to the ScriptSystem
+
+        \param      interfaceTypeName
+                the name of the C# interface type, with namespaces separated by '.'
+                (e.g. Ouroboros.Transform)
+        *//**********************************************************************************/
+        template<typename Component>
+        void RegisterComponent(std::string const& interfaceTypeName)
+        {
+            std::function<void(Entity)> add = [](Entity entity)
+            {
+                GameObject gameObject(entity);
+                gameObject.AddComponent<Component>();
+            };
+            std::function<bool(Entity)> has = [](Entity entity)
+            {
+                return WorldManager::GetActiveWorld().HasComponent<Component>(entity);
+            };
+            std::function<void(Entity)> remove = [](Entity entity)
+            {
+                WorldManager::GetActiveWorld().RemoveComponent<Component>(entity);
+            };
+            size_t id = componentMap.size();
+            componentMap.insert({ interfaceTypeName, { add, has, remove } });
+        }
 
         /*-----------------------------------------------------------------------------*/
         /* Mode Functions                                                              */
@@ -92,6 +136,7 @@ namespace engine
         void DebugPrint();
 
     private:
+        std::unordered_map<std::string, RegisteredComponent> componentMap;
         bool isPlaying;
     };
 

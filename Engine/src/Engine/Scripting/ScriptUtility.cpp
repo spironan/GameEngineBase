@@ -23,7 +23,7 @@ namespace engine
     {
         ScriptSystemInfo g_SystemInfo;
 
-        void ScriptSystemInfo::Initialize(const char* dllPath)
+        void ScriptSystemInfo::Initialize(const char* dllPath, std::unordered_map<std::string, ScriptSystem::RegisteredComponent> const& refMap)
         {
             // load scripting dll
             if (mono_domain_get() == nullptr)
@@ -79,7 +79,7 @@ namespace engine
             mono_set_dirs("../Engine/vendor/mono/lib/mono/4.5", NULL);
             scripting = mono_assembly_get_image(assembly);
 
-            // get all script class info
+            // get all script and component class info
             MonoClass* baseScriptClass = GetBaseScriptMonoClass();
             const MonoTableInfo* tableInfo = mono_image_get_table_info(scripting, MONO_TABLE_TYPEDEF);
             unsigned int tableRows = mono_table_info_get_rows(tableInfo);
@@ -94,7 +94,17 @@ namespace engine
                 if (_class != baseScriptClass && CheckBaseClass(_class, baseScriptClass))
                 {
                     classInfoList.push_back(ScriptClassInfo(name_space, name));
+                    continue;
                 }
+
+                std::string fullName = std::string(name_space) + "." + std::string(name);
+                auto& search = refMap.find(fullName);
+                if (search == refMap.end())
+                    continue;
+                MonoType* type = mono_class_get_type(_class);
+                int id = componentMap.size();
+                componentMap.insert({ type, search->second });
+                componentIDMap.insert({ type, id });
             }
         }
 
@@ -115,6 +125,8 @@ namespace engine
             domain = nullptr;
             scripting = nullptr;
             classInfoList.clear();
+            componentMap.clear();
+            componentIDMap.clear();
         }
 
         /*-----------------------------------------------------------------------------*/
@@ -145,7 +157,12 @@ namespace engine
         {
             return mono_class_from_name(g_SystemInfo.scripting, "Ouroboros", "MonoBehaviour");
         }
-        
+
+        MonoClass* GetTransformMonoClass()
+        {
+            return mono_class_from_name(g_SystemInfo.scripting, "Ouroboros", "Transform");
+        }
+
         MonoObject* MonoObjectNew(MonoClass* klass)
         {
             return mono_object_new(g_SystemInfo.domain, klass);
@@ -154,6 +171,20 @@ namespace engine
         MonoString* MonoStringNew(const char* text)
         {
             return mono_string_new(g_SystemInfo.domain, text);
+        }
+
+        ScriptSystem::RegisteredComponent const& GetRegisteredComponent(MonoType* type)
+        {
+            auto& search = g_SystemInfo.componentMap.find(type);
+            ENGINE_ASSERT(search != g_SystemInfo.componentMap.end());
+            return search->second;
+        }
+
+        size_t GetRegisteredComponentID(MonoType* type)
+        {
+            auto& search = g_SystemInfo.componentIDMap.find(type);
+            ENGINE_ASSERT(search != g_SystemInfo.componentIDMap.end());
+            return search->second;
         }
 
         bool IsClassFieldPublic(MonoClassField* field)

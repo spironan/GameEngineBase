@@ -22,5 +22,5 @@ LISTEND
 SCRIPTEND
 OBJECTEND
 
-Ouroboros/Component
+Ouroboros/MonoBehaviour
 SCRIPTEND
