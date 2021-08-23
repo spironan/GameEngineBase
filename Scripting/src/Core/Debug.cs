@@ -15,7 +15,7 @@ namespace Ouroboros
         *//**********************************************************************************/
         public static void Log(object msg)
         {
-            Log(msg.ToString());
+            Log((msg == null) ? "null" : msg.ToString());
         }
 
         [DllImport("__Internal")]
@@ -29,7 +29,7 @@ namespace Ouroboros
         *//**********************************************************************************/
         public static void LogInfo(object msg)
         {
-            LogInfo(msg.ToString());
+            LogInfo((msg == null) ? "null" : msg.ToString());
         }
 
         [DllImport("__Internal")]
@@ -43,7 +43,7 @@ namespace Ouroboros
         *//**********************************************************************************/
         public static void LogWarning(object msg)
         {
-            LogWarning(msg.ToString());
+            LogWarning((msg == null) ? "null" : msg.ToString());
         }
 
         [DllImport("__Internal")]
@@ -57,7 +57,7 @@ namespace Ouroboros
         *//**********************************************************************************/
         public static void LogError(object msg)
         {
-            LogError(msg.ToString());
+            LogError((msg == null) ? "null" : msg.ToString());
         }
 
         [DllImport("__Internal")]
@@ -71,7 +71,7 @@ namespace Ouroboros
         *//**********************************************************************************/
         public static void LogCritical(object msg)
         {
-            LogCritical(msg.ToString());
+            LogCritical((msg == null) ? "null" : msg.ToString());
         }
     }
 }
