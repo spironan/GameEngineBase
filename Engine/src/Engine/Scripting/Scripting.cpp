@@ -593,13 +593,13 @@ namespace engine
         mono_field_set_value(gameObject, idField, &id);
 
         // create Transform interface
-        MonoClass* transformClass = ScriptUtility::GetTransformMonoClass();
-        uint32_t transformPtr = AddComponentInterface(mono_class_get_namespace(transformClass), mono_class_get_name(transformClass));
-        MonoObject* transform = mono_gchandle_get_target(transformPtr);
+        //MonoClass* transformClass = ScriptUtility::GetTransformMonoClass();
+        //uint32_t transformPtr = AddComponentInterface(mono_class_get_namespace(transformClass), mono_class_get_name(transformClass));
+        //MonoObject* transform = mono_gchandle_get_target(transformPtr);
 
         // set GameObject's transform
-        MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_transform");
-        mono_field_set_value(gameObject, transformField, transform);
+        //MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_transform");
+        //mono_field_set_value(gameObject, transformField, transform);
 
         // create all script instances
         for (ScriptInfo const& scriptInfo : scriptInfoList)
