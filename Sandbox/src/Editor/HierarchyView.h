@@ -39,10 +39,8 @@ private:
 	void ToggleLockUI();
 	bool SetParent(engine::Entity entt);
 
-	void KeyCopy(engine::Entity);
-	void KeyPaste();
-	void KeyRename();
-	void Copy(engine::Entity entt);
+	void ShortCutKeys();
+	void Copy();
 	void Paste();
 	void Rename();
 private:

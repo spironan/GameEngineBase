@@ -10,6 +10,7 @@
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/Transform/Transform3D.h"
+#include "Engine/Asset/AssetsManager.h"
 
 //libs
 #include <imgui.h>
@@ -19,12 +20,34 @@
 
 using namespace rttr_type_ID;
 
-InspectorView::InspectorView()
+InspectorView::InspectorView() :m_showReadOnly{ false },m_docked {false}
 {
 }
 void InspectorView::Show()
 {
-	ImGui::Begin("inspector");
+	ImGui::Begin("inspector",nullptr,ImGuiWindowFlags_MenuBar);
+	ImGui::BeginMenuBar();
+	if(ImGui::BeginMenu("Options"))
+	{
+		{//lock window UI
+			auto* docknode = ImGui::FindWindowByName("inspector")->DockNode;
+			if (docknode)
+				m_docked = docknode->LocalFlags;
+			if(ImGui::MenuItem("Lock Window",nullptr,m_docked, docknode))
+			{
+				if (docknode && docknode->LocalFlags == 0)
+					docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
+				else
+					docknode->LocalFlags = 0;
+			}
+		}
+		if (ImGui::MenuItem("Show ReadOnly",nullptr,m_showReadOnly))
+		{
+			m_showReadOnly = !m_showReadOnly;
+		}
+		ImGui::EndMenu();
+	}
+	ImGui::EndMenuBar();
 	ImGui::BeginChild("Preview items",ImVec2(0,ImGui::GetContentRegionMax().y - 75));
 	{
 		if (!ObjectGroup::s_FocusedObject)
@@ -35,9 +58,8 @@ void InspectorView::Show()
 		{
 			auto& go = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject);
 			
-			ImGui::Text("Name :  %s", go.Name().c_str());
-			if(go.TryGetComponent<engine::GameObjectComponent>())
-				ReadComponents(go.GetComponent<engine::GameObjectComponent>());
+			ShowGameObjectDetails(go);
+
 			if(go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>());
 			
@@ -46,23 +68,6 @@ void InspectorView::Show()
 		}
 	}
 
-	ImGui::BeginChild("Ending bar");
-	auto* dock = ImGui::FindWindowByName("inspector")->DockNode;
-	if(dock != nullptr)
-		static bool docked = dock->LocalFlags;
-	ImGui::Separator();
-	if (ImGui::RadioButton("Toggle Lock", dock))
-	{
-		auto* docknode = ImGui::FindWindowByName("inspector")->DockNode;
-		if (docknode != nullptr) 
-		{
-			if (docknode->LocalFlags == 0)
-				docknode->LocalFlags = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
-			else
-				docknode->LocalFlags = 0;
-		}
-	}
-	ImGui::EndChild();
 	ImGui::End();
 }
 
@@ -87,4 +92,38 @@ void InspectorView::AddComponentButton()
 	}
 }
 
+void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
+{
+	auto& goComponent = object.GetComponent<engine::GameObjectComponent>();
+	auto& propName = goComponent.get_type().get_property("Name");
+	auto& propActive = goComponent.get_type().get_property("Active");
+	
+	static char buf[100];
+	strcpy(buf,object.Name().data());
+	ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id, {50,50});
+	ImGui::SameLine();
+
+	ImGui::BeginGroup();
+	if (ImGui::InputText("Name", buf, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoUndoRedo))
+	{
+		std::string temp = "Change value of element: " + propName.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
+		rttr::variant undo = goComponent.Name.c_str();
+		rttr::variant redo = buf;
+		ActionStack::AllocateInBuffer(new InspectorActionBehaviour<engine::GameObjectComponent>{ temp, ObjectGroup::s_FocusedObject, propName, undo  , redo });
+		goComponent.Name = buf;
+	}
+
+	
+	bool beforeActive = goComponent.ActiveSelf;
+	if (ImGui::Checkbox("Active",&goComponent.ActiveSelf))
+	{
+		std::string temp = "Change value of element: " + propActive.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
+		rttr::variant undo = beforeActive;
+		rttr::variant redo = !beforeActive;
+		ActionStack::AllocateInBuffer(new InspectorActionBehaviour<engine::GameObjectComponent>{ temp, ObjectGroup::s_FocusedObject, propActive, undo  , redo });
+		goComponent.ActiveSelf = !beforeActive;
+	}
+	ImGui::EndGroup();
+	ImGui::Separator();
+}
 

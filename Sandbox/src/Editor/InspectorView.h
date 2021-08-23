@@ -15,7 +15,10 @@ public:
 	void Show();
 
 private:
+	
 	void AddComponentButton();
+	void ShowGameObjectDetails(engine::GameObject& object);
+
 	template<typename Component>
 	void ReadComponents(Component& component)
 	{
@@ -30,7 +33,12 @@ private:
 		{
 			is_readonly = element.is_readonly();
 			if (is_readonly)
-				ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f,0.5f,0.5f,1 });
+			{
+				if (m_showReadOnly)
+					ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f,0.5f,0.5f,1 });
+				else
+					continue;
+			}
 			current_value.clear();
 			const rttr::type::type_id id = element.get_type().get_id();
 			if (id == m_tracked_ids[type_INT])
@@ -141,5 +149,8 @@ private:
 		ImGui::PopID();
 	}
 	
+private:
+	bool m_showReadOnly; //editor settings
+	bool m_docked;
 };
 

@@ -53,12 +53,18 @@ void HierarchyView::HierarchyPopUp()
 	}
 	if (ImGui::MenuItem("Copy"))
 	{
-		Copy(ObjectGroup::s_FocusedObject);
+		Copy();
 	}
 	if (ImGui::MenuItem("Paste",nullptr,nullptr, m_CopyTarget))
 	{
 		Paste();
 	}
+	if (ImGui::MenuItem("Duplicate", nullptr,nullptr,ObjectGroup::s_FocusedObject))
+	{
+		Copy();
+		Paste();
+	}
+	ImGui::Separator();
 	if (ImGui::MenuItem("Rename", nullptr, nullptr, ObjectGroup::s_FocusedObject))
 	{
 		m_rename = true;
@@ -92,8 +98,7 @@ void HierarchyView::ListHierarchy()
 	ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_DefaultOpen ;
 	int treePop = 0;
 	std::vector<std::uint32_t> depth;
-	engine::Entity root = engine::SceneManager::GetActiveRoot();//todo use scenemanager to get rootnode after its ready
-	//depth.emplace_back(root);//root
+	engine::Entity root = engine::SceneManager::GetActiveRoot();
 	auto& transformList = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
 	//display the root node
 	ImGui::BeginChild("##ListHierarchy");
@@ -150,9 +155,8 @@ void HierarchyView::ListHierarchy()
 		else
 		{
 			flag |=	 ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-			engine::Entity tempid = transform.GetEntity();
-			ImGui::PushID(tempid);
-			activated = ImGui::TreeNodeEx(engine::GameObject(tempid).Name().c_str(), flag);
+			ImGui::PushID(transform.GetEntity());
+			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
 			ImGui::PopID();
 		}
 		if (ImGui::IsItemClicked() || ImGui::IsItemClicked(ImGuiMouseButton_Right))
@@ -186,13 +190,12 @@ void HierarchyView::ListHierarchy()
 		ImGui::EndPopup();
 	}
 	
-	KeyCopy(ObjectGroup::s_FocusedObject);
-	KeyPaste();
-	KeyRename();
+	ShortCutKeys();
 	ImGui::EndChild();//end of child window
 
 	if (ImGui::IsItemClicked()) // simple deselect function
 		ObjectGroup::s_FocusedObject = root;
+
 	SetParent(root);
 
 }
@@ -343,41 +346,26 @@ bool HierarchyView::SetParent(engine::Entity entt)
 	return false;
 }
 /*********************************************************************************//*!
-\brief
-Copy with keypress check
- 
-\param    ent
-for the function Copy()
-*//**********************************************************************************/
-void HierarchyView::KeyCopy(engine::Entity ent)
-{
-	if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::C)))
-	{
-		Copy(ent);
-	}
-}
-/*********************************************************************************//*!
 \brief    
- Does Paste with keypress checks
+ Contains the keybindings for Copy and Pasting and renaming
 
 *//**********************************************************************************/
-void HierarchyView::KeyPaste()
+void HierarchyView::ShortCutKeys()
 {
-
-	if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)) && ImGui::IsKeyPressed(static_cast<int>(engine::Key::V)))
+	if (ImGui::IsWindowFocused())
 	{
-		Paste();
-	}
-}
-/*********************************************************************************//*!
-\brief
- rename Items
-*//**********************************************************************************/
-void HierarchyView::KeyRename()
-{
-	if (ImGui::IsKeyPressed(static_cast<int>(engine::KeyCode::F2)))
-	{
-		m_rename = true;
+		if (ImGui::IsKeyDown(static_cast<int>(engine::Key::LCTRL)))
+		{
+			if (ImGui::IsKeyPressed(static_cast<int>(engine::Key::C)))//copy
+				Copy();
+			if (ImGui::IsKeyPressed(static_cast<int>(engine::Key::V)))//paste
+				Paste();
+		}
+		else
+		{
+			if (ImGui::IsKeyPressed(static_cast<int>(engine::KeyCode::F2)))//rename
+				m_rename = true;
+		}
 	}
 }
 /*********************************************************************************//*!
@@ -387,9 +375,9 @@ Store m_CopyTarget
 \param    entt
 For m_CopyTarget
 *//**********************************************************************************/
-void HierarchyView::Copy(engine::Entity entt)
+void HierarchyView::Copy()
 {
-	m_CopyTarget = entt;
+	m_CopyTarget = ObjectGroup::s_FocusedObject;
 }
 /*********************************************************************************//*!
 \brief    
