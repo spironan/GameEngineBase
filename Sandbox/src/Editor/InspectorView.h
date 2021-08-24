@@ -23,14 +23,23 @@ private:
 
 
 	template<typename Component>
-	void ReadComponents(Component& component)
+	void ReadComponents(Component& component,engine::GameObject& object)
 	{
 		bool is_readonly;
+		bool is_collapsed;
 		std::vector<rttr::property> types = component.get_type().get_properties();
 		rttr::variant current_value;
-		if (ImGui::CollapsingHeader(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed) == false)
+		ImGui::BeginGroup();
+		is_collapsed = (ImGui::TreeNodeEx(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen ) == false);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 50.0f);//button width
+		if (ImGui::Button("Reset", ImVec2(0,ImGui::GetFontSize())))
+		{
+			//do smth
+		}
+		ImGui::EndGroup();
+		if (is_collapsed)	
 			return;
-
+		
 		ImGui::PushID(component.get_type().get_name().c_str());
 		for (const rttr::property& element : types)
 		{
@@ -149,6 +158,7 @@ private:
 				ImGui::PopStyleColor();
 
 		}
+		ImGui::TreePop();
 		ImGui::PopID();
 	}
 	
@@ -157,7 +167,10 @@ private:
 	{
 		rttr::type t = rttr::type::get<Component>();
 		bool selected = false;
+		ImGui::BeginGroup();
 		ImGui::Selectable(t.get_name().c_str(), &selected);
+		ImGui::Separator();
+		ImGui::EndGroup();
 		if (selected)
 		{
 			go.AddComponent<Component>();

@@ -66,7 +66,7 @@ void InspectorView::Show()
 			ShowGameObjectDetails(go);
 
 			if(go.TryGetComponent<engine::Transform3D>())
-				ReadComponents(go.GetComponent<engine::Transform3D>());
+				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
 			
 			AddComponentButton();
 			ImGui::EndChild();
@@ -79,6 +79,7 @@ void InspectorView::Show()
 void InspectorView::AddComponentButton()
 {
 	static const ImVec2 buttonSize = { 150,30 };
+	static const ImVec2 DropDownListSize = { 300,200 };
 	ImGui::NewLine();
 	ImGui::SameLine((ImGui::GetContentRegionAvail().x - buttonSize.x) * 0.5f);
 	if (ImGui::Button("Add Component",buttonSize))
@@ -88,8 +89,8 @@ void InspectorView::AddComponentButton()
 	if (m_addComponent)
 	{
 		ImGui::NewLine();
-		ImGui::SameLine((ImGui::GetContentRegionAvail().x - buttonSize.x) * 0.5f);
-		ComponentAddButton(buttonSize.x, buttonSize.y);
+		ImGui::SameLine((ImGui::GetContentRegionAvail().x - DropDownListSize.x) * 0.5f);
+		ComponentAddButton(DropDownListSize.x, DropDownListSize.y);
 
 	}
 }
@@ -131,13 +132,32 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 
 void InspectorView::ComponentAddButton(float x ,float y)
 {
-	if (ImGui::BeginListBox("Component", { x ,0 }))
+	if (ImGui::BeginListBox("##Component", { x ,y }))
 	{
-		engine::GameObject go = ObjectGroup::s_FocusedObject;
 		bool AddComponent = false;
-		AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
-		AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
-		AddComponent |= ComponentAddOptions<engine::RigidBody>(go);
+		engine::GameObject go = ObjectGroup::s_FocusedObject;
+		ImGui::BeginChild("##ListOfComponents", { x,y * 0.8f });
+		{
+			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
+			AddComponent |= ComponentAddOptions<engine::RigidBody>(go);
+		}
+		ImGui::EndChild();
+
+		{
+			ImVec4 prevCol = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, {prevCol.x*0.2f,prevCol.y * 0.2f ,prevCol.z * 0.2f ,1});
+			ImGui::BeginChild("##Description", {x,0});
+			ImGui::TextWrapped("Transform Component");
+			ImGui::EndChild();
+			ImGui::PopStyleColor();
+		}
 		if (AddComponent)
 			m_addComponent = false;
 		ImGui::EndListBox();
