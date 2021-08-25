@@ -28,8 +28,8 @@ project "Sandbox"
         "%{IncludeDir.rapidjson}",
         
         "%{IncludeDir.glm}",
-		
-		"%{IncludeDir.VulkanSDK}", -- Temporary until the rendering can standalone
+
+        "%{IncludeDir.VulkanSDK}", -- Temporary until the rendering can standalone
 
     }
 
@@ -76,7 +76,9 @@ project "Sandbox"
             {"{COPY} %{wks.location}Engine/vendor/mono/lib/ ../bin/" .. outputdir .. "/lib"},
             {"{COPY} %{wks.location}Engine/vendor/mono/dll/mono-2.0-sgen.dll ../bin/" .. outputdir .. "/Sandbox"},
             {"{COPY} %{wks.location}Sandbox/test.txt ../bin/" .. outputdir .. "/Sandbox"},
-            {"{COPY} %{wks.location}Scripting/ ../bin/" .. outputdir .. "/Scripting"}
+            {"{COPY} %{wks.location}Scripting/ ../bin/" .. outputdir .. "/Scripting"},
+            {"{COPY} %{wks.location}Engine/assets ../bin/" .. outputdir .. "/Engine/assets"},
+            {"{COPY} %{wks.location}Sandbox/icons ../bin/" .. outputdir .. "/Sandbox/icons"}
         }
 
     filter "configurations:Debug"
