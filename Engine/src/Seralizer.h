@@ -10,7 +10,7 @@ class Serializer
 public:
 	Serializer() {};
 	~Serializer() {};
-	static void LoadObject(const std::string& prefab,engine::Entity parent = 0);
+	static engine::Entity LoadObject(const std::string& prefab,engine::Entity parent = 0);
 	static void SaveObject(const std::string& prefab);
 	static void SaveWorld(const std::string& path);
 	static void LoadWorld(const std::string& path);

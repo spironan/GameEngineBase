@@ -1,6 +1,9 @@
+#include "pch.h"
 #include "Seralizer.h"
-#include "Editor/RttrTypeID.h"
-#include "Editor/EditorObjectGroup.h"
+
+#include "../../Sandbox/src/Editor/RttrTypeID.h"
+#include "../../Sandbox/src/Editor/EditorObjectGroup.h"
+
 
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/ostreamwrapper.h>
@@ -15,14 +18,18 @@
 #include "Engine/Scene/SceneManager.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/ECS/GameObject.h"
+#include "Engine/Prefab/PrefabComponent.h"
 
-void Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
+engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 {
 	std::unordered_map<engine::Entity,std::pair<engine::Entity,engine::Entity>> hierarchymap;
 	std::ifstream ifs;
 	ifs.open(prefab);
 	if (!ifs.is_open())
-		return;
+	{
+		LOG_CRITICAL("LoadObject not able to open file");
+		ENGINE_ASSERT(true);
+	}
 	rapidjson::IStreamWrapper isw(ifs);
 	rapidjson::Document doc;
 	doc.ParseStream(isw);
@@ -32,8 +39,9 @@ void Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 		engine::GameObject object{ engine::GameObject::Create{} };
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetID(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
+		object.EnsureComponent<engine::PrefabComponent>();
 	}
-	
+	engine::Entity head;
 	for (auto& hierarchyItem : hierarchymap)
 	{
 		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
@@ -44,9 +52,11 @@ void Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 		else
 		{
 			engine::GameObject(parent).AddChild(hierarchyItem.second.first);
+			head = hierarchyItem.second.first;
 		}
 	}
 	ifs.close();
+	return head;
 }
 
 void Serializer::SaveObject(const std::string& prefab)

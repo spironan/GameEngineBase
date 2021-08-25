@@ -47,7 +47,7 @@ namespace engine
 	private:
 		struct FileDetails
 		{
-			Entity head;
+			Entity head = 0;
 			std::string filename;
 		};
 		std::map<utility::StringHash::size_type , FileDetails> m_prefabDetails;

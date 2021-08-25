@@ -50,7 +50,8 @@ project "Engine"
         "%{IncludeDir.vma}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.VulkanSDK}",
-		"%{IncludeDir.mono}"
+		"%{IncludeDir.mono}",
+        "%{IncludeDir.rapidjson}",
     }
 
     -- library diretories

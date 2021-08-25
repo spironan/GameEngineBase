@@ -12,7 +12,6 @@ without the prior written consent of DigiPen Institute of
 Technology is prohibited.
  *********************************************************************/
 #pragma once
-#include "testclass.h"//remove this once ecs is done
 #include "Engine/ECS/ECS_Utility.h"//entity
 
 class ObjectGroup

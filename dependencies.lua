@@ -19,7 +19,7 @@ IncludeDir["vma"]           = "%{wks.location}/Engine/vendor/vma"
 IncludeDir["VulkanSDK"]     = "%{VULKAN_SDK}/Include"
 
 -- Sandbox side dependencies
-IncludeDir["rapidjson"]     = "%{wks.location}/Sandbox/vendor/rpj"
+IncludeDir["rapidjson"]     = "%{wks.location}/Engine/vendor/rpj"
 
 -- Paths to various external libraries directories
 LibraryDir                  = {}
