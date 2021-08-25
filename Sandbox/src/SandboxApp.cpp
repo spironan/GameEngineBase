@@ -19,6 +19,8 @@ Technology is prohibited.
 
 //Editor Layer
 #include "EditorLayer.h"
+//Scripting Layer
+#include "TestLayers/ScriptingTestLayer.h"
 
 // for debugging
 #include "TestLayers/InputDebugLayer.h"
@@ -75,6 +77,8 @@ public:
         // Everything below uses SceneBaseLayer
         // Editor Layer
         PushOverlay(new EditorLayer());
+        // Scripting Layer
+        //PushOverlay(new ScriptingTestLayer());
 
         // Debug Layers!
         PushOverlay(new DebugLayer(*this));

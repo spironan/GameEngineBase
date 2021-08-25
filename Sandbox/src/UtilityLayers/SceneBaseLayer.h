@@ -34,7 +34,7 @@ public:
 
     ~SceneBaseLayer()
     {
-        //m_scene.Unload();
+        if(m_scene.IsLoaded()) m_scene.Unload();
     }
 
     engine::Scene::ID_type GetID() const

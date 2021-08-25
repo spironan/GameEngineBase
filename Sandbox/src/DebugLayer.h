@@ -7,7 +7,6 @@
 #include "TestLayers/GameObjectTestLayer.h"
 #include "TestLayers/PhysicsTestLayer.h"
 #include "TestLayers/RenderingTestLayer.h"
-#include "TestLayers/ScriptingTestLayer.h"
 #include "TestLayers/SceneTestLayer.h"
 
 class DebugLayer final : public engine::Layer
@@ -22,6 +21,7 @@ public:
         : Layer{ "Debug Layer" }
         , application{ app }
     {
+        LOG_TRACE("SUCCESSFULLY LOADED DEBUG LAYER");
     }
 
     virtual ~DebugLayer() final
@@ -38,9 +38,10 @@ public:
 
         debugLayers.emplace_back(new TransformTestLayer());
         debugLayers.emplace_back(new PhysicsTestLayer());
-        debugLayers.emplace_back(new ScriptingTestLayer());
         debugLayers.emplace_back(new SceneTestLayer("D:/GameEngine/bin/Debug-OpenGL-windows-x86_64/Sandbox/New folder/Scene.scene"));
         
+        //currentLayer = debugLayers.front();
+        //application.PushOverlay(currentLayer);
     }
 
     void OnUpdate(engine::Timestep dt) final override
@@ -55,7 +56,7 @@ public:
             if (ImGui::Button(debugLayer->GetName().c_str()))
             {
                 if (currentLayer != nullptr)
-                    application.PopOverlay(currentLayer);
+                application.PopOverlay(currentLayer);
 
                 currentLayer = debugLayer;
                 application.PushOverlay(debugLayer);
