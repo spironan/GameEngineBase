@@ -1,6 +1,8 @@
 #pragma once
 #include "Engine/ECS/System.h"
-#include "EditorComponent.h"
+#include <vector>
+#include <unordered_map>
+class EditorComponent;
 class EditorComponentSystem final : public engine::System
 {
 public:
@@ -23,13 +25,32 @@ public:
 
 	/*********************************************************************************//*!
 	\brief    
-	 update loop used to check if anything is dirty
+	 update loop
 	*//**********************************************************************************/
 	void Update();
 	/*********************************************************************************//*!
 	\brief
 	 Update All entity using the prefab when marked for update
+	 should only be called when interacting with editor UI
+	\param
+	 target item to update
 	*//**********************************************************************************/
-	void UpdateAllPrefabUsers();
+	void UpdatedPrefab(value_reference);
+	/*********************************************************************************//*!
+	\brief    
+	 When creating a new object with prefab register this entity into m_prefabUsers
+	\param    
+	 takes in EditorComponent 
+	*//**********************************************************************************/
+	void RegisterNewUser(value_reference);
+	/*********************************************************************************//*!
+	\brief    
+	 When breaking from prefab / deleting
+	\param    
+	 the reference to EditorComponent
+	*//**********************************************************************************/
+	void UnregisterUser(value_reference);
 
+private:
+	std::map<engine::Entity, std::vector<engine::Entity> > m_prefabUsers;
 };
