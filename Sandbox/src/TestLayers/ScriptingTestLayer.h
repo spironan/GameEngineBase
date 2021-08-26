@@ -98,9 +98,12 @@ public:
     void Init() final override
     {
         auto& ss = m_scene.GetWorld().RegisterSystem<engine::ScriptSystem>();
-        ss->Compile();
 
-        //m_root.AddComponent<engine::Scripting>();
+        RootGameObject().AddComponent<engine::Scripting>();
+
+        ss->Compile();
+        if (!ss->IsSetUp())
+            return;
 
         // read values from temporary text file editor to initialize objects
         std::fstream file("test.txt");
@@ -222,29 +225,32 @@ public:
     {
         engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
         m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
-        m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->InvokeFunctionAll("Update");
+        auto ss = m_scene.GetWorld().GetSystem<engine::ScriptSystem>();
+        ss->InvokeFunctionAll("Update");
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::SPACE))
         {
-            m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->Compile();
+            ss->Compile();
         }
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::ENTER))
         {
             if (!isPlaying)
             {
-                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->StartPlay();
-                isPlaying = true;
+                if(ss->StartPlay())
+                    isPlaying = true;
             }
             else
             {
-                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->StopPlay();
-                isPlaying = false;
+                if(ss->StopPlay())
+                    isPlaying = false;
             }
         }
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::BACKSPACE))
         {
+            if (!ss->IsSetUp())
+                return;
             // re-read and apply changed values from temporary text file editor
             std::fstream file("test.txt");
             if (!file)
@@ -418,9 +424,9 @@ public:
         if (engine::Input::IsKeyPressed(engine::KeyCode::TAB))
         {
             if (isPlaying)
-                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->DebugPrint();
+                ss->DebugPrint();
             else
-                m_scene.GetWorld().GetSystem<engine::ScriptSystem>()->DebugPrintInfo();
+                ss->DebugPrintInfo();
         }
     }
 };

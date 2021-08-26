@@ -15,6 +15,7 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/System.h"
+#include "ScriptInfo.h"
 #include "Scripting.h"
 #include "Engine/ECS/WorldManager.h"
 
@@ -48,6 +49,15 @@ namespace engine
         \return     true if it has been set up and is ready for use, else false
         *//**********************************************************************************/
         bool IsSetUp();
+
+        /*********************************************************************************//*!
+        \brief      Gets the list of all C# scripts compiled
+
+        \note       C# scripts are identified by inheriting the MonoBehaviour C# class
+
+        \return     the list of all c# scripts compiled
+        *//**********************************************************************************/
+        std::vector<ScriptClassInfo> const& GetScriptClassList();
 
         /*-----------------------------------------------------------------------------*/
         /* ECS Components                                                              */

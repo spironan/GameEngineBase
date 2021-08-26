@@ -153,6 +153,11 @@ namespace engine
         return ScriptUtility::g_SystemInfo.IsSetUp();
     }
 
+    std::vector<ScriptClassInfo> const& ScriptSystem::GetScriptClassList()
+    {
+        return ScriptUtility::g_SystemInfo.classInfoList;
+    }
+
     /*-----------------------------------------------------------------------------*/
     /* Mode Functions                                                              */
     /*-----------------------------------------------------------------------------*/

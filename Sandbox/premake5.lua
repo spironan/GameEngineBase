@@ -77,6 +77,7 @@ project "Sandbox"
             {"{COPY} %{wks.location}Engine/vendor/mono/dll/mono-2.0-sgen.dll ../bin/" .. outputdir .. "/Sandbox"},
             {"{COPY} %{wks.location}Sandbox/test.txt ../bin/" .. outputdir .. "/Sandbox"},
             {"{COPY} %{wks.location}Scripting/ ../bin/" .. outputdir .. "/Scripting"},
+            {"{COPY} %{wks.location}Engine/vendor/mono/lib/mono/4.5 ../bin/" .. outputdir .. "/Engine/vendor/mono/lib/mono/4.5"}, -- mono c# libraries
             {"{COPY} %{wks.location}Engine/assets ../bin/" .. outputdir .. "/Engine/assets"}, --  engine's assets
             {"{COPY} %{wks.location}Sandbox/icons ../bin/" .. outputdir .. "/Sandbox/icons"}, -- sandbox icons
             {"{COPY} %{wks.location}Sandbox/imgui.ini ../bin/" .. outputdir .. "/Sandbox"} -- imgui.ini copy 
