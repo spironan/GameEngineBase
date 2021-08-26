@@ -20,6 +20,8 @@ Technology is prohibited.
 #include "Engine/ECS/ComponentManager.h"
 #include "Engine/ECS/ECS_Manager.h"
 
+#include "Engine/ECS/GameObjectComponent.h"
+
 namespace engine
 {
     /*-----------------------------------------------------------------------------*/
@@ -77,6 +79,10 @@ namespace engine
         // Grab Transforms from ECS manager
         for (auto& currTransform : m_ECS_Manager.GetComponentDenseArray<Transform3D>())
         {
+            if (currTransform.m_active) continue;
+
+            //m_ECS_Manager.GetComponent<GameObjectComponent>()
+
             if (currTransform.HasChanged())
             {
                 currTransform.Reset();
