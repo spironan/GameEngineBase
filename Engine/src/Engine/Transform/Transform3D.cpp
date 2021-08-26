@@ -177,9 +177,12 @@ namespace engine
     *//*****************************************************************************/
     void Transform3D::CopyComponent(Transform3D const& transform)
     {
-        Entity id = m_entity;
-        *this = transform;
-        m_entity = id;
+        m_localTransform = transform.m_localTransform;
+        m_rotationAngle = transform.m_rotationAngle;
+        m_rotationAxis = transform.m_rotationAxis;
+        m_position = transform.m_position;
+        m_scale = transform.m_scale;
+        // there may be more to copy, have to test.
     }
 
     /****************************************************************************//*!
