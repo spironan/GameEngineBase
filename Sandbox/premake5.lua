@@ -28,6 +28,7 @@ project "Sandbox"
         "%{IncludeDir.rapidjson}",
         
         "%{IncludeDir.glm}",
+        "%{IncludeDir.oom}", --custom math library.
 
         "%{IncludeDir.VulkanSDK}", -- Temporary until the rendering can standalone
 

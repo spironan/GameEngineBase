@@ -1,16 +1,34 @@
-//#include "pch.h"
-
-#include "matrix_utils.h"
+#include "matrix_utils.hpp"
 #include <cmath>
 
 namespace oom
 {
+    mat3 tensor_matrix(vec3 const& vec)
+    {
+        return mat3
+        {
+            vec.x * vec.x, vec.x * vec.y, vec.x * vec.z,
+            vec.y * vec.x, vec.y * vec.y, vec.y * vec.z,
+            vec.z * vec.x, vec.z * vec.y, vec.z * vec.z,
+        };
+    }
+
+    mat3 skew_matrix(vec3 const& vec)
+    {
+        return mat3
+        {
+            0,      vec.z, -vec.y,
+            -vec.z,     0,  vec.x,
+            vec.y, -vec.x,      0,
+        };
+    }
+
     mat3 translation_matrix(vec2 const& translation)
     {
         mat3 mat = mat3::identity();
 
-        mat[2][0] = translation[0];
-        mat[2][1] = translation[1];
+        mat[0].z = translation.x;
+        mat[1].z = translation.y;
 
         return mat;
     }
@@ -19,8 +37,8 @@ namespace oom
     {
         mat3 mat = mat3::identity();
         mat[0][0] = mat[1][1] = std::cos(angle);
-        mat[0][1] = std::sin(angle);
-        mat[1][0] = -mat[0][1];
+        mat[1][0] = std::sin(angle);
+        mat[0][1] = -mat[1][0];
 
         return mat;
     }
@@ -29,8 +47,8 @@ namespace oom
     {
         mat3 scaleMatrix = mat3::identity();
 
-        scaleMatrix[0][0] = scale[0];
-        scaleMatrix[1][1] = scale[1];
+        scaleMatrix[0][0] = scale.x;
+        scaleMatrix[1][1] = scale.y;
         scaleMatrix[2][2] = 1.f;
 
         return scaleMatrix;
@@ -66,16 +84,16 @@ namespace oom
     {
         mat4 mat = mat4::identity();
         
-        mat[3][0] = translation[0];
-        mat[3][1] = translation[1];
-        mat[3][2] = translation[2];
+        mat[0].z = translation.x;
+        mat[1].z = translation.y;
+        mat[2].z = translation.z;
 
         return mat;
     }
 
     mat4 rotation_matrix(float const& angle, vec3 const& dir)
     {
-        // axis-angle representation : cos0 I(3x3) + (1-cos0)dir*dirTransposed + sin0skewedDir
+        // axis-angle representation : cos0 I(3x3) + (1-cos0)Tensor + sin0skewedDir
 
         float cosTheta = std::cos(angle);
         float sinTheta = std::sin(angle);
@@ -83,21 +101,10 @@ namespace oom
 
         mat3 cosThetaId { cosTheta };
 
-        /*mat3 tensorMatrix
-        {
-            dir.x()() * dir.x()(), dir.x()() * dir.y()(), dir.x()() * dir.z()(),
-            dir.y()() * dir.x()(), dir.y()() * dir.y()(), dir.y()() * dir.z()(),
-            dir.z()() * dir.x()(), dir.z()() * dir.y()(), dir.z()() * dir.z()()
-        };
+        mat3 tensor = tensor_matrix(dir);
+        mat3 skew = skew_matrix(dir);
 
-        mat3 skewMatrix
-        {
-             0.f,    -dir.z()(),  dir.y()(),
-             dir.z()(),  0.f,    -dir.x()(),
-            -dir.y()(), dir.x()(),   0.f
-        };*/
-
-        return mat4 { cosThetaId /*+ tensorMatrix + skewMatrix*/ };
+        return mat4 { cosThetaId + (1 - cosTheta) * tensor +  sinTheta * skew };
 
 
         // mat4 rotationMatrix;
@@ -108,9 +115,9 @@ namespace oom
         // float s = std::sin(r);
         // float omc = 1.0f - c;
 
-        // float x = euler_angles[0];
-        // float y = euler_angles[1];
-        // float z = euler_angles[2];
+        // float x = _euler_angles[0];
+        // float y = _euler_angles[1];
+        // float z = _euler_angles[2];
 
         // rotationMatrix[0][0] = x * omc + c;
         // rotationMatrix[0][1] = y * x * omc + z * s;
@@ -127,7 +134,7 @@ namespace oom
         // return rotationMatrix;
     }
 
-    mat4 rotation_x_matrix(float angle)
+    mat4 rotation_x_matrix(float _angle)
     {
         /**
          * Rotation Matrix on X-axis
@@ -137,14 +144,14 @@ namespace oom
          * |   0   0   0   1   |
          */
         mat4 mat = mat4::identity(); 
-        mat[1][1] = mat[2][2] = std::cos(angle);
-        mat[1][2] = std::sin(angle);
+        mat[1][1] = mat[2][2] = std::cos(_angle);
+        mat[1][2] = std::sin(_angle);
         mat[2][1] = -mat[1][2];
 
         return mat;
     }
 
-    mat4 rotation_y_matrix(float angle)
+    mat4 rotation_y_matrix(float _angle)
     {
         /**
          * Rotation Matrix on Y-axis
@@ -154,14 +161,14 @@ namespace oom
          * |   0   0   0   1   |
          */
         mat4 mat = mat4::identity();
-        mat[0][0] = mat[2][2] = std::cos(angle);
-        mat[2][0] = std::sin(angle);
+        mat[0][0] = mat[2][2] = std::cos(_angle);
+        mat[2][0] = std::sin(_angle);
         mat[0][2] = -mat[2][0];
 
         return mat;
     }
 
-    mat4 rotation_z_matrix(float angle)
+    mat4 rotation_z_matrix(float _angle)
     {
         /**
          * Rotation Matrix on Y-axis
@@ -171,8 +178,8 @@ namespace oom
          * |   0   0   0   1   |
          */
         mat4 mat = mat4::identity();
-        mat[0][0] = mat[1][1] = std::cos(angle);
-        mat[0][1] = std::sin(angle);
+        mat[0][0] = mat[1][1] = std::cos(_angle);
+        mat[0][1] = std::sin(_angle);
         mat[1][0] = -mat[0][1];
 
         return mat;
@@ -180,32 +187,32 @@ namespace oom
 
     mat4 rotation_matrix(const vec3& euler_angles)
     {
-        return  rotation_x_matrix(euler_angles[0]) 
-                * rotation_y_matrix(euler_angles[1])
-                * rotation_z_matrix(euler_angles[2]);
+        return  rotation_x_matrix(euler_angles.x) 
+                * rotation_y_matrix(euler_angles.y)
+                * rotation_z_matrix(euler_angles.z);
 
     }
 
-    mat4 scaling_matrix(const vec3& scale)
+    mat4 scaling_matrix(const vec3& _scale)
     {
         mat4 scaleMatrix;
 
-        scaleMatrix[0][0] = scale[0];
-        scaleMatrix[1][1] = scale[1];
-        scaleMatrix[2][2] = scale[2];
+        scaleMatrix[0][0] = _scale.x;
+        scaleMatrix[1][1] = _scale.y;
+        scaleMatrix[2][2] = _scale.z;
         scaleMatrix[3][3] = 1.0f;
 
         return scaleMatrix;
     }
 
-    mat4 trs_matrix(const vec3& translation, const vec3& euler_angles, const vec3& scale)
+    mat4 trs_matrix(const vec3& _translation, const vec3& _euler_angles, const vec3& _scale)
     {
-        return translation_matrix(translation) * rotation_matrix(euler_angles) * scaling_matrix(scale);
+        return translation_matrix(_translation) * rotation_matrix(_euler_angles) * scaling_matrix(_scale);
     }
 
-    mat4 trs_matrix(const vec3& translation, float const angle, const vec3& direction, const vec3& scale)
+    mat4 trs_matrix(const vec3& _translation, float const angle, const vec3& direction, const vec3& _scale)
     {
-        return translation_matrix(translation) * rotation_matrix(angle, direction) * scaling_matrix(scale);
+        return translation_matrix(_translation) * rotation_matrix(angle, direction) * scaling_matrix(_scale);
     }
 
     mat4 translate(mat4& transform, vec3 const& translation)
@@ -254,11 +261,11 @@ namespace oom
     }
 
 
-    mat4 view(const vec3& _forward, const vec3& _up, const vec3& _position)
+    mat4 view(const vec3& forward, const vec3& up, const vec3& position)
     {
-        //_forward.cross(_up);
+        //forward.cross(up);
         
-        vec3 right = _forward.cross(_up);
+        vec3 right = forward.Cross(up);
         
         /**
          * translation * orientation matrix  = homogeneous matrix
@@ -273,34 +280,34 @@ namespace oom
          * [  0   0   0   1  ]
          */
 
-        mat4 mat;
-        mat[3][3] = 1.0f;
+        mat4 mat = mat4::identity();
 
         // Column 0
-        mat[0][0] = right[0];
-        mat[0][1] = _up[0];
-        mat[0][2] = -_forward[0];
+        mat[0].x = right.x;
+        mat[0].y = right.y;
+        mat[0].z = right.z;
 
         // Column 1
-        mat[1][0] = right[1];
-        mat[1][1] = _up[1];
-        mat[1][2] = -_forward[1];
-
+        mat[1].x = up.x;
+        mat[1].y = up.y;
+        mat[1].z = up.z;
+        
         // Column 2
-        mat[2][0] = right[2];
-        mat[2][1] = _up[2];
-        mat[2][2] = -_forward[2];
+        mat[2].x = -forward.x;
+        mat[2].y = -forward.y;
+        mat[2].z = -forward.z;
 
-        mat[3][0] = _position[0];
-        mat[3][1] = _position[1];
-        mat[3][2] = _position[2];
+        // Column 3
+        mat[3].x = position.x;
+        mat[3].y = position.y;
+        mat[3].z = position.z;
 
         return mat;
     }
 
-    mat4 perspective(float aspect_ratio, float fov, float near_plane, float far_plane)
+    mat4 perspective(float _aspect_ratio, float _fov, float _near_plane, float _far_plane)
     {
-        mat4 mat = mat4::identity();
+        mat4 mat = mat4::zero();
 
         /**
          * AR  = Aspect Ratio
@@ -315,10 +322,10 @@ namespace oom
          * |          0                  0               -1              0       |
          * */
 
-        float b = 1.0f / std::tan(0.5f * fov);
-        float a = b / aspect_ratio;
-        float c = (near_plane + far_plane) / (near_plane - far_plane);
-        float d = (2.0f * near_plane * far_plane) / (near_plane - far_plane);
+        float b = 1.0f / std::tan(0.5f * _fov);
+        float a = b / _aspect_ratio;
+        float c = (_near_plane + _far_plane) / (_near_plane - _far_plane);
+        float d = (2.0f * _near_plane * _far_plane) / (_near_plane - _far_plane);
 
         mat[0][0] = a;
         mat[1][1] = b;
@@ -329,24 +336,24 @@ namespace oom
         return mat;
     }
 
-    mat4 orthographic(float left, float right, float top, float bottom, float near_plane, float far_plane)
+    mat4 orthographic(float _left, float _right, float _top, float _bottom, float _near_plane, float _far_plane)
     {
         mat4 mat = mat4::identity();
 
-        mat[0][0] = 2.0f / (right - left);
-        mat[1][1] = 2.0f / (top - bottom);
-        mat[2][2] = 2.0f / (near_plane - far_plane);
+        mat[0][0] = 2.0f / (_right - _left);
+        mat[1][1] = 2.0f / (_top - _bottom);
+        mat[2][2] = 2.0f / (_near_plane - _far_plane);
 
-        mat[3][0] = (right + left) / (left - right);
-        mat[3][1] = (top + bottom) / (bottom - top);
-        mat[3][2] = (far_plane + near_plane) / (near_plane - far_plane);
+        mat[3][0] = (_right + _left) / (_left - _right);
+        mat[3][1] = (_top + _bottom) / (_bottom - _top);
+        mat[3][2] = (_far_plane + _near_plane) / (_near_plane - _far_plane);
 
         mat[3][3] = 1.0f;
 
         return mat;
     }
 
-    mat4 orthographic(float aspect_ratio, float ortho_size, float near_plane, float far_plane)
+    mat4 orthographic(float _aspect_ratio, float _ortho_size, float _near_plane, float _far_plane)
     {
         // [https://en.wikipedia.org/wiki/Orthographic_projection]
         // Most tutorial take the absolute position of the viewing box in the world as the input.
@@ -355,155 +362,155 @@ namespace oom
 
         mat4 mat = mat4::identity();
 
-        float top = ortho_size * 0.5f;
+        float top = _ortho_size * 0.5f;
         float bottom = -top;
-        float right = top * aspect_ratio;
-        float left = bottom * aspect_ratio;
+        float right = top * _aspect_ratio;
+        float left = bottom * _aspect_ratio;
 
         mat[0][0] = 2.0f / (right - left);
         mat[1][1] = 2.0f / (top - bottom);
-        mat[2][2] = 2.0f / (far_plane - near_plane);
+        mat[2][2] = 2.0f / (_far_plane - _near_plane);
 
         return mat;
     }
 
-    mat4 inverse(const mat4& matrix)
+    mat4 inverse(const mat4& _matrix)
     {
         mat4 mat;
 
         mat[0][0] =
-            matrix[0][5] * matrix[0][10] * matrix[0][15] -
-            matrix[0][5] * matrix[0][11] * matrix[0][14] -
-            matrix[0][9] * matrix[0][6] * matrix[0][15] +
-            matrix[0][9] * matrix[0][7] * matrix[0][14] +
-            matrix[0][13] * matrix[0][6] * matrix[0][11] -
-            matrix[0][13] * matrix[0][7] * matrix[0][10];
+            _matrix[0][5] * _matrix[0][10] * _matrix[0][15] -
+            _matrix[0][5] * _matrix[0][11] * _matrix[0][14] -
+            _matrix[0][9] * _matrix[0][6] * _matrix[0][15] +
+            _matrix[0][9] * _matrix[0][7] * _matrix[0][14] +
+            _matrix[0][13] * _matrix[0][6] * _matrix[0][11] -
+            _matrix[0][13] * _matrix[0][7] * _matrix[0][10];
 
         mat[0][4] =
-            -matrix[0][4] * matrix[0][10] * matrix[0][15] +
-            matrix[0][4] * matrix[0][11] * matrix[0][14] +
-            matrix[0][8] * matrix[0][6] * matrix[0][15] -
-            matrix[0][8] * matrix[0][7] * matrix[0][14] -
-            matrix[0][12] * matrix[0][6] * matrix[0][11] +
-            matrix[0][12] * matrix[0][7] * matrix[0][10];
+            -_matrix[0][4] * _matrix[0][10] * _matrix[0][15] +
+            _matrix[0][4] * _matrix[0][11] * _matrix[0][14] +
+            _matrix[0][8] * _matrix[0][6] * _matrix[0][15] -
+            _matrix[0][8] * _matrix[0][7] * _matrix[0][14] -
+            _matrix[0][12] * _matrix[0][6] * _matrix[0][11] +
+            _matrix[0][12] * _matrix[0][7] * _matrix[0][10];
 
         mat[0][8] =
-            matrix[0][4] * matrix[0][9] * matrix[0][15] -
-            matrix[0][4] * matrix[0][11] * matrix[0][13] -
-            matrix[0][8] * matrix[0][5] * matrix[0][15] +
-            matrix[0][8] * matrix[0][7] * matrix[0][13] +
-            matrix[0][12] * matrix[0][5] * matrix[0][11] -
-            matrix[0][12] * matrix[0][7] * matrix[0][9];
+            _matrix[0][4] * _matrix[0][9] * _matrix[0][15] -
+            _matrix[0][4] * _matrix[0][11] * _matrix[0][13] -
+            _matrix[0][8] * _matrix[0][5] * _matrix[0][15] +
+            _matrix[0][8] * _matrix[0][7] * _matrix[0][13] +
+            _matrix[0][12] * _matrix[0][5] * _matrix[0][11] -
+            _matrix[0][12] * _matrix[0][7] * _matrix[0][9];
 
         mat[0][12] =
-            -matrix[0][4] * matrix[0][9] * matrix[0][14] +
-            matrix[0][4] * matrix[0][10] * matrix[0][13] +
-            matrix[0][8] * matrix[0][5] * matrix[0][14] -
-            matrix[0][8] * matrix[0][6] * matrix[0][13] -
-            matrix[0][12] * matrix[0][5] * matrix[0][10] +
-            matrix[0][12] * matrix[0][6] * matrix[0][9];
+            -_matrix[0][4] * _matrix[0][9] * _matrix[0][14] +
+            _matrix[0][4] * _matrix[0][10] * _matrix[0][13] +
+            _matrix[0][8] * _matrix[0][5] * _matrix[0][14] -
+            _matrix[0][8] * _matrix[0][6] * _matrix[0][13] -
+            _matrix[0][12] * _matrix[0][5] * _matrix[0][10] +
+            _matrix[0][12] * _matrix[0][6] * _matrix[0][9];
 
         mat[0][1] =
-            -matrix[0][1] * matrix[0][10] * matrix[0][15] +
-            matrix[0][1] * matrix[0][11] * matrix[0][14] +
-            matrix[0][9] * matrix[0][2] * matrix[0][15] -
-            matrix[0][9] * matrix[0][3] * matrix[0][14] -
-            matrix[0][13] * matrix[0][2] * matrix[0][11] +
-            matrix[0][13] * matrix[0][3] * matrix[0][10];
+            -_matrix[0][1] * _matrix[0][10] * _matrix[0][15] +
+            _matrix[0][1] * _matrix[0][11] * _matrix[0][14] +
+            _matrix[0][9] * _matrix[0][2] * _matrix[0][15] -
+            _matrix[0][9] * _matrix[0][3] * _matrix[0][14] -
+            _matrix[0][13] * _matrix[0][2] * _matrix[0][11] +
+            _matrix[0][13] * _matrix[0][3] * _matrix[0][10];
 
         mat[0][5] =
-            matrix[0][0] * matrix[0][10] * matrix[0][15] -
-            matrix[0][0] * matrix[0][11] * matrix[0][14] -
-            matrix[0][8] * matrix[0][2] * matrix[0][15] +
-            matrix[0][8] * matrix[0][3] * matrix[0][14] +
-            matrix[0][12] * matrix[0][2] * matrix[0][11] -
-            matrix[0][12] * matrix[0][3] * matrix[0][10];
+            _matrix[0][0] * _matrix[0][10] * _matrix[0][15] -
+            _matrix[0][0] * _matrix[0][11] * _matrix[0][14] -
+            _matrix[0][8] * _matrix[0][2] * _matrix[0][15] +
+            _matrix[0][8] * _matrix[0][3] * _matrix[0][14] +
+            _matrix[0][12] * _matrix[0][2] * _matrix[0][11] -
+            _matrix[0][12] * _matrix[0][3] * _matrix[0][10];
 
         mat[0][9] =
-            -matrix[0][0] * matrix[0][9] * matrix[0][15] +
-            matrix[0][0] * matrix[0][11] * matrix[0][13] +
-            matrix[0][8] * matrix[0][1] * matrix[0][15] -
-            matrix[0][8] * matrix[0][3] * matrix[0][13] -
-            matrix[0][12] * matrix[0][1] * matrix[0][11] +
-            matrix[0][12] * matrix[0][3] * matrix[0][9];
+            -_matrix[0][0] * _matrix[0][9] * _matrix[0][15] +
+            _matrix[0][0] * _matrix[0][11] * _matrix[0][13] +
+            _matrix[0][8] * _matrix[0][1] * _matrix[0][15] -
+            _matrix[0][8] * _matrix[0][3] * _matrix[0][13] -
+            _matrix[0][12] * _matrix[0][1] * _matrix[0][11] +
+            _matrix[0][12] * _matrix[0][3] * _matrix[0][9];
 
         mat[0][13] =
-            matrix[0][0] * matrix[0][9] * matrix[0][14] -
-            matrix[0][0] * matrix[0][10] * matrix[0][13] -
-            matrix[0][8] * matrix[0][1] * matrix[0][14] +
-            matrix[0][8] * matrix[0][2] * matrix[0][13] +
-            matrix[0][12] * matrix[0][1] * matrix[0][10] -
-            matrix[0][12] * matrix[0][2] * matrix[0][9];
+            _matrix[0][0] * _matrix[0][9] * _matrix[0][14] -
+            _matrix[0][0] * _matrix[0][10] * _matrix[0][13] -
+            _matrix[0][8] * _matrix[0][1] * _matrix[0][14] +
+            _matrix[0][8] * _matrix[0][2] * _matrix[0][13] +
+            _matrix[0][12] * _matrix[0][1] * _matrix[0][10] -
+            _matrix[0][12] * _matrix[0][2] * _matrix[0][9];
 
         mat[0][2] =
-            matrix[0][1] * matrix[0][6] * matrix[0][15] -
-            matrix[0][1] * matrix[0][7] * matrix[0][14] -
-            matrix[0][5] * matrix[0][2] * matrix[0][15] +
-            matrix[0][5] * matrix[0][3] * matrix[0][14] +
-            matrix[0][13] * matrix[0][2] * matrix[0][7] -
-            matrix[0][13] * matrix[0][3] * matrix[0][6];
+            _matrix[0][1] * _matrix[0][6] * _matrix[0][15] -
+            _matrix[0][1] * _matrix[0][7] * _matrix[0][14] -
+            _matrix[0][5] * _matrix[0][2] * _matrix[0][15] +
+            _matrix[0][5] * _matrix[0][3] * _matrix[0][14] +
+            _matrix[0][13] * _matrix[0][2] * _matrix[0][7] -
+            _matrix[0][13] * _matrix[0][3] * _matrix[0][6];
 
         mat[0][6] =
-            -matrix[0][0] * matrix[0][6] * matrix[0][15] +
-            matrix[0][0] * matrix[0][7] * matrix[0][14] +
-            matrix[0][4] * matrix[0][2] * matrix[0][15] -
-            matrix[0][4] * matrix[0][3] * matrix[0][14] -
-            matrix[0][12] * matrix[0][2] * matrix[0][7] +
-            matrix[0][12] * matrix[0][3] * matrix[0][6];
+            -_matrix[0][0] * _matrix[0][6] * _matrix[0][15] +
+            _matrix[0][0] * _matrix[0][7] * _matrix[0][14] +
+            _matrix[0][4] * _matrix[0][2] * _matrix[0][15] -
+            _matrix[0][4] * _matrix[0][3] * _matrix[0][14] -
+            _matrix[0][12] * _matrix[0][2] * _matrix[0][7] +
+            _matrix[0][12] * _matrix[0][3] * _matrix[0][6];
 
         mat[0][10] =
-            matrix[0][0] * matrix[0][5] * matrix[0][15] -
-            matrix[0][0] * matrix[0][7] * matrix[0][13] -
-            matrix[0][4] * matrix[0][1] * matrix[0][15] +
-            matrix[0][4] * matrix[0][3] * matrix[0][13] +
-            matrix[0][12] * matrix[0][1] * matrix[0][7] -
-            matrix[0][12] * matrix[0][3] * matrix[0][5];
+            _matrix[0][0] * _matrix[0][5] * _matrix[0][15] -
+            _matrix[0][0] * _matrix[0][7] * _matrix[0][13] -
+            _matrix[0][4] * _matrix[0][1] * _matrix[0][15] +
+            _matrix[0][4] * _matrix[0][3] * _matrix[0][13] +
+            _matrix[0][12] * _matrix[0][1] * _matrix[0][7] -
+            _matrix[0][12] * _matrix[0][3] * _matrix[0][5];
 
         mat[0][14] =
-            -matrix[0][0] * matrix[0][5] * matrix[0][14] +
-            matrix[0][0] * matrix[0][6] * matrix[0][13] +
-            matrix[0][4] * matrix[0][1] * matrix[0][14] -
-            matrix[0][4] * matrix[0][2] * matrix[0][13] -
-            matrix[0][12] * matrix[0][1] * matrix[0][6] +
-            matrix[0][12] * matrix[0][2] * matrix[0][5];
+            -_matrix[0][0] * _matrix[0][5] * _matrix[0][14] +
+            _matrix[0][0] * _matrix[0][6] * _matrix[0][13] +
+            _matrix[0][4] * _matrix[0][1] * _matrix[0][14] -
+            _matrix[0][4] * _matrix[0][2] * _matrix[0][13] -
+            _matrix[0][12] * _matrix[0][1] * _matrix[0][6] +
+            _matrix[0][12] * _matrix[0][2] * _matrix[0][5];
 
         mat[0][3] =
-            -matrix[0][1] * matrix[0][6] * matrix[0][11] +
-            matrix[0][1] * matrix[0][7] * matrix[0][10] +
-            matrix[0][5] * matrix[0][2] * matrix[0][11] -
-            matrix[0][5] * matrix[0][3] * matrix[0][10] -
-            matrix[0][9] * matrix[0][2] * matrix[0][7] +
-            matrix[0][9] * matrix[0][3] * matrix[0][6];
+            -_matrix[0][1] * _matrix[0][6] * _matrix[0][11] +
+            _matrix[0][1] * _matrix[0][7] * _matrix[0][10] +
+            _matrix[0][5] * _matrix[0][2] * _matrix[0][11] -
+            _matrix[0][5] * _matrix[0][3] * _matrix[0][10] -
+            _matrix[0][9] * _matrix[0][2] * _matrix[0][7] +
+            _matrix[0][9] * _matrix[0][3] * _matrix[0][6];
 
         mat[0][7] =
-            matrix[0][0] * matrix[0][6] * matrix[0][11] -
-            matrix[0][0] * matrix[0][7] * matrix[0][10] -
-            matrix[0][4] * matrix[0][2] * matrix[0][11] +
-            matrix[0][4] * matrix[0][3] * matrix[0][10] +
-            matrix[0][8] * matrix[0][2] * matrix[0][7] -
-            matrix[0][8] * matrix[0][3] * matrix[0][6];
+            _matrix[0][0] * _matrix[0][6] * _matrix[0][11] -
+            _matrix[0][0] * _matrix[0][7] * _matrix[0][10] -
+            _matrix[0][4] * _matrix[0][2] * _matrix[0][11] +
+            _matrix[0][4] * _matrix[0][3] * _matrix[0][10] +
+            _matrix[0][8] * _matrix[0][2] * _matrix[0][7] -
+            _matrix[0][8] * _matrix[0][3] * _matrix[0][6];
 
         mat[0][11] =
-            -matrix[0][0] * matrix[0][5] * matrix[0][11] +
-            matrix[0][0] * matrix[0][7] * matrix[0][9] +
-            matrix[0][4] * matrix[0][1] * matrix[0][11] -
-            matrix[0][4] * matrix[0][3] * matrix[0][9] -
-            matrix[0][8] * matrix[0][1] * matrix[0][7] +
-            matrix[0][8] * matrix[0][3] * matrix[0][5];
+            -_matrix[0][0] * _matrix[0][5] * _matrix[0][11] +
+            _matrix[0][0] * _matrix[0][7] * _matrix[0][9] +
+            _matrix[0][4] * _matrix[0][1] * _matrix[0][11] -
+            _matrix[0][4] * _matrix[0][3] * _matrix[0][9] -
+            _matrix[0][8] * _matrix[0][1] * _matrix[0][7] +
+            _matrix[0][8] * _matrix[0][3] * _matrix[0][5];
 
         mat[0][15] =
-            matrix[0][0] * matrix[0][5] * matrix[0][10] -
-            matrix[0][0] * matrix[0][6] * matrix[0][9] -
-            matrix[0][4] * matrix[0][1] * matrix[0][10] +
-            matrix[0][4] * matrix[0][2] * matrix[0][9] +
-            matrix[0][8] * matrix[0][1] * matrix[0][6] -
-            matrix[0][8] * matrix[0][2] * matrix[0][5];
+            _matrix[0][0] * _matrix[0][5] * _matrix[0][10] -
+            _matrix[0][0] * _matrix[0][6] * _matrix[0][9] -
+            _matrix[0][4] * _matrix[0][1] * _matrix[0][10] +
+            _matrix[0][4] * _matrix[0][2] * _matrix[0][9] +
+            _matrix[0][8] * _matrix[0][1] * _matrix[0][6] -
+            _matrix[0][8] * _matrix[0][2] * _matrix[0][5];
 
         float determinant =
-            matrix[0][0] * mat[0][0]
-            + matrix[0][1] * mat[0][4]
-            + matrix[0][2] * mat[0][8]
-            + matrix[0][3] * mat[0][12];
+            _matrix[0][0] * mat[0][0]
+            + _matrix[0][1] * mat[0][4]
+            + _matrix[0][2] * mat[0][8]
+            + _matrix[0][3] * mat[0][12];
         determinant = 1.0f / determinant;
 
         for (size_t i = 0; i < 16; ++i) {

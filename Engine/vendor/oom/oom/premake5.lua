@@ -10,7 +10,7 @@ project "oom"
 
     files
     {
-        "**.h",
+        "**.hpp",
         "**.cpp",
     }
 
