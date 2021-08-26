@@ -36,7 +36,7 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 	for (auto& iter = doc.MemberBegin(); iter != doc.MemberEnd(); ++iter)
 	{
 		auto& arr = iter->value.GetArray();
-		engine::GameObject object{ engine::GameObject::Create{} };
+		engine::GameObject object = engine::SceneManager::GetActiveScene().CreateGameObject();
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetID(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 		object.EnsureComponent<engine::PrefabComponent>();
@@ -51,7 +51,7 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 		}
 		else
 		{
-			engine::GameObject(parent).AddChild(hierarchyItem.second.first);
+			//engine::GameObject(parent).AddChild(hierarchyItem.second.first);
 			head = hierarchyItem.second.first;
 		}
 	}
@@ -99,7 +99,7 @@ void Serializer::LoadWorld(const std::string& path)
 	for (auto& iter = doc.MemberBegin(); iter != doc.MemberEnd(); ++iter)
 	{
 		auto& arr = iter->value.GetArray();
-		engine::GameObject object{ engine::GameObject::Create{} };
+		engine::GameObject object = engine::SceneManager::GetActiveScene().CreateGameObject();
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetID(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 	}

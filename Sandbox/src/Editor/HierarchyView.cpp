@@ -23,6 +23,8 @@ Technology is prohibited.
 #include "ActionStack/EditorActionStack.h"//add and remove action
 #include "ActionStack/ParentActionStack.h"
 
+#include "Engine/Prefab/PrefabComponentSystem.h"
+
 #include <imgui.h>
 #include <imgui_internal.h>
 
@@ -47,7 +49,7 @@ void HierarchyView::HierarchyPopUp()
 {
 	if (ImGui::MenuItem("New Object"))
 	{
-		engine::GameObject ent{ engine::GameObject::Create{} };
+		engine::GameObject ent = engine::SceneManager::GetActiveScene().CreateGameObject();
 		(ent).AddComponent<engine::Transform3D>();
 		engine::GameObject(engine::SceneManager::GetActiveRoot()).AddChild(ent);
 	}
@@ -337,7 +339,9 @@ bool HierarchyView::SetParent(engine::Entity entt)
 		{
 			std::string temp;
 			temp = reinterpret_cast<char*>(payload->Data);
-			Serializer::LoadObject(temp.c_str(),entt);
+			engine::GameObject go = engine::SceneManager::GetActiveScene().CreateGameObject();
+			engine::SceneManager::GetActiveRoot().AddChild(go);
+			engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->InstantiateFromPrefab(temp, go);
 			ImGui::EndDragDropTarget();
 			return true;
 		}
@@ -392,7 +396,7 @@ void HierarchyView::Paste()
 
 	int childcount = targetGameObject.GetComponent<engine::Transform3D>().GetChildCount();
 	//create the parent node first
-	engine::GameObject parent{ engine::GameObject::Create{} };
+	engine::GameObject parent = engine::SceneManager::GetActiveScene().CreateGameObject();
 	parent.Name() = targetGameObject.Name() + "-Copy";
 	parent.ActiveSelf() = static_cast<bool>(targetGameObject.ActiveSelf());
 
@@ -418,9 +422,9 @@ void HierarchyView::Paste()
 	currentHierarchy.resize(childcount);
 
 	engine::Entity entID = engine::SceneManager::GetActiveRoot();
-	for (size_t iter = 0; iter < tranformList.size(); ++iter)//increase iter by 1 to skip the parent node
+	for (size_t iter = 0; iter < tranformList.size(); ++iter)
 	{
-		engine::GameObject		child{ engine::GameObject::Create{} };
+		engine::GameObject		child;
 		engine::GameObject&		copyObject = engine::GameObject(tranformList[iter]);
 		engine::Transform3D&	copyTransform = copyObject.GetComponent<engine::Transform3D>();
 		//gameobject component

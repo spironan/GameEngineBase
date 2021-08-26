@@ -35,7 +35,7 @@ namespace engine
 	\param    filepath
 	 use to generate data for the map
 	*//**********************************************************************************/
-		void AddPrefab(const std::string& filepath);
+		Entity AddPrefab(const std::string& filepath);
 	/*********************************************************************************//*!
 	\brief    
 	 Returns a prefab when accessed using a filepath	 
@@ -44,6 +44,17 @@ namespace engine
 	 prefab head id
 	*//**********************************************************************************/
 		Entity GetPrefab(const std::string& filepath);
+	/*********************************************************************************//*!
+	\brief    
+	 Creates the prefab using gameobject provided
+	 head will be the start of the prefab (*not its children)
+	 
+	\param    filepath
+	 prefab filepath
+	\param    head
+	 start of the new prefab object
+	*//**********************************************************************************/
+		void InstantiateFromPrefab(const std::string& filepath, GameObject& head);
 	private:
 		struct FileDetails
 		{

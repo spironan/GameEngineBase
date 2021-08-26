@@ -16,6 +16,7 @@ public:
 	EditorComponent& operator=(EditorComponent&&) = default;
 	virtual ~EditorComponent() override = default;
 	
+	EditorComponent(engine::Entity entity, bool active) :Component{ entity,active } {};
 	/*********************************************************************************//*!
 	\brief
 	 Getters
@@ -23,6 +24,13 @@ public:
 	bool IsPrefab() { return m_isPrefab; };
 	bool IsPrefabDirty() { return m_isPrefab_Dirty; };
 	engine::Entity GetPrefabReference() { return m_prefabReference; };
+	/*********************************************************************************//*!
+	\brief
+	 Setters
+	*//**********************************************************************************/
+	void SetPrefab(bool p) { m_isPrefab = p; };
+	void SetPrefabDirty(bool pd) { m_isPrefab_Dirty = pd; };
+	void SetPrefabReference(engine::Entity e) { m_prefabReference = e; };
 	/*********************************************************************************//*
 	\brief    
 	 Will not show any prefab icons if broken off

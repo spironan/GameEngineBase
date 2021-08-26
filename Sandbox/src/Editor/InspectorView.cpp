@@ -14,6 +14,7 @@
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Renderer/Sprite2D.h"
 #include "Engine/PhysicsCollision/RigidBody.h"
+#include "Editor/Component/EditorComponent.h"
 //libs
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -68,6 +69,11 @@ void InspectorView::Show()
 			if(go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
 			
+			if (m_showReadOnly)
+			{
+				if (go.TryGetComponent<EditorComponent>())
+					ReadComponents(go.GetComponent<EditorComponent>(), go);
+			}
 			AddComponentButton();
 			ImGui::EndChild();
 		}
