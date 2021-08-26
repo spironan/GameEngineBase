@@ -191,7 +191,7 @@ namespace engine
 		}
 
 		template<typename T>
-		bool CopyComponent(Entity source, Entity dest)
+		std::enable_if_t<std::is_base_of<Component, T>::value == false, bool> CopyComponent(Entity source, Entity dest)
 		{
 			if (HasComponent<T>(source) == false)
 				return false;
@@ -199,6 +199,20 @@ namespace engine
 				GetComponent<T>(dest) = GetComponent<T>(source);
 			else
 				EmplaceComponent<T>(dest, GetComponent<T>(source));
+			return true;
+		}
+		
+		template<typename T>
+		std::enable_if_t<std::is_base_of<Component, T>::value == true, bool> CopyComponent(Entity source, Entity dest)
+		{
+			if (HasComponent<T>(source) == false)
+				return false;
+			if (HasComponent<T>(dest))
+				GetComponent<T>(dest) = GetComponent<T>(source);
+			else
+				EmplaceComponent<T>(dest, GetComponent<T>(source));
+
+			GetComponent<T>(dest).SetEntity(dest);
 			return true;
 		}
 
