@@ -42,6 +42,11 @@ namespace engine
             return *m_sparseContainer.insert(entity, component);
         }
 
+        T const& InsertData(Entity entity, T component) const
+        {
+            return *m_sparseContainer.insert(entity, component);
+        }
+
         template <typename... args>
         T& EmplaceData(Entity entity, args&&... arguementList)
         {
@@ -52,7 +57,14 @@ namespace engine
         {
             m_sparseContainer.Remove(entity);
         }
+
         T& GetData(Entity entity)
+        {
+            ENGINE_ASSERT(m_sparseContainer[entity]);
+            return *m_sparseContainer[entity];
+        }
+
+        T const& GetData(Entity entity) const
         {
             ENGINE_ASSERT(m_sparseContainer[entity]);
             return *m_sparseContainer[entity];
@@ -63,17 +75,23 @@ namespace engine
             return m_sparseContainer[entity];
         }
 
+        T const* TryGetData(Entity entity) const
+        {
+            return m_sparseContainer[entity];
+        }
+
         void OnEntityDestroy(Entity entity) override
         {
             RemoveData(entity);
         }
 
-        bool HasData(Entity entity)
+        bool HasData(Entity entity) const
         {
             return !m_sparseContainer.IsAvailable(entity);
         }
 
         container_type& GetContainer() { return m_sparseContainer; }
+        container_type const& GetContainer() const { return m_sparseContainer; }
     private:
         container_type m_sparseContainer;
     };

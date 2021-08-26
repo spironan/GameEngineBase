@@ -13,6 +13,7 @@ namespace engine
         virtual ~Component() = default;
 
         Component(Entity entity, bool active) : m_entity(entity), m_active(active) {}
+        virtual Component& CopyComponent(Component const& comp) { return *this = comp; };
 
         Entity GetEntity() const            { return m_entity; }
         void SetEntity(Entity entity)       { m_entity = entity; }
