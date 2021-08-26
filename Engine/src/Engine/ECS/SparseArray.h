@@ -83,17 +83,34 @@ namespace engine
             return &(m_dense[m_index[index]]);
         }
 
+        T const* At(size_type const index) const
+        {
+            if (IsAvailable(index) == true)
+                return nullptr;
+            return &(m_dense[m_index[index]]);
+        }
+
         T& AtIndex(size_type const index)
         {
             return m_dense[index];
         }
 
-        typename sparse_container::value_type AtIndexSparse(size_type const index)
+        T const& AtIndex(size_type const index) const
+        {
+            return m_dense[index];
+        }
+
+        typename sparse_container::value_type AtIndexSparse(size_type const index) const
         {
             return m_sparse[index];
         }
 
-        T* operator[](size_type const index)
+        T* operator[](size_type const index) 
+        {
+            return At(index);
+        }
+
+        T const* operator[](size_type const index) const
         {
             return At(index);
         }
@@ -107,6 +124,11 @@ namespace engine
         {
             return m_dense;
         }
+
+        dense_container const& GetContainer() const
+        {
+            return m_dense;
+        } 
         T* insert(size_type const index, T& element)
         {
             if (IsAvailable(index) == false)
@@ -173,7 +195,12 @@ namespace engine
             return m_dense;
         }
 
-        size_type GetIndex(Entity e)
+        dense_container const& GetDenseContainer() const
+        {
+            return m_dense;
+        }
+
+        size_type GetIndex(Entity e) const
         {
             if (IsAvailable((size_type)e))
                 return Size();
