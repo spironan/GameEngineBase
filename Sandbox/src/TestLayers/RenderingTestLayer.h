@@ -36,7 +36,7 @@ private:
     std::vector<engine::GameObject>::iterator m_target;
 
 
-    static constexpr float scaling = 1.0f;
+    static constexpr float scaling = 50.0f;
     static constexpr float TARGET_ROTATION = 90.f;
 
 public:
@@ -58,8 +58,8 @@ public:
 
         m_camera = CreateGameObject();
         auto& cam = m_camera.AddComponent<engine::SceneCamera>();
-        cam.SetOrthographicSize(100.0f);
         cam.UpdateViewportSize(width, height);
+        
         //cam.SetOrthographic(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
         LOG_ENGINE_INFO(cam.GetEntity());
@@ -71,6 +71,7 @@ public:
         //base world scaling
         //RootGameObject().Transform().Scale() = { scaling, scaling, 1.0f };
 
+        m_child = CreateGameObject();
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
         childSpr.SetTexture(tex);
         m_child.Transform().Scale() = { scaling, scaling, 1.0f };

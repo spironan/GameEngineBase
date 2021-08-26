@@ -53,7 +53,7 @@ namespace engine
 	void Renderer2DSystem::Update()
 	{
 		auto view = m_ECS_Manager.GetComponentView<Transform3D, Sprite2D>();
-		engine::Renderer2D::BeginScene(m_view, m_viewProj);
+		engine::Renderer2D::BeginScene( m_viewProj, m_view);
 		for (auto [transform, sprite] : view)
 		{
 			Renderer2D::DrawRotatedQuad(transform.GetGlobalPosition(),
@@ -61,12 +61,10 @@ namespace engine
 										transform.GetGlobalRotationDeg(),
 										sprite.GetTexture(), 1.0f,
 										sprite.GetColor());
-
 			Renderer2D::DrawCircle(transform.GetGlobalPosition(),
 								   transform.GetGlobalRotationDeg(),
 								   transform.GetGlobalScale().x / 2.f,
 								   sprite.GetColor());
-
 		}
 		engine::Renderer2D::EndScene();
 	}

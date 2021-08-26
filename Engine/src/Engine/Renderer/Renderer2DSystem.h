@@ -45,7 +45,10 @@ public:
     /*-----------------------------------------------------------------------------*/
     explicit Renderer2DSystem(ECS_Manager& _ECS_Manager) : System{ _ECS_Manager }, m_projection{glm::ortho(-1,1,-1,1)} {};
     //explicit Renderer2DSystem(ECS_Manager& _ECS_Manager,const OrthographicCamera& cam) : System{ _ECS_Manager }, m_orthoCam{ cam } {};
-    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager, const Camera& cam) : System{ _ECS_Manager }, m_cam{ &cam } {SetCamera(cam, {0,0,0}); };
+    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager, const Camera& cam) : System{ _ECS_Manager }, m_cam{ &cam } 
+    {
+        SetCamera(cam, {0,0,0}); 
+    };
 
     /*********************************************************************************//*!
     \brief    Updates the rendering system to use the specified camera as the viewpoint

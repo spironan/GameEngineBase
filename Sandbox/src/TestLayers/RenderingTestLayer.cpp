@@ -23,6 +23,8 @@ void RenderingTestLayer::OnImGuiRender()
     int width = x.GetSize().first;
     int height = x.GetSize().second;
 
+    auto ar = (float)width / height;
+
 
     ImGui::Begin("Scene", nullptr,
                     ImGuiWindowFlags_NoBringToFrontOnFocus
@@ -44,16 +46,19 @@ void RenderingTestLayer::OnImGuiRender()
 
         // opengl loves saving framebuffers upside down, 
         // so we flip the UVW in imgui::image()
-        ImGui::Image((ImTextureID)fb, ImVec2{ myW, myH }, { 0.0f,1.0f }, { 1.0f,0.0f });
+        ImGui::Image((ImTextureID)fb, ImVec2{ ar*myH, myH }, { 0.0f,1.0f }, { 1.0f,0.0f });
         
         //Debug Red box
         //ImGui::GetForegroundDrawList()->AddRect(vMin, vMax, ImU32(0xFF0000FF));
 
         ImGui::SetNextWindowSize({ vMax.x - vMin.x,vMax.y - vMin.y });
         ImGui::SetNextWindowPos(vMin);
+
+        //window hole should be same size as content area
         ImGui::SetWindowHitTestHole(ImGui::GetCurrentWindow(), vMin, { myW,myH });
+
         // IMPORTANT: we now NEED to call this before begin frame
-        ImGuizmo::SetRect(vMin.x, vMin.y, myW, myH);
+        ImGuizmo::SetRect(vMin.x, vMin.y, ar*myH, myH);
         ImGuizmo::BeginFrame(); 
 
         glm::vec3 mScale = transform.GetGlobalScale();
@@ -77,6 +82,7 @@ void RenderingTestLayer::OnImGuiRender()
 
         auto& cam = m_camera.GetComponent<engine::SceneCamera>();
 
+        // TODO : way for camera to do view matrix
         auto& view = glm::mat4{ 1.0f };
         auto& projection = cam.GetProjection();
 
