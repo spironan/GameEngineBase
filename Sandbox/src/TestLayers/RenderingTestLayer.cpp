@@ -14,8 +14,8 @@ void RenderingTestLayer::OnImGuiRender()
 {
     fb = engine::FramebufferPool::Get("2D_Framebuffer")->GetImage()->GetID();
 
-    m_world.GetSystem<engine::Renderer2DSystem>()->SetCamera(m_camera.GetComponent<engine::SceneCamera>(), m_camera.GetComponent<engine::Transform3D>().GetGlobalPosition());
-    m_world.GetSystem<engine::Renderer2DSystem>()->Update();
+    m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->SetCamera(m_camera.GetComponent<engine::SceneCamera>(), m_camera.GetComponent<engine::Transform3D>().GetGlobalPosition());
+    m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
 
     auto& transform = m_child.GetComponent<engine::Transform3D>();
 

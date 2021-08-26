@@ -22,7 +22,8 @@ void TransformTestLayer::Init()
     engine::Window& x = engine::Application::Get().GetWindow();
     int width = x.GetSize().first;
     int height = x.GetSize().second;
-    cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
+    auto& cam = m_camera.AddComponent<engine::SceneCamera>();
+    cam.UpdateViewportSize(width,height);
 
     auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
 

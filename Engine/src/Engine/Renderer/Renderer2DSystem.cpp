@@ -30,13 +30,13 @@ Technology is prohibited.
 
 namespace engine
 {
-	void Renderer2DSystem::SetCamera(const Camera& cam,const glm::vec3& position)
+	void Renderer2DSystem::SetCamera(const Camera& cam, const glm::vec3& position)
 	{
 		m_cam = &cam;
 
 		m_projection = m_cam->GetProjection();
 		//auto transform = WorldManager::GetActiveWorld().GetComponent<Transform3D>(cam.GetEntity());
-		
+
 		//glm::vec3 pos = m_transform->GetGlobalPosition();
 		m_view = {
 			1.0f,	0.0f,	0.0f,	0.0f,
@@ -47,42 +47,28 @@ namespace engine
 
 		//m_view = glm::inverse(glm::translate(glm::mat4{ 1.0f },m_transform->GetGlobalPosition()) * m_transform->GetGlobalRotationMatrix());
 		//m_view = glm::inverse(m_transform->GetGlobalMatrix());
-		m_viewProj = m_projection* m_view;
+		m_viewProj = m_projection * m_view;
 	}
 
-	engine::Renderer2D::BeginScene(m_orthoCam);
-	for (auto [transform, sprite] : view)
+	void Renderer2DSystem::Update()
 	{
-		//Renderer2D::DrawQuad(transform.GetGlobalPosition(), transform.GetGlobalScale(), sprite.GetColor());
-		Renderer2D::DrawRotatedQuad(transform.GetGlobalPosition(),
-			transform.GetGlobalScale(),
-			transform.GetGlobalRotationDeg(),
-			sprite.GetTexture(), 1.0f,
-			sprite.GetColor());
+		auto view = m_ECS_Manager.GetComponentView<Transform3D, Sprite2D>();
+		engine::Renderer2D::BeginScene(m_view, m_viewProj);
+		for (auto [transform, sprite] : view)
+		{
+			Renderer2D::DrawRotatedQuad(transform.GetGlobalPosition(),
+										transform.GetGlobalScale(),
+										transform.GetGlobalRotationDeg(),
+										sprite.GetTexture(), 1.0f,
+										sprite.GetColor());
 
-		Renderer2D::DrawCircle(transform.GetGlobalPosition(),
-			transform.GetGlobalRotationDeg(),
-			transform.GetGlobalScale().x / 2.f,
-			sprite.GetColor());
+			Renderer2D::DrawCircle(transform.GetGlobalPosition(),
+								   transform.GetGlobalRotationDeg(),
+								   transform.GetGlobalScale().x / 2.f,
+								   sprite.GetColor());
 
-		/*
-		
-		auto& transform = m_ECS_Manager.GetComponent<Transform3D>(it);
-		auto& sprite = m_ECS_Manager.GetComponent<Sprite2D>(it);
-
-		//Renderer2D::DrawQuad(transform.GetGlobalPosition(), transform.GetGlobalScale(), sprite.GetColor());
-		Renderer2D::DrawRotatedQuad(transform.GetGlobalPosition(),
-									transform.GetGlobalScale(),
-									transform.GetGlobalRotationDeg(),
-									sprite.GetTexture(),1.0f,
-									sprite.GetColor());
-
-		Renderer2D::DrawCircle(transform.GetGlobalPosition(),
-							   transform.GetGlobalRotationDeg(),
-							   transform.GetGlobalScale().x/2.f,
-							   sprite.GetColor());
-
-		*/
+		}
+		engine::Renderer2D::EndScene();
 	}
 
 };

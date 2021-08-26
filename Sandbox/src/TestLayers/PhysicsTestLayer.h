@@ -13,12 +13,13 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+#include "Engine.h"
 #include "UtilityLayers/SceneBaseLayer.h"
 
 class PhysicsTestLayer final : public SceneBaseLayer
 {
 private:
-    engine::OrthographicCamera cam{ -1, 1, -1, 1 };
+    engine::GameObject m_cam;
     int width{}, height{};
 
     glm::vec2 upperbounds, lowerbounds;
@@ -37,6 +38,8 @@ public:
         width = x.GetSize().first;
         height = x.GetSize().second;
 
+        auto& cam = m_cam.AddComponent<engine::SceneCamera>();
+            
         auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
         auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();
 
