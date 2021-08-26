@@ -16,6 +16,8 @@ Technology is prohibited.
 #include <Engine.h>
 #include "Seralizer.h"
 #include "UtilityLayers/SceneBaseLayer.h"
+#include "Engine/Prefab/PrefabComponentSystem.h"
+#include "Editor/Component/EditorComponentSystem.h"
 struct A
 {
     int i = 1;
@@ -43,17 +45,18 @@ public:
 
     void Init() final override
     {
-
         engine::GameObject testrootGO = RootGameObject();
         testrootGO.Name() = "Scene";
         std::vector<engine::GameObject> entities;
+		m_scene.GetWorld().RegisterSystem<engine::PrefabComponentSystem>();
+		m_scene.GetWorld().RegisterSystem<EditorComponentSystem>();
 
         Serializer::LoadWorld(m_scene_path);
     }
 
     void Exit() final override
     {
-        Serializer::SaveWorld(m_scene_path);
+        //Serializer::SaveWorld(m_scene_path);
     }
 
     /*~SceneTestLayer()

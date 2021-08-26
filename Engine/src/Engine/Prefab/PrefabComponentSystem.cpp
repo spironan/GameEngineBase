@@ -25,7 +25,7 @@ Entity PrefabComponentSystem::AddPrefab(const std::string& filepath)
 		return iter->second.head;
 
 	//use serializer to serialize prefab
-	Entity headNode = Serializer::LoadObject(filepath, -1);//not shown in hierarchy
+	Entity headNode = Serializer::LoadObject(filepath, 500);//not shown in hierarchy
 	ENGINE_ASSERT(headNode != 0);//means seralization failed
 
 	static_cast<GameObject>(headNode).GetComponent<PrefabComponent>().m_RootNode = true;
@@ -60,12 +60,9 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 	std::vector<Entity> current{head};
 	Entity prevParent = head;
 
-	auto headEditorComponent = head.TryGetComponent<EditorComponent>();
-	if (headEditorComponent)
-	{
-		headEditorComponent->SetPrefab(true);
-		headEditorComponent->SetPrefabReference(obj);
-	}
+	auto& headEditorComponent = head.EnsureComponent<EditorComponent>();
+	headEditorComponent.SetPrefab(true);
+	headEditorComponent.SetPrefabReference(obj);
 
 	for (GameObject childs : childList)
 	{
@@ -75,12 +72,11 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		//gameobject component
 		child.Name() = copyObject.Name();
 		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
-		auto editorComponent = child.TryGetComponent<EditorComponent>();
-		if(editorComponent)
-		{
-			editorComponent->SetPrefab(true);
-			editorComponent->SetPrefabReference(copyObject.GetID());
-		}
+
+		auto& editorComponent = child.EnsureComponent<EditorComponent>();
+		editorComponent.SetPrefab(true);
+		editorComponent.SetPrefabReference(copyObject.GetID());
+		
 
 		{//TODO fix this once its done
 			engine::Transform3D& newTrans = static_cast<engine::GameObject>(copyObject).GetComponent<engine::Transform3D>();

@@ -15,6 +15,7 @@
 #include "Engine/Renderer/Sprite2D.h"
 #include "Engine/PhysicsCollision/RigidBody.h"
 #include "Editor/Component/EditorComponent.h"
+#include "Engine/Prefab/PrefabComponent.h"
 //libs
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -68,7 +69,9 @@ void InspectorView::Show()
 
 			if(go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
-			
+			//if (go.TryGetComponent<engine::PrefabComponent>())
+			//	ImGui::Text("prefab component");
+			//	ReadComponents(go.GetComponent<engine::PrefabComponent>(), go);
 			if (m_showReadOnly)
 			{
 				if (go.TryGetComponent<EditorComponent>())

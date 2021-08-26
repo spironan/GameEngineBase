@@ -30,7 +30,7 @@ private:
 		std::vector<rttr::property> types = component.get_type().get_properties();
 		rttr::variant current_value;
 		ImGui::BeginGroup();
-		is_collapsed = (ImGui::TreeNodeEx(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen ) == false);
+		is_collapsed = (ImGui::TreeNodeEx(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen) == false);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 50.0f);//button width
 		if (ImGui::Button("Reset", ImVec2(0,ImGui::GetFontSize())))
 		{
@@ -158,7 +158,7 @@ private:
 				ImGui::PopStyleColor();
 
 		}
-		ImGui::TreePop();
+		
 		ImGui::PopID();
 	}
 	
