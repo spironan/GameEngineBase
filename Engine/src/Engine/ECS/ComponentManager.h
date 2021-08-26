@@ -23,13 +23,17 @@ namespace engine
 	public:
 		using TypeContainer = std::unordered_map<const char*, ComponentType>;
 		using ComponentContainer = std::unordered_map<const char*, std::shared_ptr<ComponentArrayBase>>;
+		using AddComponentCallback = std::function<void*(ComponentManager&, Entity, void*)>;
+		using AddComponentMap = std::unordered_map<ComponentType, AddComponentCallback>;
+		using GetComponentCallback = std::function<void* (ComponentManager&, Entity)>;
+		using GetComponentMap = std::unordered_map<ComponentType, GetComponentCallback>;
 		/*****************************************************************//**
 		 * @brief Registers a component to be used. Creates a ComponentArray
 		 * of type T and inserts it into m_ComponentArrays
 		 * 
 		*********************************************************************/
 		template<typename T>
-		void RegisterComponent()
+		void RegisterComponent() 
 		{
 			const char* typeName = typeid(T).name();
 
@@ -38,17 +42,25 @@ namespace engine
 
 			m_ComponentTypes.insert({ typeName, m_NextComponentType });
 			m_ComponentArrays.insert({ typeName, std::make_shared<ComponentArray<T>>() });
+			m_addComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity entity, void* comp)->void* {
+				//return reinterpret_cast<Component*>(&(cm.EmplaceComponent<T>(entity)));
+				return &(cm.AddComponent(entity,*(static_cast<T*>(comp))));
+				} });
+			m_getComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity entity)->void* {
+				return &(cm.GetComponent<T>(entity));
+				} });
 			++m_NextComponentType;
 		}
 
 		template<typename T>
-		ComponentType GetComponentID()
+		ComponentType GetComponentID() 
 		{
 			const char* typeName = typeid(T).name();
 			//Component not registered before use
-			ENGINE_ASSERT(IsRegistered<T>());
+			if (IsRegistered<T>() == false)
+				RegisterComponent<T>();
 
-			return m_ComponentTypes[typeName];
+			return m_ComponentTypes.find(typeName)->second;
 		}
 
 		/*template<typename T>
@@ -65,7 +77,7 @@ namespace engine
 			if (IsRegistered<T>() == false)
 				RegisterComponent<T>();
 			auto& comp = GetComponentArray<T>()->InsertData(entity, component);			
-			comp->SetEntity(entity);
+			comp.SetEntity(entity);
 			return comp;
 		}
 
@@ -94,6 +106,12 @@ namespace engine
 			return GetComponentArray<T>()->EmplaceData(entity, std::forward<args>(arguementList)...);
 		}
 
+		void* EmplaceComponentByTypeID(Entity entity, ComponentType type, void* component)
+		{
+			if (type >= Size())
+				return nullptr;
+			return m_addComponentMap[type](*this, entity, component);
+		}
 
 		template<typename T>
 		void RemoveComponent(Entity entity)
@@ -102,7 +120,7 @@ namespace engine
 		}
 
 		template<typename T>
-		bool HasComponent(Entity entity)
+		bool HasComponent(Entity entity) const
 		{
 			if (!IsRegistered<T>()) { return false; }
 			return GetComponentArray<T>()->HasData(entity);
@@ -112,6 +130,20 @@ namespace engine
 		T& GetComponent(Entity entity)
 		{
 			return GetComponentArray<T>()->GetData(entity);
+		}
+
+		template<typename T>
+		T const& GetComponent(Entity entity) const
+		{
+			return GetComponent<T>();
+		}
+
+		
+		void* GetComponentByTypeID(Entity entity, ComponentType type)
+		{
+			if (type >= Size())
+				return nullptr;
+			return m_getComponentMap[type](*this,type);
 		}
 
 		template<typename... Component>
@@ -125,8 +157,25 @@ namespace engine
 			return std::forward_as_tuple(GetComponentArray<Component>()->GetData(entity)...);
 		}
 
+		template<typename... Component>
+		decltype(auto) GetComponents(Entity entity) const
+		{
+			if constexpr (sizeof...(Component) == 1)
+			{
+				return GetComponentArray<Component>()->GetData(entity);
+			}
+
+			return std::forward_as_tuple(GetComponentArray<Component>()->GetData(entity)...);
+		}
+
 		template<typename T>
 		T* TryGetComponent(Entity entity)
+		{
+			return GetComponentArray<T>()->TryGetData(entity);
+		}
+
+		template<typename T>
+		T const* TryGetComponent(Entity entity) const
 		{
 			return GetComponentArray<T>()->TryGetData(entity);
 		}
@@ -164,13 +213,13 @@ namespace engine
 		}
 
 		template<typename T>
-		Entity GetEntity(T& component)
+		Entity GetEntity(T& component) const
 		{
 			return static_cast<Component>(component).GetEntity();
 		}
 
 		template<typename T>
-		Entity GetEntity(T* component)
+		Entity GetEntity(T* component) const
 		{
 			return static_cast<Component>(component).GetEntity();
 		}
@@ -182,7 +231,19 @@ namespace engine
 		}
 
 		template<typename T>
+		typename ComponentArray<T>::container_type const& GetContainer() const
+		{
+			return GetComponentArray<T>()->GetContainer();
+		}
+
+		template<typename T>
 		typename ComponentArray<T>::container_type::dense_container& GetContainerDenseArray()
+		{
+			return GetContainer<T>().GetDenseContainer();
+		}
+
+		template<typename T>
+		typename ComponentArray<T>::container_type::dense_container const& GetContainerDenseArray() const
 		{
 			return GetContainer<T>().GetDenseContainer();
 		}
@@ -205,24 +266,31 @@ namespace engine
 		}
 
 		template<typename T>
-		bool IsRegistered()
+		bool IsRegistered() const
 		{
 			const char* typeName = typeid(T).name();
 			return m_ComponentTypes.find(typeName) != m_ComponentTypes.end();
+		}
+
+		ComponentType Size() const
+		{
+			return m_NextComponentType;
 		}
 	private:
 		TypeContainer m_ComponentTypes{};
 		ComponentContainer m_ComponentArrays{};
 		ComponentType m_NextComponentType{};
-
-
+		AddComponentMap m_addComponentMap{};
+		GetComponentMap m_getComponentMap{};
 		template<typename T>
 		std::shared_ptr<ComponentArray<T>> GetComponentArray()
 		{
 			const char* typeName = typeid(T).name();
 
 			//Component not registered before use
-			ENGINE_ASSERT(m_ComponentTypes.find(typeName) != m_ComponentTypes.end());
+			if (IsRegistered<T>() == false)
+				RegisterComponent<T>();
+
 
 			return std::static_pointer_cast<ComponentArray<T>>(m_ComponentArrays[typeName]);
 		}

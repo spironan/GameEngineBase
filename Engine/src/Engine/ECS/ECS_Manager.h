@@ -42,10 +42,20 @@ namespace engine
 
 		void DestroyEntity(Entity entity)
 		{
-			m_EntityManager->DestroyEntity(entity);
-			m_ComponentManager->OnEntityDestroy(entity);
+			deleteList.emplace(entity);
+			
 
 			//m_SystemManager->EntityDestroyed(entity);
+		}
+
+		void ProcessDeletions()
+		{
+			for (auto const i : deleteList)
+			{
+				m_EntityManager->DestroyEntity(i);
+				m_ComponentManager->OnEntityDestroy(i);
+			}
+			deleteList.clear();
 		}
 
 
@@ -112,6 +122,13 @@ namespace engine
 
 		template<typename T>
 		T& GetComponent(Entity entity)
+		{
+			ENGINE_ASSERT(m_EntityManager->Valid(entity));
+			return m_ComponentManager->GetComponent<T>(entity);
+		}
+
+		template<typename T>
+		T const& GetComponent(Entity entity) const
 		{
 			ENGINE_ASSERT(m_EntityManager->Valid(entity));
 			return m_ComponentManager->GetComponent<T>(entity);
@@ -199,6 +216,22 @@ namespace engine
 			return m_ComponentManager->Swap<T>(index1, index2);
 		}
 
+		Entity DuplicateEntity(Entity source)
+		{
+			Entity dest = CreateEntity();
+			auto signature = m_EntityManager->GetSignature(dest);
+			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
+			{
+				if (signature[type] == true)
+				{
+					void* comp = m_ComponentManager->EmplaceComponentByTypeID(dest, type, m_ComponentManager->GetComponentByTypeID(source, type));
+					ENGINE_ASSERT(comp != nullptr);
+					static_cast<Component*>(comp)->SetEntity(dest);
+				}					
+			}
+			return dest;
+		}
+
 		//// Event methods
 		//void AddEventListener(EventId eventId, std::function<void(Event&)> const& listener)
 		//{
@@ -220,5 +253,6 @@ namespace engine
 		std::unique_ptr<EntityManager> m_EntityManager;
 		//std::unique_ptr<EventManager> mEventManager;
 		std::unique_ptr<SystemManager> m_SystemManager;
+		std::set<Entity> deleteList;
 	};
 }
