@@ -40,7 +40,6 @@ namespace engine
         //m_imGuiLayer = new ImGuiLayer();
         m_imGuiLayer = MemoryManager::NewOnStack<ImGuiLayer>();
         m_layerStack.PushOverlay(m_imGuiLayer);
-        m_imGuiLayer->OnAttach();
 
         /*Initialize Input Management*/
         Input::Init();
