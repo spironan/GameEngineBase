@@ -59,7 +59,7 @@ namespace oom
         */
     template<length_t Size, typename T>
     mat<Size - 1, Size - 1, T>
-    minor(mat<Size - 1, Size - 1, T> const& matrix, length_t cofactor_col, length_t cofactor_row)
+    minor(mat<Size, Size, T> const& matrix, length_t cofactor_col, length_t cofactor_row)
     {
         mat<Size - 1, Size - 1, T> result;
 
@@ -96,8 +96,8 @@ namespace oom
             float cofactor = matrix[column][0];
             //determine sign-ness of that iteration
             cofactor *= 1 + ((column & 1) * -2);
-            mat<Size - 1, Size - 1, T> shrank_mat = matrix;
-            mat<Size - 1, Size - 1, T> minor_mat = minor<Size, T>(shrank_mat, column, 0);
+            //mat<Size - 1, Size - 1, T> shrank_mat = matrix;
+            mat<Size - 1, Size - 1, T> minor_mat = minor<Size, T>(matrix, column, 0);
             det += determinant(minor_mat) * cofactor;
         }
 
@@ -111,7 +111,7 @@ namespace oom
         * @return float the determinant of the matrix
         */
     template<>
-    float determinant(mat2 const& matrix)
+    float determinant(mat<2, 2, float> const& matrix)
     {
         return (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
     };
@@ -122,7 +122,8 @@ namespace oom
         * @param matrix the matrix that will be used
         * @return float the determinant of the matrix
         */
-    /*float determinant(mat1 const& matrix) { return matrix[0][0]; };*/
+    template<>
+    float determinant(mat<1, 1, float> const& matrix) { return matrix[0][0]; };
 
     /**
         * @brief Get the cofactor matrix of a given matrix
@@ -140,8 +141,8 @@ namespace oom
         {
             for (length_t row = 0; row < Size; ++row) 
             {
-                float determinant = determinant(minor(matrix, column, row));
-                result[column][row] = determinant * (1 + (column ^ row) * -2);
+                float deter = determinant(minor<Size, T>(matrix, column, row));
+                result[column][row] = deter * (1 + (column ^ row) * -2);
             }
         }
 
@@ -166,7 +167,7 @@ namespace oom
     template<length_t Size, typename T>
     mat<Size, Size, T> adjugate(mat<Size, Size, T> const& matrix)
     {
-        return cofactor(matrix).transposed();
+        return transposed(cofactor(matrix));
     }
 
     /**

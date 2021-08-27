@@ -17,6 +17,8 @@ Technology is prohibited.
 #include <Engine.h>
 #include <EntryPoint.h>
 
+#include <oom/oom.hpp>
+
 //Editor Layer
 #include "EditorLayer.h"
 //Scripting Layer

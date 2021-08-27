@@ -57,6 +57,7 @@ project "Engine"
     libdirs 
     {
         "%{LibraryDir.SDL}",
+        "%{LibraryDir.oom}", --custom math library.
         --"%{LibraryDir.rttr}",
         --"%{LibraryDir.VulkanSDK}",
     }
@@ -74,7 +75,8 @@ project "Engine"
         --"vulkan-1",
         "%{Library.Vulkan}",
         "vkbootstrap",
-        "tinyobjloader"
+        "tinyobjloader",
+        "oom" --custom math library.
     }
 
     -- Graphic's Dependent defines

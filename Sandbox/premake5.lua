@@ -40,6 +40,7 @@ project "Sandbox"
         "%{LibraryDir.SDL}",
         "%{LibraryDir.rttr}",
         "%{LibraryDir.mono}",
+        "%{LibraryDir.oom}", --custom math library.
     }
 
     links
@@ -50,7 +51,8 @@ project "Sandbox"
         "SDL2test",
         "Engine",
         "mono-2.0-sgen",
-        "MonoPosixHelper"
+        "MonoPosixHelper",
+        "oom" --custom math library.
     }
 
     defines

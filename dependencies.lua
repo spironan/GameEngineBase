@@ -29,6 +29,7 @@ LibraryDir["SDL"]           = "%{wks.location}/Engine/vendor/sdl2/lib/x64"
 LibraryDir["tinyobjloader"] = "%{wks.location}/Engine/vendor/tinyobjloader/lib"
 LibraryDir["vkbootstrap"]   = "%{wks.location}/Engine/vendor/vkbootstrap/lib"
 LibraryDir["VulkanSDK"]     = "%{VULKAN_SDK}/Lib"
+LibraryDir["oom"]           = "%{wks.location}/Engine/vendor/oom/lib"   -- custom maths library directory
 
 -- Paths to libraries that will be used
 Library                     = {}
