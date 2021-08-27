@@ -7,11 +7,11 @@
 
 namespace oom
 {
-    using vec1  = vec<1, float>;
+    /*using vec1  = vec<1, float>;
     using dvec1 = vec<1, double>;
     using ivec1 = vec<1, int>;
     using uvec1 = vec<1, unsigned int>;
-    using bvec1 = vec<1, bool>;
+    using bvec1 = vec<1, bool>;*/
 
     using vec2  = vec<2, float>;
     using dvec2 = vec<2, double>;

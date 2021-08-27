@@ -67,16 +67,16 @@ namespace oom
         // -- Matrix conversions --
 
         template<typename U>
-        explicit constexpr mat(mat<4, 4, U> const& m);
+        OOM_EXPLICIT constexpr mat(mat<4, 4, U> const& m);
 
-        explicit constexpr mat(mat<2, 2, T> const& x);
-        explicit constexpr mat(mat<3, 3, T> const& x);
-        explicit constexpr mat(mat<2, 3, T> const& x);
-        explicit constexpr mat(mat<3, 2, T> const& x);
-        explicit constexpr mat(mat<2, 4, T> const& x);
-        explicit constexpr mat(mat<4, 2, T> const& x);
-        explicit constexpr mat(mat<3, 4, T> const& x);
-        explicit constexpr mat(mat<4, 3, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<2, 2, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<3, 3, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<2, 3, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<3, 2, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<2, 4, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<4, 2, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<3, 4, T> const& x);
+        OOM_EXPLICIT constexpr mat(mat<4, 3, T> const& x);
 
         // -- Unary arithmetic operators --
 

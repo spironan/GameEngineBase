@@ -16,3 +16,4 @@
 #include "common.hpp"
 #include "geometric.hpp"
 #include "matrix_utils.hpp"
+#include "type_ptr.hpp"

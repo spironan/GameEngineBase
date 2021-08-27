@@ -78,11 +78,11 @@ namespace oom
         constexpr vec(vec<1, A> const& _x, vec<2, B> const& _yz);
         /// Explicit conversions (From section 5.4.1 Conversion and scalar constructors of GLSL 1.30.08 specification)
         template<typename U>
-        constexpr explicit vec(vec<4, U> const& v);
+        constexpr OOM_EXPLICIT vec(vec<4, U> const& v);
 
         /// Explicit conversions (From section 5.4.1 Conversion and scalar constructors of GLSL 1.30.08 specification)
         template<typename U>
-        constexpr explicit vec(vec<3, U> const& v);
+        constexpr OOM_EXPLICIT vec(vec<3, U> const& v);
 
         // -- Unary arithmetic operators --
 
