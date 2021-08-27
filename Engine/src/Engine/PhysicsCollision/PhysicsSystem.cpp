@@ -117,14 +117,14 @@ namespace engine
         auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, CircleCollider2D>();
         //auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, BoxCollider2D>();
 
-        for (auto& ent : view)
+        for (auto[rigidbody, collider] : view)
         {
             //auto& collider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
-            auto& collider = m_ECS_Manager.GetComponent<CircleCollider2D>(ent);
-            for (auto& ent2 : view)
+            //auto& collider = m_ECS_Manager.GetComponent<CircleCollider2D>(ent);
+            for (auto[rigidbody2, collider2] : view)
             {
                 //auto& collider2 = m_ECS_Manager.GetComponent<BoxCollider2D>(ent2);
-                auto& collider2 = m_ECS_Manager.GetComponent<CircleCollider2D>(ent2);
+                //auto& collider2 = m_ECS_Manager.GetComponent<CircleCollider2D>(ent2);
                 if (collider.GetEntity() == collider2.GetEntity()) break;
 
                 /*if(collider.TestCollision(&collider2))
@@ -163,9 +163,9 @@ namespace engine
 
         auto& view = m_ECS_Manager.GetComponentView<Rigidbody2D, BoxCollider2D>();
         
-        for (auto& ent : view)
+        for (auto[rigidbody, boxCollider] : view)
         {
-            BoxCollider2D boxCollider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
+            //BoxCollider2D boxCollider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
 
             vec2 center = boxCollider.WorldPosition();
             centerSum += center;
@@ -190,23 +190,20 @@ namespace engine
         }
         
         //std::sort(view.begin(), view.end(), m_broadphaseCompare);
-
-        for (auto iterA = view.begin(); iterA != view.end(); ++iterA)
+        for (auto [rigidbody, boxCollider] : view)
         {
-            float minA = m_ECS_Manager.GetComponent<BoxCollider2D>(*iterA).GetGlobalBounds().min[m_broadphaseCompare.Axis];
+            float minA = boxCollider.GetGlobalBounds().min[m_broadphaseCompare.Axis];
 
-            for (auto iterB = iterA + 1 ; iterB != view.end(); ++iterB)
+            for (auto [rigidbody2, boxCollider2] : view)
             {
-                float minB = m_ECS_Manager.GetComponent<BoxCollider2D>(*iterB).GetGlobalBounds().min[m_broadphaseCompare.Axis];
-                
+                if (boxCollider.GetEntity() == boxCollider2.GetEntity()) continue;
+                float minB = boxCollider2.GetGlobalBounds().min[m_broadphaseCompare.Axis];
+
                 if (minB > minA) break;
-                
-                m_narrowPhase.emplace_back(*iterA, *iterB);
+
+                m_narrowPhase.emplace_back(boxCollider.GetEntity(), boxCollider2.GetEntity());
             }
-
         }
-
-
     }
 
     void PhysicsSystem::NarrowPhase()

@@ -13,37 +13,43 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include <Engine.h>
+#include "UtilityLayers/SceneBaseLayer.h"
 
-class PhysicsTestLayer : public engine::Layer
+class PhysicsTestLayer : public SceneBaseLayer
 {
 private:
-    engine::World& m_world;
+    //engine::World& m_scene.GetWorld();
     engine::OrthographicCamera cam{ -1, 1, -1, 1 };
     int width{}, height{};
-    engine::GameObject m_root, m_second, m_third/*, m_floor*/;
+    engine::GameObject m_second, m_third;
 
-    oom::vec2 upperbounds, lowerbounds;
+    glm::vec2 upperbounds, lowerbounds;
+
 public:
 
     PhysicsTestLayer()
-        : Layer{ "PhysicsTestLayer" }
-        , m_world{ engine::WorldManager::CreateWorld() }
-        , upperbounds { 500,  200 }
-        , lowerbounds {-500, -200 }
+        : SceneBaseLayer{ "PhysicsTestLayer" }
+        , upperbounds   { 500,  200 }
+        , lowerbounds   {-500, -200 }
+        , m_second      { }
+        , m_third       { }
     {
-        engine::WorldManager::SetActiveWorld(m_world.GetID());
+    }
+
+    virtual void Init() override
+    {
+        engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
 
         engine::Window& x = engine::Application::Get().GetWindow();
         width = x.GetSize().first;
         height = x.GetSize().second;
         cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
-        auto& ts = m_world.RegisterSystem<engine::TransformSystem>();
-        auto& rs = m_world.RegisterSystem<engine::Renderer2DSystem>(cam);
-        auto& ps = m_world.RegisterSystem<engine::PhysicsSystem>();
+        auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
+        auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();
 
         {
+            m_second = CreateGameObject();
             m_second.Transform().Scale() = { 50.f, 50.f, 1.0f };
             m_second.AddComponent<engine::Sprite2D>();
             //m_second.AddComponent<engine::BoxCollider2D>();
@@ -51,10 +57,11 @@ public:
             auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
             pc.GravityScale = 0.0f;
-            m_root.AddChild(m_second);
+            RootGameObject().AddChild(m_second);
         }
-        
+
         {
+            m_third = CreateGameObject();
             m_third.Transform().Position() = { 100.f, 0.f, 0.f };
             m_third.Transform().Scale() = { 50.f, 50.f, 1.0f };
             m_third.AddComponent<engine::Sprite2D>();
@@ -63,7 +70,7 @@ public:
             auto& pc = m_third.AddComponent<engine::Rigidbody2D>();
             pc.SetMass(1.f);
             pc.GravityScale = 0.0f;
-            m_root.AddChild(m_third);
+            RootGameObject().AddChild(m_third);
         }
 
         ////Ground
@@ -77,15 +84,14 @@ public:
         //    pc.BodyType = engine::BodyType::STATIC;
         //    pc.GravityScale = 0.0f;
         //}
-
     }
 
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
-        engine::WorldManager::SetActiveWorld(m_world.GetID());
-        m_world.GetSystem<engine::TransformSystem>()->Update();
-        m_world.GetSystem<engine::PhysicsSystem>()->Update(dt);
+        engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
+        m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
+        m_scene.GetWorld().GetSystem<engine::PhysicsSystem>()->Update(dt);
 
         constexpr float force   = 300.f;
         constexpr float jumpforce = 10000.f;
@@ -119,10 +125,10 @@ public:
         LOG_TRACE("{0}{1}", rootsForce.x, rootsForce.y );*/
 
         // transform objects
-        auto view = m_world.GetComponentView<engine::Transform3D>();
-        for (auto& ent : view)
+        auto view = m_scene.GetWorld().GetComponentView<engine::Transform3D>();
+        for (auto[transform] : view)
         {
-            auto& transform = m_world.GetComponent<engine::Transform3D>(ent);
+            //auto& transform = m_scene.GetWorld().GetComponent<engine::Transform3D>(ent);
             if (transform.Position().y < lowerbounds.y)
             {
                 transform.Position().y = upperbounds.y;
@@ -145,8 +151,8 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        engine::WorldManager::SetActiveWorld(m_world.GetID());
-        m_world.GetSystem<engine::Renderer2DSystem>()->Update();
+        engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
+        m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
     }
 
 };
