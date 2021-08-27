@@ -8,6 +8,7 @@
 #include "TestLayers/PhysicsTestLayer.h"
 #include "TestLayers/RenderingTestLayer.h"
 #include "TestLayers/SceneTestLayer.h"
+#include "TestLayers/ScriptingTestLayer.h"
 
 class DebugLayer final : public engine::Layer
 {
@@ -39,6 +40,7 @@ public:
         debugLayers.emplace_back(new TransformTestLayer());
         debugLayers.emplace_back(new PhysicsTestLayer());
         debugLayers.emplace_back(new SceneTestLayer("D:/GameEngine/bin/Debug-OpenGL-windows-x86_64/Sandbox/New folder/Scene.scene"));
+        debugLayers.emplace_back(new ScriptingTestLayer());
         
         //currentLayer = debugLayers.front();
         //application.PushOverlay(currentLayer);

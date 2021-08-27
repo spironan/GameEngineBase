@@ -29,17 +29,14 @@ namespace fs = std::filesystem;
 
 namespace engine
 {
+    bool ScriptSystem::s_IsPlaying = false;
+    std::unordered_map<std::string, ScriptSystem::RegisteredComponent> ScriptSystem::s_ComponentMap{};
+
     static std::string s_ProjDir = "../Scripting/Scripting.csproj";
     static std::string s_OutputDir = "../Sandbox/scripting";
     static std::string s_OutputFileName = "scripting";
     static std::string s_ErrorsLogFile = "../Sandbox/scripting/errors.log";
     static std::string s_WarningsLogFile = "../Sandbox/scripting/warnings.log";
-
-    ScriptSystem::~ScriptSystem()
-    {
-        if(mono_domain_get())
-            mono_jit_cleanup(mono_domain_get());
-    }
 
     /*-----------------------------------------------------------------------------*/
     /* Compiling                                                                   */
@@ -47,7 +44,7 @@ namespace engine
 
     void ScriptSystem::Compile()
     {
-        if (isPlaying)
+        if (s_IsPlaying)
         {
             LOG_WARN("Script Warning: you are currently in play mode");
             return;
@@ -61,17 +58,6 @@ namespace engine
 
         // unload current system info, needed to allow for rebuild
         ScriptUtility::g_SystemInfo.Reset();
-
-        // get all script filenames
-        //std::string scriptNames = "";
-        //for (const auto& entry : fs::recursive_directory_iterator(s_AssetDir))
-        //{
-        //    // std::cout << entry.path().generic_string() << std::endl;
-        //    if (entry.path().extension() == ".cs")
-        //    {
-        //        scriptNames += " " + entry.path().parent_path().generic_string() + "\\" + entry.path().filename().generic_string();
-        //    }
-        //}
         
         // find msbuild path
         FILE* msbuildPathFile = _popen("\"C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe", "r");
@@ -126,26 +112,15 @@ namespace engine
         if (hasError)
             return;
 
-        //FILE* result = _popen(command.c_str(), "r");
-        //if (result == nullptr)
-        //{
-        //    LOG_ERROR("Script Compiling Error: failed to build scripting.dll");
-        //    return;
-        //}
-
-        //bool hasError = false;
-        //while (fgets(buffer, 1024, result))
-        //{
-        //    LOG_ERROR(buffer);
-        //    hasError = true;
-        //}
-        //fclose(result);
-        //if (hasError)
-        //    return;
-
         // load all system info for later use
         LOG_ENGINE_TRACE("Script Compiling Successful");
-        ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str(), componentMap);
+        ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str(), s_ComponentMap);
+    }
+
+    void ScriptSystem::CleanUp()
+    {
+        if (mono_domain_get())
+            mono_jit_cleanup(mono_domain_get());
     }
 
     bool ScriptSystem::IsSetUp()
@@ -168,12 +143,12 @@ namespace engine
             LOG_ERROR("Fix Compile Time Errors before entering play mode");
             return false;
         }
-        if (isPlaying)
+        if (s_IsPlaying)
             return false;
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
             scripting.SetUpPlay();
-            for (auto const& component : componentMap)
+            for (auto const& component : s_ComponentMap)
             {
                 if (component.second.Has(scripting.GetEntity()))
                 {
@@ -188,19 +163,19 @@ namespace engine
         {
             scripting.StartPlay();
         }
-        isPlaying = true;
+        s_IsPlaying = true;
         return true;
     }
 
     bool ScriptSystem::StopPlay()
     {
-        if (!isPlaying)
+        if (!s_IsPlaying)
             return false;
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
             scripting.StopPlay();
         }
-        isPlaying = false;
+        s_IsPlaying = false;
         return true;
     }
 

@@ -101,8 +101,7 @@ public:
 
         RootGameObject().AddComponent<engine::Scripting>();
 
-        ss->Compile();
-        if (!ss->IsSetUp())
+        if (!engine::ScriptSystem::IsSetUp())
             return;
 
         // read values from temporary text file editor to initialize objects
@@ -113,8 +112,7 @@ public:
             return;
         }
         std::string line;
-        engine::GameObject m_obj{};
-        RootGameObject().AddChild(m_obj);
+        engine::GameObject m_obj = CreateGameObject();
         goList.emplace_back(m_obj);
         engine::Scripting* entityScripting = &(goList[0].AddComponent<engine::Scripting>());
         engine::ScriptInfo* scriptInfo = nullptr;
@@ -126,8 +124,7 @@ public:
 
             if (line == "OBJECTEND")
             {
-                engine::GameObject new_obj{};
-                RootGameObject().AddChild(new_obj);
+                engine::GameObject new_obj = CreateGameObject();
                 goList.push_back(new_obj);
                 entityScripting = &(goList[goList.size() - 1].AddComponent<engine::Scripting>());
                 scriptInfo = nullptr;
@@ -228,11 +225,6 @@ public:
         auto ss = m_scene.GetWorld().GetSystem<engine::ScriptSystem>();
         ss->InvokeFunctionAll("Update");
 
-        if (engine::Input::IsKeyPressed(engine::KeyCode::SPACE))
-        {
-            ss->Compile();
-        }
-
         if (engine::Input::IsKeyPressed(engine::KeyCode::ENTER))
         {
             if (!isPlaying)
@@ -263,8 +255,7 @@ public:
             engine::Scripting* entityScripting = nullptr;
             if (goList.size() <= 0)
             {
-                engine::GameObject new_obj{};
-                RootGameObject().AddChild(new_obj);
+                engine::GameObject new_obj = CreateGameObject();
                 goList.push_back(new_obj);
                 entityScripting = &(goList[0].AddComponent<engine::Scripting>());
             }

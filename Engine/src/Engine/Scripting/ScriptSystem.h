@@ -30,8 +30,7 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Constructors & Destructor                                                   */
         /*-----------------------------------------------------------------------------*/
-        explicit ScriptSystem(ECS_Manager& _ECS_Manager) : System{ _ECS_Manager }, isPlaying{ false } {};
-        ~ScriptSystem();
+        explicit ScriptSystem(ECS_Manager& _ECS_Manager) : System{ _ECS_Manager } {};
 
         /*-----------------------------------------------------------------------------*/
         /* Compiling                                                                   */
@@ -40,7 +39,12 @@ namespace engine
         /*********************************************************************************//*!
         \brief      executes the required actions to compile all user made scripts during runtime
         *//**********************************************************************************/
-        void Compile();
+        static void Compile();
+
+        /*********************************************************************************//*!
+        \brief      executes the required mono functions to clean up resources used by mono
+        *//**********************************************************************************/
+        static void CleanUp();
 
         /*********************************************************************************//*!
         \brief      Checks if the C# scripts have been properly compiled and the script system
@@ -48,7 +52,7 @@ namespace engine
 
         \return     true if it has been set up and is ready for use, else false
         *//**********************************************************************************/
-        bool IsSetUp();
+        static bool IsSetUp();
 
         /*********************************************************************************//*!
         \brief      Gets the list of all C# scripts compiled
@@ -57,7 +61,7 @@ namespace engine
 
         \return     the list of all c# scripts compiled
         *//**********************************************************************************/
-        std::vector<ScriptClassInfo> const& GetScriptClassList();
+        static std::vector<ScriptClassInfo> const& GetScriptClassList();
 
         /*-----------------------------------------------------------------------------*/
         /* ECS Components                                                              */
@@ -80,7 +84,7 @@ namespace engine
                 (e.g. Ouroboros.Transform)
         *//**********************************************************************************/
         template<typename Component>
-        void RegisterComponent(std::string const& interfaceTypeName)
+        static void RegisterComponent(std::string const& interfaceTypeName)
         {
             std::function<void(Entity)> add = [](Entity entity)
             {
@@ -95,8 +99,8 @@ namespace engine
             {
                 WorldManager::GetActiveWorld().RemoveComponent<Component>(entity);
             };
-            size_t id = componentMap.size();
-            componentMap.insert({ interfaceTypeName, { add, has, remove } });
+            size_t id = s_ComponentMap.size();
+            s_ComponentMap.insert({ interfaceTypeName, { add, has, remove } });
         }
 
         /*-----------------------------------------------------------------------------*/
@@ -146,8 +150,8 @@ namespace engine
         void DebugPrint();
 
     private:
-        std::unordered_map<std::string, RegisteredComponent> componentMap;
-        bool isPlaying;
+        static bool s_IsPlaying;
+        static std::unordered_map<std::string, RegisteredComponent> s_ComponentMap;
     };
 
     extern "C"

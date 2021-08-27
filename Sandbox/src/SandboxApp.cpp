@@ -20,7 +20,7 @@ Technology is prohibited.
 //Editor Layer
 #include "EditorLayer.h"
 //Scripting Layer
-#include "TestLayers/ScriptingTestLayer.h"
+#include "ScriptingLayer.h"
 
 // for debugging
 #include "TestLayers/InputDebugLayer.h"
@@ -78,7 +78,7 @@ public:
         // Editor Layer
         PushOverlay(new EditorLayer());
         // Scripting Layer
-        //PushOverlay(new ScriptingTestLayer());
+        PushOverlay(new ScriptingLayer());
 
         // Debug Layers!
         PushOverlay(new DebugLayer(*this));
