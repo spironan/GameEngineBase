@@ -63,11 +63,11 @@ namespace oom
     {
         mat<Size - 1, Size - 1, T> result;
 
-        for (float major_col = 0, minor_col = 0; major_col < Size; ++major_col) 
+        for (length_t major_col = 0, minor_col = 0; major_col < Size; ++major_col)
         {
             if (major_col == cofactor_col) continue;
 
-            for (float major_row = 0, minor_row = 0; major_row < Size; ++major_row) 
+            for (length_t major_row = 0, minor_row = 0; major_row < Size; ++major_row)
             {
                 if (major_row == cofactor_row) continue;
 
@@ -87,10 +87,15 @@ namespace oom
         * @param matrix the matrix that will be used
         * @return float the determinant of the matrix
         */
-    template<length_t Size, typename T>
-    float determinant(mat<Size, Size, T> const& matrix)
+    template<length_t Size, typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+    T determinant(mat<Size, Size, T> const& matrix)
     {
-        float det = 0.0f;
+        /*if constexpr(Size == 2)
+            return (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
+        else if constexpr (Size == 1)
+            return matrix[0][0];*/
+
+        T det = 0.0f;
         for (length_t column = 0; column < Size; ++column)
         {
             float cofactor = matrix[column][0];
@@ -110,8 +115,8 @@ namespace oom
         * @param matrix the matrix that will be used
         * @return float the determinant of the matrix
         */
-    template<>
-    float determinant(mat<2, 2, float> const& matrix)
+    template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+    T determinant(mat<2, 2, T> const& matrix)
     {
         return (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
     };
@@ -122,8 +127,8 @@ namespace oom
         * @param matrix the matrix that will be used
         * @return float the determinant of the matrix
         */
-    template<>
-    float determinant(mat<1, 1, float> const& matrix) { return matrix[0][0]; };
+    template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+    T determinant(mat<1, 1, T> const& matrix) { return matrix[0][0]; };
 
     /**
         * @brief Get the cofactor matrix of a given matrix
@@ -155,7 +160,8 @@ namespace oom
         * @param matrix the original matrix
         * @return matrix<1, 1> the cofactor matrix generated from the original matrix
         */
-    //mat1 cofactor(mat1 const& matrix) { return matrix; }
+    template<typename T>
+    mat<1, 1, T> cofactor(mat<1, 1, T> const& matrix) { return matrix; }
 
     /**
         * @brief Get the adjugate matrix of a given matrix
@@ -192,8 +198,158 @@ namespace oom
         * @param matrix the original 4 by 4 matrix
         * @return mat4 the resultant inverse
         */
-    template<>
-    std::optional<mat4> inverse(mat4 const& matrix);
+    template<typename T>
+    std::optional<mat<4, 4, T>> inverse(mat<4, 4, T> const& matrix)
+    {
+        if (!has_inverse(matrix)) return std::nullopt;
+
+        mat<4, 4, T> mat;
+
+        mat[0][0] =
+            matrix[1][1] * matrix[2][2] * matrix[3][3] -
+            matrix[1][1] * matrix[2][3] * matrix[3][2] -
+            matrix[2][1] * matrix[1][2] * matrix[3][3] +
+            matrix[2][1] * matrix[1][3] * matrix[3][2] +
+            matrix[3][1] * matrix[1][2] * matrix[2][3] -
+            matrix[3][1] * matrix[1][3] * matrix[2][2];
+
+        mat[1][0] =
+            -matrix[1][0] * matrix[2][2] * matrix[3][3] +
+            matrix[1][0] * matrix[2][3] * matrix[3][2] +
+            matrix[2][0] * matrix[1][2] * matrix[3][3] -
+            matrix[2][0] * matrix[1][3] * matrix[3][2] -
+            matrix[3][0] * matrix[1][2] * matrix[2][3] +
+            matrix[3][0] * matrix[1][3] * matrix[2][2];
+
+        mat[2][0] =
+            matrix[1][0] * matrix[2][1] * matrix[3][3] -
+            matrix[1][0] * matrix[2][3] * matrix[3][1] -
+            matrix[2][0] * matrix[1][1] * matrix[3][3] +
+            matrix[2][0] * matrix[1][3] * matrix[3][1] +
+            matrix[3][0] * matrix[1][1] * matrix[2][3] -
+            matrix[3][0] * matrix[1][3] * matrix[2][1];
+
+        mat[3][0] =
+            -matrix[1][0] * matrix[2][1] * matrix[3][2] +
+            matrix[1][0] * matrix[2][2] * matrix[3][1] +
+            matrix[2][0] * matrix[1][1] * matrix[3][2] -
+            matrix[2][0] * matrix[1][2] * matrix[3][1] -
+            matrix[3][0] * matrix[1][1] * matrix[2][2] +
+            matrix[3][0] * matrix[1][2] * matrix[2][1];
+
+        mat[0][1] =
+            -matrix[0][1] * matrix[2][2] * matrix[3][3] +
+            matrix[0][1] * matrix[2][3] * matrix[3][2] +
+            matrix[2][1] * matrix[0][2] * matrix[3][3] -
+            matrix[2][1] * matrix[0][3] * matrix[3][2] -
+            matrix[3][1] * matrix[0][2] * matrix[2][3] +
+            matrix[3][1] * matrix[0][3] * matrix[2][2];
+
+        mat[1][1] =
+            matrix[0][0] * matrix[2][2] * matrix[3][3] -
+            matrix[0][0] * matrix[2][3] * matrix[3][2] -
+            matrix[2][0] * matrix[0][2] * matrix[3][3] +
+            matrix[2][0] * matrix[0][3] * matrix[3][2] +
+            matrix[3][0] * matrix[0][2] * matrix[2][3] -
+            matrix[3][0] * matrix[0][3] * matrix[2][2];
+
+        mat[2][1] =
+            -matrix[0][0] * matrix[2][1] * matrix[3][3] +
+            matrix[0][0] * matrix[2][3] * matrix[3][1] +
+            matrix[2][0] * matrix[0][1] * matrix[3][3] -
+            matrix[2][0] * matrix[0][3] * matrix[3][1] -
+            matrix[3][0] * matrix[0][1] * matrix[2][3] +
+            matrix[3][0] * matrix[0][3] * matrix[2][1];
+
+        mat[3][1] =
+            matrix[0][0] * matrix[2][1] * matrix[3][2] -
+            matrix[0][0] * matrix[2][2] * matrix[3][1] -
+            matrix[2][0] * matrix[0][1] * matrix[3][2] +
+            matrix[2][0] * matrix[0][2] * matrix[3][1] +
+            matrix[3][0] * matrix[0][1] * matrix[2][2] -
+            matrix[3][0] * matrix[0][2] * matrix[2][1];
+
+        mat[0][2] =
+            matrix[0][1] * matrix[1][2] * matrix[3][3] -
+            matrix[0][1] * matrix[1][3] * matrix[3][2] -
+            matrix[1][1] * matrix[0][2] * matrix[3][3] +
+            matrix[1][1] * matrix[0][3] * matrix[3][2] +
+            matrix[3][1] * matrix[0][2] * matrix[1][3] -
+            matrix[3][1] * matrix[0][3] * matrix[1][2];
+
+        mat[1][2] =
+            -matrix[0][0] * matrix[1][2] * matrix[3][3] +
+            matrix[0][0] * matrix[1][3] * matrix[3][2] +
+            matrix[1][0] * matrix[0][2] * matrix[3][3] -
+            matrix[1][0] * matrix[0][3] * matrix[3][2] -
+            matrix[3][0] * matrix[0][2] * matrix[1][3] +
+            matrix[3][0] * matrix[0][3] * matrix[1][2];
+
+        mat[2][2] =
+            matrix[0][0] * matrix[1][1] * matrix[3][3] -
+            matrix[0][0] * matrix[1][3] * matrix[3][1] -
+            matrix[1][0] * matrix[0][1] * matrix[3][3] +
+            matrix[1][0] * matrix[0][3] * matrix[3][1] +
+            matrix[3][0] * matrix[0][1] * matrix[1][3] -
+            matrix[3][0] * matrix[0][3] * matrix[1][1];
+
+        mat[3][2] =
+            -matrix[0][0] * matrix[1][1] * matrix[3][2] +
+            matrix[0][0] * matrix[1][2] * matrix[3][1] +
+            matrix[1][0] * matrix[0][1] * matrix[3][2] -
+            matrix[1][0] * matrix[0][2] * matrix[3][1] -
+            matrix[3][0] * matrix[0][1] * matrix[1][2] +
+            matrix[3][0] * matrix[0][2] * matrix[1][1];
+
+        mat[0][3] =
+            -matrix[0][1] * matrix[1][2] * matrix[2][3] +
+            matrix[0][1] * matrix[1][3] * matrix[2][2] +
+            matrix[1][1] * matrix[0][2] * matrix[2][3] -
+            matrix[1][1] * matrix[0][3] * matrix[2][2] -
+            matrix[2][1] * matrix[0][2] * matrix[1][3] +
+            matrix[2][1] * matrix[0][3] * matrix[1][2];
+
+        mat[1][3] =
+            matrix[0][0] * matrix[1][2] * matrix[2][3] -
+            matrix[0][0] * matrix[1][3] * matrix[2][2] -
+            matrix[1][0] * matrix[0][2] * matrix[2][3] +
+            matrix[1][0] * matrix[0][3] * matrix[2][2] +
+            matrix[2][0] * matrix[0][2] * matrix[1][3] -
+            matrix[2][0] * matrix[0][3] * matrix[1][2];
+
+        mat[2][3] =
+            -matrix[0][0] * matrix[1][1] * matrix[2][3] +
+            matrix[0][0] * matrix[1][3] * matrix[2][1] +
+            matrix[1][0] * matrix[0][1] * matrix[2][3] -
+            matrix[1][0] * matrix[0][3] * matrix[2][1] -
+            matrix[2][0] * matrix[0][1] * matrix[1][3] +
+            matrix[2][0] * matrix[0][3] * matrix[1][1];
+
+        mat[3][3] =
+            matrix[0][0] * matrix[1][1] * matrix[2][2] -
+            matrix[0][0] * matrix[1][2] * matrix[2][1] -
+            matrix[1][0] * matrix[0][1] * matrix[2][2] +
+            matrix[1][0] * matrix[0][2] * matrix[2][1] +
+            matrix[2][0] * matrix[0][1] * matrix[1][2] -
+            matrix[2][0] * matrix[0][2] * matrix[1][1];
+
+        float determinant =
+            matrix[0][0] * mat[0][0]
+            + matrix[0][1] * mat[1][0]
+            + matrix[0][2] * mat[2][0]
+            + matrix[0][3] * mat[3][0];
+        determinant = 1.0f / determinant;
+
+        for (length_t col = 0; col < 4; ++col)
+        {
+            for (length_t row = 0; row < 4; ++row)
+            {
+                mat[col][row] *= determinant;
+            }
+        }
+
+        return mat;
+    }
 
     /**
         * @brief boolean to test if an inverse exist

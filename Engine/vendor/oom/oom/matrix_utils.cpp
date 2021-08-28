@@ -27,8 +27,8 @@ namespace oom
     {
         mat3 mat = mat3::identity();
 
-        mat[0].z = translation.x;
-        mat[1].z = translation.y;
+        mat[2] = oom::vec3{ translation.x, translation.y, 1.f };
+        //mat[1].z = translation.y;
 
         return mat;
     }
@@ -84,9 +84,7 @@ namespace oom
     {
         mat4 mat = mat4::identity();
         
-        mat[0].z = translation.x;
-        mat[1].z = translation.y;
-        mat[2].z = translation.z;
+        mat[3] = vec4{ translation.x, translation.y, translation.z, 1.f };
 
         return mat;
     }
@@ -195,7 +193,7 @@ namespace oom
 
     mat4 scaling_matrix(const vec3& _scale)
     {
-        mat4 scaleMatrix;
+        mat4 scaleMatrix = mat4::identity();
 
         scaleMatrix[0][0] = _scale.x;
         scaleMatrix[1][1] = _scale.y;
@@ -374,152 +372,5 @@ namespace oom
         return mat;
     }
 
-    std::optional<mat4> inverse(const mat4& matrix)
-    {
-        if (!has_inverse(matrix)) return std::nullopt;
-
-        mat4 mat;
-
-        mat[0][0] =
-            matrix[1][1] * matrix[2][2] * matrix[3][3] -
-            matrix[1][1] * matrix[2][3] * matrix[3][2] -
-            matrix[2][1] * matrix[1][2] * matrix[3][3] +
-            matrix[2][1] * matrix[1][3] * matrix[3][2] +
-            matrix[3][1] * matrix[1][2] * matrix[2][3] -
-            matrix[3][1] * matrix[1][3] * matrix[2][2];
-
-        mat[1][0] =
-            -matrix[1][0] * matrix[2][2] * matrix[3][3] +
-            matrix[1][0] * matrix[2][3] * matrix[3][2] +
-            matrix[2][0] * matrix[1][2] * matrix[3][3] -
-            matrix[2][0] * matrix[1][3] * matrix[3][2] -
-            matrix[3][0] * matrix[1][2] * matrix[2][3] +
-            matrix[3][0] * matrix[1][3] * matrix[2][2];
-
-        mat[2][0] =
-            matrix[1][0] * matrix[2][1] * matrix[3][3] -
-            matrix[1][0] * matrix[2][3] * matrix[3][1] -
-            matrix[2][0] * matrix[1][1] * matrix[3][3] +
-            matrix[2][0] * matrix[1][3] * matrix[3][1] +
-            matrix[3][0] * matrix[1][1] * matrix[2][3] -
-            matrix[3][0] * matrix[1][3] * matrix[2][1];
-
-        mat[3][0] =
-            -matrix[1][0] * matrix[2][1] * matrix[3][2] +
-            matrix[1][0] * matrix[2][2] * matrix[3][1] +
-            matrix[2][0] * matrix[1][1] * matrix[3][2] -
-            matrix[2][0] * matrix[1][2] * matrix[3][1] -
-            matrix[3][0] * matrix[1][1] * matrix[2][2] +
-            matrix[3][0] * matrix[1][2] * matrix[2][1];
-
-        mat[0][1] =
-            -matrix[0][1] * matrix[2][2] * matrix[3][3] +
-            matrix[0][1] * matrix[2][3] * matrix[3][2] +
-            matrix[2][1] * matrix[0][2] * matrix[3][3] -
-            matrix[2][1] * matrix[0][3] * matrix[3][2] -
-            matrix[3][1] * matrix[0][2] * matrix[2][3] +
-            matrix[3][1] * matrix[0][3] * matrix[2][2];
-
-        mat[1][1] =
-            matrix[0][0] * matrix[2][2] * matrix[3][3] -
-            matrix[0][0] * matrix[2][3] * matrix[3][2] -
-            matrix[2][0] * matrix[0][2] * matrix[3][3] +
-            matrix[2][0] * matrix[0][3] * matrix[3][2] +
-            matrix[3][0] * matrix[0][2] * matrix[2][3] -
-            matrix[3][0] * matrix[0][3] * matrix[2][2];
-
-        mat[2][1] =
-            -matrix[0][0] * matrix[2][1] * matrix[3][3] +
-            matrix[0][0] * matrix[2][3] * matrix[3][1] +
-            matrix[2][0] * matrix[0][1] * matrix[3][3] -
-            matrix[2][0] * matrix[0][3] * matrix[3][1] -
-            matrix[3][0] * matrix[0][1] * matrix[2][3] +
-            matrix[3][0] * matrix[0][3] * matrix[2][1];
-
-        mat[3][1] =
-            matrix[0][0] * matrix[2][1] * matrix[3][2] -
-            matrix[0][0] * matrix[2][2] * matrix[3][1] -
-            matrix[2][0] * matrix[0][1] * matrix[3][2] +
-            matrix[2][0] * matrix[0][2] * matrix[3][1] +
-            matrix[3][0] * matrix[0][1] * matrix[2][2] -
-            matrix[3][0] * matrix[0][2] * matrix[2][1];
-
-        mat[0][2] =
-            matrix[0][1] * matrix[1][2] * matrix[3][3] -
-            matrix[0][1] * matrix[1][3] * matrix[3][2] -
-            matrix[1][1] * matrix[0][2] * matrix[3][3] +
-            matrix[1][1] * matrix[0][3] * matrix[3][2] +
-            matrix[3][1] * matrix[0][2] * matrix[1][3] -
-            matrix[3][1] * matrix[0][3] * matrix[1][2];
-
-        mat[1][2] =
-            -matrix[0][0] * matrix[1][2] * matrix[3][3] +
-            matrix[0][0] * matrix[1][3] * matrix[3][2] +
-            matrix[1][0] * matrix[0][2] * matrix[3][3] -
-            matrix[1][0] * matrix[0][3] * matrix[3][2] -
-            matrix[3][0] * matrix[0][2] * matrix[1][3] +
-            matrix[3][0] * matrix[0][3] * matrix[1][2];
-
-        mat[2][2] =
-            matrix[0][0] * matrix[1][1] * matrix[3][3] -
-            matrix[0][0] * matrix[1][3] * matrix[3][1] -
-            matrix[1][0] * matrix[0][1] * matrix[3][3] +
-            matrix[1][0] * matrix[0][3] * matrix[3][1] +
-            matrix[3][0] * matrix[0][1] * matrix[1][3] -
-            matrix[3][0] * matrix[0][3] * matrix[1][1];
-
-        mat[3][2] =
-            -matrix[0][0] * matrix[1][1] * matrix[3][2] +
-            matrix[0][0] * matrix[1][2] * matrix[3][1] +
-            matrix[1][0] * matrix[0][1] * matrix[3][2] -
-            matrix[1][0] * matrix[0][2] * matrix[3][1] -
-            matrix[3][0] * matrix[0][1] * matrix[1][2] +
-            matrix[3][0] * matrix[0][2] * matrix[1][1];
-
-        mat[0][3] =
-            -matrix[0][1] * matrix[1][2] * matrix[2][3] +
-            matrix[0][1] * matrix[1][3] * matrix[2][2] +
-            matrix[1][1] * matrix[0][2] * matrix[2][3] -
-            matrix[1][1] * matrix[0][3] * matrix[2][2] -
-            matrix[2][1] * matrix[0][2] * matrix[1][3] +
-            matrix[2][1] * matrix[0][3] * matrix[1][2];
-
-        mat[1][3] =
-            matrix[0][0] * matrix[1][2] * matrix[2][3] -
-            matrix[0][0] * matrix[1][3] * matrix[2][2] -
-            matrix[1][0] * matrix[0][2] * matrix[2][3] +
-            matrix[1][0] * matrix[0][3] * matrix[2][2] +
-            matrix[2][0] * matrix[0][2] * matrix[1][3] -
-            matrix[2][0] * matrix[0][3] * matrix[1][2];
-
-        mat[2][3] =
-            -matrix[0][0] * matrix[1][1] * matrix[2][3] +
-            matrix[0][0] * matrix[1][3] * matrix[2][1] +
-            matrix[1][0] * matrix[0][1] * matrix[2][3] -
-            matrix[1][0] * matrix[0][3] * matrix[2][1] -
-            matrix[2][0] * matrix[0][1] * matrix[1][3] +
-            matrix[2][0] * matrix[0][3] * matrix[1][1];
-
-        mat[3][3] =
-            matrix[0][0] * matrix[1][1] * matrix[2][2] -
-            matrix[0][0] * matrix[1][2] * matrix[2][1] -
-            matrix[1][0] * matrix[0][1] * matrix[2][2] +
-            matrix[1][0] * matrix[0][2] * matrix[2][1] +
-            matrix[2][0] * matrix[0][1] * matrix[1][2] -
-            matrix[2][0] * matrix[0][2] * matrix[1][1];
-
-        float determinant =
-            matrix[0][0] * mat[0][0]
-            + matrix[0][1] * mat[1][0]
-            + matrix[0][2] * mat[2][0]
-            + matrix[0][3] * mat[3][0];
-        determinant = 1.0f / determinant;
-
-        for (size_t i = 0; i < 16; ++i) 
-        {
-            mat[0][i] *= determinant;
-        }
-
-        return mat;
-    }
+    
 }

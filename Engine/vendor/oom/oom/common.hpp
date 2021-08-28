@@ -4,6 +4,8 @@
 #include <type_traits>
 #include <cmath>
 
+#include "common.hpp"
+
 namespace oom
 {
     template<typename T, typename = std::enable_if<std::is_signed_v<T>>>
@@ -54,6 +56,12 @@ namespace oom
         return min(max(x, minVal), maxVal);
     }
 
+    template<length_t length, typename T>
+    static constexpr vec<length, T> clamp(vec<length, T> const& x, vec<length, T> const& minVal, vec<length, T> const& maxVal)
+    {
+        return min(max(x, minVal), maxVal);
+    }
+
 
     /**
        * Return the smaller of the given values.
@@ -66,6 +74,17 @@ namespace oom
     static constexpr T min(T a, T b)
     {
         return (b < a) ? b : a;
+    }
+
+    template<length_t length, typename T>
+    static constexpr vec<length, T> min(vec<length, T> const& a, vec<length, T> const& b)
+    {
+        vec<length, T> result;
+        
+        for (length_t len = 0; len < length; ++len)
+            result[len] = b[len] < a[len] ? b[len] : a[len];
+        
+        return result;
     }
 
     /**
@@ -94,6 +113,17 @@ namespace oom
     static constexpr T max(T a, T b)
     {
         return (a < b) ? b : a;
+    }
+
+    template<length_t length, typename T>
+    static constexpr vec<length, T> max(vec<length, T> const& a, vec<length, T> const& b)
+    {
+        vec<length, T> result;
+
+        for (length_t len = 0; len < length; ++len)
+            result[len] = a[len] < b[len] ? b[len] : a[len];
+
+        return result;
     }
 
     /**
