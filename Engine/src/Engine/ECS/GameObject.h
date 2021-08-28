@@ -43,6 +43,8 @@ namespace engine
         GameObject& operator=(GameObject const&)  = default;
         GameObject& operator=(GameObject&&)       = default;
 
+        GameObject& operator=(Entity entt) { m_entity = entt; return *this; };
+
         // Non-Traditional Copy Construct GameObject Based on Entity
         GameObject(Entity entt);
 
@@ -57,8 +59,6 @@ namespace engine
 
         std::vector<Entity> GetChildren() const;
 
-        //void RemoveChild(GameObject* gameObj);
-
         // CAN BE DONE BUT NOT REQUIRED RIGHT NOW
         //GameObject* FindGameObjectInChildrenByName(std::string const& name);
 
@@ -69,6 +69,12 @@ namespace engine
         Component& GetComponent() const
         {
             return WorldManager::GetActiveWorld().GetComponent<Component>(m_entity);
+        }
+        
+        template<typename... Components>
+        decltype(auto) GetComponents() const
+        {
+            return WorldManager::GetActiveWorld().GetComponents<Components>(m_entity);
         }
 
         template<typename Component>
@@ -146,6 +152,17 @@ namespace engine
         Component& EnsureComponent(Args...args) const
         {
             return HasComponent<Component>() ? GetComponent<Component>() : AddComponent<Component>(args...);
+        }
+
+        GameObject& Duplicate(GameObject target)
+        {
+            return *this = WorldManager::GetActiveWorld().DuplicateEntity(target);
+        }
+
+        template<typename Component>
+        ComponentType GetComponentType()
+        {
+            return WorldManager::GetActiveWorld().GetComponentType<Component>();
         }
 
     };
