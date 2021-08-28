@@ -43,6 +43,7 @@ namespace engine
         GameObject& operator=(GameObject const&)  = default;
         GameObject& operator=(GameObject&&)       = default;
 
+        //gameobject assignment to entity
         GameObject& operator=(Entity entt) { m_entity = entt; return *this; };
 
         // Non-Traditional Copy Construct GameObject Based on Entity
