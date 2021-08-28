@@ -5,6 +5,7 @@
 #include <rttr/variant.h>
 #include <vector>
 #include "Engine/Transform/Transform3D.h"
+#include "Engine/Prefab/EditorComponent.h"
 #include "RttrTypeID.h"
 
 
@@ -151,7 +152,10 @@ private:
 					redo.clear();
 					redo = current_value;
 					std::string temp = "Change value of element: " + element.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
-					ActionStack::AllocateInBuffer(new InspectorActionBehaviour<Component>{ temp, ObjectGroup::s_FocusedObject, element, undo, redo });
+					
+					ActionStack::AllocateInBuffer(new InspectorActionBehaviour<Component>{ temp, ObjectGroup::s_FocusedObject, element, undo, redo,
+												  object.GetComponent<engine::EditorComponent>().IsPrefabDirty() });
+					object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 				}
 			}
 			if (is_readonly)

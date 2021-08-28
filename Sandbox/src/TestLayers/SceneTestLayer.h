@@ -17,7 +17,7 @@ Technology is prohibited.
 #include "Seralizer.h"
 #include "UtilityLayers/SceneBaseLayer.h"
 #include "Engine/Prefab/PrefabComponentSystem.h"
-#include "Editor/Component/EditorComponentSystem.h"
+#include "Engine/Prefab/EditorComponentSystem.h"
 struct A
 {
     int i = 1;
@@ -49,7 +49,7 @@ public:
         testrootGO.Name() = "Scene";
         std::vector<engine::GameObject> entities;
 		m_scene.GetWorld().RegisterSystem<engine::PrefabComponentSystem>();
-		m_scene.GetWorld().RegisterSystem<EditorComponentSystem>();
+		m_scene.GetWorld().RegisterSystem<engine::EditorComponentSystem>();
 
         Serializer::LoadWorld(m_scene_path);
     }

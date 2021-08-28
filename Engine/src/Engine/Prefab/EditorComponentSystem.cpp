@@ -1,12 +1,20 @@
 #include "pch.h"
+
+//base components
 #include "Engine/ECS/ECS_Manager.h"
 #include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/ECS_Utility.h"
-
+#include "Engine/Transform/Transform3D.h"
+//logging
 #include "Engine/Core/Log.h"
-
+//external components
+#include "Engine/Scene/SceneManager.h"
 #include "EditorComponentSystem.h"
+#include "PrefabComponentSystem.h"
 #include "EditorComponent.h"
+#include "Seralizer.h"
+namespace engine
+{
 
 void EditorComponentSystem::Update()
 {
@@ -26,39 +34,41 @@ void EditorComponentSystem::UpdatedPrefab(value_reference object)
 		return;
 	}
 	//update prefab
-	engine::GameObject& Prefab = (engine::GameObject)iter->first;
+	engine::GameObject& Prefab = (engine::GameObject)id;
+	object.SetPrefabDirty(false);
+	GameObject& go = (GameObject)object.GetEntity();//remove later
+	engine::Transform3D& prefabTransform = Prefab.GetComponent<engine::Transform3D>();
+	prefabTransform.SetPosition(go.GetComponent<engine::Transform3D>().GetPosition());
 	//Prefab.CopyComponents(object.GetEntity());
 
 	//update users
 	for (auto ent : iter->second)
 	{
 		engine::GameObject& gameobject = (engine::GameObject)ent;
+		gameobject.GetComponent<engine::Transform3D>().SetPosition(prefabTransform.GetPosition());
 		//gameobject.CopyComponents(Prefab);
 	}
-
+	//updating prefab to file
+	engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->SavePrefab(Prefab);
 }
 
-void EditorComponentSystem::RegisterNewUser(value_reference object)
+void EditorComponentSystem::RegisterNewUser(Entity prefab,value_reference object)
 {
-	auto& iter = m_prefabUsers.find(object.GetPrefabReference());
-	if (iter == m_prefabUsers.end())
-	{
-		LOG_ERROR("RegisterNewUser Failed.");
-		return;
-	}
-	iter->second.emplace_back(object.GetEntity());
+	m_prefabUsers[prefab].emplace_back(object.GetEntity());
 }
 
-void EditorComponentSystem::UnregisterUser(value_reference object)
+void EditorComponentSystem::UnregisterUser(Entity prefab,value_reference object)
 {
-	auto& iter = m_prefabUsers.find(object.GetPrefabReference());
+	auto& iter = m_prefabUsers.find(prefab);
 	if (iter == m_prefabUsers.end())
 	{
-		LOG_ERROR("RegisterNewUser Failed.");
+		LOG_ERROR("Find User Failed.");
 		return;
 	}
 	auto& vector_reference = iter->second;
 	auto& target = std::find(vector_reference.begin(), vector_reference.end(), object.GetEntity());
 	std::swap(*target, vector_reference.back());
 	vector_reference.pop_back();
+}
+
 }

@@ -25,11 +25,6 @@ namespace engine
 		explicit PrefabComponentSystem(engine::ECS_Manager& _ECS_Manager) : System{ _ECS_Manager } {};
 
 	/*********************************************************************************//*!
-	\brief
-	 Saves all the prefab currently tracked
-	*//**********************************************************************************/
-		void SavePrefab();
-	/*********************************************************************************//*!
 	\brief    
 	 Check if the prefab is already made else add it into the prefab pool
 	\param    filepath
@@ -55,6 +50,32 @@ namespace engine
 	 start of the new prefab object
 	*//**********************************************************************************/
 		void InstantiateFromPrefab(const std::string& filepath, GameObject& head);
+	/*********************************************************************************//*!
+	\brief    
+	 The full creation flow of prefab making
+
+	\param    filepath
+	 target location of the prefab file
+	\param    head
+	 start of seralization
+	*//**********************************************************************************/
+		void MakePrefab(const std::string& filepath, GameObject& head);
+
+	/*********************************************************************************//*!
+	\brief    
+	 Saves the prefab into file
+	\param    go
+	 Can be anypart of the prefab as long its connected
+	 it will look for the head node then do a comparison with the main list
+	 can be quite costly so do not use this function too much
+	*//**********************************************************************************/
+		void SavePrefab(GameObject& go);
+	/*********************************************************************************//*!
+	\brief
+	 Saves all the prefab currently tracked
+	*//**********************************************************************************/
+		void SavePrefab();
+
 	private:
 		struct FileDetails
 		{

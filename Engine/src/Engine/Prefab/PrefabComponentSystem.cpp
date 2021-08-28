@@ -1,11 +1,14 @@
 #include "pch.h"
+#include "PrefabComponentSystem.h"
 
 #include "Engine/Scene/SceneManager.h"
-#include "PrefabComponentSystem.h"
-#include "PrefabComponent.h"
-#include "../../Sandbox/src/Editor/Component/EditorComponent.h"
+#include "Engine/Prefab/EditorComponentSystem.h"
 #include "Utility/Hash.h"
 #include "Seralizer.h"
+
+//components
+#include "PrefabComponent.h"
+#include "EditorComponent.h"
 namespace engine
 {
 void PrefabComponentSystem::SavePrefab()
@@ -30,6 +33,7 @@ Entity PrefabComponentSystem::AddPrefab(const std::string& filepath)
 
 	static_cast<GameObject>(headNode).GetComponent<PrefabComponent>().m_RootNode = true;
 	m_prefabDetails[fileHash] = FileDetails{ headNode,filepath };
+
 	return headNode;
 }
 
@@ -61,7 +65,7 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 	Entity prevParent = head;
 
 	auto& headEditorComponent = head.EnsureComponent<EditorComponent>();
-	headEditorComponent.SetPrefab(true);
+
 	headEditorComponent.SetPrefabReference(obj);
 
 	for (GameObject childs : childList)
@@ -74,7 +78,6 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
 
 		auto& editorComponent = child.EnsureComponent<EditorComponent>();
-		editorComponent.SetPrefab(true);
 		editorComponent.SetPrefabReference(copyObject.GetID());
 		
 
@@ -113,6 +116,44 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		}
 	}
 
+}
+
+void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& head)
+{
+	Serializer::SaveObject(filepath);
+	GameObject prefab = AddPrefab(filepath);
+
+	auto& prefabChild = prefab.GetChildren();
+	auto& childList = head.GetChildren();
+	
+	if (head.TryGetComponent<EditorComponent>())
+	{
+		EditorComponent& ec = head.GetComponent<EditorComponent>();
+		ec.SetPrefabReference(prefab.GetID());
+	}
+
+	for (size_t iter = 0; iter < childList.size(); ++iter)
+	{
+		EditorComponent& ec = static_cast<GameObject>(childList[iter]).GetComponent<EditorComponent>();
+		ec.SetPrefabReference(prefabChild[iter]);
+	}
+
+}
+
+void PrefabComponentSystem::SavePrefab(GameObject& go)
+{
+	Transform3D head = go.GetComponent<Transform3D>();
+	Entity parent = head.GetParentId();
+	while (parent != head.GetID())//this is to find the main head
+	{
+		head = static_cast<GameObject>(parent).GetComponent<Transform3D>();
+		parent = head.GetParentId();
+	}
+	for (auto& iter : m_prefabDetails)
+	{
+		if (iter.second.head == parent)
+			Serializer::SaveObject(iter.second.filename);
+	}
 }
 
 }

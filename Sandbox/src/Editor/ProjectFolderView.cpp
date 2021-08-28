@@ -6,22 +6,29 @@
  * \author Leong Jun Xiang (junxiang.leong)
  * \date   June 2021
  *********************************************************************/
+//sandbox
 #include "ProjectFolderView.h"
 #include "Editor/Editor.h"
 #include "EditorFileGroup.h"
 #include "EditorObjectGroup.h"
+//engine
+#include "Engine/Scene/SceneManager.h"
+#include "Engine/Prefab/PrefabComponentSystem.h"
 
+//util
 #include "RttrTypeID.h"
 #include "Seralizer.h"
 #include "Engine/Asset/AssetsManager.h"
 #include "Utility/Hash.h"
 
-#include <string>
-
+//imgui
 #include <imgui.h>
 
+//std
+#include <string>
 #include <filesystem>
 
+//windows
 #include <Windows.h>
 #include <shellapi.h>
  /**
@@ -157,9 +164,8 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-			std::string filename = engine::GameObject(ObjectGroup::s_FocusedObject).Name() + ".prefab";
-
-			Serializer::SaveObject(FileGroup::s_CurrentPath +'/' + filename);
+			std::string filename = FileGroup::s_CurrentPath+ "/" + engine::GameObject(ObjectGroup::s_FocusedObject).Name() + ".prefab";
+			engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->MakePrefab(filename, engine::GameObject(ObjectGroup::s_FocusedObject));
 		}
 		ImGui::EndDragDropTarget();
 	}

@@ -2,6 +2,9 @@
 #include "Engine/ECS/System.h"
 #include <vector>
 #include <unordered_map>
+namespace engine
+{
+
 class EditorComponent;
 class EditorComponentSystem final : public engine::System
 {
@@ -39,18 +42,24 @@ public:
 	/*********************************************************************************//*!
 	\brief    
 	 When creating a new object with prefab register this entity into m_prefabUsers
+	\param
+	 prefab id to register
 	\param    
 	 takes in EditorComponent 
 	*//**********************************************************************************/
-	void RegisterNewUser(value_reference);
+	void RegisterNewUser(Entity,value_reference);
 	/*********************************************************************************//*!
 	\brief    
 	 When breaking from prefab / deleting
+	\param
+	 prefab id to unregister
 	\param    
 	 the reference to EditorComponent
 	*//**********************************************************************************/
-	void UnregisterUser(value_reference);
+	void UnregisterUser(Entity,value_reference);
 
 private:
 	std::map<engine::Entity, std::vector<engine::Entity> > m_prefabUsers;
 };
+
+}

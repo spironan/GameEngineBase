@@ -14,7 +14,7 @@
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Renderer/Sprite2D.h"
 #include "Engine/PhysicsCollision/RigidBody.h"
-#include "Editor/Component/EditorComponent.h"
+#include "Engine/Prefab/EditorComponent.h"
 #include "Engine/Prefab/PrefabComponent.h"
 //libs
 #include <imgui.h>
@@ -74,8 +74,8 @@ void InspectorView::Show()
 			//	ReadComponents(go.GetComponent<engine::PrefabComponent>(), go);
 			if (m_showReadOnly)
 			{
-				if (go.TryGetComponent<EditorComponent>())
-					ReadComponents(go.GetComponent<EditorComponent>(), go);
+				if (go.TryGetComponent<engine::EditorComponent>())
+					ReadComponents(go.GetComponent<engine::EditorComponent>(), go);
 			}
 			AddComponentButton();
 			ImGui::EndChild();
@@ -121,7 +121,9 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 		std::string temp = "Change value of element: " + propName.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
 		rttr::variant undo = goComponent.Name.c_str();
 		rttr::variant redo = buf;
-		ActionStack::AllocateInBuffer(new InspectorActionBehaviour<engine::GameObjectComponent>{ temp, ObjectGroup::s_FocusedObject, propName, undo  , redo });
+		ActionStack::AllocateInBuffer(new InspectorActionBehaviour<engine::GameObjectComponent>{ temp, ObjectGroup::s_FocusedObject, propName, undo  , redo ,
+									  object.GetComponent<engine::EditorComponent>().IsPrefabDirty() });
+		object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 		goComponent.Name = buf;
 	}
 
@@ -132,10 +134,22 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 		std::string temp = "Change value of element: " + propActive.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
 		rttr::variant undo = beforeActive;
 		rttr::variant redo = !beforeActive;
-		ActionStack::AllocateInBuffer(new InspectorActionBehaviour<engine::GameObjectComponent>{ temp, ObjectGroup::s_FocusedObject, propActive, undo  , redo });
+		ActionStack::AllocateInBuffer(new InspectorActionBehaviour<engine::GameObjectComponent>{ temp, ObjectGroup::s_FocusedObject, propActive, undo  , redo ,
+									  object.GetComponent<engine::EditorComponent>().IsPrefabDirty() });
+		object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 		goComponent.ActiveSelf = !beforeActive;
 	}
 	ImGui::EndGroup();
+
+	if (ImGui::Button("Update Prefab"))
+	{
+		object.GetComponent<engine::EditorComponent>().UpdatePrefab();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Break Prefab"))
+	{
+		object.GetComponent<engine::EditorComponent>().BreakOffFromPrefab();
+	}
 	ImGui::Separator();
 }
 

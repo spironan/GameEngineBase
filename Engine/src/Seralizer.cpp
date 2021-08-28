@@ -19,6 +19,7 @@
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/ECS/GameObject.h"
 #include "Engine/Prefab/PrefabComponent.h"
+#include "Engine/Prefab/EditorComponent.h"
 
 engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 {
@@ -36,12 +37,12 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 	for (auto& iter = doc.MemberBegin(); iter != doc.MemberEnd(); ++iter)
 	{
 		auto& arr = iter->value.GetArray();
-		engine::GameObject object = engine::SceneManager::GetActiveScene().CreateGameObject();
+		engine::GameObject object;
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetID(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 		object.EnsureComponent<engine::PrefabComponent>();
 	}
-	engine::Entity head;
+	engine::Entity head = 0;
 	for (auto& hierarchyItem : hierarchymap)
 	{
 		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
@@ -51,7 +52,6 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 		}
 		else
 		{
-			//engine::GameObject(parent).AddChild(hierarchyItem.second.first);
 			head = hierarchyItem.second.first;
 		}
 	}
@@ -145,6 +145,7 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 		SaveComponent<engine::GameObjectComponent>(go.GetComponent<engine::GameObjectComponent>(), writer);
 	if (go.TryGetComponent<engine::Transform3D>())
 		SaveComponent<engine::Transform3D>(go.GetComponent<engine::Transform3D>(), writer);
+	
 	writer.EndArray();
 }
 
@@ -152,7 +153,7 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& go)
 {
 	std::string component;
-	for (int count = 2; count < arr.Size(); ++count)
+	for (size_t count = 2; count < arr.Size(); ++count)
 	{
 		component = arr[count].GetString();
 		++count;
@@ -171,6 +172,9 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& 
 			transform.SetPosition(GetVec3(trans[0]));
 			transform.SetRotationAxis(GetVec3(trans[1]));
 			transform.SetRotationAngle(trans[2].GetFloat());
+		}
+		if (component == rttr::type::get<engine::PrefabComponent>().get_name())
+		{
 		}
 	}
 }

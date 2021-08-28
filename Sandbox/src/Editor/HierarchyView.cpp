@@ -28,7 +28,7 @@ Technology is prohibited.
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include "Editor/Component/EditorComponent.h"
+#include "Engine/Prefab/EditorComponent.h"
 /**
  * \brief The main function to displaying the Hierarchy window
  *			-contains the function for the interaction of the nodes
@@ -52,7 +52,7 @@ void HierarchyView::HierarchyPopUp()
 	{
 		engine::GameObject ent = engine::SceneManager::GetActiveScene().CreateGameObject();
 		(ent).AddComponent<engine::Transform3D>();
-		(ent).AddComponent<EditorComponent>();
+		(ent).AddComponent<engine::EditorComponent>();
 
 		engine::GameObject(engine::SceneManager::GetActiveRoot()).AddChild(ent);
 	}

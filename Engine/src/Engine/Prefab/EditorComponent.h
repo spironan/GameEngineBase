@@ -2,6 +2,9 @@
 #include "Engine/ECS/Component.h"
 #include "Engine/ECS/ECS_Utility.h"
 #include <rttr/type>
+namespace engine
+{
+
 class EditorComponent : public engine::Component
 {
 public:
@@ -16,21 +19,27 @@ public:
 	EditorComponent& operator=(EditorComponent&&) = default;
 	virtual ~EditorComponent() override = default;
 	
-	EditorComponent(engine::Entity entity, bool active) :Component{ entity,active } {};
+	EditorComponent(engine::Entity entity, bool active);
 	/*********************************************************************************//*!
 	\brief
 	 Getters
 	*//**********************************************************************************/
-	bool IsPrefab() { return m_isPrefab; };
-	bool IsPrefabDirty() { return m_isPrefab_Dirty; };
-	engine::Entity GetPrefabReference() { return m_prefabReference; };
+	bool IsPrefab();
+	bool IsPrefabDirty();
+	engine::Entity GetPrefabReference();
 	/*********************************************************************************//*!
 	\brief
 	 Setters
 	*//**********************************************************************************/
-	void SetPrefab(bool p) { m_isPrefab = p; };
-	void SetPrefabDirty(bool pd) { m_isPrefab_Dirty = pd; };
-	void SetPrefabReference(engine::Entity e) { m_prefabReference = e; };
+	void SetPrefabDirty(bool pd) ;
+	/*********************************************************************************//*!
+	\brief    
+	 Unregister the old prefab reference 
+	 and register the new prefab reference
+	\param    reference
+	
+	*//**********************************************************************************/
+	void SetPrefabReference(Entity reference);
 	/*********************************************************************************//*
 	\brief    
 	 Will not show any prefab icons if broken off
@@ -42,6 +51,7 @@ public:
 	*//**********************************************************************************/
 	void UpdatePrefab();
 	
+
 	RTTR_ENABLE();
 private:
 
@@ -53,4 +63,6 @@ private:
 	//custom icon
 
 	//
+};
+
 };
