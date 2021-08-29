@@ -33,10 +33,15 @@ engine::EditorComponent::EditorComponent(engine::Entity entity, bool active)
 }
 Component& engine::EditorComponent::CopyComponent(Component const& comp)
 {
-	EditorComponent& ec = comp.GetComponent<EditorComponent>();
+	const EditorComponent& ec = reinterpret_cast<EditorComponent const &>(comp);
 	m_isPrefab = ec.m_isPrefab;
 	m_isPrefab_Dirty = ec.m_isPrefab_Dirty;
+
+	if (m_prefabReference)
+		engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->UnregisterUser(m_prefabReference, *this);
 	m_prefabReference = ec.m_prefabReference;
+	engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->RegisterNewUser(m_prefabReference, *this);
+
 	m_headReference = 0;
 	return *this;
 };
