@@ -153,7 +153,7 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& go)
 {
 	std::string component;
-	for (size_t count = 2; count < arr.Size(); ++count)
+	for (rapidjson::SizeType count = 2; count < arr.Size(); ++count)
 	{
 		component = arr[count].GetString();
 		++count;

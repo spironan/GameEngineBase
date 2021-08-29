@@ -66,7 +66,7 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 
 	auto& headEditorComponent = head.EnsureComponent<EditorComponent>();
 
-	headEditorComponent.SetPrefabReference(obj);
+	headEditorComponent.SetPrefabReference(obj,head);
 
 	for (GameObject childs : childList)
 	{
@@ -77,8 +77,8 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		child.Name() = copyObject.Name();
 		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
 
-		auto& editorComponent = child.EnsureComponent<EditorComponent>();
-		editorComponent.SetPrefabReference(copyObject.GetID());
+		auto& editorComponent = child.AddComponent<EditorComponent>();
+		editorComponent.SetPrefabReference(copyObject.GetID(),head);
 		
 
 		{//TODO fix this once its done
@@ -129,13 +129,13 @@ void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& 
 	if (head.TryGetComponent<EditorComponent>())
 	{
 		EditorComponent& ec = head.GetComponent<EditorComponent>();
-		ec.SetPrefabReference(prefab.GetID());
+		ec.SetPrefabReference(prefab.GetID(),head);
 	}
 
 	for (size_t iter = 0; iter < childList.size(); ++iter)
 	{
 		EditorComponent& ec = static_cast<GameObject>(childList[iter]).GetComponent<EditorComponent>();
-		ec.SetPrefabReference(prefabChild[iter]);
+		ec.SetPrefabReference(prefabChild[iter],head);
 	}
 
 }

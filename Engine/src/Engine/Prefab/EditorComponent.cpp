@@ -16,9 +16,10 @@ registration::class_<EditorComponent>("Editor Component")
 	.property_readonly("Prefab Reference",&EditorComponent::GetPrefabReference);
 }
 
+
+
 void EditorComponent::BreakOffFromPrefab()
 {
-	m_isPrefab = false;
 	engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->UnregisterUser(m_prefabReference,*this);
 }
 
@@ -30,6 +31,14 @@ engine::EditorComponent::EditorComponent(engine::Entity entity, bool active)
 	:Component{ entity,active }
 {
 }
+Component& engine::EditorComponent::CopyComponent(Component const& comp)
+{
+	EditorComponent& ec = comp.GetComponent<EditorComponent>();
+	m_isPrefab = ec.m_isPrefab;
+	m_isPrefab_Dirty = ec.m_isPrefab_Dirty;
+	m_prefabReference = ec.m_prefabReference;
+	return *this;
+};
 bool EditorComponent::IsPrefab()
 {
 	return m_isPrefab; 
@@ -42,18 +51,28 @@ engine::Entity EditorComponent::GetPrefabReference()
 {
 	return m_prefabReference; 
 }
+engine::Entity engine::EditorComponent::GetHeadReference()
+{
+	return m_headReference;
+}
 void EditorComponent::SetPrefabDirty(bool pd)
 {
 
 	m_isPrefab_Dirty = pd;
-};
-void EditorComponent::SetPrefabReference(engine::Entity e)
-{ 
-	if(m_prefabReference)
-		engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->UnregisterUser(m_prefabReference,*this);
-	m_prefabReference = e; 
+}
+void engine::EditorComponent::SetIsPrefab(bool ip)
+{
+	m_isPrefab = ip;
+}
+;
+void engine::EditorComponent::SetPrefabReference(Entity reference, Entity head)
+{
+	if (m_prefabReference)
+		engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->UnregisterUser(m_prefabReference, *this);
+	m_prefabReference = reference;
 	engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->RegisterNewUser(m_prefabReference, *this);
 	m_isPrefab = true;
-};
+	m_headReference = head;
+}
 
 }

@@ -105,6 +105,12 @@ void HierarchyView::ListHierarchy()
 	std::vector<std::uint32_t> depth;
 	engine::Entity root = engine::SceneManager::GetActiveRoot();
 	auto& transformList = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
+
+	//remb to compile this into settings
+	static const ImVec4 default_textCol = { 0.8f,0.8f,0.8f,1.0f };
+	static const ImVec4 prefab_text_color = { 0.0f,0.8f,0.8f,1.0f };
+
+	ImVec4 current_color;
 	//display the root node
 	ImGui::BeginChild("##ListHierarchy");
 	if (transformList.size())
@@ -131,6 +137,13 @@ void HierarchyView::ListHierarchy()
 	{
 		flag = 0;//reset flag before use
 		engine::Transform3D& transform = *iter;
+		engine::GameObject& gameObj = static_cast<engine::GameObject>(iter->GetID());
+
+		if (gameObj.TryGetComponent<engine::EditorComponent>())
+			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
+		else//is a prefab instance == skip
+			continue;
+
 		if (ObjectGroup::s_FocusedObject == transform.GetEntity())
 		{
 			flag = ImGuiTreeNodeFlags_Selected;
@@ -150,8 +163,11 @@ void HierarchyView::ListHierarchy()
 		if (transform.GetChildCount())
 		{
 			flag |= ImGuiTreeNodeFlags_OpenOnArrow;
+			
 			ImGui::PushID(transform.GetEntity());
+			ImGui::PushStyleColor(ImGuiCol_Text,current_color);
 			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
+			ImGui::PopStyleColor();
 			ImGui::PopID();
 			//if activated then show child else skip
 			(activated && !(flag & ImGuiTreeNodeFlags_NoTreePushOnOpen)) ? ++treePop , depth.emplace_back(transform.GetEntity()) : std::advance(iter,transform.GetChildCount());
@@ -161,7 +177,9 @@ void HierarchyView::ListHierarchy()
 		{
 			flag |=	 ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 			ImGui::PushID(transform.GetEntity());
+			ImGui::PushStyleColor(ImGuiCol_Text, current_color);
 			activated = ImGui::TreeNodeEx(engine::GameObject(transform.GetEntity()).Name().c_str(), flag);
+			ImGui::PopStyleColor();
 			ImGui::PopID();
 		}
 		if (ImGui::IsItemClicked() || ImGui::IsItemClicked(ImGuiMouseButton_Right))

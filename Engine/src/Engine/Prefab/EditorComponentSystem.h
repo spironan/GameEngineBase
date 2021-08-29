@@ -57,7 +57,12 @@ public:
 	 the reference to EditorComponent
 	*//**********************************************************************************/
 	void UnregisterUser(Entity,value_reference);
-
+private:
+	/*********************************************************************************//*!
+	\brief    
+	 helper function to unregister users to help remove the whole object from prefab
+	*//**********************************************************************************/
+	void RemoveUsers(Entity, value_reference);
 private:
 	std::map<engine::Entity, std::vector<engine::Entity> > m_prefabUsers;
 };

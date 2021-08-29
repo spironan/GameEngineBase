@@ -20,11 +20,11 @@ public:
     {
     }
 
-    void OnEvent(engine::Event& e) override
-    {
-        engine::EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<engine::WindowFocusEvent>(ENGINE_BIND_EVENT_FN(ScriptingLayer::Compile));
-    }
+    //void OnEvent(engine::Event& e) override
+    //{
+    //    engine::EventDispatcher dispatcher(e);
+    //    dispatcher.Dispatch<engine::WindowFocusEvent>(ENGINE_BIND_EVENT_FN(ScriptingLayer::Compile));
+    //}
 
     bool Compile(engine::WindowFocusEvent& e)
     {

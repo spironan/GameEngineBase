@@ -37,16 +37,14 @@ void EditorComponentSystem::UpdatedPrefab(value_reference object)
 	engine::GameObject& Prefab = (engine::GameObject)id;
 	object.SetPrefabDirty(false);
 	GameObject& go = (GameObject)object.GetEntity();//remove later
-	engine::Transform3D& prefabTransform = Prefab.GetComponent<engine::Transform3D>();
-	prefabTransform.SetPosition(go.GetComponent<engine::Transform3D>().GetPosition());
-	//Prefab.CopyComponents(object.GetEntity());
+	engine::Transform3D& prefabTransform = Prefab.Transform();
+	Prefab.CopyComponent<Transform3D>(go);
 
 	//update users
 	for (auto ent : iter->second)
 	{
 		engine::GameObject& gameobject = (engine::GameObject)ent;
-		gameobject.GetComponent<engine::Transform3D>().SetPosition(prefabTransform.GetPosition());
-		//gameobject.CopyComponents(Prefab);
+		gameobject.CopyComponent<Transform3D>(Prefab);
 	}
 	//updating prefab to file
 	engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->SavePrefab(Prefab);
@@ -59,6 +57,20 @@ void EditorComponentSystem::RegisterNewUser(Entity prefab,value_reference object
 
 void EditorComponentSystem::UnregisterUser(Entity prefab,value_reference object)
 {
+	Entity head = object.GetHeadReference();
+	GameObject& headGo = static_cast<GameObject>(head);
+	value_reference headRef = headGo.GetComponent<value_type>();
+	RemoveUsers(headRef.GetPrefabReference(), headRef);
+	auto& childList = headGo.GetChildren();
+	for (GameObject child: childList)
+	{
+		value_reference childRef = child.GetComponent<value_type>();
+		RemoveUsers(childRef.GetPrefabReference(), childRef);
+	}
+}
+
+void EditorComponentSystem::RemoveUsers(Entity prefab , value_reference object)
+{
 	auto& iter = m_prefabUsers.find(prefab);
 	if (iter == m_prefabUsers.end())
 	{
@@ -69,6 +81,7 @@ void EditorComponentSystem::UnregisterUser(Entity prefab,value_reference object)
 	auto& target = std::find(vector_reference.begin(), vector_reference.end(), object.GetEntity());
 	std::swap(*target, vector_reference.back());
 	vector_reference.pop_back();
+	object.SetIsPrefab(false);
 }
 
 }

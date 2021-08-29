@@ -22,7 +22,11 @@ namespace engine
 		 Prefab Component will set the main gameobject to inactive
 		*//**********************************************************************************/
 		PrefabComponent(Entity entity, bool active);
-		
+		/*********************************************************************************//*!
+		\brief    
+		 this function does nothing
+		*//**********************************************************************************/
+		virtual Component& CopyComponent(Component const& comp) override;
 	public:
 		bool m_RootNode = false;
 		

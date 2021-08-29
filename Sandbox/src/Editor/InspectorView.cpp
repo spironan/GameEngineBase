@@ -69,9 +69,7 @@ void InspectorView::Show()
 
 			if(go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
-			//if (go.TryGetComponent<engine::PrefabComponent>())
-			//	ImGui::Text("prefab component");
-			//	ReadComponents(go.GetComponent<engine::PrefabComponent>(), go);
+
 			if (m_showReadOnly)
 			{
 				if (go.TryGetComponent<engine::EditorComponent>())
@@ -141,15 +139,20 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	}
 	ImGui::EndGroup();
 
+	engine::EditorComponent& objectEC = object.GetComponent<engine::EditorComponent>();
+	ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !objectEC.IsPrefab());
+	objectEC.IsPrefab() ? ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f) : ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.6f);
 	if (ImGui::Button("Update Prefab"))
 	{
-		object.GetComponent<engine::EditorComponent>().UpdatePrefab();
+		objectEC.UpdatePrefab();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Break Prefab"))
 	{
-		object.GetComponent<engine::EditorComponent>().BreakOffFromPrefab();
+		objectEC.BreakOffFromPrefab();
 	}
+	ImGui::PopStyleVar();
+	ImGui::PopItemFlag();
 	ImGui::Separator();
 }
 

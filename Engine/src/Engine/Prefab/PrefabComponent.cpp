@@ -10,6 +10,11 @@ PrefabComponent::PrefabComponent(Entity entity, bool active)
 	static_cast<GameObject>(entity).ActiveSelf() = false;
 }
 
+Component& PrefabComponent::CopyComponent(Component const& comp)
+{
+	return *this;
+}
+
 
 
 

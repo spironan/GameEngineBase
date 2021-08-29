@@ -20,6 +20,8 @@ public:
 	virtual ~EditorComponent() override = default;
 	
 	EditorComponent(engine::Entity entity, bool active);
+	virtual Component& CopyComponent(Component const& comp) override;
+
 	/*********************************************************************************//*!
 	\brief
 	 Getters
@@ -27,11 +29,13 @@ public:
 	bool IsPrefab();
 	bool IsPrefabDirty();
 	engine::Entity GetPrefabReference();
+	engine::Entity GetHeadReference();
 	/*********************************************************************************//*!
 	\brief
 	 Setters
 	*//**********************************************************************************/
 	void SetPrefabDirty(bool pd) ;
+	void SetIsPrefab(bool ip);
 	/*********************************************************************************//*!
 	\brief    
 	 Unregister the old prefab reference 
@@ -39,7 +43,7 @@ public:
 	\param    reference
 	
 	*//**********************************************************************************/
-	void SetPrefabReference(Entity reference);
+	void SetPrefabReference(Entity reference,Entity head);
 	/*********************************************************************************//*
 	\brief    
 	 Will not show any prefab icons if broken off
@@ -60,6 +64,7 @@ private:
 	bool m_isPrefab_Dirty = false;
 
 	engine::Entity m_prefabReference = 0;
+	engine::Entity m_headReference = 0;
 	//custom icon
 
 	//
