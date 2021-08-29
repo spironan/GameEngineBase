@@ -175,13 +175,16 @@ namespace engine
      @brief     Copies the relevant data of transform component while retaining
                 its entityID to be of prior gameobject before this operation.
     *//*****************************************************************************/
-    void Transform3D::CopyComponent(Transform3D const& transform)
+    Component& Transform3D::CopyComponent(Component const& comp)
     {
-        m_localTransform = transform.m_localTransform;
-        m_rotationAngle = transform.m_rotationAngle;
-        m_rotationAxis = transform.m_rotationAxis;
-        m_position = transform.m_position;
-        m_scale = transform.m_scale;
+        auto& transform = reinterpret_cast<Transform3D const&>(comp);
+        m_localTransform    = transform.m_localTransform;
+        m_rotationAngle     = transform.m_rotationAngle;
+        m_rotationAxis      = transform.m_rotationAxis;
+        m_position          = transform.m_position;
+        m_scale             = transform.m_scale;
+
+        return *this;
         // there may be more to copy, have to test.
     }
 

@@ -81,7 +81,7 @@ namespace engine
          @brief     Copies the relevant data of transform component while retaining
                     its entityID to be of prior gameobject before this operation.
         *//*****************************************************************************/
-        void CopyComponent(Transform3D const& transform);
+        virtual Component& CopyComponent(Component const& comp) override;
 
         /****************************************************************************//*!
          @brief     Retrieves the global position of this Component from the global
