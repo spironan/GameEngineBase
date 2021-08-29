@@ -37,6 +37,7 @@ Component& engine::EditorComponent::CopyComponent(Component const& comp)
 	m_isPrefab = ec.m_isPrefab;
 	m_isPrefab_Dirty = ec.m_isPrefab_Dirty;
 	m_prefabReference = ec.m_prefabReference;
+	m_headReference = 0;
 	return *this;
 };
 bool EditorComponent::IsPrefab()
@@ -64,7 +65,11 @@ void engine::EditorComponent::SetIsPrefab(bool ip)
 {
 	m_isPrefab = ip;
 }
-;
+void engine::EditorComponent::SetHead(Entity head)
+{
+	m_headReference = head;
+}
+
 void engine::EditorComponent::SetPrefabReference(Entity reference, Entity head)
 {
 	if (m_prefabReference)

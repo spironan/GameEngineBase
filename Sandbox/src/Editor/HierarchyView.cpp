@@ -420,15 +420,10 @@ void HierarchyView::Paste()
 	engine::GameObject parent = engine::SceneManager::GetActiveScene().CreateGameObject();
 	parent.Name() = targetGameObject.Name() + "-Copy";
 	parent.ActiveSelf() = static_cast<bool>(targetGameObject.ActiveSelf());
-
-	auto& trans = parent.GetComponent<engine::Transform3D>();
-	auto& targetTransfom = targetGameObject.GetComponent<engine::Transform3D>();
-	//update this once the function is done TODO
-	//trans.CopyComponent(targetTransfom);
-	trans.SetPosition(targetTransfom.GetPosition());
-	trans.SetScale(targetTransfom.GetScale());
-	trans.SetRotationAngle(targetTransfom.GetRotationAngle());
-	trans.SetRotationAxis(targetTransfom.GetRotationAxis());
+	
+	parent.CopyComponent<engine::Transform3D>(targetGameObject);
+	parent.CopyComponent<engine::EditorComponent>(targetGameObject);
+	parent.GetComponent<engine::EditorComponent>().SetHead(parent);
 
 	if (childcount == 0)
 		return;
@@ -453,13 +448,9 @@ void HierarchyView::Paste()
 		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
 
 		{//TODO fix this once its done
-			engine::Transform3D & newTrans = static_cast<engine::GameObject>(tranformList[iter]).GetComponent<engine::Transform3D>();
-			engine::Transform3D& childTrans = child.GetComponent<engine::Transform3D>();
-			//childTrans.CopyComponent(newTrans);
-			childTrans.SetPosition(newTrans.GetPosition());
-			childTrans.SetScale(newTrans.GetScale());
-			childTrans.SetRotationAngle(newTrans.GetRotationAngle());
-			childTrans.SetRotationAxis(newTrans.GetRotationAxis());
+			child.CopyComponent<engine::Transform3D>(copyObject);
+			child.CopyComponent<engine::EditorComponent>(copyObject);
+			child.GetComponent<engine::EditorComponent>().SetHead(parent);
 		}
 
 		const engine::Entity parentid = copyTransform.GetParentId();
@@ -490,7 +481,6 @@ void HierarchyView::Paste()
 			break;
 	}
 	engine::SceneManager::GetActiveRoot().AddChild(parent);
-
 }
 
 void HierarchyView::Rename()

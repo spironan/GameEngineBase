@@ -36,6 +36,7 @@ public:
 	*//**********************************************************************************/
 	void SetPrefabDirty(bool pd) ;
 	void SetIsPrefab(bool ip);
+	void SetHead(Entity head);
 	/*********************************************************************************//*!
 	\brief    
 	 Unregister the old prefab reference 
