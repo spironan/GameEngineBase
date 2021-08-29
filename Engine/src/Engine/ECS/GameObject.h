@@ -49,6 +49,12 @@ namespace engine
         // Non-Traditional Copy Construct GameObject Based on Entity
         GameObject(Entity entt);
 
+        //Duplicating objects
+        GameObject& Duplicate(GameObject target)
+        {
+            return *this = WorldManager::GetActiveWorld().DuplicateEntity(target);
+        }
+
         // use with caution, this should not immediately delete the object!
         void Destroy();
 
@@ -90,6 +96,11 @@ namespace engine
             return WorldManager::GetActiveWorld().HasComponent<Component>(m_entity);
         }
 
+        template<typename Component>
+        ComponentType GetComponentType()
+        {
+            return WorldManager::GetActiveWorld().GetComponentType<Component>();
+        }
 
         /*---------------------------------------------------------------------------------*/
         /* Manipulation                                                                    */
@@ -155,16 +166,6 @@ namespace engine
             return HasComponent<Component>() ? GetComponent<Component>() : AddComponent<Component>(args...);
         }
 
-        GameObject& Duplicate(GameObject target)
-        {
-            return *this = WorldManager::GetActiveWorld().DuplicateEntity(target);
-        }
-
-        template<typename Component>
-        ComponentType GetComponentType()
-        {
-            return WorldManager::GetActiveWorld().GetComponentType<Component>();
-        }
 
     };
 
