@@ -424,10 +424,6 @@ void HierarchyView::Paste()
 	
 	//update this once the function is done TODO
 	parent.AddComponent<engine::EditorComponent>();
-
-	parent.GetComponent<engine::Transform3D>().CopyComponent(targetGameObject.GetComponent<engine::Transform3D>());
-	parent.GetComponent<engine::EditorComponent>().CopyComponent(targetGameObject.GetComponent<engine::EditorComponent>());
-
 	
 	parent.CopyComponent<engine::Transform3D>(targetGameObject); 
 	parent.CopyComponent<engine::EditorComponent>(targetGameObject);
@@ -455,12 +451,12 @@ void HierarchyView::Paste()
 		//gameobject component
 		child.Name() = copyObject.Name();
 		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
-
 		child.AddComponent<engine::EditorComponent>();
+
 		{//TODO fix this once its done
 			child.GetComponent<engine::Transform3D>().CopyComponent(copyObject.GetComponent<engine::Transform3D>());
-			child.GetComponent<engine::EditorComponent>().CopyComponent(copyObject.GetComponent<engine::EditorComponent>());
 			child.GetComponent<engine::EditorComponent>().SetHead(parent);
+			child.GetComponent<engine::EditorComponent>().CopyComponent(copyObject.GetComponent<engine::EditorComponent>());
 		}
 
 		const engine::Entity parentid = copyTransform.GetParentId();

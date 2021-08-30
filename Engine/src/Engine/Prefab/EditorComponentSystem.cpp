@@ -47,7 +47,9 @@ void EditorComponentSystem::UpdatedPrefab(value_reference object)
 		gameobject.CopyComponent<Transform3D>(Prefab);
 	}
 	//updating prefab to file
-	engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->SavePrefab(Prefab);
+
+	engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->
+		SavePrefab(static_cast<GameObject>(object.GetHeadReference()));
 }
 
 void EditorComponentSystem::RegisterNewUser(Entity prefab,value_reference object)
