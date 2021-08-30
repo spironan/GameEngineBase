@@ -20,6 +20,7 @@ namespace engine
 {
 	class ComponentManager
 	{
+		friend class ECS_Manager;
 	public:
 		using TypeContainer = std::unordered_map<const char*, ComponentType>;
 		using ComponentContainer = std::unordered_map<const char*, std::shared_ptr<ComponentArrayBase>>;
@@ -29,6 +30,11 @@ namespace engine
 		using GetComponentMap = std::unordered_map<ComponentType, GetComponentCallback>;
 		using CopyComponentCallback = std::function<bool (ComponentManager&, Entity, Entity)>;
 		using CopyComponentMap = std::unordered_map<ComponentType, CopyComponentCallback>;
+		using DeletedComponentCallback = std::function<void*(ComponentManager&, Entity)>;
+		using DeletedComponentMap = std::unordered_map<ComponentType, DeletedComponentCallback>;
+		using RestoredComponentCallback = std::function<void* (ComponentManager&, Entity, void*)>;
+		using RestoredComponentMap = std::unordered_map<ComponentType, RestoredComponentCallback>;
+
 		/*****************************************************************//**
 		 * @brief Registers a component to be used. Creates a ComponentArray
 		 * of type T and inserts it into m_ComponentArrays
@@ -53,6 +59,14 @@ namespace engine
 				} });
 			m_copyComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity src,Entity dest)->bool {
 				return cm.CopyComponent<T>(src,dest);
+				} });
+			m_deletedComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity entity)->void* {
+				T* deleted_component = reinterpret_cast<T*>(new char[sizeof(T)]);
+				memcpy(deleted_component, &(cm.GetComponent<T>(entity)), sizeof(T));
+				return static_cast<void*>(deleted_component);
+				} });
+			m_restoredComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity entity, void* component)->void* {
+				return static_cast<void*>( &cm.EmplaceComponent<T>( entity ,*(static_cast<T*>(component)) ) );
 				} });
 			++m_NextComponentType;
 		}
@@ -156,6 +170,19 @@ namespace engine
 			return GetComponent<T>();
 		}
 
+		void* GetDeletedComponentByTypeID(Entity entity, ComponentType type) 
+		{
+			if (type >= Size())
+				return nullptr;
+			return m_deletedComponentMap[type](*this, entity);
+		}
+
+		void* RestoreComponentByTypeID(Entity entity, ComponentType type,void* component)
+		{
+			if (type >= Size())
+				return nullptr;
+			return m_restoredComponentMap[type](*this, entity, component);
+		}
 		
 		void* GetComponentByTypeID(Entity entity, ComponentType type)
 		{
@@ -317,6 +344,8 @@ namespace engine
 		AddComponentMap m_addComponentMap{};
 		GetComponentMap m_getComponentMap{};
 		CopyComponentMap m_copyComponentMap{};
+		DeletedComponentMap m_deletedComponentMap{};
+		RestoredComponentMap m_restoredComponentMap{};
 
 		template<typename T>
 		std::shared_ptr<ComponentArray<T>> GetComponentArray()
