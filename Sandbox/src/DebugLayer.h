@@ -55,6 +55,7 @@ public:
 
     void OnImGuiRender() final override
     {
+        ImGui::Begin("Debug Layers", nullptr, ImGuiWindowFlags_NoDocking);
         for (auto& debugLayer : debugLayers)
             if (ImGui::Button(debugLayer->GetName().c_str()))
             {
@@ -64,5 +65,6 @@ public:
                 currentLayer = debugLayer;
                 application.PushOverlay(debugLayer);
             }
+        ImGui::End();
     }
 };
