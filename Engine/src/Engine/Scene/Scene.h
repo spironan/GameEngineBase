@@ -59,9 +59,8 @@ namespace engine
 		{
 			m_world = &WorldManager::CreateWorld();
 			WorldManager::SetActiveWorld(m_world->GetID());
-			m_root = GameObject{GameObject::Instantiate{}};	//instantiate root game object
+			m_root = GameObject{GameObject::Create{}};	//instantiate root game object
 			//deserialise scene file and load objects here
-
 
 			return *m_world;
 		}
@@ -105,7 +104,7 @@ namespace engine
 		GameObject CreateGameObject()
 		{
 			ENGINE_ASSERT(IsLoaded());
-			GameObject temp{ engine::GameObject::Instantiate{} };
+			GameObject temp{ engine::GameObject::Create{} };
 			m_root.AddChild(temp);
 			return temp;
 		}

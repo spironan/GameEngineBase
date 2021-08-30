@@ -19,8 +19,22 @@ Technology is prohibited.
 
 namespace engine
 {
+    /*---------------------------------------------------------------------------------*/
+    /* Static Functions                                                                */
+    /*---------------------------------------------------------------------------------*/
+    GameObject& GameObject::Instantiate(GameObject const& source)
+    {
+        return static_cast<GameObject>(WorldManager::GetActiveWorld().DuplicateEntity(source));
+    }
+
+    void GameObject::DestroyGameObject(Entity entt)
+    {
+        WorldManager::GetActiveWorld().DestroyEntity(entt);
+    }
+
+
     // order matters! dont switch it! Instantiate is a dummy type
-    GameObject::GameObject(Instantiate)
+    GameObject::GameObject(Create)
         : m_entity  { WorldManager::GetActiveWorld().CreateEntity() }
     {
         AddComponent<Transform3D>();
@@ -38,7 +52,7 @@ namespace engine
         // but add to a stack instead that is used to call the code below
         // at the end of the frame.
         // should use a pair to avoid multiple removes of the same object.
-        WorldManager::GetActiveWorld().DestroyEntity(m_entity);
+        DestroyGameObject(m_entity);
     }
 
 
@@ -68,6 +82,7 @@ namespace engine
         for (auto const& childTf : childTfs) entities.emplace_back(childTf.GetEntity());
         return entities;
     }
+    
 
     //void GameObject::RemoveChild(GameObject* gameObj)
     //{

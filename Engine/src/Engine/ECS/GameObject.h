@@ -47,17 +47,19 @@ namespace engine
         GameObject& operator=(Entity entt) { m_entity = entt; return *this; };
 
         // Explicit Instantiation constructor, instantiate is a dummy type
-        struct Instantiate {};
-        explicit GameObject(Instantiate);
+        struct Create {};
+        explicit GameObject(Create);
 
         // Non-Traditional Copy Construct GameObject Based on Entity
         GameObject(Entity entt);
+        
+        /*---------------------------------------------------------------------------------*/
+        /* Static Functions                                                                */
+        /*---------------------------------------------------------------------------------*/
+        // Duplicating objects
+        static void GameObject::DestroyGameObject(Entity entt);
+        static GameObject& Instantiate(GameObject const& source);
 
-        //Duplicating objects
-        GameObject& Duplicate(GameObject target)
-        {
-            return *this = WorldManager::GetActiveWorld().DuplicateEntity(target);
-        }
 
         // use with caution, this should not immediately delete the object!
         void Destroy();
@@ -170,6 +172,11 @@ namespace engine
             return HasComponent<Component>() ? GetComponent<Component>() : AddComponent<Component>(args...);
         }
 
+
+        /*GameObject& CopyGameObject(GameObject const& source)
+        {
+            return *this = WorldManager::GetActiveWorld().DuplicateEntity(source);
+        }*/
 
     };
 
