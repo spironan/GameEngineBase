@@ -79,7 +79,7 @@ namespace engine
         // Grab Transforms from ECS manager
         for (auto& currTransform : m_ECS_Manager.GetComponentDenseArray<Transform3D>())
         {
-            if (currTransform.m_active) continue;
+            if (!currTransform.m_active) continue;
 
             //m_ECS_Manager.GetComponent<GameObjectComponent>()
 
