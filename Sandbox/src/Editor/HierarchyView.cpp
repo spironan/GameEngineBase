@@ -110,7 +110,7 @@ void HierarchyView::ListHierarchy()
 	static const ImVec4 default_textCol = { 0.8f,0.8f,0.8f,1.0f };
 	static const ImVec4 prefab_text_color = { 0.0f,0.8f,0.8f,1.0f };
 
-	ImVec4 current_color;
+	ImVec4 current_color = default_textCol;
 	//display the root node
 	ImGui::BeginChild("##ListHierarchy");
 	if (transformList.size())
@@ -422,15 +422,13 @@ void HierarchyView::Paste()
 	parent.ActiveSelf() = static_cast<bool>(targetGameObject.ActiveSelf());
 	
 	//update this once the function is done TODO
+	parent.AddComponent<engine::EditorComponent>();
 
-	//auto& trans = parent.GetComponent<engine::Transform3D>();
-	//auto& targetTransfom = targetGameObject.GetComponent<engine::Transform3D>();
-	//trans.SetPosition(targetTransfom.GetPosition());
-	//trans.SetScale(targetTransfom.GetScale());
-	//trans.SetRotationAngle(targetTransfom.GetRotationAngle());
-	//trans.SetRotationAxis(targetTransfom.GetRotationAxis());
+	parent.GetComponent<engine::Transform3D>().CopyComponent(targetGameObject.GetComponent<engine::Transform3D>());
+	parent.GetComponent<engine::EditorComponent>().CopyComponent(targetGameObject.GetComponent<engine::EditorComponent>());
 
-	parent.CopyComponent<engine::Transform3D>(targetGameObject);
+	
+	parent.CopyComponent<engine::Transform3D>(targetGameObject); 
 	parent.CopyComponent<engine::EditorComponent>(targetGameObject);
 	parent.GetComponent<engine::EditorComponent>().SetHead(parent);
 
@@ -440,7 +438,8 @@ void HierarchyView::Paste()
 	auto& tranformList = static_cast<engine::GameObject>(m_CopyTarget).GetChildren();
 
 	engine::Entity prevParent = parent;
-	//the 2 hierarchy stacks
+
+	//hierarchy stacks
 	std::vector<engine::Entity> hierarchy;
 	hierarchy.reserve(childcount);
 	std::vector<engine::Entity> currentHierarchy;
@@ -456,16 +455,10 @@ void HierarchyView::Paste()
 		child.Name() = copyObject.Name();
 		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
 
+		child.AddComponent<engine::EditorComponent>();
 		{//TODO fix this once its done
-			//auto& trans = child.GetComponent<engine::Transform3D>();
-			//
-			//trans.SetPosition(copyTransform.GetPosition());
-			//trans.SetScale(copyTransform.GetScale());
-			//trans.SetRotationAngle(copyTransform.GetRotationAngle());
-			//trans.SetRotationAxis(copyTransform.GetRotationAxis());
-
-			child.CopyComponent<engine::Transform3D>(copyObject);
-			child.CopyComponent<engine::EditorComponent>(copyObject);
+			child.GetComponent<engine::Transform3D>().CopyComponent(copyObject.GetComponent<engine::Transform3D>());
+			child.GetComponent<engine::EditorComponent>().CopyComponent(copyObject.GetComponent<engine::EditorComponent>());
 			child.GetComponent<engine::EditorComponent>().SetHead(parent);
 		}
 

@@ -54,10 +54,7 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 	Transform3D& trans = GO.GetComponent<Transform3D>();
 	
 	Transform3D& headTrans = head.GetComponent<Transform3D>();
-	headTrans.SetPosition(trans.GetPosition());
-	headTrans.SetRotationAngle(trans.GetRotationAngle());
-	headTrans.SetRotationAxis(trans.GetRotationAxis());
-	headTrans.SetScale(trans.GetScale());
+	headTrans.CopyComponent(trans);
 
 	auto& childList = GO.GetChildren();
 	std::vector<Entity> orignal{GO};
@@ -84,11 +81,7 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		{//TODO fix this once its done
 			engine::Transform3D& newTrans = static_cast<engine::GameObject>(copyObject).GetComponent<engine::Transform3D>();
 			engine::Transform3D& childTrans = child.GetComponent<engine::Transform3D>();
-			//childTrans.CopyComponent(newTrans);
-			childTrans.SetPosition(newTrans.GetPosition());
-			childTrans.SetScale(newTrans.GetScale());
-			childTrans.SetRotationAngle(newTrans.GetRotationAngle());
-			childTrans.SetRotationAxis(newTrans.GetRotationAxis());
+			childTrans.CopyComponent(newTrans);
 		}
 
 		const engine::Entity parentid = copyTransform.GetParentId();
@@ -142,17 +135,12 @@ void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& 
 
 void PrefabComponentSystem::SavePrefab(GameObject& go)
 {
-	Transform3D head = go.GetComponent<Transform3D>();
-	Entity parent = head.GetParentId();
-	while (parent != head.GetID())//this is to find the main head
+	GameObject head = go.GetComponent<EditorComponent>().GetHeadReference();
+	Entity ref = head.GetComponent<EditorComponent>().GetPrefabReference();
+	for (auto& element : m_prefabDetails)
 	{
-		head = static_cast<GameObject>(parent).GetComponent<Transform3D>();
-		parent = head.GetParentId();
-	}
-	for (auto& iter : m_prefabDetails)
-	{
-		if (iter.second.head == parent)
-			Serializer::SaveObject(iter.second.filename);
+		if (element.second.head == ref)
+			Serializer::SaveObject(element.second.filename);
 	}
 }
 

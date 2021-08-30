@@ -12,8 +12,8 @@
 //components
 #include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/Transform/Transform3D.h"
-#include "Engine/Renderer/Sprite2D.h"
 #include "Engine/PhysicsCollision/RigidBody.h"
+#include "Engine/Renderer/Sprite2D.h"
 #include "Engine/Prefab/EditorComponent.h"
 #include "Engine/Prefab/PrefabComponent.h"
 //libs
@@ -69,6 +69,7 @@ void InspectorView::Show()
 
 			if(go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
+			
 
 			if (m_showReadOnly)
 			{
@@ -164,12 +165,6 @@ void InspectorView::ComponentAddButton(float x ,float y)
 		engine::GameObject go = ObjectGroup::s_FocusedObject;
 		ImGui::BeginChild("##ListOfComponents", { x,y * 0.8f });
 		{
-			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
-			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
-			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
-			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
-			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
-			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
 			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
 			AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
 			AddComponent |= ComponentAddOptions<engine::RigidBody>(go);
