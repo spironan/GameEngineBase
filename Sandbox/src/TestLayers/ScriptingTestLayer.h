@@ -273,7 +273,7 @@ public:
                     ++goIndex;
                     if (goIndex >= goList.size())
                     {
-                        goList.push_back(engine::GameObject{ engine::GameObject::Instantiate{} });
+                        goList.push_back(engine::GameObject{ engine::GameObject::Create{} });
                         entityScripting = &(goList[goIndex].AddComponent<engine::Scripting>());
                     }
                     else

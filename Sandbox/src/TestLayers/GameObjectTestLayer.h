@@ -35,7 +35,7 @@ public:
             // Creates an Entity : should not be allowed
             engine::Entity ent{};
             // Creates a GameObject That Generates a unique Entity ID : allowed
-            engine::GameObject go0{ engine::GameObject::Instantiate{} };
+            engine::GameObject go0{ engine::GameObject::Create{} };
             // Creates a GameObject with entity : should not be allowed, soln : dont allowed entity to be constructed by any tomdickharry.
             engine::GameObject go1{ engine::Entity{} };
             // Creates a GameObject and copy over its data from the other gameobject : allowed
@@ -79,7 +79,7 @@ public:
         }
 
         // Create Another GameObject
-        engine::GameObject test{ engine::GameObject::Instantiate{} };
+        engine::GameObject test{ engine::GameObject::Create{} };
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
