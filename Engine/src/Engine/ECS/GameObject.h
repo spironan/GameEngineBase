@@ -26,7 +26,7 @@ namespace engine
     class GameObject final
     {
     private:
-        Entity m_entity;
+        Entity m_entity = -1;
 
     public:
         
@@ -37,7 +37,7 @@ namespace engine
         Entity GetID()              const { return m_entity; }
 
         // Rule of 5
-        GameObject();
+        GameObject()                              = default;
         GameObject(GameObject const& copy)        = default;
         GameObject(GameObject &&)                 = default;
         GameObject& operator=(GameObject const&)  = default;
@@ -45,6 +45,10 @@ namespace engine
 
         //gameobject assignment to entity
         GameObject& operator=(Entity entt) { m_entity = entt; return *this; };
+
+        // Explicit Instantiation constructor, instantiate is a dummy type
+        struct Instantiate {};
+        explicit GameObject(Instantiate);
 
         // Non-Traditional Copy Construct GameObject Based on Entity
         GameObject(Entity entt);

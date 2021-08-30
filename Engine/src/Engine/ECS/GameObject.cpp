@@ -19,8 +19,8 @@ Technology is prohibited.
 
 namespace engine
 {
-    // order matters! dont switch it!
-    GameObject::GameObject()
+    // order matters! dont switch it! Instantiate is a dummy type
+    GameObject::GameObject(Instantiate)
         : m_entity  { WorldManager::GetActiveWorld().CreateEntity() }
     {
         AddComponent<Transform3D>();
