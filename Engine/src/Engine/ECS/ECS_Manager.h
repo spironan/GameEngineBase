@@ -154,6 +154,12 @@ namespace engine
 		}
 
 		template<typename T>
+		bool HasComponent(Entity entity) const
+		{
+			return m_ComponentManager->HasComponent<T>(entity);
+		}
+
+		template<typename T>
 		bool TransferComponent(Entity source, Entity dest)
 		{
 			return m_ComponentManager->TransferComponent<T>(source, dest);
@@ -219,15 +225,19 @@ namespace engine
 		Entity DuplicateEntity(Entity source)
 		{
 			Entity dest = CreateEntity();
+			return DuplicateEntity(source, dest);
+		}
+
+		Entity DuplicateEntity(Entity source, Entity dest)
+		{
 			auto signature = m_EntityManager->GetSignature(dest);
 			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
 			{
 				if (signature[type] == true)
 				{
-					void* comp = m_ComponentManager->EmplaceComponentByTypeID(dest, type, m_ComponentManager->GetComponentByTypeID(source, type));
-					ENGINE_ASSERT(comp != nullptr);
-					static_cast<Component*>(comp)->SetEntity(dest);
-				}					
+					bool result = m_ComponentManager->CopyComponentByTypeID(source, dest, type);
+					ENGINE_ASSERT(result);
+				}
 			}
 			return dest;
 		}
