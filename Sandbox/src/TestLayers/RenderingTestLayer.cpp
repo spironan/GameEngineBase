@@ -63,7 +63,8 @@ void RenderingTestLayer::OnImGuiRender()
 
         glm::vec3 mScale = transform.GetGlobalScale();
         glm::vec3 mPosition = transform.GetGlobalPosition();
-        glm::vec3 mRot{};
+        glm::vec3 mRot{0,0,(transform.GetGlobalRotationRad())};
+        
 
         // Set the object TRS
         ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(mPosition), glm::value_ptr(mRot), glm::value_ptr(mScale), glm::value_ptr(matrix));
@@ -81,10 +82,11 @@ void RenderingTestLayer::OnImGuiRender()
         }
 
         auto& cam = m_camera.GetComponent<engine::SceneCamera>();
+        auto& camTrans = m_camera.GetComponent<engine::Transform3D>();
 
         // TODO : way for camera to do view matrix
-        auto& view = glm::mat4{ 1.0f };
         auto& projection = cam.GetProjection();
+        auto& view = cam.CalculateViewMatrix(camTrans.GetGlobalMatrix());
 
         auto mCurrentGizmoMode = ImGuizmo::WORLD;
         ImGuizmo::SetOrthographic(true);
@@ -108,6 +110,7 @@ void RenderingTestLayer::OnImGuiRender()
         
         transform.SetPosition(mPosition);
         transform.SetScale(mScale);
+        transform.SetRotationAngle(glm::degrees(mRot.z));
         // transform.SetRotationAxis(mRot); // maybe??
 
    
