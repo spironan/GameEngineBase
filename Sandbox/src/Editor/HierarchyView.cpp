@@ -46,7 +46,7 @@ void HierarchyView::HierarchyPopUp()
 {
 	if (ImGui::MenuItem("New Object"))
 	{
-		engine::GameObject ent;
+		engine::GameObject ent{ engine::GameObject::Instantiate{} };
 		(ent).AddComponent<engine::Transform3D>();
 		engine::GameObject(engine::SceneManager::GetActiveRoot()).AddChild(ent);
 	}
@@ -386,7 +386,7 @@ void HierarchyView::Paste()
 
 	int childcount = targetGameObject.GetComponent<engine::Transform3D>().GetChildCount();
 	//create the parent node first
-	engine::GameObject parent;
+	engine::GameObject parent{ engine::GameObject::Instantiate{} };
 	parent.Name() = targetGameObject.Name() + "-Copy";
 	parent.ActiveSelf() = static_cast<bool>(targetGameObject.ActiveSelf());
 
@@ -415,7 +415,7 @@ void HierarchyView::Paste()
 	engine::Entity entID = engine::SceneManager::GetActiveRoot();
 	for (size_t iter = 0; iter < tranformList.size(); ++iter)//increase iter by 1 to skip the parent node
 	{
-		engine::GameObject		child;
+		engine::GameObject		child{ engine::GameObject::Instantiate{} };
 		engine::GameObject&		copyObject = engine::GameObject(tranformList[iter]);
 		engine::Transform3D&	copyTransform = copyObject.GetComponent<engine::Transform3D>();
 		//gameobject component
