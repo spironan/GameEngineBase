@@ -35,7 +35,7 @@ namespace engine
 
 	private:
 		container_type m_scenes{};
-		key_type m_active_scene_id;
+		key_type m_active_scene_id{};
 
 	public:
 		/*********************************************************************************//*!
