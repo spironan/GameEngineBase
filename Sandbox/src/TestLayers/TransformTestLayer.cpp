@@ -22,7 +22,10 @@ void TransformTestLayer::Init()
     engine::Window& x = engine::Application::Get().GetWindow();
     int width = x.GetSize().first;
     int height = x.GetSize().second;
+
+    m_camera = CreateGameObject();
     auto& cam = m_camera.AddComponent<engine::SceneCamera>();
+
     cam.UpdateViewportSize(width,height);
 
     auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);

@@ -38,6 +38,7 @@ public:
         width = x.GetSize().first;
         height = x.GetSize().second;
 
+        m_cam = CreateGameObject();
         auto& cam = m_cam.AddComponent<engine::SceneCamera>();
             
         auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
