@@ -420,6 +420,7 @@ void HierarchyView::Paste()
 	engine::GameObject parent = engine::SceneManager::GetActiveScene().CreateGameObject();
 	parent.Name() = targetGameObject.Name() + "-Copy";
 	parent.ActiveSelf() = static_cast<bool>(targetGameObject.ActiveSelf());
+	parent.AddComponent<engine::EditorComponent>();
 	
 	//update this once the function is done TODO
 	parent.AddComponent<engine::EditorComponent>();

@@ -135,13 +135,13 @@ void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& 
 
 void PrefabComponentSystem::SavePrefab(GameObject& go)
 {
-	GameObject head = go.GetComponent<EditorComponent>().GetHeadReference();
-	Entity ref = head.GetComponent<EditorComponent>().GetPrefabReference();
-	for (auto& element : m_prefabDetails)
-	{
-		if (element.second.head == ref)
-			Serializer::SaveObject(element.second.filename);
-	}
+	//GameObject head = go.GetComponent<EditorComponent>().GetHeadReference();
+	//Entity ref = head.GetComponent<EditorComponent>().GetPrefabReference();
+	//for (auto& element : m_prefabDetails)
+	//{
+	//	if (element.second.head == ref)
+	//		Serializer::SaveObject(element.second.filename);
+	//}
 }
 
 }
