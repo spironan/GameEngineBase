@@ -12,9 +12,9 @@ namespace engine
 	MemoryManager* MemoryManager::instance;
 
 	MemoryManager::MemoryManager() :
-		m_persistentAllocator(2 * MemoryManager::GB),
+		m_persistentAllocator(200 * MemoryManager::MB),
 		//m_poolAlloc(),
-		m_total_size(2 * MemoryManager::GB)
+		m_total_size(200 * MemoryManager::MB)
 	{
 		//ENGINE_ASSERT_MSG(instance != nullptr, "MemoryManager instance already exists");
 		if (instance != nullptr)
