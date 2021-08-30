@@ -27,6 +27,8 @@ namespace engine
 		using AddComponentMap = std::unordered_map<ComponentType, AddComponentCallback>;
 		using GetComponentCallback = std::function<void* (ComponentManager&, Entity)>;
 		using GetComponentMap = std::unordered_map<ComponentType, GetComponentCallback>;
+		using CopyComponentCallback = std::function<bool (ComponentManager&, Entity, Entity)>;
+		using CopyComponentMap = std::unordered_map<ComponentType, CopyComponentCallback>;
 		/*****************************************************************//**
 		 * @brief Registers a component to be used. Creates a ComponentArray
 		 * of type T and inserts it into m_ComponentArrays
@@ -49,7 +51,16 @@ namespace engine
 			m_getComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity entity)->void* {
 				return &(cm.GetComponent<T>(entity));
 				} });
+			m_copyComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity src,Entity dest)->bool {
+				return cm.CopyComponent<T>(src,dest);
+				} });
 			++m_NextComponentType;
+		}
+
+		template<typename T>
+		void RegisterComponent() const
+		{
+			RegisterComponent<T>();
 		}
 
 		template<typename T>
@@ -120,9 +131,16 @@ namespace engine
 		}
 
 		template<typename T>
-		bool HasComponent(Entity entity) const
+		bool HasComponent(Entity entity)
 		{
 			if (!IsRegistered<T>()) { return false; }
+			return GetComponentArray<T>()->HasData(entity);
+		}
+
+		template<typename T>
+		bool HasComponent(Entity entity) const
+		{
+			ENGINE_ASSERT(IsRegistered<T>());
 			return GetComponentArray<T>()->HasData(entity);
 		}
 
@@ -193,27 +211,29 @@ namespace engine
 		template<typename T>
 		std::enable_if_t<std::is_base_of<Component, T>::value == false, bool> CopyComponent(Entity source, Entity dest)
 		{
-			if (HasComponent<T>(source) == false)
+			if (HasComponent<T>(source) == false || HasComponent<T>(dest) == false)
 				return false;
-			if (HasComponent<T>(dest))
-				GetComponent<T>(dest) = GetComponent<T>(source);
-			else
-				EmplaceComponent<T>(dest, GetComponent<T>(source));
+			GetComponent<T>(dest) = GetComponent<T>(source);
 			return true;
 		}
 		
 		template<typename T>
 		std::enable_if_t<std::is_base_of<Component, T>::value == true, bool> CopyComponent(Entity source, Entity dest)
 		{
-			if (HasComponent<T>(source) == false)
+			if (HasComponent<T>(source) == false || HasComponent<T>(dest) == false)
 				return false;
-			if (HasComponent<T>(dest))
-				GetComponent<T>(dest) = GetComponent<T>(source);
-			else
-				EmplaceComponent<T>(dest, GetComponent<T>(source));
 
+			GetComponent<T>(dest).CopyComponent(GetComponent<T>(source));
 			GetComponent<T>(dest).SetEntity(dest);
 			return true;
+		}
+
+		
+		bool CopyComponentByTypeID(Entity source, Entity dest, ComponentType type)
+		{
+			if (type >= Size())
+				return false;
+			return m_copyComponentMap[type](*this, source, dest);
 		}
 
 		void OnEntityDestroy(Entity entity)
@@ -296,6 +316,8 @@ namespace engine
 		ComponentType m_NextComponentType{};
 		AddComponentMap m_addComponentMap{};
 		GetComponentMap m_getComponentMap{};
+		CopyComponentMap m_copyComponentMap{};
+
 		template<typename T>
 		std::shared_ptr<ComponentArray<T>> GetComponentArray()
 		{
@@ -309,6 +331,10 @@ namespace engine
 			return std::static_pointer_cast<ComponentArray<T>>(m_ComponentArrays[typeName]);
 		}
 
-		
+		template<typename T>
+		std::weak_ptr<ComponentArray<T> const> GetComponentArray() const
+		{
+			return const_cast<ComponentManager&>(*this).GetComponentArray<T>();
+		}
 	};
 }
