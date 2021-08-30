@@ -37,7 +37,7 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 	for (auto& iter = doc.MemberBegin(); iter != doc.MemberEnd(); ++iter)
 	{
 		auto& arr = iter->value.GetArray();
-		engine::GameObject object;
+		engine::GameObject object{ engine::GameObject::Create{} };
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetID(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 		object.EnsureComponent<engine::PrefabComponent>();
