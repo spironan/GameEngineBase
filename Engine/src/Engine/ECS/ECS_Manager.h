@@ -19,6 +19,7 @@ Technology is prohibited.
 #include "EntityManager.h"
 #include "SystemManager.h"
 #include "View.h"
+#include "DeletedGameObject.h"
 namespace engine
 {
 	class ECS_Manager
@@ -240,6 +241,40 @@ namespace engine
 				}
 			}
 			return dest;
+		}
+
+		auto StoreAsDeleted(Entity entity)
+		{
+			std::shared_ptr<DeletedGameObject> temp = std::make_shared<DeletedGameObject>();
+			auto signature = m_EntityManager->GetSignature(entity);
+			temp->signature = signature;
+			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
+			{
+				if (signature[type] == true)
+				{
+					void* component = m_ComponentManager->GetDeletedComponentByTypeID(entity, type);
+					ENGINE_ASSERT(component);
+					temp->m_componentList[type] = static_cast<Component*>(component);
+				}
+			}
+
+			return temp;
+		}
+
+		Entity RestoreFromDeleted(DeletedGameObject& go)
+		{
+			Entity entity = CreateEntity();
+			auto signature = go.signature;
+			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
+			{
+				if (signature[type] == true)
+				{
+					void* component = static_cast<void*>(go.m_componentList[type]);
+					auto restored_component = m_ComponentManager->RestoreComponentByTypeID(entity, type, component);
+					ENGINE_ASSERT(restored_component);
+				}
+			}
+			return entity;
 		}
 
 		//// Event methods
