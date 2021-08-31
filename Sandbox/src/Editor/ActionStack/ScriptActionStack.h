@@ -4,6 +4,9 @@
 #include "Engine/Scripting/ScriptInfo.h" // script field info
 #include "Engine/ECS/ECS_Utility.h" // entity
 #include "Utility/Hash.h" // data type
+
+#include "Engine/Prefab/EditorComponent.h"
+
 class ScriptActionStack : public ActionBehaviour
 {
 public:
@@ -16,13 +19,15 @@ public:
 	}
 	void undo()
 	{
-		engine::Scripting& scriptcomponent = static_cast<engine::GameObject>(m_object).GetComponent<engine::Scripting>();
-
+		engine::GameObject& go = static_cast<engine::GameObject>(m_object);
+		engine::Scripting& scriptcomponent = go.GetComponent<engine::Scripting>();
+		go.GetComponent<engine::EditorComponent>().SetPrefabDirty(m_dirty);
 	}
 	void redo()
 	{
-		engine::Scripting& scriptcomponent = static_cast<engine::GameObject>(m_object).GetComponent<engine::Scripting>();
-
+		engine::GameObject& go = static_cast<engine::GameObject>(m_object);
+		engine::Scripting& scriptcomponent = go.GetComponent<engine::Scripting>();
+		go.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 	}
 
 private:

@@ -36,7 +36,7 @@ public:
 	{
 		prop.set_value(static_cast<engine::GameObject>(item).GetComponent<Component>(), redoData);
 		auto& go = static_cast<engine::GameObject>(item);
-		go.GetComponent<engine::EditorComponent>().SetPrefabDirty(false);
+		go.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 	}
 
 private:

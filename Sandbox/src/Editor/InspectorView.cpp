@@ -1,8 +1,10 @@
 #include "InspectorView.h"
 #include "EditorObjectGroup.h"
 #include "Editor.h"
+//action behaviour
 #include "ActionStack/EditorActionStack.h"
 #include "ActionStack/InspectorActionBehaviour.h"
+#include "ActionStack/ScriptActionStack.h"
 
 //engine code
 #include "glm/gtc/type_ptr.hpp"
@@ -78,6 +80,8 @@ void InspectorView::Show()
 				if (go.TryGetComponent<engine::EditorComponent>())
 					ReadComponents(go.GetComponent<engine::EditorComponent>(), go);
 			}
+
+			ReadScriptInfo(go);
 			AddComponentButton();
 			ImGui::EndChild();
 		}
@@ -142,20 +146,20 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	}
 	ImGui::EndGroup();
 
-	engine::EditorComponent& objectEC = object.GetComponent<engine::EditorComponent>();
-	ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !objectEC.IsPrefab());
-	objectEC.IsPrefab() ? ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f) : ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.6f);
-	if (ImGui::Button("Update Prefab"))
-	{
-		objectEC.UpdatePrefab();
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Break Prefab"))
-	{
-		objectEC.BreakOffFromPrefab();
-	}
-	ImGui::PopStyleVar();
-	ImGui::PopItemFlag();
+	//engine::EditorComponent& objectEC = object.GetComponent<engine::EditorComponent>();
+	//ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !objectEC.IsPrefab());
+	//objectEC.IsPrefab() ? ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f) : ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.6f);
+	//if (ImGui::Button("Update Prefab"))
+	//{
+	//	objectEC.UpdatePrefab();
+	//}
+	//ImGui::SameLine();
+	//if (ImGui::Button("Break Prefab"))
+	//{
+	//	objectEC.BreakOffFromPrefab();
+	//}
+	//ImGui::PopStyleVar();
+	//ImGui::PopItemFlag();
 	ImGui::Separator();
 }
 
@@ -190,112 +194,115 @@ void InspectorView::ComponentAddButton(float x ,float y)
 
 void InspectorView::ReadScriptInfo(engine::GameObject& object)
 {
-	 std::vector<engine::ScriptInfo> listScriptInfo = object.GetComponent<engine::Scripting>().GetScriptInfoAll();
-	 bool is_collapsed;
-	 ImGui::BeginGroup();
-	 is_collapsed = (ImGui::TreeNodeEx("Scripting", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen) == false);
-	 ImGui::SameLine(ImGui::GetContentRegionAvail().x - 50.0f);//button width
-	 if (ImGui::Button("Reset", ImVec2(0, ImGui::GetFontSize())))
-	 {
-		 //do smth
-	 }
-	 ImGui::EndGroup();
-	 if (is_collapsed)
-		 return;
-	 engine::ScriptFieldInfo current_value;
-	 for (engine::ScriptInfo& info : listScriptInfo)
-	 {
-		 for (auto& scriptVars : info.fieldMap)
-		 {
-			 engine::ScriptFieldInfo& fieldInfo = scriptVars.second;
-			 switch (fieldInfo.value.GetValueType())
-			 {
-				case engine::ScriptValueType::EMPTY		  :
-				{
-					continue;
-				}
-				case engine::ScriptValueType::BOOL		  :
-				{
-					bool temp = fieldInfo.value.GetValue<bool>();
-					current_value = fieldInfo;
-					if(ImGui::RadioButton(fieldInfo.name.c_str(), temp))
-					{
-						fieldInfo.value.SetValue(!temp);
-						current_value = fieldInfo;
-					}
-					break;
-				}
-				case engine::ScriptValueType::INT		  :
-				{
-					bool temp = fieldInfo.value.GetValue<bool>();
-					current_value = fieldInfo;
-					if (ImGui::RadioButton(fieldInfo.name.c_str(), temp))
-					{
-						fieldInfo.value.SetValue(!temp);
-						current_value = fieldInfo;
-					}
-					break;
-				}
-				case engine::ScriptValueType::FLOAT		  :
-				{
-					float temp = fieldInfo.value.GetValue<float>();
-					current_value = fieldInfo;
-					if (ImGui::DragFloat(fieldInfo.name.c_str(), &temp))
-					{
-						fieldInfo.value.SetValue(temp);
-						current_value = fieldInfo;
-					}
-					break;
-				}
-				case engine::ScriptValueType::STRING	  :
-				{
-					std::string temp = fieldInfo.value.GetValue<std::string>();
-					current_value = fieldInfo;
+	if (object.TryGetComponent<engine::Scripting>() == false)
+		return;
+	auto& listScriptInfo = object.GetComponent<engine::Scripting>().GetScriptInfoAll();
+	bool is_collapsed;
 
-					static char buf[100];
+	engine::ScriptFieldInfo current_value;
+	for (auto& info : listScriptInfo)
+	{
+		ImGui::BeginGroup();
+		is_collapsed = (ImGui::TreeNodeEx(info.second.classInfo.name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen) == false);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 50.0f);//button width
+		if (ImGui::Button("Reset", ImVec2(0, ImGui::GetFontSize())))
+		{
+			//do smth
+		}
+		ImGui::EndGroup();
+		if (is_collapsed)
+			continue;
+		for (auto& scriptVars : info.second.fieldMap)
+		{
+			engine::ScriptFieldInfo& fieldInfo = scriptVars.second;
+			switch (fieldInfo.value.GetValueType())
+			{
+			case engine::ScriptValueType::EMPTY		  :
+			{
+				continue;
+			}
+			case engine::ScriptValueType::BOOL		  :
+			{
+				bool temp = fieldInfo.value.GetValue<bool>();
+				current_value = fieldInfo;
+				if(ImGui::RadioButton(fieldInfo.name.c_str(), temp))
+				{
+					fieldInfo.value.SetValue(!temp);
+					current_value = fieldInfo;
+				}
+				break;
+			}
+			case engine::ScriptValueType::INT		  :
+			{
+				int temp = fieldInfo.value.GetValue<int>();
+				current_value = fieldInfo;
+				if (ImGui::DragInt(fieldInfo.name.c_str(), &temp))
+				{
+					fieldInfo.value.SetValue(!temp);
+					current_value = fieldInfo;
+				}
+				break;
+			}
+			case engine::ScriptValueType::FLOAT		  :
+			{
+				float temp = fieldInfo.value.GetValue<float>();
+				current_value = fieldInfo;
+				if (ImGui::DragFloat(fieldInfo.name.c_str(), &temp))
+				{
+					fieldInfo.value.SetValue(temp);
+					current_value = fieldInfo;
+				}
+				break;
+			}
+			case engine::ScriptValueType::STRING	  :
+			{
+				std::string temp = fieldInfo.value.GetValue<std::string>();
+				current_value = fieldInfo;
+
+				static char buf[100];
 					
-					strcpy(buf, temp.data());
-					if (ImGui::InputText(fieldInfo.name.c_str(), buf, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoUndoRedo))
-					{
-						fieldInfo.value.SetValue<std::string>(buf);
-						current_value = fieldInfo;
-					}
-					break;
-				}
-				case engine::ScriptValueType::GAMEOBJECT  :
+				strcpy(buf, temp.data());
+				if (ImGui::InputText(fieldInfo.name.c_str(), buf, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoUndoRedo))
 				{
-					ImGui::Text("%s : %u", fieldInfo.name.c_str(),fieldInfo.value.GetValue<engine::GameObject>());
-					break;
+					fieldInfo.value.SetValue<std::string>(buf);
+					current_value = fieldInfo;
 				}
-				case engine::ScriptValueType::CLASS		  :
+				break;
+			}
+			case engine::ScriptValueType::GAMEOBJECT  :
+			{
+				ImGui::Text("%s : %u", fieldInfo.name.c_str(),fieldInfo.value.GetValue<engine::Entity>());
+				break;
+			}
+			case engine::ScriptValueType::CLASS		  :
+			{
+				continue;
+			}
+			case engine::ScriptValueType::LIST		  :
+			{
+				continue;
+			}
+			}
+			//undo and redo instructions
+			{
+				static engine::ScriptFieldInfo undo;
+				static engine::ScriptFieldInfo redo;
+				if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 				{
-					continue;
+					undo = current_value;
 				}
-				case engine::ScriptValueType::LIST		  :
+				if (ImGui::IsItemDeactivatedAfterEdit())
 				{
-					continue;
-				}
-			 }
-			 //undo and redo instructions
-			 {
-				 static engine::ScriptFieldInfo undo;
-				 static engine::ScriptFieldInfo redo;
-				 if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-				 {
-					 undo = current_value;
-				 }
-				 if (ImGui::IsItemDeactivatedAfterEdit())
-				 {
-					 //redo stack
-					 redo = current_value;
-					 std::string temp = "Change value of element: " + undo.name + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
+					//redo stack
+					redo = current_value;
+					std::string temp = "Change value of element: " + undo.name + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
 
-					 /*ActionStack::AllocateInBuffer(new InspectorActionBehaviour<Component>{ temp, ObjectGroup::s_FocusedObject, element, undo, redo,
-												   object.GetComponent<engine::EditorComponent>().IsPrefabDirty() });*/
-					 object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
-				 }
-			 }
-		 }
-	 }
+					ActionStack::AllocateInBuffer(new ScriptActionStack(temp,info.first, ObjectGroup::s_FocusedObject ,undo,redo,
+																		object.GetComponent<engine::EditorComponent>().IsPrefabDirty()));
+					object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
+				}
+			}
+		}
+	}
 }
 

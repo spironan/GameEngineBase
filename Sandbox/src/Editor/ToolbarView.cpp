@@ -3,6 +3,8 @@
 #include <imgui_internal.h>
 
 #include <iostream>
+#include "Engine/Scene/SceneManager.h"
+#include "Engine/Scripting/ScriptSystem.h"
 void ToolbarView::Show()
 {
 	ImGui::Begin("Toolbar",NULL,ImGuiWindowFlags_NoDecoration);
@@ -10,13 +12,10 @@ void ToolbarView::Show()
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0,0 });
 	{
 		ImGui::BeginChild("ChildToolbar", { 0,0 });
-		ImGui::Button("##Play", { btn_width,btn_height });
-		ImGui::SameLine();
-		ImGui::Button("##Play2", { btn_width,btn_height });
-		ImGui::SameLine();
-		ImGui::Button("##Play3", { btn_width,btn_height });
-		ImGui::SameLine();
-		ImGui::Button("##Play4", { btn_width,btn_height });
+		if (ImGui::Button("Compile", { 0,btn_height }))
+		{
+			engine::ScriptSystem::Compile();
+		}
 		ImGui::EndChild();
 		ImGui::SameLine(w * 0.5f - (btn_width * 3 * 0.5f));
 	}
