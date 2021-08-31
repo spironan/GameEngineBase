@@ -216,7 +216,10 @@ namespace ImGuizmo
       const vec_t& operator + () const { return (*this); }
       float Length() const { return sqrtf(x * x + y * y + z * z); };
       float LengthSq() const { return (x * x + y * y + z * z); };
-      vec_t Normalize() { (*this) *= (1.f / Length()); return (*this); }
+      vec_t Normalize() {
+          auto l = Length();
+          (*this) *= (1.f / (l==0.0f? 1.0f : l) ); return (*this); 
+      }
       vec_t Normalize(const vec_t& v) { this->Set(v.x, v.y, v.z, v.w); this->Normalize(); return (*this); }
       vec_t Abs() const;
 
@@ -273,7 +276,13 @@ namespace ImGuizmo
    vec_t vec_t::operator * (const vec_t& v) const { return makeVect(x * v.x, y * v.y, z * v.z, w * v.w); }
    vec_t vec_t::Abs() const { return makeVect(fabsf(x), fabsf(y), fabsf(z)); }
 
-   vec_t Normalized(const vec_t& v) { vec_t res; res = v; res.Normalize(); return res; }
+   vec_t Normalized(const vec_t& v) 
+   { 
+       vec_t res; 
+       res = v;
+       res.Normalize();
+       return res; 
+   }
    vec_t Cross(const vec_t& v1, const vec_t& v2)
    {
       vec_t res;
@@ -2257,7 +2266,12 @@ namespace ImGuizmo
      gContext.mAllowAxisFlip = value;
    }
 
-   bool Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix, const float* snap, const float* localBounds, const float* boundsSnap)
+   bool Manipulate(const float* view,
+                   const float* projection,
+                   OPERATION operation,
+                   MODE mode,
+                   float* matrix,
+                   float* deltaMatrix, const float* snap, const float* localBounds, const float* boundsSnap)
    {
       ComputeContext(view, projection, matrix, mode);
 
@@ -2274,7 +2288,7 @@ namespace ImGuizmo
       {
          return false;
       }
-
+      
       // --
       int type = MT_NONE;
       bool manipulated = false;
@@ -2282,9 +2296,9 @@ namespace ImGuizmo
       {
          if (!gContext.mbUsingBounds)
          {
-            manipulated = HandleTranslation(matrix, deltaMatrix, operation, type, snap) ||
-                          HandleScale(matrix, deltaMatrix, operation, type, snap) ||
-                          HandleRotation(matrix, deltaMatrix, operation, type, snap);
+             manipulated |= HandleTranslation(matrix, deltaMatrix, operation, type, snap);
+             manipulated |= HandleScale(matrix, deltaMatrix, operation, type, snap);
+             manipulated |= HandleRotation(matrix, deltaMatrix, operation, type, snap);
          }
       }
 

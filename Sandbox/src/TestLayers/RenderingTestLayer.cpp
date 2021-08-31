@@ -90,27 +90,29 @@ void RenderingTestLayer::OnImGuiRender()
 
         auto mCurrentGizmoMode = ImGuizmo::WORLD;
         ImGuizmo::SetOrthographic(true);
-        
+
         // supposed to call here but i am editing the interals to support docking
         //ImGuizmo::SetRect(vMin.x, vMin.y, myW, myH);
         ImGuizmo::SetDrawlist();
-        ImGuizmo::Manipulate(glm::value_ptr(view),
-                                glm::value_ptr(projection),
-                                operation,
-                                mCurrentGizmoMode,
-                                glm::value_ptr(matrix),
-                                NULL,
-                                NULL);
+        if (ImGuizmo::Manipulate(glm::value_ptr(view),
+                                 glm::value_ptr(projection),
+                                 operation,
+                                 mCurrentGizmoMode,
+                                 glm::value_ptr(matrix),
+                                 NULL,
+                                 NULL))
+        {
+             // Return the matrix to its components so that we can update values
+            ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(matrix),
+                                                  glm::value_ptr(mPosition),
+                                                  glm::value_ptr(mRot),
+                                                  glm::value_ptr(mScale));
+            transform.SetPosition(mPosition);
+            transform.SetScale(mScale);
+            transform.SetRotationAngle(glm::degrees(mRot.z));
+        }
 
-        // Return the matrix to its components so that we can update values
-        ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(matrix),
-                                              glm::value_ptr(mPosition),
-                                              glm::value_ptr(mRot),
-                                              glm::value_ptr(mScale));
-        
-        transform.SetPosition(mPosition);
-        transform.SetScale(mScale);
-        transform.SetRotationAngle(glm::degrees(mRot.z));
+       
         // transform.SetRotationAxis(mRot); // maybe??
 
    
