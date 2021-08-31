@@ -150,20 +150,21 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	}
 	ImGui::EndGroup();
 
-	//engine::EditorComponent& objectEC = object.GetComponent<engine::EditorComponent>();
-	//ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !objectEC.IsPrefab());
-	//objectEC.IsPrefab() ? ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f) : ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.6f);
-	//if (ImGui::Button("Update Prefab"))
-	//{
-	//	objectEC.UpdatePrefab();
-	//}
-	//ImGui::SameLine();
-	//if (ImGui::Button("Break Prefab"))
-	//{
-	//	objectEC.BreakOffFromPrefab();
-	//}
-	//ImGui::PopStyleVar();
-	//ImGui::PopItemFlag();
+	engine::EditorComponent& objectEC = object.GetComponent<engine::EditorComponent>();
+	ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !objectEC.IsPrefab());
+	objectEC.IsPrefab() ? ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f) : ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.6f);
+	if (ImGui::Button("Update Prefab"))
+	{
+		objectEC.UpdatePrefab();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Break Prefab"))
+	{
+		objectEC.BreakOffFromPrefab();
+	}
+	ImGui::PopStyleVar();
+	ImGui::PopItemFlag();
+
 	ImGui::Separator();
 }
 
@@ -303,8 +304,8 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 					std::string temp = "Change value of element: " + undo.name + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
 
 					ActionStack::AllocateInBuffer(new ScriptActionStack(temp,info.second.classInfo, ObjectGroup::s_FocusedObject ,undo,redo,
-																		false));
-					//object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
+																		object.GetComponent<engine::EditorComponent>().IsPrefabDirty()));
+					object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 				}
 			}
 		}

@@ -23,7 +23,7 @@ public:
 		engine::Scripting& scriptcomponent = go.GetComponent<engine::Scripting>();
 		engine::ScriptFieldInfo* info = scriptcomponent.GetScriptInfo(m_script_reference)->FindFieldInfo(m_undoData.name);
 		*info = m_undoData;
-		//go.GetComponent<engine::EditorComponent>().SetPrefabDirty(m_dirty);
+		go.GetComponent<engine::EditorComponent>().SetPrefabDirty(m_dirty);
 	}
 	void redo()
 	{
@@ -31,7 +31,7 @@ public:
 		engine::Scripting& scriptcomponent = go.GetComponent<engine::Scripting>();
 		engine::ScriptFieldInfo* info = scriptcomponent.GetScriptInfo(m_script_reference)->FindFieldInfo(m_redoData.name);
 		*info = m_redoData;
-		//go.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
+		go.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 	}
 
 private:
