@@ -24,12 +24,15 @@ PhysicsTestLayer::PhysicsTestLayer()
 
 void PhysicsTestLayer::Init()
 {
-    engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
-
     engine::Window& x = engine::Application::Get().GetWindow();
     width = x.GetSize().first;
-    height = x.GetSize().second;
-    cam.SetProjection(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
+    height = x.GetSize().second; 
+
+    engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
+    engine::TextureDatabase::AddTexture("ogre", tex);
+
+    auto& cam = m_camera.AddComponent<engine::SceneCamera>();
+    cam.UpdateViewportSize(width, height);
 
     auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
     auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();
@@ -37,10 +40,32 @@ void PhysicsTestLayer::Init()
     {
         m_second = CreateGameObject();
         m_second.Transform().Scale() = { 50.f, 50.f, 1.0f };
-        m_second.AddComponent<engine::Sprite2D>();
+        m_second.AddComponent<engine::Sprite2D>().SetTexture(tex);
         //m_second.AddComponent<engine::BoxCollider2D>();
+        auto& c = m_second.AddComponent<engine::Collider2D>();
         m_second.AddComponent<engine::CircleCollider2D>();
+        c.OnTriggerEnter +=
+            [=](auto const& manifolds) 
+            { 
+                m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 0, 1 });
+                LOG_TRACE("ENTER");
+            };
+        c.OnTriggerStay +=
+            [=](auto const& manifolds)
+            {
+                m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 0, 1 });
+                LOG_TRACE("STAY");
+            };
+        c.OnTriggerExit +=
+            [=](auto const& manifolds)
+            {
+                m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 0, 1, 1 });
+                LOG_TRACE("EXIT");
+            };
+        c.IsTrigger = true;
+
         auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
+        
         pc.SetMass(1.f);
         pc.GravityScale = 0.0f;
         RootGameObject().AddChild(m_second);
@@ -50,8 +75,10 @@ void PhysicsTestLayer::Init()
         m_third = CreateGameObject();
         m_third.Transform().Position() = { 100.f, 0.f, 0.f };
         m_third.Transform().Scale() = { 50.f, 50.f, 1.0f };
-        m_third.AddComponent<engine::Sprite2D>();
+        m_third.AddComponent<engine::Sprite2D>().SetTexture(tex);
         //m_third.AddComponent<engine::BoxCollider2D>();
+        auto& c = m_third.AddComponent<engine::Collider2D>();
+        c.IsTrigger = true;
         m_third.AddComponent<engine::CircleCollider2D>();
         auto& pc = m_third.AddComponent<engine::Rigidbody2D>();
         pc.SetMass(1.f);
@@ -75,7 +102,6 @@ void PhysicsTestLayer::Init()
 
 void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
 {
-    engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
     m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
     m_scene.GetWorld().GetSystem<engine::PhysicsSystem>()->Update(dt);
 
@@ -137,7 +163,6 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
 
 void PhysicsTestLayer::OnImGuiRender()
 {
-    engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
     m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
 }
 

@@ -61,6 +61,7 @@ namespace engine
         virtual ~Rigidbody2D() override             = default;
 
         Rigidbody2D(Entity entity, bool active = true);
+        
 
         /*********************************************************************************//*!
         \brief    Applies a force to the rigidbody
@@ -137,8 +138,8 @@ namespace engine
         bool IsKinematic()  const { return BodyType == BodyType::KINEMATIC; }
         bool IsDynamic()    const { return BodyType == BodyType::DYNAMIC; }
 
-        void SetMaterial(PhysicsMaterial material) { m_material = material; }
-        PhysicsMaterial GetMaterial() const { return m_material; }
+        PhysicsMaterial GetMaterial() const         { return m_material; }
+        void SetMaterial(PhysicsMaterial material)  { m_material = material; }
 
         void SetAutoMass(bool useAutoMass);
         

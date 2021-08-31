@@ -3,22 +3,14 @@
 #include "Engine/ECS/Component.h"
 
 #include "Shapes.h"
+#include "Manifold.h"   // requires full definition for events to compile
 
 namespace engine
 {
-    //// forward declaration
-    //class BoxCollider2D;
-    //class CircleCollider2D;
-
     enum class ColliderType
     {
         CIRCLE,
         BOX
-    };
-
-    struct CollisionMap
-    {
-        static Manifold2D TestCollision2D(Collider2D const& first, Collider2D const& second);
     };
 
     class Collider2D : public Component
@@ -32,12 +24,16 @@ namespace engine
         ColliderType m_broadphaseCollider   = ColliderType::BOX;
         ColliderType m_narrowPhaseCollider  = ColliderType::CIRCLE;
 
-    public:
-        bool IsTrigger;
-        vec2 Offset;
+        bool m_previous = false, m_current = false;
+        std::vector<Manifold2D> m_collisions{};
+        std::vector<Collider2D> m_triggers{};
+        friend class PhysicsSystem;
+        void Update();
 
-        explicit Collider2D(Entity entity, bool active = true);
-        
+    public:
+        bool IsTrigger = false;
+        vec2 Offset = { 0, 0 };
+
         /*-----------------------------------------------------------------------------*/
         /* Constructors and Destructors                                                */
         /*-----------------------------------------------------------------------------*/
@@ -48,9 +44,27 @@ namespace engine
         Collider2D& operator=(Collider2D &&)    = default;
         virtual ~Collider2D()                   = default;
 
+        explicit Collider2D(Entity entity, bool active = true);
+
+        /*-----------------------------------------------------------------------------*/
+        /* Supported Event Callbacks                                                   */
+        /*-----------------------------------------------------------------------------*/
+        
+        EventCallback<std::vector<Manifold2D>> OnCollisionEnter;
+        EventCallback<std::vector<Manifold2D>> OnCollisionStay;
+        EventCallback<std::vector<Manifold2D>> OnCollisionExit;
+
+        EventCallback<std::vector<Collider2D>> OnTriggerEnter;
+        EventCallback<std::vector<Collider2D>> OnTriggerStay;
+        EventCallback<std::vector<Collider2D>> OnTriggerExit;
+        
+
+        /*-----------------------------------------------------------------------------*/
+        /* Supported Event Callbacks                                                   */
+        /*-----------------------------------------------------------------------------*/
+
         // third attempt : double components - function map collision
         ColliderType GetBroadPhaseCollider() const { return m_broadphaseCollider; }
-
         ColliderType GetNarrowPhaseCollider() const { return m_narrowPhaseCollider; }
 
         void SetNarrowPhaseCollider(ColliderType narrowPhaseCollider);

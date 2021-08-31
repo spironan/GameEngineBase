@@ -73,7 +73,7 @@ namespace engine
         SortSweepCompare m_broadphaseCompare;
 
         void NarrowPhase();
-        std::vector<std::pair<Collider2D, Collider2D>> m_narrowPhase;
+        std::vector<std::pair<Entity, Entity>> m_narrowPhase;
 
         double m_accumulator;
 

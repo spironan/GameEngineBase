@@ -29,7 +29,7 @@ Technology is prohibited.
 
 // Utility files
 #include "Utility/Bitmask.h"
-
+#include "Utility/EventCallback.h"
 
 // Commonly use external libraries
 #include <iostream>

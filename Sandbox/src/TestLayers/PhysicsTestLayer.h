@@ -18,8 +18,7 @@ Technology is prohibited.
 class PhysicsTestLayer : public SceneBaseLayer
 {
 private:
-    //engine::World& m_scene.GetWorld();
-    engine::OrthographicCamera cam{ -1, 1, -1, 1 };
+    engine::GameObject m_camera{ engine::GameObject::Create{} };
     int width{}, height{};
     engine::GameObject m_second, m_third;
 

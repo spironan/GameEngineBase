@@ -177,12 +177,8 @@ void InspectorView::ComponentAddButton(float x ,float y)
 		{
 			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
 			AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
-			AddComponent |= ComponentAddOptions<engine::RigidBody>(go);
-
-
-
-			//scripting
 			AddComponent |= ScriptAddOptions(go);
+			AddComponent |= ComponentAddOptions<engine::Rigidbody2D>(go);
 		}
 		ImGui::EndChild();
 

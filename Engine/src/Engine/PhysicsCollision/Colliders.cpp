@@ -2,7 +2,7 @@
 #include "Colliders.h"
 
 #include "Engine/ECS/WorldManager.h"
-#include "Collider.h"
+#include "ColliderCore.h"
 
 namespace engine
 {

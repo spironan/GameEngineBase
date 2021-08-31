@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Engine/PhysicsCollision/CircleCollider.h"
-#include "Engine/PhysicsCollision/BoxCollider.h"
+#include "Engine/PhysicsCollision/Colliders.h"
 
 namespace engine
 {

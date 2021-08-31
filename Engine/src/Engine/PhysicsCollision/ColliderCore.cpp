@@ -1,47 +1,54 @@
 #include "pch.h"
-#include "Collider.h"
+#include "ColliderCore.h"
 
 #include "Colliders.h"
 #include "Engine/ECS/GameObject.h"
 
-#include "Manifold.h"
-#include "Algorithms/PhysicsCollision.h"
 
 namespace engine
 {
 
-    Manifold2D CollisionMap::TestCollision2D(Collider2D const& first, Collider2D const& second)
+    void Collider2D::Update()
     {
-        switch (first.GetNarrowPhaseCollider())
+        if (IsTrigger)
         {
-        case ColliderType::CIRCLE:
-            switch (second.GetNarrowPhaseCollider())
+            if (!m_previous && m_current)
             {
-            case ColliderType::CIRCLE:
-                return PhysicsCollision::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<CircleCollider2D>());
-
-            case ColliderType::BOX:
-                return PhysicsCollision::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<BoxCollider2D>());
+                OnTriggerEnter(m_triggers);
             }
-        case ColliderType::BOX:
-            switch (second.GetNarrowPhaseCollider())
+            else if (m_previous && m_current)
             {
-            case ColliderType::CIRCLE:
-                return PhysicsCollision::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<CircleCollider2D>());
-
-            case ColliderType::BOX:
-                return PhysicsCollision::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<BoxCollider2D>());
+                OnTriggerStay(m_triggers);
             }
+            else if (m_previous && !m_current)
+            {
+                OnTriggerExit(m_triggers);
+            }
+            m_triggers.clear();
         }
+        else
+        {
+            if (!m_previous && m_current)
+            {
+                OnCollisionEnter(m_collisions);
+            }
+            else if (m_previous && m_current)
+            {
+                OnCollisionStay(m_collisions);
+            }
+            else if (m_previous && !m_current)
+            {
+                OnCollisionExit(m_collisions);
+            }
+            m_collisions.clear();
+        }
+        m_previous = m_current;
+        m_current = false;
     }
-
 
     Collider2D::Collider2D(Entity entity, bool active)
         : Component{ entity, active }
-        , IsTrigger{ false }
-        , Offset{ 0, 0 }
         //, collider{ BoxCollider2D{ GetComponent<Transform3D>() } }
-        //, collider{}
     {
     };
 

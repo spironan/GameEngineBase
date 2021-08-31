@@ -13,11 +13,10 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "BoxCollider.h"
-#include "CircleCollider.h"
-
-#include "Collider.h"
+#include "ColliderCore.h"
 #include "Colliders.h"
+
+#include "CollisionMap.h"
 
 #include "Rigidbody.h"
 #include "PhysicsSystem.h"

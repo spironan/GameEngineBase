@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shapes.h"
-#include "Engine/Transform/Transform3D.h"
+#include "Engine/ECS/Component.h"
 
 namespace engine
 {
