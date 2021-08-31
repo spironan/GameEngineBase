@@ -30,7 +30,7 @@ Technology is prohibited.
 #include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/ECS.h"
 #include "Engine/Transform/Transform.h"
-#include "Engine/PhysicsCollision/PhysicsCollision.h"
+#include "Engine/PhysicsCollision/Physics.h"
 #include "Engine/Scripting/ScriptSystem.h"
 
 //Scene
@@ -38,3 +38,7 @@ Technology is prohibited.
 
 // -- Rendering
 #include "Engine/Renderer/2DRendering.h"
+
+
+// -- Physics
+#include "Engine/PhysicsCollision/Physics.h";

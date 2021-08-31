@@ -20,14 +20,16 @@ Technology is prohibited.
 
 #include "Engine/ECS/GameObject.h"
 
-#include "Rigidbody.h"
-
-#include "BoxCollider.h"
-#include "CircleCollider.h"
+//#include "BoxCollider.h"
+//#include "CircleCollider.h"
 
 #include "Engine/Transform/TransformSystem.h"
 
+#include "Rigidbody.h"
 #include "Manifold.h"
+#include "Algorithms/PhysicsCollision.h"
+#include "Colliders.h"
+#include "Collider.h"
 
 namespace engine
 {
@@ -114,27 +116,53 @@ namespace engine
         //Generate Manifold : Rigidbody only. If trigger : 2 flags and set them
         //_mm_rsqrt_ss
 
-        auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, CircleCollider2D>();
-        //auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, BoxCollider2D>();
-
-        for (auto[rigidbody, collider] : view)
+        auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, Collider2D>();
+        
+        for (auto& [rigidbodyA, colliderA]: view)
         {
+            /*auto& rigidbodyA = std::get<Rigidbody2D>(componentA);
+            auto& colliderA = std::get<Collider2D>(componentA);*/
+
             //auto& collider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
-            //auto& collider = m_ECS_Manager.GetComponent<CircleCollider2D>(ent);
-            for (auto[rigidbody2, collider2] : view)
+            //auto& colliderA = m_ECS_Manager.GetComponent<Collider2D>(entA);
+            for (auto& [rigidbodyB, colliderB]: view)
             {
+                /*auto& rigidbodyB = std::get<Rigidbody2D>(componentB);
+                auto& colliderB = std::get<Collider2D>(componentB);*/
+
                 //auto& collider2 = m_ECS_Manager.GetComponent<BoxCollider2D>(ent2);
-                //auto& collider2 = m_ECS_Manager.GetComponent<CircleCollider2D>(ent2);
-                if (collider.GetEntity() == collider2.GetEntity()) break;
+                //auto& colliderB = m_ECS_Manager.GetComponent<Collider2D>(entB);
+                if (colliderA.GetEntity() == colliderB.GetEntity()) break;
 
                 /*if(collider.TestCollision(&collider2))
                     LOG_INFO("Collision!");*/
-                
-                Manifold2D result = collider.TestCollision(&collider2);
-                
-                LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
 
-                if (result.HasCollision) m_collisions.emplace_back(result);
+                Manifold2D result = CollisionMap::TestCollision2D(colliderA, colliderB);
+
+                /*auto& secondCollider = colliderB;
+
+                auto TestCollision = [&](auto const& v1)
+                {
+                    std::visit([&](auto& v2)
+                        {
+                            result = PhysicsCollision::Test2DCollision(v1, v2);
+                        }, secondCollider.collider);
+                };
+
+                std::visit(TestCollision, colliderA.collider);*/
+
+                if (result.HasCollision)
+                {
+                    result.ObjA = &rigidbodyA; //colliderA.GetComponent<Rigidbody2D>();
+                    result.ObjB = &rigidbodyB; //colliderB.GetComponent<Rigidbody2D>();
+                    m_collisions.emplace_back(result);
+                }
+
+                //Manifold2D result = collider.TestCollision(&collider2);
+                
+                //LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
+
+                //if (result.HasCollision) m_collisions.emplace_back(result);
                 
             }
         }
@@ -143,7 +171,8 @@ namespace engine
     void PhysicsSystem::UpdatePhysicsResolution(Timestep dt)
     {
         //Resolve all the collision
-        for (auto* solver : m_solvers) {
+        for (auto* solver : m_solvers) 
+        {
             solver->Solve(m_collisions, static_cast<float>(dt));
         }
         
@@ -161,13 +190,14 @@ namespace engine
         //Finding max variance
         vec2 centerSum{ 0.f }, centerSumSq{ 0.f };
 
-        auto& view = m_ECS_Manager.GetComponentView<Rigidbody2D, BoxCollider2D>();
+        auto& view = m_ECS_Manager.GetComponentView<Rigidbody2D, Collider2D>();
         
-        for (auto[rigidbody, boxCollider] : view)
+        for (auto& [rigidbody, collider]: view)
         {
             //BoxCollider2D boxCollider = m_ECS_Manager.GetComponent<BoxCollider2D>(ent);
-
-            vec2 center = boxCollider.WorldPosition();
+            //vec2 center;
+            //std::visit([&](auto const& v1) { center = v1.WorldPosition(); }, collider.collider);
+            vec2 center = collider.WorldPosition();
             centerSum += center;
             centerSumSq += center * center;
         }
@@ -190,9 +220,37 @@ namespace engine
         }
         
         //std::sort(view.begin(), view.end(), m_broadphaseCompare);
-        for (auto [rigidbody, boxCollider] : view)
+
+        for (auto& [rigidbodyA, colliderA] : view)
         {
-            float minA = boxCollider.GetGlobalBounds().min[m_broadphaseCompare.Axis];
+            for (auto& [rigidbodyB, colliderB] : view)
+            {
+                if (colliderA.GetEntity() == colliderB.GetEntity()) break;
+
+                //auto& secondCollider = colliderB;
+
+                float minA, minB;
+
+                /*auto TestCollision = [&](auto const& v1)
+                {
+                    std::visit([&](auto& v2)
+                        {
+                        }, secondCollider.collider);
+                };
+
+                std::visit(TestCollision, colliderA.collider);*/
+
+                if (minB > minA) break;
+
+                m_narrowPhase.emplace_back(colliderA, colliderB);
+            }
+        }
+
+        /*for (auto iterA = view.begin(); iterA != view.end(); ++iterA)
+        {
+            m_ECS_Manager.GetComponent<Collider2D>(*iterA);
+
+            float minA = m_ECS_Manager.GetComponent<Collider2D>(*iterA).GetGlobalBounds().min[m_broadphaseCompare.Axis];
 
             for (auto [rigidbody2, boxCollider2] : view)
             {
@@ -203,17 +261,33 @@ namespace engine
 
                 m_narrowPhase.emplace_back(boxCollider.GetEntity(), boxCollider2.GetEntity());
             }
-        }
+        }*/
     }
 
     void PhysicsSystem::NarrowPhase()
     {
-        for (auto& [entA, entB] : m_narrowPhase)
+        for (auto& [colliderA, colliderB] : m_narrowPhase)
         {
-            auto& collider = m_ECS_Manager.GetComponent<BoxCollider2D>(entA);
-            auto& collider2 = m_ECS_Manager.GetComponent<BoxCollider2D>(entB);
+            /*auto& colliderA = m_ECS_Manager.GetComponent<Collider2D>(entA);
+            auto& colliderB = m_ECS_Manager.GetComponent<Collider2D>(entB);*/
 
-            Manifold2D result = collider.TestCollision(&collider2);
+            /*auto TestCollision = [&](auto const& v1)
+            {
+                std::visit([&](auto const& v2)
+                    {
+                        Manifold2D result = PhysicsCollision::Test2DCollision(v1, v2);
+                        if (result.HasCollision)
+                        {
+                            result.ObjA = colliderA.GetComponent<Rigidbody2D>();
+                            result.ObjB = colliderB.GetComponent<Rigidbody2D>();
+                            m_collisions.emplace_back(result);
+                        }
+                    }, colliderB.collider);
+            };
+
+            std::visit(TestCollision, colliderA.collider);*/
+
+            Manifold2D result = CollisionMap::TestCollision2D(colliderA, colliderB);//collider.TestCollision(&collider2);
 
             LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
 
@@ -223,8 +297,11 @@ namespace engine
 
     bool SortSweepCompare::operator()(Entity a, Entity b)
     {
+        //float aMin = std::get<BoxCollider2D>(Manager.GetComponent<Collider2D>(a).collider).GetGlobalBounds().min[Axis];
+        //float bMin = std::get<BoxCollider2D>(Manager.GetComponent<Collider2D>(b).collider).GetGlobalBounds().min[Axis];
         float aMin = Manager.GetComponent<BoxCollider2D>(a).GetGlobalBounds().min[Axis];
         float bMin = Manager.GetComponent<BoxCollider2D>(b).GetGlobalBounds().min[Axis];
+
         return aMin < bMin;
     }
 

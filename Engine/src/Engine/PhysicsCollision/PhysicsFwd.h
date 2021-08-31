@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+//#include <oom/oom.hpp>
 
 namespace engine
 {
@@ -12,8 +13,8 @@ namespace engine
     class Rigidbody2D;
 
     class Collider2D;
-    class BoxCollider2D;
-    class CircleCollider2D;
+    struct BoxCollider2D;
+    struct CircleCollider2D;
 
     struct Manifold2D;
     struct PhysicsMaterial;

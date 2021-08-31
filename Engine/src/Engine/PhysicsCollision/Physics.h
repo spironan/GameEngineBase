@@ -16,5 +16,8 @@ Technology is prohibited.
 #include "BoxCollider.h"
 #include "CircleCollider.h"
 
+#include "Collider.h"
+#include "Colliders.h"
+
 #include "Rigidbody.h"
 #include "PhysicsSystem.h"

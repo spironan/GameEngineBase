@@ -146,7 +146,7 @@ namespace engine
         }
 
         template<>
-        void RemoveComponent<Transform3D>() const { throw "Cannot Remove Transform Component"; }
+        void RemoveComponent<Transform3D>() const { throw "Cannot Remove Transform Component!"; }
 
         template<typename Component>
         bool CopyComponent(GameObject const& src) const

@@ -39,6 +39,7 @@ Technology is prohibited.
 #include <stdexcept>
 #include <limits>
 #include <cmath>
+#include <variant>
 
 #include <functional>
 #include <algorithm>
