@@ -87,7 +87,7 @@ public:
 
         m_scene.GetWorld().ProcessDeletions();
 
-        if (engine::Input::IsKeyPressed(engine::KeyCode::P))
+        if (engine::Input::IsKeyPressed(engine::KeyCode::DEL))
         {
             if (!isPlaying)
             {
@@ -101,7 +101,7 @@ public:
             }
         }
 
-        if (engine::Input::IsKeyPressed(engine::KeyCode::O))
+        if (engine::Input::IsKeyPressed(engine::KeyCode::END))
         {
             if (isPlaying)
                 ss->DebugPrint();

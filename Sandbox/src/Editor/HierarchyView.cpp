@@ -141,17 +141,17 @@ void HierarchyView::ListHierarchy()
 
 		if (gameObj.TryGetComponent<engine::EditorComponent>())
 			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
-		//else//is a prefab instance == skip
-		//	continue;
+		else//is a prefab instance == skip
+			continue;
 
 		if (ObjectGroup::s_FocusedObject == transform.GetEntity())
 		{
 			flag = ImGuiTreeNodeFlags_Selected;
-			if (m_dragging)
-			{
-				flag |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
-				m_dragging = !ImGui::IsMouseReleased(ImGuiMouseButton_Left);
-			}
+		}
+		if (m_dragging && ObjectGroup::s_DraggingObject == transform.GetEntity())
+		{
+			flag |= ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Selected;
+			m_dragging = !ImGui::IsMouseReleased(ImGuiMouseButton_Left);
 		}
 		//check if theres an error here TODO
 		while (!depth.empty() && depth.back() != transform.GetParentId())
@@ -182,18 +182,20 @@ void HierarchyView::ListHierarchy()
 			ImGui::PopStyleColor();
 			ImGui::PopID();
 		}
-		if (ImGui::IsItemClicked() || ImGui::IsItemClicked(ImGuiMouseButton_Right))
+		if ((ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))|| ImGui::IsItemClicked(ImGuiMouseButton_Right))
 			ObjectGroup::s_FocusedObject = transform.GetEntity();
 
 		//drop
 		if (SetParent(transform.GetEntity()))
 			break;
 		//drag
-		if (ObjectGroup::s_FocusedObject && ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAutoExpirePayload))
 		{
 			// Set payload to carry the index of our item (could be anything)
 			m_dragging = true;
-			ImGui::SetDragDropPayload("HIERACHY_OBJ", nullptr, 0);
+			engine::Entity temp = transform.GetEntity();
+			ObjectGroup::s_DraggingObject = temp;
+			ImGui::SetDragDropPayload("HIERACHY_OBJ", &temp, sizeof(temp));
 			ImGui::Text("%s", static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name().c_str());
 			ImGui::EndDragDropSource();
 		}
@@ -325,7 +327,8 @@ void HierarchyView::FilterByName(const std::string& target)
 		engine::GameObject& ent = static_cast<engine::GameObject>(transform.GetEntity());
 		if (ent.Name().find(target) != std::string::npos)
 		{
-			m_filterlist.emplace_back(ent);
+			if(ent.TryGetComponent<engine::EditorComponent>())
+				m_filterlist.emplace_back(ent);
 		}
 	}
 }
@@ -348,9 +351,10 @@ bool HierarchyView::SetParent(engine::Entity entt)
 		if (payload)
 		{
 			m_dragging = false;
-			engine::Entity parent_id = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).GetComponent<engine::Transform3D>().GetParentId();
-			ActionStack::AllocateInBuffer(new ParentActionStack(ObjectGroup::s_FocusedObject, parent_id, entt));
-			static_cast<engine::GameObject>(entt).AddChild(ObjectGroup::s_FocusedObject);
+			engine::Entity ent = *(reinterpret_cast<engine::Entity*>(payload->Data));
+			engine::Entity parent_id = static_cast<engine::GameObject>(ent).GetComponent<engine::Transform3D>().GetParentId();
+			ActionStack::AllocateInBuffer(new ParentActionStack(ent, parent_id, entt));
+			static_cast<engine::GameObject>(entt).AddChild(ent);
 			ImGui::EndDragDropTarget();
 			return true;
 		}

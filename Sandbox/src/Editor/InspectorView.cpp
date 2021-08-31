@@ -218,6 +218,7 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 		ImGui::EndGroup();
 		if (is_collapsed)
 			continue;
+		ImGui::PushID(info.second.classInfo.ToString().c_str());
 		for (auto& scriptVars : info.second.fieldMap)
 		{
 			engine::ScriptFieldInfo& fieldInfo = scriptVars.second;
@@ -277,7 +278,18 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 			}
 			case engine::ScriptValueType::GAMEOBJECT  :
 			{
-				ImGui::Text("%s : %u", fieldInfo.name.c_str(),fieldInfo.value.GetValue<engine::Entity>());
+				int temp = fieldInfo.value.GetValue<engine::Entity>();
+				ImGui::DragInt(fieldInfo.name.c_str(),&temp,1.0f,0,0,"%d", ImGuiSliderFlags_::ImGuiSliderFlags_NoInput);
+				if (ImGui::BeginDragDropTarget())
+				{
+					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
+					if (payload)
+					{
+						engine::Entity ent = *(reinterpret_cast<engine::Entity*>(payload->Data));
+						fieldInfo.value.SetValue<engine::Entity>(ent);
+						ImGui::EndDragDropTarget();
+					}
+				}
 				break;
 			}
 			case engine::ScriptValueType::CLASS		  :
@@ -309,6 +321,7 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 				}
 			}
 		}
+		ImGui::PopID();
 	}
 }
 
@@ -329,6 +342,7 @@ bool InspectorView::ScriptAddOptions(engine::GameObject& go)
 		ImGui::EndGroup();
 		if (selected)
 		{
+			go.EnsureComponent<engine::Scripting>();
 			go.GetComponent<engine::Scripting>().AddScriptInfo(script);
 			return true;
 		}

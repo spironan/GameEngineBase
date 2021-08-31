@@ -12,5 +12,5 @@ Technology is prohibited.
  *********************************************************************/
 #include "EditorObjectGroup.h"
 
-std::uint32_t ObjectGroup::s_FocusedObject = 0;
-
+engine::Entity ObjectGroup::s_FocusedObject = 0;
+engine::Entity ObjectGroup::s_DraggingObject = 0;

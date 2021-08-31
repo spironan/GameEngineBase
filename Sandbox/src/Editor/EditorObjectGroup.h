@@ -18,6 +18,6 @@ class ObjectGroup
 {
 public:
 	static engine::Entity s_FocusedObject;
-
+	static engine::Entity s_DraggingObject;
 };
 
