@@ -59,6 +59,17 @@ namespace engine
 			return static_cast<T*>(&(*m_Systems[typeName]));
 		}
 
+		template<typename T>
+		T* TryGetSystem()
+		{
+			const char* typeName = typeid(T).name();
+			static_assert(std::is_base_of_v<System, T>);
+			if (m_Systems.find(typeName) == m_Systems.end())
+				return nullptr;
+
+			return static_cast<T*>(&(*m_Systems[typeName]));
+		}
+
 		void EntityDestroyed(Entity entity)
 		{
 			/*for (auto const& pair : m_Systems)

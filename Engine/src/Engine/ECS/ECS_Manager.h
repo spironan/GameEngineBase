@@ -193,6 +193,12 @@ namespace engine
 		}
 
 		template<typename T>
+		T* TryGetSystem()
+		{
+			return m_SystemManager->TryGetSystem<T>();
+		}
+
+		template<typename T>
 		void SetSystemSignature(Signature signature)
 		{
 			m_SystemManager->SetSignature<T>(signature);
