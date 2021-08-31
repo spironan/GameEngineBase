@@ -205,10 +205,10 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 	 engine::ScriptFieldInfo current_value;
 	 for (engine::ScriptInfo& info : listScriptInfo)
 	 {
-		 for (auto& scriptVars : info.fieldList)
+		 for (auto& scriptVars : info.fieldMap)
 		 {
-			 scriptVars.value.GetValueType();
-			 switch (scriptVars.value.GetValueType())
+			 engine::ScriptFieldInfo& fieldInfo = scriptVars.second;
+			 switch (fieldInfo.value.GetValueType())
 			 {
 				case engine::ScriptValueType::EMPTY		  :
 				{
@@ -216,36 +216,64 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 				}
 				case engine::ScriptValueType::BOOL		  :
 				{
-					bool temp = scriptVars.value.GetValue<bool>();
-					current_value = scriptVars;
-					if(ImGui::RadioButton(scriptVars.name.c_str(), temp))
+					bool temp = fieldInfo.value.GetValue<bool>();
+					current_value = fieldInfo;
+					if(ImGui::RadioButton(fieldInfo.name.c_str(), temp))
 					{
-
+						fieldInfo.value.SetValue(!temp);
+						current_value = fieldInfo;
 					}
+					break;
 				}
 				case engine::ScriptValueType::INT		  :
 				{
-
+					bool temp = fieldInfo.value.GetValue<bool>();
+					current_value = fieldInfo;
+					if (ImGui::RadioButton(fieldInfo.name.c_str(), temp))
+					{
+						fieldInfo.value.SetValue(!temp);
+						current_value = fieldInfo;
+					}
+					break;
 				}
 				case engine::ScriptValueType::FLOAT		  :
 				{
-
+					float temp = fieldInfo.value.GetValue<float>();
+					current_value = fieldInfo;
+					if (ImGui::DragFloat(fieldInfo.name.c_str(), &temp))
+					{
+						fieldInfo.value.SetValue(temp);
+						current_value = fieldInfo;
+					}
+					break;
 				}
 				case engine::ScriptValueType::STRING	  :
 				{
+					std::string temp = fieldInfo.value.GetValue<std::string>();
+					current_value = fieldInfo;
 
+					static char buf[100];
+					
+					strcpy(buf, temp.data());
+					if (ImGui::InputText(fieldInfo.name.c_str(), buf, 100, ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoUndoRedo))
+					{
+						fieldInfo.value.SetValue<std::string>(buf);
+						current_value = fieldInfo;
+					}
+					break;
 				}
 				case engine::ScriptValueType::GAMEOBJECT  :
 				{
-
+					ImGui::Text("%s : %u", fieldInfo.name.c_str(),fieldInfo.value.GetValue<engine::GameObject>());
+					break;
 				}
 				case engine::ScriptValueType::CLASS		  :
 				{
-
+					continue;
 				}
 				case engine::ScriptValueType::LIST		  :
 				{
-
+					continue;
 				}
 			 }
 			 //undo and redo instructions
