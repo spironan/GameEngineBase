@@ -619,10 +619,10 @@ namespace engine
             ScriptInfo& scriptInfo = scriptInfoList[i];
             MonoObject* scriptObj = mono_gchandle_get_target(scriptList[i]);
             MonoClass* scriptClass = ScriptUtility::GetMonoClass(scriptInfo.classInfo);
-            for (ScriptFieldInfo fieldInfo : scriptInfo.fieldList)
+            for (auto const& fieldInfo : scriptInfo.fieldMap)
             {
-                MonoClassField* field = mono_class_get_field_from_name(scriptClass, fieldInfo.name.c_str());
-                OverrideMonoField(scriptObj, field, fieldInfo.value);
+                MonoClassField* field = mono_class_get_field_from_name(scriptClass, fieldInfo.second.name.c_str());
+                OverrideMonoField(scriptObj, field, fieldInfo.second.value);
             }
         }
         InvokeFunctionAll("Awake");

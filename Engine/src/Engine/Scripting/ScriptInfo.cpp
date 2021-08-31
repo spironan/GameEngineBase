@@ -16,6 +16,8 @@ Technology is prohibited.
 #include "ScriptInfo.h"
 #include "ScriptUtility.h"
 
+#include "Utility/Hash.h"
+
 namespace engine
 {
     /*-----------------------------------------------------------------------------*/
@@ -234,19 +236,20 @@ namespace engine
 
     ScriptInfo::ScriptInfo(ScriptClassInfo const& _classInfo) : classInfo(_classInfo)
     {
-        fieldList = classInfo.GetScriptFieldInfoAll();
+        std::vector<ScriptFieldInfo> fieldList = classInfo.GetScriptFieldInfoAll();
+        for (int i = 0; i < fieldList.size(); ++i)
+        {
+            fieldMap.insert({ utility::StringHash(fieldList[i].name), fieldList[i] });
+        }
     }
 
     ScriptFieldInfo* ScriptInfo::FindFieldInfo(std::string const& fieldName)
     {
-        for (unsigned int i = 0; i < fieldList.size(); ++i)
-        {
-            if (fieldList[i].name == fieldName)
-            {
-                return &fieldList[i];
-            }
-        }
-        return nullptr;
+        utility::StringHash nameHash(fieldName);
+        auto& search = fieldMap.find(nameHash);
+        if(search == fieldMap.end())
+            return nullptr;
+        return &(search->second);
     }
 
     void ScriptInfo::DebugPrint() const
@@ -256,9 +259,9 @@ namespace engine
             std::cout << classInfo.name_space << "/";
         }
         std::cout << classInfo.name << std::endl;
-        for (ScriptFieldInfo const& fieldInfo : fieldList)
+        for (auto const& fieldInfo : fieldMap)
         {
-            std::cout << fieldInfo << std::endl;
+            std::cout << fieldInfo.second << std::endl;
         }
     }
 

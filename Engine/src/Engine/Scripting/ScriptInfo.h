@@ -234,7 +234,7 @@ namespace engine
     struct ScriptInfo
     {
         ScriptClassInfo classInfo;
-        std::vector<ScriptFieldInfo> fieldList;
+        std::map<unsigned int, ScriptFieldInfo> fieldMap;
 
         /*********************************************************************************//*!
         \brief      constructs a C# script's info from the given class info
