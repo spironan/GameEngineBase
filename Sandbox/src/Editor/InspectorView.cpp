@@ -247,7 +247,7 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 				current_value = fieldInfo;
 				if (ImGui::DragInt(fieldInfo.name.c_str(), &temp))
 				{
-					fieldInfo.value.SetValue(!temp);
+					fieldInfo.value.SetValue(temp);
 					current_value = fieldInfo;
 				}
 				break;
@@ -306,9 +306,9 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 					redo = current_value;
 					std::string temp = "Change value of element: " + undo.name + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
 
-					ActionStack::AllocateInBuffer(new ScriptActionStack(temp,info.first, ObjectGroup::s_FocusedObject ,undo,redo,
-																		object.GetComponent<engine::EditorComponent>().IsPrefabDirty()));
-					object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
+					ActionStack::AllocateInBuffer(new ScriptActionStack(temp,info.second.classInfo, ObjectGroup::s_FocusedObject ,undo,redo,
+																		false));
+					//object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
 				}
 			}
 		}
