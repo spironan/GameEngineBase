@@ -31,6 +31,12 @@ namespace engine
         Scripting(Scripting const&) = default;
         Scripting(Scripting&&) = default;
 
+        /****************************************************************************//*!
+         @brief     Copies the relevant data of scripting component while retaining
+                    its entityID to be of prior gameobject before this operation.
+        *//*****************************************************************************/
+        virtual Component& CopyComponent(Component const& comp) override;
+
         /*********************************************************************************//*!
         \brief      overloaded constructor for Scripting component
          
