@@ -16,6 +16,8 @@
 #include "Engine/Renderer/Sprite2D.h"
 #include "Engine/Prefab/EditorComponent.h"
 #include "Engine/Prefab/PrefabComponent.h"
+#include "Engine/Scripting/Scripting.h"
+#include "Engine/Scripting/ScriptInfo.h"
 //libs
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -184,5 +186,88 @@ void InspectorView::ComponentAddButton(float x ,float y)
 		ImGui::EndListBox();
 	}
 	
+}
+
+void InspectorView::ReadScriptInfo(engine::GameObject& object)
+{
+	 std::vector<engine::ScriptInfo> listScriptInfo = object.GetComponent<engine::Scripting>().GetScriptInfoAll();
+	 bool is_collapsed;
+	 ImGui::BeginGroup();
+	 is_collapsed = (ImGui::TreeNodeEx("Scripting", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen) == false);
+	 ImGui::SameLine(ImGui::GetContentRegionAvail().x - 50.0f);//button width
+	 if (ImGui::Button("Reset", ImVec2(0, ImGui::GetFontSize())))
+	 {
+		 //do smth
+	 }
+	 ImGui::EndGroup();
+	 if (is_collapsed)
+		 return;
+	 engine::ScriptFieldInfo current_value;
+	 for (engine::ScriptInfo& info : listScriptInfo)
+	 {
+		 for (auto& scriptVars : info.fieldList)
+		 {
+			 scriptVars.value.GetValueType();
+			 switch (scriptVars.value.GetValueType())
+			 {
+				case engine::ScriptValueType::EMPTY		  :
+				{
+					continue;
+				}
+				case engine::ScriptValueType::BOOL		  :
+				{
+					bool temp = scriptVars.value.GetValue<bool>();
+					current_value = scriptVars;
+					if(ImGui::RadioButton(scriptVars.name.c_str(), temp))
+					{
+
+					}
+				}
+				case engine::ScriptValueType::INT		  :
+				{
+
+				}
+				case engine::ScriptValueType::FLOAT		  :
+				{
+
+				}
+				case engine::ScriptValueType::STRING	  :
+				{
+
+				}
+				case engine::ScriptValueType::GAMEOBJECT  :
+				{
+
+				}
+				case engine::ScriptValueType::CLASS		  :
+				{
+
+				}
+				case engine::ScriptValueType::LIST		  :
+				{
+
+				}
+			 }
+			 //undo and redo instructions
+			 {
+				 static engine::ScriptFieldInfo undo;
+				 static engine::ScriptFieldInfo redo;
+				 if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+				 {
+					 undo = current_value;
+				 }
+				 if (ImGui::IsItemDeactivatedAfterEdit())
+				 {
+					 //redo stack
+					 redo = current_value;
+					 std::string temp = "Change value of element: " + undo.name + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
+
+					 /*ActionStack::AllocateInBuffer(new InspectorActionBehaviour<Component>{ temp, ObjectGroup::s_FocusedObject, element, undo, redo,
+												   object.GetComponent<engine::EditorComponent>().IsPrefabDirty() });*/
+					 object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
+				 }
+			 }
+		 }
+	 }
 }
 

@@ -22,6 +22,7 @@ private:
 
 	void ComponentAddButton(float x ,float y);
 
+	void ReadScriptInfo(engine::GameObject&);
 
 	template<typename Component>
 	void ReadComponents(Component& component,engine::GameObject& object)
