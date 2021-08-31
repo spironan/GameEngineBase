@@ -66,6 +66,9 @@ namespace engine
         break;
         case ScriptValueType::GAMEOBJECT:
         {
+            Entity entity = value.GetValue<Entity>();
+            if (entity == (Entity)-1)
+                break;
             GameObject gameObject{ value.GetValue<Entity>() };
             Scripting* scripting = gameObject.TryGetComponent<Scripting>();
             if (scripting != nullptr)
@@ -578,6 +581,16 @@ namespace engine
         if (search == scriptInfoMap.end())
             return;
         scriptInfoMap.erase(search);
+    }
+
+    void Scripting::RefreshScriptInfoAll()
+    {
+        for (auto& entry : scriptInfoMap)
+        {
+            ScriptInfo newInfo(entry.second.classInfo);
+            newInfo.CopyFieldValues(entry.second);
+            entry.second = newInfo;
+        }
     }
 
     /*-----------------------------------------------------------------------------*/

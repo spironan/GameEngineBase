@@ -252,6 +252,30 @@ namespace engine
         return &(search->second);
     }
 
+    ScriptInfo& ScriptInfo::CopyFieldValues(ScriptInfo const& src)
+    {
+        for (auto& entry : fieldMap)
+        {
+            auto& search = src.fieldMap.find(entry.first);
+            if (search == src.fieldMap.end())
+                continue;
+            if (entry.second.value.GetValueType() != search->second.value.GetValueType())
+                continue;
+            entry.second.value = search->second.value;
+        }
+        return *this;
+    }
+
+    void ScriptInfo::ResetFieldValues()
+    {
+        fieldMap.clear();
+        std::vector<ScriptFieldInfo> fieldList = classInfo.GetScriptFieldInfoAll();
+        for (int i = 0; i < fieldList.size(); ++i)
+        {
+            fieldMap.insert({ utility::StringHash(fieldList[i].name), fieldList[i] });
+        }
+    }
+
     void ScriptInfo::DebugPrint() const
     {
         if (classInfo.name_space.size() > 0)
@@ -323,6 +347,8 @@ namespace engine
 
     std::string const ScriptClassInfo::ToString() const
     {
+        if (name_space.size() <= 0)
+            return name;
         return name_space + "." + name;
     }
 

@@ -213,6 +213,12 @@ namespace engine
         *//**********************************************************************************/
         void RemoveScriptInfo(ScriptClassInfo const& classInfo);
 
+        /*********************************************************************************//*!
+        \brief      refreshes all ScriptInfo in the Scripting component in the event
+                    of any changes made to the actual after compilation
+        *//**********************************************************************************/
+        void RefreshScriptInfoAll();
+
         /*-----------------------------------------------------------------------------*/
         /* Mode Functions                                                              */
         /*-----------------------------------------------------------------------------*/

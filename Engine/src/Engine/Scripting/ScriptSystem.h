@@ -63,6 +63,12 @@ namespace engine
         *//**********************************************************************************/
         static std::vector<ScriptClassInfo> const& GetScriptClassList();
 
+        /*********************************************************************************//*!
+        \brief      refreshes all ScriptInfo in all GameObjects in the event
+                    of any changes made to the actual after compilation
+        *//**********************************************************************************/
+        void RefreshScriptInfoAll();
+
         /*-----------------------------------------------------------------------------*/
         /* ECS Components                                                              */
         /*-----------------------------------------------------------------------------*/

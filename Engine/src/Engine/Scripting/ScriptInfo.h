@@ -262,6 +262,21 @@ namespace engine
         ScriptFieldInfo* FindFieldInfo(std::string const& fieldName);
 
         /*********************************************************************************//*!
+        \brief      copies the field values from another given ScriptInfo
+
+        \param      src
+                the ScriptInfo to copy field values from
+         *
+        \return     a reference to this
+        *//**********************************************************************************/
+        ScriptInfo& CopyFieldValues(ScriptInfo const& src);
+
+        /*********************************************************************************//*!
+        \brief      resets all field values in the ScriptInfo to their default values
+        *//**********************************************************************************/
+        void ResetFieldValues();
+
+        /*********************************************************************************//*!
         \brief      outputs all of the script's info to the standard output stream
                     for debugging purposes
         *//**********************************************************************************/

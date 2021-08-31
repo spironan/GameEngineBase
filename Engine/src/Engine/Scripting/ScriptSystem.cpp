@@ -115,6 +115,10 @@ namespace engine
         // load all system info for later use
         LOG_ENGINE_TRACE("Script Compiling Successful");
         ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str(), s_ComponentMap);
+
+        ScriptSystem* ss = WorldManager::GetActiveWorld().GetSystem<ScriptSystem>();
+        if (ss != nullptr)
+            ss->RefreshScriptInfoAll();
     }
 
     void ScriptSystem::CleanUp()
@@ -133,6 +137,14 @@ namespace engine
         return ScriptUtility::g_SystemInfo.classInfoList;
     }
 
+    void ScriptSystem::RefreshScriptInfoAll()
+    {
+        for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
+        {
+            scripting.RefreshScriptInfoAll();
+        }
+    }
+
     /*-----------------------------------------------------------------------------*/
     /* Mode Functions                                                              */
     /*-----------------------------------------------------------------------------*/
@@ -148,14 +160,14 @@ namespace engine
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
             scripting.SetUpPlay();
-            for (auto const& component : s_ComponentMap)
+            for (auto const& component : ScriptUtility::g_SystemInfo.componentMap)
             {
                 if (component.second.Has(scripting.GetEntity()))
                 {
-                    std::string::size_type separator = component.first.find_last_of('.');
-                    std::string name = component.first.substr(separator + 1, component.first.size() - separator - 1);
-                    std::string name_space = component.first.substr(0, separator);
-                    scripting.AddComponentInterface(name_space.c_str(), name.c_str());
+                    MonoClass* _class = mono_type_get_class(component.first);
+                    const char* name_space = mono_class_get_namespace(_class);
+                    const char* name = mono_class_get_name(_class);
+                    scripting.AddComponentInterface(name_space, name);
                 }
             }
         }
