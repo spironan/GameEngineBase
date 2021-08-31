@@ -323,7 +323,11 @@ bool InspectorView::ScriptAddOptions(engine::GameObject& go)
 	{
 		bool selected = false;
 		ImGui::BeginGroup();
+
+		ImGui::PushStyleColor(ImGuiCol_Text, { 0.9f,0.9f,0,1.0f });
 		ImGui::Selectable(script.ToString().c_str(), &selected);
+		ImGui::PopStyleColor();
+
 		ImGui::Separator();
 		ImGui::EndGroup();
 		if (selected)
