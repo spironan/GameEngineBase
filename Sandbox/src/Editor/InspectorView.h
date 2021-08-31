@@ -184,6 +184,8 @@ private:
 		return false;
 	}
 
+	bool ScriptAddOptions(engine::GameObject& go);
+
 private:
 	bool m_showReadOnly; //editor settings
 	bool m_docked;

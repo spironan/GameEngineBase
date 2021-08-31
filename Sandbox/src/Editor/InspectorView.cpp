@@ -1,6 +1,7 @@
 #include "InspectorView.h"
 #include "EditorObjectGroup.h"
 #include "Editor.h"
+
 //action behaviour
 #include "ActionStack/EditorActionStack.h"
 #include "ActionStack/InspectorActionBehaviour.h"
@@ -11,6 +12,8 @@
 #include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/Asset/AssetsManager.h"
+#include "Engine/Scripting/ScriptSystem.h"
+
 //components
 #include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/Transform/Transform3D.h"
@@ -20,6 +23,7 @@
 #include "Engine/Prefab/PrefabComponent.h"
 #include "Engine/Scripting/Scripting.h"
 #include "Engine/Scripting/ScriptInfo.h"
+
 //libs
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -174,6 +178,11 @@ void InspectorView::ComponentAddButton(float x ,float y)
 			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
 			AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
 			AddComponent |= ComponentAddOptions<engine::RigidBody>(go);
+
+
+
+			//scripting
+			AddComponent |= ScriptAddOptions(go);
 		}
 		ImGui::EndChild();
 
@@ -304,5 +313,26 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 			}
 		}
 	}
+}
+
+bool InspectorView::ScriptAddOptions(engine::GameObject& go)
+{
+	const std::vector<engine::ScriptClassInfo>& listScriptInfo = engine::ScriptSystem::GetScriptClassList();
+
+	for (auto& script : listScriptInfo)
+	{
+		bool selected = false;
+		ImGui::BeginGroup();
+		ImGui::Selectable(script.ToString().c_str(), &selected);
+		ImGui::Separator();
+		ImGui::EndGroup();
+		if (selected)
+		{
+			go.GetComponent<engine::Scripting>().AddScriptInfo(script);
+			return true;
+		}
+	}
+	return false;
+
 }
 
