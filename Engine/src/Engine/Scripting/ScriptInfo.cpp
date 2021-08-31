@@ -321,6 +321,11 @@ namespace engine
         return name_space != rhs.name_space || name != rhs.name;
     }
 
+    std::string const ScriptClassInfo::ToString() const
+    {
+        return name_space + "." + name;
+    }
+
     /*-----------------------------------------------------------------------------*/
     /* ScriptFieldInfo                                                             */
     /*-----------------------------------------------------------------------------*/

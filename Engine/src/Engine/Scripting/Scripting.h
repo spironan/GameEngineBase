@@ -192,7 +192,7 @@ namespace engine
         
         \return     a reference to the vector of all script info of the current GameObject
         *//**********************************************************************************/
-        std::vector<ScriptInfo>& GetScriptInfoAll();
+        std::map<unsigned int, ScriptInfo>& GetScriptInfoAll();
 
         /*********************************************************************************//*!
         \brief      removes a script info set based on the given class info
@@ -283,7 +283,7 @@ namespace engine
         uint32_t gameObjPtr;
         std::vector<uint32_t> componentList;
         std::vector<uint32_t> scriptList;
-        std::vector<ScriptInfo> scriptInfoList;
+        std::map<unsigned int, ScriptInfo> scriptInfoMap;
     };
 
     /*-----------------------------------------------------------------------------*/

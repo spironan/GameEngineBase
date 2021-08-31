@@ -229,6 +229,13 @@ namespace engine
         \return     true if the namespace and name of the classes do not match, else false
         *//**********************************************************************************/
         bool operator!=(ScriptClassInfo const& rhs);
+
+        /*********************************************************************************//*!
+        \brief      gets a script's class info as one string (<namespace>.<name>)
+
+        \return     the std::string containing all info in the script class
+        *//**********************************************************************************/
+        std::string const ToString() const;
     };
 
     struct ScriptInfo

@@ -16,6 +16,7 @@ Technology is prohibited.
 #include "Scripting.h"
 #include "ScriptUtility.h"
 
+#include "Utility/Hash.h"
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/ECS/GameObjectComponent.h"
 
@@ -543,34 +544,31 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     ScriptInfo& Scripting::AddScriptInfo(ScriptClassInfo const& classInfo)
     {
-        scriptInfoList.push_back(ScriptInfo{ classInfo });
-        return scriptInfoList[scriptInfoList.size() - 1];
+        auto& inserted = scriptInfoMap.insert({ utility::StringHash(classInfo.ToString()), ScriptInfo(classInfo) });
+        return inserted.first->second;
     }
 
     ScriptInfo* Scripting::GetScriptInfo(ScriptClassInfo const& classInfo)
     {
-        for (unsigned int i = 0; i < scriptInfoList.size(); ++i)
-        {
-            if (scriptInfoList[i].classInfo == classInfo)
-                return &scriptInfoList[i];
-        }
-        return nullptr;
+        utility::StringHash key(classInfo.ToString());
+        auto& search = scriptInfoMap.find(key);
+        if(search == scriptInfoMap.end())
+            return nullptr;
+        return &(search->second);
     }
 
-    std::vector<ScriptInfo>& Scripting::GetScriptInfoAll()
+    std::map<unsigned int, ScriptInfo>& Scripting::GetScriptInfoAll()
     {
-        return scriptInfoList;
+        return scriptInfoMap;
     }
 
     void Scripting::RemoveScriptInfo(ScriptClassInfo const& classInfo)
     {
-        for (unsigned int i = 0; i < scriptInfoList.size(); ++i)
-        {
-            if (scriptInfoList[i].classInfo != classInfo)
-                continue;
-            scriptInfoList.erase(scriptInfoList.begin() + i);
+        utility::StringHash key(classInfo.ToString());
+        auto& search = scriptInfoMap.find(key);
+        if (search == scriptInfoMap.end())
             return;
-        }
+        scriptInfoMap.erase(search);
     }
 
     /*-----------------------------------------------------------------------------*/
@@ -602,9 +600,9 @@ namespace engine
         //mono_field_set_value(gameObject, transformField, transform);
 
         // create all script instances
-        for (ScriptInfo const& scriptInfo : scriptInfoList)
+        for (auto const& scriptInfo : scriptInfoMap)
         {
-            AddScript(scriptInfo.classInfo.name_space.c_str(), scriptInfo.classInfo.name.c_str(), false);
+            AddScript(scriptInfo.second.classInfo.name_space.c_str(), scriptInfo.second.classInfo.name.c_str(), false);
         }
     }
 
@@ -614,16 +612,17 @@ namespace engine
             return;
 
         // assign public variables and call Awake
-        for (unsigned int i = 0; i < scriptInfoList.size(); ++i)
+        int scriptIndex = 0;
+        for (auto const& scriptInfo : scriptInfoMap)
         {
-            ScriptInfo& scriptInfo = scriptInfoList[i];
-            MonoObject* scriptObj = mono_gchandle_get_target(scriptList[i]);
-            MonoClass* scriptClass = ScriptUtility::GetMonoClass(scriptInfo.classInfo);
-            for (auto const& fieldInfo : scriptInfo.fieldMap)
+            MonoObject* scriptObj = mono_gchandle_get_target(scriptList[scriptIndex]);
+            MonoClass* scriptClass = ScriptUtility::GetMonoClass(scriptInfo.second.classInfo);
+            for (auto const& fieldInfo : scriptInfo.second.fieldMap)
             {
                 MonoClassField* field = mono_class_get_field_from_name(scriptClass, fieldInfo.second.name.c_str());
                 OverrideMonoField(scriptObj, field, fieldInfo.second.value);
             }
+            ++scriptIndex;
         }
         InvokeFunctionAll("Awake");
     }
@@ -704,9 +703,9 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     void Scripting::DebugPrintInfo()
     {
-        for (ScriptInfo const& scriptInfo : scriptInfoList)
+        for (auto const& scriptInfo : scriptInfoMap)
         {
-            scriptInfo.DebugPrint();
+            scriptInfo.second.DebugPrint();
         }
     }
 
