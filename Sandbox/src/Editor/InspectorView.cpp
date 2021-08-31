@@ -278,8 +278,8 @@ void InspectorView::ReadScriptInfo(engine::GameObject& object)
 			}
 			case engine::ScriptValueType::GAMEOBJECT  :
 			{
-				int temp = fieldInfo.value.GetValue<engine::Entity>();
-				ImGui::DragInt(fieldInfo.name.c_str(),&temp,1.0f,0,0,"%d", ImGuiSliderFlags_::ImGuiSliderFlags_NoInput);
+				engine::Entity temp = fieldInfo.value.GetValue<engine::Entity>();
+				ImGui::DragScalar(fieldInfo.name.c_str(), ImGuiDataType_::ImGuiDataType_U32, &temp, 1.0f, 0, 0, "%d", ImGuiSliderFlags_::ImGuiSliderFlags_NoInput);
 				if (ImGui::BeginDragDropTarget())
 				{
 					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
