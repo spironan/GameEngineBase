@@ -2,6 +2,7 @@
 #include "ECS_Utility.h"
 namespace engine
 {
+    class WorldManager;
     class Component
     {
     public:
