@@ -19,6 +19,7 @@
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/PhysicsCollision/RigidBody.h"
 #include "Engine/Renderer/Sprite2D.h"
+#include "Engine/Renderer/Camera.h"
 #include "Engine/Prefab/EditorComponent.h"
 #include "Engine/Prefab/PrefabComponent.h"
 #include "Engine/Scripting/Scripting.h"
@@ -77,7 +78,11 @@ void InspectorView::Show()
 
 			if(go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
-			
+			if (go.TryGetComponent<engine::Camera>())
+				ReadComponents(go.GetComponent<engine::Camera>(), go);
+
+			if (go.TryGetComponent<engine::Sprite2D>())
+				ReadComponents(go.GetComponent<engine::Sprite2D>(), go);
 
 			if (m_showReadOnly)
 			{
@@ -177,6 +182,7 @@ void InspectorView::ComponentAddButton(float x ,float y)
 		ImGui::BeginChild("##ListOfComponents", { x,y * 0.8f });
 		{
 			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
+			AddComponent |= ComponentAddOptions<engine::Camera>(go);
 			AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
 			AddComponent |= ScriptAddOptions(go);
 			AddComponent |= ComponentAddOptions<engine::Rigidbody2D>(go);
