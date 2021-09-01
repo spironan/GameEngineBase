@@ -673,19 +673,19 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Function Invoking                                                           */
     /*-----------------------------------------------------------------------------*/
-    void Scripting::InvokeFunctionAll(const char* functionName)
+    void Scripting::InvokeFunctionAll(const char* functionName, int paramCount, void** params)
     {
         for (unsigned int i = 0; i < scriptList.size(); ++i)
         {
             MonoObject* script = mono_gchandle_get_target(scriptList[i]);
-            MonoMethod* method = ScriptUtility::FindFunction(script, functionName);
+            MonoMethod* method = ScriptUtility::FindFunction(script, functionName, paramCount);
             if (method == nullptr)
                 continue;
 
             //std::cout << "GAMEOBJECT " << m_entity << " " << scriptInfoList[i].classInfo.name << ": " << functionName << std::endl;
 
             MonoObject* exception = nullptr;
-            mono_runtime_invoke(method, script, NULL, &exception);
+            mono_runtime_invoke(method, script, params, &exception);
             if (exception)
             {
                 MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");

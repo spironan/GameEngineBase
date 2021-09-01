@@ -194,11 +194,13 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Function Invoking                                                           */
     /*-----------------------------------------------------------------------------*/
-    void ScriptSystem::InvokeFunctionAll(const char* functionName)
+    void ScriptSystem::InvokeFunctionAll(const char* functionName, int paramCount, void** params)
     {
+        if (!s_IsPlaying)
+            return;
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
-            scripting.InvokeFunctionAll(functionName);
+            scripting.InvokeFunctionAll(functionName, paramCount, params);
         }
     }
 

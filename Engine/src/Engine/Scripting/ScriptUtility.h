@@ -70,7 +70,7 @@ namespace engine
          
         \param      name_space
                 the namespace of the desired C# class (nested namespaces separated by '.')
-                    name
+        \param      name
                 the name of the desired C# class (nested classes won't work)
 
         \return     the pointer to the desired MonoClass, null if not found
@@ -175,7 +175,7 @@ namespace engine
 
         \param      klass
                 the pointer to the MonoClass to check
-                    desiredBase
+        \param      desiredBase
                 the pointer to the desired base MonoClass that klass may inherit from
 
         \return     true if the given class inherits from the given base class, else false
@@ -197,12 +197,14 @@ namespace engine
 
         \param      obj
                 the pointer to the MonoObject to get the function from
-                    functionName
+        \param      functionName
                 the name of the desired function
+        \param      paramCount
+                the number of parameters the desired function has
 
         \return     the pointer to the C# function found, or null if none were found
         *//**********************************************************************************/
-        MonoMethod* FindFunction(MonoObject* obj, const char* functionName);
+        MonoMethod* FindFunction(MonoObject* obj, const char* functionName, int paramCount = 0);
 
         /*********************************************************************************//*!
         \brief      Helper function to get a list of C# classes used by a generic C# type

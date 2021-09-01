@@ -255,14 +255,40 @@ namespace engine
 
         /*********************************************************************************//*!
         \brief      invokes a function by name in all script instances attached to this GameObject
+                    with the given parameters
 
         \warning    this should only be called during play mode as no script instances
                     exist during edit mode to invoke functions from.
          
         \param      functionName
                 the name of the function to invoke
+        \param      paramCount
+                the number of parameters the function takes in
+        \param      params
+                the pointer to the void* array containing all the parameters
         *//**********************************************************************************/
-        void InvokeFunctionAll(const char* functionName);
+        void InvokeFunctionAll(const char* functionName, int paramCount = 0, void** params = NULL);
+
+        /*********************************************************************************//*!
+        \brief      invokes a function by name in all script instances attached to this GameObject
+                    with the given parameters
+
+        \warning    this should only be called during play mode as no script instances
+                    exist during edit mode to invoke functions from.
+
+        \param      functionName
+                the name of the function to invoke
+        \param      paramCount
+                the number of parameters the function takes in
+        \param      args
+                the parameters to pass to the script function
+        *//**********************************************************************************/
+        template<typename ... Args>
+        void InvokeFunctionAll(const char* functionName, int paramCount, Args... args)
+        {
+            void* params[] = { (void*)(&args)... };
+            InvokeFunctionAll(functionName, paramCount, params);
+        }
 
         /*-----------------------------------------------------------------------------*/
         /* Getters                                                                     */

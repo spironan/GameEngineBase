@@ -104,7 +104,7 @@ public:
         engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
         m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
         auto ss = m_scene.GetWorld().GetSystem<engine::ScriptSystem>();
-        ss->InvokeFunctionAll("Update");
+        ss->InvokeFunctionAll("Update", 1, (float)dt.GetSeconds());
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::P))
         {

@@ -222,17 +222,17 @@ namespace engine
             return listClass == resultClass;
         }
 
-        MonoMethod* FindFunction(MonoObject* obj, const char* functionName)
+        MonoMethod* FindFunction(MonoObject* obj, const char* functionName, int paramCount)
         {
             MonoClass* _class = mono_object_get_class(obj);
-            MonoMethod* _method = mono_class_get_method_from_name(_class, functionName, 0);
+            MonoMethod* _method = mono_class_get_method_from_name(_class, functionName, paramCount);
             MonoClass* _pClass = mono_class_get_parent(_class);
 
             while (_method == nullptr && _pClass != nullptr && _class != _pClass)
             {
                 _class = _pClass;
                 _pClass = mono_class_get_parent(_class);
-                _method = mono_class_get_method_from_name(_class, functionName, 0);
+                _method = mono_class_get_method_from_name(_class, functionName, paramCount);
             }
             return _method;
         }

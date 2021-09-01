@@ -130,14 +130,46 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Function Invoking                                                           */
         /*-----------------------------------------------------------------------------*/
-        
         /*********************************************************************************//*!
         \brief      invokes a function by name in all script instances of all GameObjects
-         
+                    with the given parameters
+
+        \warning    this should only be called during play mode as no script instances
+                    exist during edit mode to invoke functions from.
+
         \param      functionName
-                the name of the desired function
+                the name of the function to invoke
+        \param      paramCount
+                the number of parameters the function takes in
+        \param      params
+                the pointer to the void* array containing all the parameters
         *//**********************************************************************************/
-        void InvokeFunctionAll(const char* functionName);
+        void InvokeFunctionAll(const char* functionName, int paramCount = 0, void** params = NULL);
+
+        /*********************************************************************************//*!
+        \brief      invokes a function by name in all script instances attached to this GameObject
+                    with the given parameters
+
+        \warning    this should only be called during play mode as no script instances
+                    exist during edit mode to invoke functions from.
+
+        \param      functionName
+                the name of the function to invoke
+        \param      paramCount
+                the number of parameters the function takes in
+        \param      args
+                the parameters to pass to the script function
+        *//**********************************************************************************/
+        template<typename ... Args>
+        void InvokeFunctionAll(const char* functionName, int paramCount, Args... args)
+        {
+            if (!s_IsPlaying)
+                return;
+            for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
+            {
+                scripting.InvokeFunctionAll(functionName, paramCount, args...);
+            }
+        }
 
         /*-----------------------------------------------------------------------------*/
         /* Debugging Tools                                                             */
