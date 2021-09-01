@@ -36,87 +36,98 @@ namespace engine
 		GameObject m_root{ Entity{0} };
 		ID_type m_id{0};
 		//SparseContainer<GameObject,MAX_ENTITY> gameobjects{};
-
-		void SetID(ID_type id)
-		{
-			m_id = id;
-		}
+		/*********************************************************************************//*!
+		\brief    Sets this scene's id
+		 
+		\param    id this scene's id
+		
+		*//**********************************************************************************/
+		void SetID(ID_type id);
 
 	public:
-
-		explicit Scene(std::string filename) : m_filename{ std::move(filename) } 
-		{ 
-
-		};
-		~Scene() { if (IsLoaded()) Unload(); }
+		/*********************************************************************************//*!
+		\brief    Scene must be constructed with a given name
+		 
+		\param    filename given name of scene
 		
-		std::string GetSceneName()
-		{
-			return m_filename.substr(0, m_filename.find_first_of('.'));
-		}
-
-		World& Load()
-		{
-			m_world = &WorldManager::CreateWorld();
-			WorldManager::SetActiveWorld(m_world->GetID());
-			m_root = GameObject{GameObject::Create{}};	//instantiate root game object
-			//deserialise scene file and load objects here
-
-			return *m_world;
-		}
-
-		bool IsLoaded()
-		{
-			return m_world != nullptr;
-		}
-
-		void Unload()
-		{
-			SaveToFile();
-
-			if (m_world)
-				WorldManager::DestroyWorld(m_world->GetID());
-			m_world = nullptr;
-		}
-
-		void SaveToFile()
-		{
-			SaveToFileName(m_filename);
-		}
-
-		void SaveToFileName(std::string const& filename)
-		{
-			//save data to file here
-		}
-
-		World& GetWorld()
-		{
-			ENGINE_ASSERT(IsLoaded());
-			return *m_world;
-		}
-
-		GameObject& GetRoot()
-		{
-			ENGINE_ASSERT(IsLoaded());
-			return m_root;
-		}
-
-		GameObject CreateGameObject()
-		{
-			ENGINE_ASSERT(IsLoaded());
-			GameObject temp{ engine::GameObject::Create{} };
-			m_root.AddChild(temp);
-			return temp;
-		}
-
-		void SetWorldAsActive()
-		{
-			WorldManager::SetActiveWorld(m_world->GetID());
-		}
-
-		ID_type GetID()
-		{
-			return m_id;
-		}
+		*//**********************************************************************************/
+		explicit Scene(std::string filename);
+		~Scene();
+		/*********************************************************************************//*!
+		\brief    Returns the scene's name
+		 
+		\return   the scene's name
+		
+		*//**********************************************************************************/
+		std::string GetSceneName();
+		/*********************************************************************************//*!
+		\brief    Loads a world into the scene
+		 
+		\return   reference to the loaded world
+		
+		*//**********************************************************************************/
+		World& Load();
+		/*********************************************************************************//*!
+		\brief    True if scene has a world loaded, false otherwise
+		 
+		\return   True if scene has a world loaded, false otherwise
+		
+		*//**********************************************************************************/
+		bool IsLoaded();
+		/*********************************************************************************//*!
+		\brief    Unloads a world from a scene. Calls SaveToFile() to save world to
+		scene file
+		 
+		
+		*//**********************************************************************************/
+		void Unload();
+		/*********************************************************************************//*!
+		\brief    Saves a world in a scene into a scene file
+		 
+		
+		*//**********************************************************************************/
+		void SaveToFile();
+		/*********************************************************************************//*!
+		\brief    Saves a world in a scene into a specified scene file
+		 
+		\param    filename specified scene file's filename
+		
+		*//**********************************************************************************/
+		void SaveToFileName(std::string const& filename);
+		/*********************************************************************************//*!
+		\brief    Get a reference to the loaded world
+		 
+		\return   reference to the loaded world
+		
+		*//**********************************************************************************/
+		World& GetWorld();
+		/*********************************************************************************//*!
+		\brief    Returns reference to the root gameobject of the world loaded in the scene
+		 
+		\return   reference to the root gameobject of the world loaded in the scene
+		
+		*//**********************************************************************************/
+		GameObject& GetRoot();
+		/*********************************************************************************//*!
+		\brief    Creates a gameobject that is parented to the root gameobject of the world 
+		loaded in the scene
+		 
+		\return   created gameobject
+		
+		*//**********************************************************************************/
+		GameObject CreateGameObject();
+		/*********************************************************************************//*!
+		\brief    Sets this world as the active world in the world manager
+		 
+		
+		*//**********************************************************************************/
+		void SetWorldAsActive();
+		/*********************************************************************************//*!
+		\brief    Get the id of this scene
+		 
+		\return   id of this scene
+		
+		*//**********************************************************************************/
+		ID_type GetID();
 	};
 }
