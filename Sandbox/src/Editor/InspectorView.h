@@ -109,20 +109,20 @@ private:
 			}
 			else if (id == m_tracked_ids[type_VEC3])
 			{
-				glm::vec3 value = element.get_value(component).get_value<glm::vec3>();
+				oom::vec3 value = element.get_value(component).get_value<oom::vec3>();
 				ImGuiSliderFlags flag = 0;
 				if (element.is_readonly())
 					flag = ImGuiSliderFlags_ReadOnly | ImGuiSliderFlags_NoInput;
 				else
 					current_value = value;
-				if (ImGui::DragFloat3(element.get_name().c_str(), glm::value_ptr(value), 1, 0, 0, "%.3f", flag))
+				if (ImGui::DragFloat3(element.get_name().c_str(), oom::value_ptr(value), 1, 0, 0, "%.3f", flag))
 				{
 					element.set_value(component, value);
 				}
 			}
 			else if (id == m_tracked_ids[type_MAT4])
 			{
-				glm::mat4 value = element.get_value(component).get_value<glm::mat4>();
+				oom::mat4 value = element.get_value(component).get_value<oom::mat4>();
 				ImGuiSliderFlags flag = 0;
 				if (element.is_readonly())
 					flag = ImGuiSliderFlags_ReadOnly | ImGuiSliderFlags_NoInput;
@@ -130,10 +130,10 @@ private:
 					current_value = value;
 				ImGui::Text(element.get_name().c_str());
 				ImGui::PushID(element.get_name().c_str());
-				bool activated = ImGui::DragFloat4("##x" , glm::value_ptr(value[0]),1,0,0,"%.3f", flag);
-				activated = ImGui::DragFloat4("##y" , glm::value_ptr(value[1]),1,0,0,"%.3f", flag);
-				activated = ImGui::DragFloat4("##z" , glm::value_ptr(value[2]),1,0,0,"%.3f", flag);
-				activated = ImGui::DragFloat4("##w" , glm::value_ptr(value[3]),1,0,0,"%.3f", flag);
+				bool activated = ImGui::DragFloat4("##x" , oom::value_ptr(value[0]),1,0,0,"%.3f", flag);
+				activated = ImGui::DragFloat4("##y" , oom::value_ptr(value[1]),1,0,0,"%.3f", flag);
+				activated = ImGui::DragFloat4("##z" , oom::value_ptr(value[2]),1,0,0,"%.3f", flag);
+				activated = ImGui::DragFloat4("##w" , oom::value_ptr(value[3]),1,0,0,"%.3f", flag);
 				ImGui::PopID();
 				if (activated)
 					element.set_value(component, value);

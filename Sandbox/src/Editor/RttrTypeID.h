@@ -2,7 +2,8 @@
 #include <vector>
 #include <rttr/type.h>
 #include "Engine/ECS/ECS_Utility.h"
-#include "glm/glm.hpp"
+//#include "glm/glm.hpp"
+#include <oom/oom.hpp>
 
 namespace rttr_type_ID
 {
@@ -24,8 +25,8 @@ namespace rttr_type_ID
 		rttr::type::get<std::string>().get_id(),
 		rttr::type::get<bool>().get_id(),
 		rttr::type::get<engine::Entity>().get_id(),
-		rttr::type::get<glm::vec3>().get_id(),
-		rttr::type::get<glm::mat4>().get_id()
+		rttr::type::get<oom::vec3>().get_id(),
+		rttr::type::get<oom::mat4>().get_id()
 
 	};
 }

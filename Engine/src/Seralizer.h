@@ -21,7 +21,7 @@ private:
 	static void SaveComponent(Component & component, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer);
 	static void LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& go);
 
-	static glm::vec3 GetVec3(rapidjson::Value& val)
+	static oom::vec3 GetVec3(rapidjson::Value& val)
 	{
 		auto& arr = val.GetArray();
 		return { arr[0].GetFloat(), arr[1].GetFloat(), arr[2].GetFloat() };
@@ -64,7 +64,7 @@ void Serializer::SaveComponent(Component& component, rapidjson::PrettyWriter<rap
 		else if (id == rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC3])
 		{
 			writer.StartArray();
-			glm::vec3 value = element.get_value(component).get_value<glm::vec3>();
+			oom::vec3 value = element.get_value(component).get_value<oom::vec3>();
 			writer.Double(value.x);
 			writer.Double(value.y);
 			writer.Double(value.z);
@@ -73,7 +73,7 @@ void Serializer::SaveComponent(Component& component, rapidjson::PrettyWriter<rap
 		else if (id == rttr_type_ID::m_tracked_ids[rttr_type_ID::type_MAT4])
 		{
 			writer.StartArray();
-			glm::mat4 value = element.get_value(component).get_value<glm::mat4>();
+			oom::mat4 value = element.get_value(component).get_value<oom::mat4>();
 			writer.Double(value[0].x);
 			writer.Double(value[0].y);
 			writer.Double(value[0].z);
