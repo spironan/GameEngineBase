@@ -36,7 +36,7 @@ namespace engine
         m_inverseMass = 1.0f / m_mass;
     }
 
-    void RigidBody::ApplyGravity(glm::vec2 gravity)
+    void RigidBody::ApplyGravity(oom::vec2 gravity)
     {
         AddForce(gravity * m_mass * GravityScale);
     }
@@ -48,7 +48,7 @@ namespace engine
 
     void RigidBody::UpdatePosition(Timestep dt)
     {
-        static_cast<GameObject>(GetEntity()).Transform().Position() += glm::vec3{ m_velocity, 0.f } *static_cast<float>(dt);
+        static_cast<GameObject>(GetEntity()).Transform().Position() += oom::vec3{ m_velocity, 0.f } *static_cast<float>(dt);
     }
 
 }

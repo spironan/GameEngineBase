@@ -20,7 +20,8 @@ Technology is prohibited.
 #include "Engine/ECS/Component.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Core/Timestep.h"
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
+#include <oom/oom.hpp>
 
 namespace engine
 {
@@ -55,7 +56,7 @@ namespace engine
                 vector indicating the direction and strength of the force to apply onto
                 this object
         *//**********************************************************************************/
-        void AddForce(glm::vec2 force) { m_force += force; }
+        void AddForce(oom::vec2 force) { m_force += force; }
         
         /*********************************************************************************//*!
         \brief    Set the mass of the rigidbody with new mass
@@ -80,13 +81,13 @@ namespace engine
         \param    newVel
                 The new velocity to assign this rigidbody's velocity to.
         *//**********************************************************************************/
-        void SetVelocity(glm::vec2 newVel) { m_velocity = newVel; }
+        void SetVelocity(oom::vec2 newVel) { m_velocity = newVel; }
         /*********************************************************************************//*!
         \brief    Retrieve the current velocity of the rigidbody
 
         \return   the current velocity of the rigidbody.
         *//**********************************************************************************/
-        glm::vec2 GetVelocity() const { return m_velocity; }
+        oom::vec2 GetVelocity() const { return m_velocity; }
 
 
         /*********************************************************************************//*!
@@ -95,17 +96,17 @@ namespace engine
         \param    newForce
                 The new force to assign this rigidbody's force to.
         *//**********************************************************************************/
-        void SetForce(glm::vec2 newForce) { m_force = newForce; }
+        void SetForce(oom::vec2 newForce) { m_force = newForce; }
         /*********************************************************************************//*!
         \brief    Retrieve the current force of the rigidbody
 
         \return   the current force of the rigidbody.
         *//**********************************************************************************/
-        glm::vec2 GetForce() const { return m_force; }
+        oom::vec2 GetForce() const { return m_force; }
 
     private:
-        glm::vec2 m_velocity = { 0.f, 0.f };
-        glm::vec2 m_force = { 0.f, 0.f };
+        oom::vec2 m_velocity = { 0.f, 0.f };
+        oom::vec2 m_force = { 0.f, 0.f };
 
         float m_mass = 1.0f;
         float m_inverseMass = 1.0f / m_mass;
@@ -119,7 +120,7 @@ namespace engine
         \param    gravity
                     Gravity of the world to apply to this rigidbody.
         *//**********************************************************************************/
-        void ApplyGravity(glm::vec2 gravity);
+        void ApplyGravity(oom::vec2 gravity);
 
         /*********************************************************************************//*!
         \brief    Updates the Velocity of the object with forces.

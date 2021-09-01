@@ -22,7 +22,7 @@ private:
     engine::GameObject m_cam;
     int width{}, height{};
 
-    glm::vec2 upperbounds, lowerbounds;
+    oom::vec2 upperbounds, lowerbounds;
 public:
 
     PhysicsTestLayer()

@@ -44,7 +44,7 @@ namespace engine
 
             rb.UpdatePosition(deltaTime);
 
-            rb.SetForce(glm::vec2{0.f});
+            rb.SetForce(oom::vec2{0.f});
         }
     }
 

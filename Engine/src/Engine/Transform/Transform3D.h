@@ -18,7 +18,8 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/Component.h"
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
+#include <oom/oom.hpp>
 
 #include <rttr/type>
 
@@ -50,12 +51,12 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        float     const& GetRotationAngle()    const    { return glm::degrees(m_rotationAngle); }
-        glm::vec3 const& GetPosition()         const    { return m_position; }
-        glm::vec3 const& GetRotationAxis()     const    { return m_rotationAxis; }
-        glm::vec3 const& GetScale()            const    { return m_scale;    }
-        glm::mat4 const& GetLocalMatrix()      const    { return m_localTransform;}
-        glm::mat4 const& GetGlobalMatrix()     const    { return m_globalTransform; }
+        float     const& GetRotationAngle()    const    { return oom::degrees(m_rotationAngle); }
+        oom::vec3 const& GetPosition()         const    { return m_position; }
+        oom::vec3 const& GetRotationAxis()     const    { return m_rotationAxis; }
+        oom::vec3 const& GetScale()            const    { return m_scale;    }
+        oom::mat4 const& GetLocalMatrix()      const    { return m_localTransform;}
+        oom::mat4 const& GetGlobalMatrix()     const    { return m_globalTransform; }
         int       const& GetChildCount()       const    { return m_childCount; }
         Entity    const& GetParentId()         const    { return m_parentId; }
         bool      const& IsDirty()             const    { return m_dirty; }
@@ -65,17 +66,17 @@ namespace engine
         /* Setter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
         float&      RotationAngle()                     { m_dirty = true; return m_rotationAngle; }
-        glm::vec3&  Position()                          { m_dirty = true; return m_position; }
-        glm::vec3&  RotationAxis()                      { m_dirty = true; return m_rotationAxis; }
-        glm::vec3&  Scale()                             { m_dirty = true; return m_scale; }
+        oom::vec3&  Position()                          { m_dirty = true; return m_position; }
+        oom::vec3&  RotationAxis()                      { m_dirty = true; return m_rotationAxis; }
+        oom::vec3&  Scale()                             { m_dirty = true; return m_scale; }
         void        Reset()                             { m_hasChanged = false; }
 
-        void SetPosition(glm::vec3 const& pos)          { m_dirty = true; m_position = pos; }
-        void SetRotationAxis(glm::vec3 const& rotAxis)  { m_dirty = true; m_rotationAxis = rotAxis; }
-        void SetRotationAngle(float const& angle)       { m_dirty = true; m_rotationAngle = glm::radians(angle); }
-        void SetScale(glm::vec3 const& scale)           { m_dirty = true; m_scale = scale; }
+        void SetPosition(oom::vec3 const& pos)          { m_dirty = true; m_position = pos; }
+        void SetRotationAxis(oom::vec3 const& rotAxis)  { m_dirty = true; m_rotationAxis = rotAxis; }
+        void SetRotationAngle(float const& angle)       { m_dirty = true; m_rotationAngle = oom::radians(angle); }
+        void SetScale(oom::vec3 const& scale)           { m_dirty = true; m_scale = scale; }
         
-        glm::mat4 const& GetConversionMatrix() { return m_conversionMatrix; }
+        oom::mat4 const& GetConversionMatrix() { return m_conversionMatrix; }
 
         /****************************************************************************//*!
          @brief     Copies the relevant data of transform component while retaining
@@ -91,10 +92,10 @@ namespace engine
                     Runtime has been executed, this will be the position from the previous
                     frame.
 
-         @return    An glm::vec3 that represents the previous position of this Component in
+         @return    An oom::vec3 that represents the previous position of this Component in
                     global coordinates.
         *//*****************************************************************************/
-        glm::vec3 GetGlobalPosition() const { return m_globalTransform[3] ; }
+        oom::vec3 GetGlobalPosition() const { return m_globalTransform[3] ; }
 
         /****************************************************************************//*!
          @brief     Retrieves the global rotation matrix of this object from the global
@@ -105,10 +106,10 @@ namespace engine
                     Runtime has been executed, this will be the rotation matrix 
                     from the previous frame.
 
-         @return    An glm::mat4 that represents the rotation matrix from the previous frame
+         @return    An oom::mat4 that represents the rotation matrix from the previous frame
                     of this Component in global coordinates.
         *//*****************************************************************************/
-        glm::mat4 GetGlobalRotationMatrix() const;
+        oom::mat4 GetGlobalRotationMatrix() const;
 
         /****************************************************************************//*!
          @brief    Retrieves the global rotation of this object in radians 
@@ -147,10 +148,10 @@ namespace engine
                     Runtime has been executed, this will be the scale from the previous
                     frame.
 
-         @return    An glm::vec3 that represents the previous scale of this GameObject in
+         @return    An oom::vec3 that represents the previous scale of this GameObject in
                     global coordinates.
         *//*****************************************************************************/
-        glm::vec3    GetGlobalScale()   const;
+        oom::vec3    GetGlobalScale()   const;
 
 
         /*-----------------------------------------------------------------------------*/
@@ -220,16 +221,16 @@ namespace engine
         int m_childCount;
         Entity m_parentId;
 
-        glm::mat4 m_globalTransform;
-        glm::mat4 m_localTransform;
+        oom::mat4 m_globalTransform;
+        oom::mat4 m_localTransform;
 
         float m_rotationAngle;
 
-        glm::vec3 m_position;
-        glm::vec3 m_rotationAxis;
-        glm::vec3 m_scale;
+        oom::vec3 m_position;
+        oom::vec3 m_rotationAxis;
+        oom::vec3 m_scale;
 
-        glm::mat4 m_conversionMatrix;
+        oom::mat4 m_conversionMatrix;
         bool m_conversion; 
 
         bool m_dirty;

@@ -17,7 +17,8 @@ Technology is prohibited.
 
 #include "Engine/ECS/System.h"
 #include "Engine/Core/Timestep.h"
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
+#include <oom/oom.hpp>
 
 namespace engine
 {
@@ -44,7 +45,7 @@ namespace engine
         *//**********************************************************************************/
         void Update(Timestep deltaTime);
         
-        glm::vec2 Gravity;
+        oom::vec2 Gravity;
 
     private:
         void UpdateDynamics(Timestep deltaTime);
