@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Ouroboros
 {
     // [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public class GameObject
+    public class GameObject : Object
     {
         private int m_InstanceID = -1;
         //private Transform m_Transform = null;
@@ -46,24 +46,6 @@ namespace Ouroboros
         {
             GameObject_SetActive(m_InstanceID, value);
         }
-
-        #region Create/Destroy
-
-        [DllImport("__Internal")] private static extern IntPtr CreateEntity();
-        
-        public static GameObject Instantiate()
-        {
-            return (GameObject)GCHandle.FromIntPtr(CreateEntity()).Target;
-        }
-
-        [DllImport("__Internal")] private static extern void DestroyEntity(int id);
-        
-        public static void Destroy(GameObject obj)
-        {
-            DestroyEntity(obj.m_InstanceID);
-        }
-
-        #endregion Create/Destroy
 
         #region Script/Component
 

@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 
 namespace Ouroboros
 {
-    public class Component
+    public class Component : Object
     {
         private GameObject m_GameObject = null;
-        protected int m_InstanceID = -1;
+        private int m_InstanceID = -1;
 
         public GameObject gameObject
         {
@@ -15,6 +15,11 @@ namespace Ouroboros
             {
                 return m_GameObject;
             }
+        }
+
+        public int GetInstanceID()
+        {
+            return m_InstanceID;
         }
 
         [DllImport("__Internal")] private static extern void SetScriptEnabled(int entityID, int scriptID, bool enabled);
@@ -30,5 +35,24 @@ namespace Ouroboros
         {
 
         }
+
+        #region Script/Component
+
+        public T AddComponent<T>() where T : Component
+        {
+            return gameObject.AddComponent<T>();
+        }
+
+        public T GetComponent<T>() where T : Component
+        {
+            return gameObject.GetComponent<T>();
+        }
+
+        public void RemoveComponent<T>() where T : Component
+        {
+            gameObject.RemoveComponent<T>();
+        }
+
+        #endregion Script/Component
     }
 }

@@ -176,6 +176,17 @@ namespace engine
         void RemoveScript(const char* name_space, const char* name);
 
         /*********************************************************************************//*!
+        \brief      deletes and removes a script instance by its index from the GameObject, if any
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \param      scriptID
+                the index of the script instance in the GameObject's script list
+        *//**********************************************************************************/
+        void RemoveScript(int scriptID);
+
+        /*********************************************************************************//*!
         \brief      enables a script instance by its C# IntPtr so that behavioural functions
                     (e.g. Update) will be executed accordingly
 
@@ -520,6 +531,21 @@ namespace engine
                 the name of the desired script (nested classes won't work)
         *//**********************************************************************************/
         __declspec(dllexport) void RemoveScript(int id, const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      deletes and removes a script instance by its index from the GameObject, if any.
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \note       Mainly used for C# side calling
+
+        \param      entityID
+                the entity id of the target GameObject
+        \param      scriptID
+                the index of the desired script instance in the target GameObject's script list
+        *//**********************************************************************************/
+        __declspec(dllexport) void DestroyScript(int entityID, int scriptID);
 
         /*********************************************************************************//*!
         \brief      sets the active state of a given script instance so that behavioural functions

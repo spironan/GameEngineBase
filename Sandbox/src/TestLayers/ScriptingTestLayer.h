@@ -62,5 +62,7 @@ public:
             else
                 ss->DebugPrintInfo();
         }
+
+        m_scene.GetWorld().ProcessDeletions();
     }
 };

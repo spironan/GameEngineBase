@@ -511,11 +511,7 @@ namespace engine
         // call Awake, if wanted
         if (callAwake)
         {
-            MonoMethod* awakeMethod = ScriptUtility::FindFunction(script, "Awake");
-            if (awakeMethod != nullptr)
-            {
-                mono_runtime_invoke(awakeMethod, script, NULL, NULL);
-            }
+            InvokeFunction(scriptPtr, "Awake");
         }
         return scriptPtr;
     }
@@ -565,6 +561,16 @@ namespace engine
             scriptList.erase(scriptList.begin() + i);
             break;
         }
+    }
+
+    void Scripting::RemoveScript(int scriptID)
+    {
+        if (!ScriptUtility::g_SystemInfo.IsSetUp() || gameObjPtr == 0)
+            return;
+        if (scriptID < 0 || scriptID >= scriptList.size())
+            return;
+        mono_gchandle_free(scriptList[scriptID].handle);
+        scriptList.erase(scriptList.begin() + scriptID);
     }
 
     void Scripting::EnableScript(uint32_t handle)
@@ -842,6 +848,11 @@ namespace engine
     void RemoveScript(int id, const char* name_space, const char* name)
     {
         WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(name_space, name);
+    }
+
+    void DestroyScript(int entityID, int scriptID)
+    {
+        WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(entityID).RemoveScript(scriptID);
     }
 
     void SetScriptEnabled(int entityID, int scriptID, bool enabled)
