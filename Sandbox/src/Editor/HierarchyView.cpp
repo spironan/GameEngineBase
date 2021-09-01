@@ -22,13 +22,16 @@ Technology is prohibited.
 //action stack stuff
 #include "ActionStack/EditorActionStack.h"//add and remove action
 #include "ActionStack/ParentActionStack.h"
+//#include "ActionStack/DeleteItemActionStack.h"
 
 #include "Engine/Prefab/PrefabComponentSystem.h"
+#include "Engine/Prefab/EditorComponent.h"
+
+#include "Engine/ECS/DeletedGameObject.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include "Engine/Prefab/EditorComponent.h"
 /**
  * \brief The main function to displaying the Hierarchy window
  *			-contains the function for the interaction of the nodes
@@ -76,7 +79,9 @@ void HierarchyView::HierarchyPopUp()
 	}
 	if (ImGui::MenuItem("Delete",nullptr,nullptr,ObjectGroup::s_FocusedObject))
 	{
-		static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Destroy();
+		engine::SceneManager::GetActiveWorld().StoreAsDeleted(ObjectGroup::s_FocusedObject);
+		//std::string temp = "Deleted item : " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
+		//ActionStack::AllocateInBuffer(new DeleteItemActionStack(temp, ObjectGroup::s_FocusedObject));
 		ObjectGroup::s_FocusedObject = 0;
 	}
 	ImGui::Separator();
