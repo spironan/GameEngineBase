@@ -27,11 +27,7 @@ namespace engine
 		SceneManager() = default;
 		~SceneManager() = default;
 
-		static SceneManager& GetInstance()
-		{
-			static SceneManager scene_manager;
-			return scene_manager;
-		}
+		static SceneManager& GetInstance();
 
 	private:
 		container_type m_scenes{};
@@ -47,20 +43,7 @@ namespace engine
 		\return   
 			the added scene
 		*//**********************************************************************************/
-		static Scene& AddScene(std::string filename, bool active = false)
-		{
-			auto result = GetInstance().m_scenes.emplace(std::make_pair(utility::StringHash::GenerateFNV1aHash(filename), filename));
-			ENGINE_VERIFY(result.second);
-			auto& scene = (*(result.first)).second;
-			scene.SetID(result.first->first);
-			if (GetInstance().m_scenes.size() == 1)
-			{
-				GetInstance().m_active_scene_id = scene.GetID();
-			}
-
-
-			return scene;
-		}
+		static Scene& AddScene(std::string filename, bool active = false);
 		/*********************************************************************************//*!
 		\brief    Same as AddScene but also loads the scene and set it as the active scene
 
@@ -69,25 +52,14 @@ namespace engine
 		\return
 			the added scene
 		*//**********************************************************************************/
-		static Scene& CreateScene(std::string filename)
-		{
-			auto& temp = GetInstance().AddScene(filename, true);
-			temp.Load();
-
-			return temp;
-		}
+		static Scene& CreateScene(std::string filename);
 		/*********************************************************************************//*!
 		\brief    Returns the current active scene
 		 
 		\return   current active scene
 		
 		*//**********************************************************************************/
-		static Scene& GetActiveScene()
-		{
-			ENGINE_VERIFY(GetInstance().m_scenes.find(GetInstance().m_active_scene_id) != GetInstance().m_scenes.end());
-			return GetInstance().m_scenes.find(GetInstance().m_active_scene_id)->second;
-
-		}
+		static Scene& GetActiveScene();
 		/*********************************************************************************//*!
 		\brief    Gets the scene with the specified filename
 		 
@@ -96,12 +68,7 @@ namespace engine
 		\return   
 			the scene with the specified filename, if not found, returns the first scene
 		*//**********************************************************************************/
-		static Scene& GetScene(key_type id)
-		{
-			ENGINE_VERIFY(GetInstance().m_scenes.find(id) != GetInstance().m_scenes.end());
-			return GetInstance().m_scenes.find(id)->second;
-
-		}
+		static Scene& GetScene(key_type id);
 		/*********************************************************************************//*!
 		\brief    Sets the current active scene as the scene with the specified filename
 		 
@@ -109,32 +76,21 @@ namespace engine
 		\return   current active scene after it has been set
 		
 		*//**********************************************************************************/
-		static void SetActiveScene(key_type id)
-		{
-			ENGINE_VERIFY(GetInstance().m_scenes.find(id) != GetInstance().m_scenes.end());
-			GetInstance().m_active_scene_id = id;
-		}
+		static void SetActiveScene(key_type id);
 		/*********************************************************************************//*!
 		\brief    Gets the world of the current active scene
 		 
 		\return   world of the current active scene
 		
 		*//**********************************************************************************/
-		static World& GetActiveWorld()
-		{
-			return GetActiveScene().GetWorld();
-
-		}
+		static World& GetActiveWorld();
 		/*********************************************************************************//*!
 		\brief    Gets the root gameobject of the world of the current active scene
 		 
 		\return   root gameobject of the world of the current active scene
 		
 		*//**********************************************************************************/
-		static GameObject& GetActiveRoot()
-		{
-			return GetActiveScene().GetRoot();
-		}
+		static GameObject& GetActiveRoot();
 		/*********************************************************************************//*!
 		\brief    Removes a scene from the scene manager, currently disabled
 		 
