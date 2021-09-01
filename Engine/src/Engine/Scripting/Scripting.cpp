@@ -252,7 +252,7 @@ namespace engine
 
                     if (fieldValue != nullptr)
                     {
-                        MonoClassField* idField = mono_class_get_field_from_name(typeClass, "m_instanceID");
+                        MonoClassField* idField = mono_class_get_field_from_name(typeClass, "m_InstanceID");
                         int instanceID = -1;
                         mono_field_get_value(fieldValue, idField, &instanceID);
                         std::cout << "GAMEOBJECT " << instanceID << std::endl;
@@ -270,12 +270,12 @@ namespace engine
 
                     if (fieldValue != nullptr)
                     {
-                        MonoClassField* goField = mono_class_get_field_from_name(typeClass, "m_gameObject");
+                        MonoClassField* goField = mono_class_get_field_from_name(typeClass, "m_GameObject");
                         //std::cout << mono_field_get_name(goField);
                         MonoObject* go = nullptr;
                         mono_field_get_value(fieldValue, goField, &go);
                         //std::cout << mono_class_get_name(mono_object_get_class(go));
-                        MonoClassField* idField = mono_class_get_field_from_name(mono_object_get_class(go), "m_instanceID");
+                        MonoClassField* idField = mono_class_get_field_from_name(mono_object_get_class(go), "m_InstanceID");
                         int instanceID = -1;
                         mono_field_get_value(go, idField, &instanceID);
                         std::cout << "GAMEOBJECT " << instanceID << std::endl;
@@ -445,12 +445,16 @@ namespace engine
         mono_runtime_object_init(component);
 
         // set Component's gameObject
-        MonoClassField* objField = mono_class_get_field_from_name(ScriptUtility::GetTransformMonoClass(), "m_gameObject");
+        MonoClassField* objField = mono_class_get_field_from_name(compClass, "m_GameObject");
         MonoObject* gameObject = mono_gchandle_get_target(gameObjPtr);
         mono_field_set_value(component, objField, gameObject);
 
-        // store ptr in componentList
+        // set Component's instanceID
         size_t compID = ScriptUtility::GetRegisteredComponentID(mono_class_get_type(compClass));
+        MonoClassField* idField = mono_class_get_field_from_name(compClass, "m_InstanceID");
+        mono_field_set_value(component, idField, &compID);
+
+        // store ptr in componentList
         if (compID >= componentList.size())
             componentList.resize(compID + 1);
         componentList[compID] = componentPtr;
@@ -489,15 +493,20 @@ namespace engine
         MonoClass* klass = ScriptUtility::GetMonoClass(name_space, name);
         MonoObject* script = ScriptUtility::MonoObjectNew(klass);
         uint32_t scriptPtr = mono_gchandle_new(script, false);
-        scriptList.push_back(scriptPtr);
+        scriptList.push_back(ScriptInstance(scriptPtr));
 
         // call script constructor
         mono_runtime_object_init(script);
 
         // set gameObject field
-        MonoClassField* gameObjectField = mono_class_get_field_from_name(klass, "m_gameObject");
+        MonoClassField* gameObjectField = mono_class_get_field_from_name(klass, "m_GameObject");
         MonoObject* gameObject = mono_gchandle_get_target(gameObjPtr);
         mono_field_set_value(script, gameObjectField, gameObject);
+
+        // set instanceID field
+        int id = scriptList.size() - 1;
+        MonoClassField* idField = mono_class_get_field_from_name(klass, "m_InstanceID");
+        mono_field_set_value(script, idField, &id);
 
         // call Awake, if wanted
         if (callAwake)
@@ -522,12 +531,19 @@ namespace engine
 
         for (unsigned int i = 0; i < scriptList.size(); ++i)
         {
-            MonoObject* script = mono_gchandle_get_target(scriptList[i]);
+            MonoObject* script = mono_gchandle_get_target(scriptList[i].handle);
             MonoClass* scriptClass = mono_object_get_class(script);
             if (scriptClass == targetClass)
-                return scriptList[i];
+                return scriptList[i].handle;
         }
         return 0;
+    }
+
+    Scripting::ScriptInstance const* Scripting::GetScript(int scriptID)
+    {
+        if (scriptID < 0 || scriptID >= scriptList.size())
+            return nullptr;
+        return &(scriptList[scriptID]);
     }
 
     void Scripting::RemoveScript(const char* name_space, const char* name)
@@ -541,14 +557,52 @@ namespace engine
 
         for (unsigned int i = 0; i < scriptList.size(); ++i)
         {
-            MonoObject* script = mono_gchandle_get_target(scriptList[i]);
+            MonoObject* script = mono_gchandle_get_target(scriptList[i].handle);
             MonoClass* scriptClass = mono_object_get_class(script);
             if (scriptClass != targetClass)
                 continue;
-            mono_gchandle_free(scriptList[i]);
+            mono_gchandle_free(scriptList[i].handle);
             scriptList.erase(scriptList.begin() + i);
             break;
         }
+    }
+
+    void Scripting::EnableScript(uint32_t handle)
+    {
+        for (unsigned int i = 0; i < scriptList.size(); ++i)
+        {
+            if (scriptList[i].handle != handle)
+                continue;
+            EnableScript(i);
+            return;
+        }
+    }
+
+    void Scripting::EnableScript(int scriptID)
+    {
+        if (scriptID < 0 || scriptID >= scriptList.size() || scriptList[scriptID].enabled)
+            return;
+        scriptList[scriptID].enabled = true;
+        InvokeFunction(scriptList[scriptID].handle, "OnEnable");
+    }
+
+    void Scripting::DisableScript(uint32_t handle)
+    {
+        for (unsigned int i = 0; i < scriptList.size(); ++i)
+        {
+            if (scriptList[i].handle != handle)
+                continue;
+            DisableScript(i);
+            return;
+        }
+    }
+
+    void Scripting::DisableScript(int scriptID)
+    {
+        if (scriptID < 0 || scriptID >= scriptList.size() || !scriptList[scriptID].enabled)
+            return;
+        InvokeFunction(scriptList[scriptID].handle, "OnDisable");
+        scriptList[scriptID].enabled = false;
     }
 
     /*-----------------------------------------------------------------------------*/
@@ -608,7 +662,7 @@ namespace engine
         mono_runtime_object_init(gameObject);
 
         // set GameObject instance id
-        MonoClassField* idField = mono_class_get_field_from_name(_class, "m_instanceID");
+        MonoClassField* idField = mono_class_get_field_from_name(_class, "m_InstanceID");
         int id = GetEntity();
         mono_field_set_value(gameObject, idField, &id);
 
@@ -618,7 +672,7 @@ namespace engine
         //MonoObject* transform = mono_gchandle_get_target(transformPtr);
 
         // set GameObject's transform
-        //MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_transform");
+        //MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_Transform");
         //mono_field_set_value(gameObject, transformField, transform);
 
         // create all script instances
@@ -637,7 +691,7 @@ namespace engine
         int scriptIndex = 0;
         for (auto const& scriptInfo : scriptInfoMap)
         {
-            MonoObject* scriptObj = mono_gchandle_get_target(scriptList[scriptIndex]);
+            MonoObject* scriptObj = mono_gchandle_get_target(scriptList[scriptIndex].handle);
             MonoClass* scriptClass = ScriptUtility::GetMonoClass(scriptInfo.second.classInfo);
             for (auto const& fieldInfo : scriptInfo.second.fieldMap)
             {
@@ -656,7 +710,7 @@ namespace engine
 
         for (unsigned int i = 0; i < scriptList.size(); ++i)
         {
-            mono_gchandle_free(scriptList[i]);
+            mono_gchandle_free(scriptList[i].handle);
         }
         scriptList.clear();
         for (unsigned int i = 0; i < componentList.size(); ++i)
@@ -673,42 +727,49 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Function Invoking                                                           */
     /*-----------------------------------------------------------------------------*/
+    void Scripting::InvokeFunction(uint32_t pointer, const char* functionName, int paramCount, void** params)
+    {
+        MonoObject* script = mono_gchandle_get_target(pointer);
+        MonoMethod* method = ScriptUtility::FindFunction(script, functionName, paramCount);
+        if (method == nullptr)
+            return;
+
+        //std::cout << "GAMEOBJECT " << m_entity << " " << scriptInfoList[i].classInfo.name << ": " << functionName << std::endl;
+
+        MonoObject* exception = nullptr;
+        mono_runtime_invoke(method, script, params, &exception);
+        if (exception)
+        {
+            MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
+            MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
+
+            LOG_CRITICAL(mono_string_to_utf8(excMsg));
+            // mono_print_unhandled_exception(exception);
+        }
+        //__try
+        //{
+        //    mono_runtime_invoke(method, script, NULL, (MonoObject**)&exception);
+        //}
+        //__finally
+        //{
+        //    //std::cout << "SOMETHING" << std::endl;
+        //    if (exception)
+        //    {
+        //        MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
+        //        MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
+        //        LOG_ERROR(mono_string_to_utf8(excMsg));
+        //        mono_print_unhandled_exception(exception);
+        //    }
+        //}
+    }
+
     void Scripting::InvokeFunctionAll(const char* functionName, int paramCount, void** params)
     {
         for (unsigned int i = 0; i < scriptList.size(); ++i)
         {
-            MonoObject* script = mono_gchandle_get_target(scriptList[i]);
-            MonoMethod* method = ScriptUtility::FindFunction(script, functionName, paramCount);
-            if (method == nullptr)
+            if (!scriptList[i].enabled)
                 continue;
-
-            //std::cout << "GAMEOBJECT " << m_entity << " " << scriptInfoList[i].classInfo.name << ": " << functionName << std::endl;
-
-            MonoObject* exception = nullptr;
-            mono_runtime_invoke(method, script, params, &exception);
-            if (exception)
-            {
-                MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
-                MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
-
-                LOG_CRITICAL(mono_string_to_utf8(excMsg));
-                // mono_print_unhandled_exception(exception);
-            }
-            //__try
-            //{
-            //    mono_runtime_invoke(method, script, NULL, (MonoObject**)&exception);
-            //}
-            //__finally
-            //{
-            //    //std::cout << "SOMETHING" << std::endl;
-            //    if (exception)
-            //    {
-            //        MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
-            //        MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
-            //        LOG_ERROR(mono_string_to_utf8(excMsg));
-            //        mono_print_unhandled_exception(exception);
-            //    }
-            //}
+            InvokeFunction(scriptList[i].handle, functionName, paramCount, params);
         }
     }
 
@@ -736,7 +797,7 @@ namespace engine
         std::cout << "GAMEOBJECT " << GetEntity() << std::endl;
         for (size_t i = 0; i < scriptList.size(); ++i)
         {
-            MonoObject* script = mono_gchandle_get_target(scriptList[i]);
+            MonoObject* script = mono_gchandle_get_target(scriptList[i].handle);
             DebugPrintObjectFields(script, 1);
         }
     }
@@ -781,6 +842,19 @@ namespace engine
     void RemoveScript(int id, const char* name_space, const char* name)
     {
         WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(name_space, name);
+    }
+
+    void SetScriptEnabled(int entityID, int scriptID, bool enabled)
+    {
+        if(enabled)
+            WorldManager::GetActiveWorld().GetComponent<Scripting>(entityID).EnableScript(scriptID);
+        else
+            WorldManager::GetActiveWorld().GetComponent<Scripting>(entityID).DisableScript(scriptID);
+    }
+
+    bool CheckScriptEnabled(int entityID, int scriptID)
+    {
+        return WorldManager::GetActiveWorld().GetComponent<Scripting>(entityID).GetScript(scriptID)->enabled;
     }
 
 

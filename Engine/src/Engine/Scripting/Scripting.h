@@ -105,8 +105,16 @@ namespace engine
         void RemoveComponentInterface(const char* name_space, const char* name);
 
         /*-----------------------------------------------------------------------------*/
-        /* Script Functions                                                            */
+        /* Script Instance Functions                                                   */
         /*-----------------------------------------------------------------------------*/
+
+        struct ScriptInstance
+        {
+            uint32_t handle;
+            bool enabled;
+
+            ScriptInstance(uint32_t aHandle) : handle(aHandle), enabled(true) {};
+        };
 
         /*********************************************************************************//*!
         \brief      creates and attaches a new script instance of a given C# class to the GameObject
@@ -142,6 +150,19 @@ namespace engine
         uint32_t GetScript(const char* name_space, const char* name);
 
         /*********************************************************************************//*!
+        \brief      gets a specific script instance from the GameObject by its index
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \param      scriptID
+                the index of the script instance in the GameObject's script list
+
+        \return     a pointer to the script instance, or null if the index given is out of array size
+        *//**********************************************************************************/
+        ScriptInstance const* GetScript(int scriptID);
+
+        /*********************************************************************************//*!
         \brief      deletes and removes a script instance of a given C# class from the GameObject, if any
 
         \warning    this function should only be called during play mode as script instances
@@ -153,6 +174,54 @@ namespace engine
                 the name of the desired script (nested classes won't work)
         *//**********************************************************************************/
         void RemoveScript(const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      enables a script instance by its C# IntPtr so that behavioural functions
+                    (e.g. Update) will be executed accordingly
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \param      handle
+                the IntPtr to the desired script instance to enable
+        *//**********************************************************************************/
+        void EnableScript(uint32_t handle);
+
+        /*********************************************************************************//*!
+        \brief      enables a script instance by its index so that behavioural functions
+                    (e.g. Update) will be executed accordingly
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \param      scriptID
+                the index of the script instance in the GameObject's script list
+        *//**********************************************************************************/
+        void EnableScript(int scriptID);
+
+        /*********************************************************************************//*!
+        \brief      disables a script instance by its C# IntPtr so that behavioural functions
+                    (e.g. Update) will not be executed
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \param      handle
+                the IntPtr to the desired script instance to enable
+        *//**********************************************************************************/
+        void DisableScript(uint32_t handle);
+
+        /*********************************************************************************//*!
+        \brief      disables a script instance by its index so that behavioural functions
+                    (e.g. Update) will not be executed
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \param      scriptID
+                the index of the script instance in the GameObject's script list
+        *//**********************************************************************************/
+        void DisableScript(int scriptID);
 
         /*-----------------------------------------------------------------------------*/
         /* Script Info Functions                                                       */
@@ -254,6 +323,23 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
 
         /*********************************************************************************//*!
+        \brief      invokes a script instance's function by name with the given parameters
+
+        \warning    this should only be called during play mode as no script instances
+                    exist during edit mode to invoke functions from.
+
+        \param      pointer
+                the C# IntPtr to the target script instance
+        \param      functionName
+                the name of the function to invoke
+        \param      paramCount
+                the number of parameters the function takes in
+        \param      params
+                the pointer to the void* array containing all the parameters
+        *//**********************************************************************************/
+        static void InvokeFunction(uint32_t pointer, const char* functionName, int paramCount = 0, void** params = NULL);
+
+        /*********************************************************************************//*!
         \brief      invokes a function by name in all script instances attached to this GameObject
                     with the given parameters
 
@@ -320,7 +406,7 @@ namespace engine
     private:
         uint32_t gameObjPtr;
         std::vector<uint32_t> componentList;
-        std::vector<uint32_t> scriptList;
+        std::vector<ScriptInstance> scriptList;
         std::map<unsigned int, ScriptInfo> scriptInfoMap;
     };
 
@@ -434,6 +520,41 @@ namespace engine
                 the name of the desired script (nested classes won't work)
         *//**********************************************************************************/
         __declspec(dllexport) void RemoveScript(int id, const char* name_space, const char* name);
+
+        /*********************************************************************************//*!
+        \brief      sets the active state of a given script instance so that behavioural functions
+                    (e.g. Update) will be executed accordingly
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \note       Mainly used for C# side calling
+
+        \param      entityID
+                the entity id of the target GameObject
+        \param      scriptID
+                the index of the desired script instance in the target GameObject's script list
+        \param      enabled
+                the desired active state of the script instance
+        *//**********************************************************************************/
+        __declspec(dllexport) void SetScriptEnabled(int entityID, int scriptID, bool enabled);
+
+        /*********************************************************************************//*!
+        \brief      gets the active state of a given script instance
+
+        \warning    this function should only be called during play mode as script instances
+                    are only created during play mode, since it will break if a recompile is triggered
+
+        \note       Mainly used for C# side calling
+
+        \param      entityID
+                the entity id of the target GameObject
+        \param      scriptID
+                the index of the desired script instance in the target GameObject's script list
+
+        \return     the active state of the specified script instance
+        *//**********************************************************************************/
+        __declspec(dllexport) bool CheckScriptEnabled(int entityID, int scriptID);
 
         /*********************************************************************************//*!
         \brief      creates and attaches a new ECS component and its corresponding C# interface

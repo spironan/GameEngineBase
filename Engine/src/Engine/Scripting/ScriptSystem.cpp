@@ -116,7 +116,7 @@ namespace engine
         LOG_ENGINE_TRACE("Script Compiling Successful");
         ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str(), s_ComponentMap);
 
-        ScriptSystem* ss = WorldManager::GetActiveWorld().GetSystem<ScriptSystem>();
+        ScriptSystem* ss = WorldManager::GetActiveWorld().TryGetSystem<ScriptSystem>();
         if (ss != nullptr)
             ss->RefreshScriptInfoAll();
     }

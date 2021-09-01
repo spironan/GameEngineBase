@@ -9,14 +9,14 @@ namespace Ouroboros
     // [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public class GameObject
     {
-        private int m_instanceID = -1;
-        //private Transform m_transform = null;
+        private int m_InstanceID = -1;
+        //private Transform m_Transform = null;
 
         public GameObject() { }
 
         public int GetInstanceID()
         {
-            return m_instanceID;
+            return m_InstanceID;
         }
 
         [DllImport("__Internal")] private static extern IntPtr GameObject_GetName(int id);
@@ -26,12 +26,12 @@ namespace Ouroboros
         {
             get
             { 
-                GCHandle stringPtr = GCHandle.FromIntPtr(GameObject_GetName(m_instanceID));
+                GCHandle stringPtr = GCHandle.FromIntPtr(GameObject_GetName(m_InstanceID));
                 string name = (string)stringPtr.Target;
                 stringPtr.Free();
                 return name;
             }
-            set { GameObject_SetName(m_instanceID, value); }
+            set { GameObject_SetName(m_InstanceID, value); }
         }
 
         [DllImport("__Internal")] private static extern bool GameObject_GetActive(int id);
@@ -39,12 +39,12 @@ namespace Ouroboros
 
         public bool activeSelf
         {
-            get { return GameObject_GetActive(m_instanceID); }
+            get { return GameObject_GetActive(m_InstanceID); }
         }
 
         public void SetActive(bool value)
         {
-            GameObject_SetActive(m_instanceID, value);
+            GameObject_SetActive(m_InstanceID, value);
         }
 
         #region Create/Destroy
@@ -60,7 +60,7 @@ namespace Ouroboros
         
         public static void Destroy(GameObject obj)
         {
-            DestroyEntity(obj.m_instanceID);
+            DestroyEntity(obj.m_InstanceID);
         }
 
         #endregion Create/Destroy
@@ -69,7 +69,7 @@ namespace Ouroboros
 
         //public Transform transform
         //{
-        //    get { return m_transform; }
+        //    get { return m_Transform; }
         //}
 
         [DllImport("__Internal")] private static extern IntPtr AddScript(int id, string name_space, string _type);
@@ -83,8 +83,8 @@ namespace Ouroboros
                 name_space = type.Namespace;
 
             IntPtr ptr = type.IsSubclassOf(typeof(MonoBehaviour))
-                            ? AddScript(m_instanceID, name_space, type.Name)
-                            : AddComponentFromScript(m_instanceID, name_space, type.Name);
+                            ? AddScript(m_InstanceID, name_space, type.Name)
+                            : AddComponentFromScript(m_InstanceID, name_space, type.Name);
 
             if (ptr == IntPtr.Zero)
                 return null;
@@ -102,8 +102,8 @@ namespace Ouroboros
                 name_space = type.Namespace;
 
             IntPtr ptr = type.IsSubclassOf(typeof(MonoBehaviour))
-                            ? GetScript(m_instanceID, name_space, type.Name)
-                            : GetComponentFromScript(m_instanceID, name_space, type.Name);
+                            ? GetScript(m_InstanceID, name_space, type.Name)
+                            : GetComponentFromScript(m_InstanceID, name_space, type.Name);
 
             if (ptr == IntPtr.Zero)
                 return null;
@@ -122,11 +122,11 @@ namespace Ouroboros
 
             if (type.IsSubclassOf(typeof(MonoBehaviour)))
             {
-                RemoveScript(m_instanceID, name_space, type.Name);
+                RemoveScript(m_InstanceID, name_space, type.Name);
             }
             else
             {
-                RemoveComponentFromScript(m_instanceID, name_space, type.Name);
+                RemoveComponentFromScript(m_InstanceID, name_space, type.Name);
             }
         }
 
