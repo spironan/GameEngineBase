@@ -74,60 +74,60 @@ void OpenGLShader::SetUniform(const std::string& fullname, uint32_t count, const
 	glUniform1iv(location, count, value);
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::ivec2& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::ivec2& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{0}' in {1} shader ", fullname, m_Name);
 	glUniform2i(location, value.x,value.y);
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::ivec3& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::ivec3& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{0}' in {1} shader ", fullname, m_Name);
 	glUniform3i(location, value.x, value.y,value.z);
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::ivec4& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::ivec4& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{0}' in {1} shader ", fullname, m_Name);
 	glUniform4i(location, value.x, value.y, value.z, value.w);
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::vec2& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::vec2& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{0}' in {1} shader ", fullname, m_Name);
-	glUniform2fv(location, 1,glm::value_ptr(value));
+	glUniform2fv(location, 1,oom::value_ptr(value));
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::vec3& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::vec3& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{0}' in {1} shader ", fullname, m_Name);
-	glUniform3fv(location, 1, glm::value_ptr(value));
+	glUniform3fv(location, 1, oom::value_ptr(value));
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::vec4& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::vec4& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{0}' in {1} shader ", fullname, m_Name);
-	glUniform4fv(location, 1, glm::value_ptr(value));
+	glUniform4fv(location, 1, oom::value_ptr(value));
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::mat3& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::mat3& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{0}' in {1} shader ", fullname, m_Name);
-	glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
+	glUniformMatrix3fv(location, 1, GL_FALSE, oom::value_ptr(value));
 }
 
-void OpenGLShader::SetUniform(const std::string& fullname, const glm::mat4& value)
+void OpenGLShader::SetUniform(const std::string& fullname, const oom::mat4& value)
 {
 	GLint location = glGetUniformLocation(m_ShaderID, fullname.c_str());
 	ENGINE_ASSERT_MSG(location != -1, "Cannot find uniform '{1}' in {2} shader ", fullname, m_Name);
-	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+	glUniformMatrix4fv(location, 1, GL_FALSE, oom::value_ptr(value));
 }
 
 std::string OpenGLShader::ReadShaderFromFile(const std::string& filepath) const

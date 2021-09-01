@@ -22,8 +22,9 @@ Technology is prohibited.
 
 #include "Engine/Memory/MemoryCommon.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/type_ptr.hpp>
+#include <oom/oom.hpp>
 
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/Transform/Transform3D.h"
@@ -37,21 +38,21 @@ namespace engine
 {
 	struct QuadVertex
 	{
-		glm::vec4 position{};
-		glm::vec4 colour{};
-		glm::vec2 texCoord{};
+		oom::vec4 position{};
+		oom::vec4 colour{};
+		oom::vec2 texCoord{};
 		float TexIndex{};
 		float TilingFactor{};
 		//
 		//// Editor-only
 		//int EntityID;
-		//QuadVertex(glm::vec3 p, glm::vec4 col, glm::vec2 tex) :position{ p }, colour{col}, texCoord{tex}{}
+		//QuadVertex(oom::vec3 p, oom::vec4 col, oom::vec2 tex) :position{ p }, colour{col}, texCoord{tex}{}
 	};
 
 	struct LineVertex
 	{
-		glm::vec4 position{};
-		glm::vec4 colour{};
+		oom::vec4 position{};
+		oom::vec4 colour{};
 	};
 
 
@@ -80,7 +81,7 @@ namespace engine
 		std::array<GLuint, MaxTextureSlots> TextureSlots{};
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
 
-		std::array<glm::vec4, 4> QuadVertexPositions;
+		std::array<oom::vec4, 4> QuadVertexPositions;
 
 		Renderer2D::BatchRenderStats Stats;
 
@@ -93,13 +94,13 @@ namespace engine
 		uint32_t LineIndexCount = 0;
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
-		std::array<glm::vec4, CircleNumSegments> LineVertexPositions;
+		std::array<oom::vec4, CircleNumSegments> LineVertexPositions;
 
 		struct CameraData
 		{
-			glm::mat4 View{ 1.0f };
-			glm::mat4 Projection{ 1.0f };
-			glm::mat4 ViewProjection{ 1.0f };
+			oom::mat4 View{ 1.0f };
+			oom::mat4 Projection{ 1.0f };
+			oom::mat4 ViewProjection{ 1.0f };
 		};
 		CameraData CameraBuffer;
 		//Ref<UniformBuffer> CameraUniformBuffer;
@@ -226,7 +227,7 @@ void engine::Renderer2D::Init()
 
 	//Line vertices 
 	{
-		constexpr float theta = 2.0f * glm::pi<float>() / static_cast<float>(s_Data.CircleNumSegments);
+		constexpr float theta = 2.0f * oom::pi<float>() / static_cast<float>(s_Data.CircleNumSegments);
 		float c = cosf(theta);//precalculate the sine and cosine
 		float s = sinf(theta);
 		float t{};
@@ -278,7 +279,7 @@ void engine::Renderer2D::Shutdown()
 	delete[] s_Data.LineVertexBufferBase;
 }
 
-void Renderer2D::BeginScene(const glm::mat4& viewProj, const glm::mat4& view)
+void Renderer2D::BeginScene(const oom::mat4& viewProj, const oom::mat4& view)
 {
 	s_Data.CameraBuffer.View = view;
 	s_Data.CameraBuffer.ViewProjection = viewProj;
@@ -365,14 +366,14 @@ void Renderer2D::FlushLines()
 	//s_Data.Stats.QuadCount += s_Data.QuadIndexCount / 6;
 }
 
-void engine::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
+void engine::Renderer2D::DrawQuad(const oom::vec2& position, const oom::vec2& size, const oom::vec4& color)
 {
 	DrawQuad({ position.x,position.y, 0.0f }, size, color);
 }
 
-void engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+void engine::Renderer2D::DrawQuad(const oom::vec3& position, const oom::vec2& size, const oom::vec4& color)
 {
-	glm::mat4 mdl_xform = {
+	oom::mat4 mdl_xform = {
 		 size.x,	0.0f,		0.0f,		0.0f,
 		 0.0f,		size.y,		0.0f,		0.0f,
 		 0.0f,		0.0f,		0.0f,		0.0f,
@@ -382,7 +383,7 @@ void engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& si
 	constexpr size_t quadVertexCount = 4;
 	//const float textureIndex = 0.0f; // White Texture
 	// eventually can change textures coords in sprite
-	constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+	constexpr oom::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 	const float tilingFactor = 1.0f;
 
 	if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -403,15 +404,15 @@ void engine::Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& si
 	s_Data.QuadIndexCount += 6;
 }
 
-void engine::Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+void engine::Renderer2D::DrawRotatedQuad(const oom::vec2& position, const oom::vec2& size, float rotation, const oom::vec4& color)
 {
 	DrawRotatedQuad({ position.x,position.y,0.0f }, size, rotation, color);
 }
 
-void engine::Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+void engine::Renderer2D::DrawRotatedQuad(const oom::vec3& position, const oom::vec2& size, float rotation, const oom::vec4& color)
 {
-	GLfloat rot = glm::radians(rotation);
-	glm::mat4 mdl_xform = {
+	GLfloat rot = oom::radians(rotation);
+	oom::mat4 mdl_xform = {
 		cosf(rot) * size.x,		sinf(rot) * size.x,	0.0f,		0.0f,
 		-sinf(rot) * size.y,	cosf(rot) * size.y,	0.0f,		0.0f,
 		 0.0f,					0.0f,				0.0f,		0.0f,
@@ -421,7 +422,7 @@ void engine::Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::v
 	constexpr size_t quadVertexCount = 4;
 	//const float textureIndex = 0.0f; // White Texture
 	// eventually can change textures coords in sprite
-	constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+	constexpr oom::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 	float tilingFactor = 1.0f;
 
 	if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -441,15 +442,15 @@ void engine::Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::v
 	s_Data.QuadIndexCount += 6;
 }
 
-void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor, const glm::vec4& tintColor)
+void Renderer2D::DrawRotatedQuad(const oom::vec2& position, const oom::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor, const oom::vec4& tintColor)
 {																										
 	DrawRotatedQuad({ position.x,position.y,0.0f }, size, rotation,texture, tilingFactor, tintColor);
 }
 
-void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor, const glm::vec4& tintColor)
+void Renderer2D::DrawRotatedQuad(const oom::vec3& position, const oom::vec2& size, float rotation, const ooRendererID& texture, float tilingFactor, const oom::vec4& tintColor)
 {
-	GLfloat rot = glm::radians(rotation);
-	glm::mat4 mdl_xform = {
+	GLfloat rot = oom::radians(rotation);
+	oom::mat4 mdl_xform = {
 		cosf(rot) * size.x,		sinf(rot) * size.x,	0.0f,		0.0f,
 		-sinf(rot) * size.y,	cosf(rot) * size.y,	0.0f,		0.0f,
 		 0.0f,					0.0f,				0.0f,		0.0f,
@@ -459,7 +460,7 @@ void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& siz
 	constexpr size_t quadVertexCount = 4;
 	//const float textureIndex = 0.0f; // White Texture
 	// eventually can change textures coords in sprite
-	constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+	constexpr oom::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
 
 	if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 		FlushAndReset();
@@ -505,40 +506,40 @@ void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& siz
 	s_Data.QuadIndexCount += 6;
 }
 
-void Renderer2D::DrawCircle(const glm::vec3& position, float rotation, float radius, const glm::vec4& color)
+void Renderer2D::DrawCircle(const oom::vec3& position, float rotation, float radius, const oom::vec4& color)
 {
-	GLfloat rot = glm::radians(rotation);
-	glm::mat4 mdl_xform = {
+	GLfloat rot = oom::radians(rotation);
+	oom::mat4 mdl_xform = {
 		 cosf(rot)* radius,		sinf(rot)* radius,	0.0f,		0.0f,
 		 -sinf(rot) * radius,	cosf(rot)* radius,		0.0f,		0.0f,
 		 0.0f,		0.0f,		0.0f,		0.0f,
 		 position.x,position.y, position.z,		1.0f
 	};
 
-	glm::vec4 firstLine0 = mdl_xform * glm::vec4{0,0,0,1.0f};
-	glm::vec4 firstLine1 = mdl_xform * s_Data.LineVertexPositions[0];
+	oom::vec4 firstLine0 = mdl_xform * oom::vec4{0,0,0,1.0f};
+	oom::vec4 firstLine1 = mdl_xform * s_Data.LineVertexPositions[0];
 	DrawLine(firstLine0, firstLine1, color);
 	for (size_t i = 0; i < s_Data.CircleNumSegments -1; i++)
 	{
-		glm::vec4 p0 = mdl_xform * s_Data.LineVertexPositions[i];
-		glm::vec4 p1 = mdl_xform * s_Data.LineVertexPositions[i+1];
+		oom::vec4 p0 = mdl_xform * s_Data.LineVertexPositions[i];
+		oom::vec4 p1 = mdl_xform * s_Data.LineVertexPositions[i+1];
 		DrawLine(p0, p1, color);
 	}
-	glm::vec4 p0 = mdl_xform * s_Data.LineVertexPositions[s_Data.CircleNumSegments-1];
-	glm::vec4 p1 = mdl_xform * s_Data.LineVertexPositions[0];
+	oom::vec4 p0 = mdl_xform * s_Data.LineVertexPositions[s_Data.CircleNumSegments-1];
+	oom::vec4 p1 = mdl_xform * s_Data.LineVertexPositions[0];
 	DrawLine(p0, p1, color);
 }
 
-void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
+void Renderer2D::DrawLine(const oom::vec3& p0, const oom::vec3& p1, const oom::vec4& color)
 {
 	if (s_Data.LineIndexCount >= Renderer2DData::MaxLineVertice)
 		FlushAndResetLines();
 
-	s_Data.LineVertexBufferPtr->position = glm::vec4{ p0 ,1.0f};
+	s_Data.LineVertexBufferPtr->position = oom::vec4{ p0 ,1.0f};
 	s_Data.LineVertexBufferPtr->colour = color;
 	s_Data.LineVertexBufferPtr++;
 
-	s_Data.LineVertexBufferPtr->position = glm::vec4{ p1, 1.0f };
+	s_Data.LineVertexBufferPtr->position = oom::vec4{ p1, 1.0f };
 	s_Data.LineVertexBufferPtr->colour = color;
 	s_Data.LineVertexBufferPtr++;
 

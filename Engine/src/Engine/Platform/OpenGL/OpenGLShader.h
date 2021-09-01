@@ -16,6 +16,7 @@ Technology is prohibited.
 #include "Engine/Renderer/Shader.h"
 #include "Utility/Hash.h"
 #include <glad/glad.h>
+#include <oom/oom.hpp>
 
 namespace engine
 {
@@ -59,14 +60,14 @@ public:
 	virtual void SetUniform(const std::string& fullname, uint32_t value);
 	virtual void SetUniform(const std::string& fullname, int value);
 	virtual void SetUniform(const std::string& fullname,uint32_t count, const int value[]);
-	virtual void SetUniform(const std::string& fullname, const glm::ivec2& value);
-	virtual void SetUniform(const std::string& fullname, const glm::ivec3& value);
-	virtual void SetUniform(const std::string& fullname, const glm::ivec4& value);
-	virtual void SetUniform(const std::string& fullname, const glm::vec2& value);
-	virtual void SetUniform(const std::string& fullname, const glm::vec3& value);
-	virtual void SetUniform(const std::string& fullname, const glm::vec4& value);
-	virtual void SetUniform(const std::string& fullname, const glm::mat3& value);
-	virtual void SetUniform(const std::string& fullname, const glm::mat4& value);
+	virtual void SetUniform(const std::string& fullname, const oom::ivec2& value);
+	virtual void SetUniform(const std::string& fullname, const oom::ivec3& value);
+	virtual void SetUniform(const std::string& fullname, const oom::ivec4& value);
+	virtual void SetUniform(const std::string& fullname, const oom::vec2& value);
+	virtual void SetUniform(const std::string& fullname, const oom::vec3& value);
+	virtual void SetUniform(const std::string& fullname, const oom::vec4& value);
+	virtual void SetUniform(const std::string& fullname, const oom::mat3& value);
+	virtual void SetUniform(const std::string& fullname, const oom::mat4& value);
 
 private:
 	/*********************************************************************************//*!

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Engine/Platform/Vulkan/vk_types.h"
-#include <../vendor/glm/glm/vec3.hpp>
-#include <../vendor/glm/glm/vec2.hpp>
+//#include <../vendor/glm/glm/vec3.hpp>
+//#include <../vendor/glm/glm/vec2.hpp>
+#include <oom/oom.hpp>
 
 #include <vector>
 
@@ -16,10 +17,10 @@ struct VertexInputDescription
 
 struct Vertex
 {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec3 color;
-	glm::vec2 uv;
+	oom::vec3 position;
+	oom::vec3 normal;
+	oom::vec3 color;
+	oom::vec2 uv;
 
 	static VertexInputDescription get_vertex_description();
 };

@@ -49,7 +49,7 @@ namespace engine
 		float Scale = 1.0f;
 		uint32_t Width = 0;
 		uint32_t Height = 0;
-		glm::vec4 ClearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+		oom::vec4 ClearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 		bool ClearOnLoad = true;
 		FramebufferAttachmentSpecification Attachments;
 		uint32_t Samples = 1; // multisampling

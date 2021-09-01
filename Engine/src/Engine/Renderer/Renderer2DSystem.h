@@ -43,7 +43,7 @@ public:
     /*-----------------------------------------------------------------------------*/
     /* Explicit Constructor                                                        */
     /*-----------------------------------------------------------------------------*/
-    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager) : System{ _ECS_Manager }, m_projection{glm::ortho(-1,1,-1,1)} {};
+    explicit Renderer2DSystem(ECS_Manager& _ECS_Manager) : System{ _ECS_Manager }, m_projection{oom::ortho(-1,1,-1,1)} {};
     //explicit Renderer2DSystem(ECS_Manager& _ECS_Manager,const OrthographicCamera& cam) : System{ _ECS_Manager }, m_orthoCam{ cam } {};
     explicit Renderer2DSystem(ECS_Manager& _ECS_Manager, const Camera& cam) : System{ _ECS_Manager }, m_cam{ &cam } 
     {
@@ -56,7 +56,7 @@ public:
     \param    cam Copy of the camera
     
     *//**********************************************************************************/
-    void SetCamera(const Camera& cam,const glm::vec3& position);
+    void SetCamera(const Camera& cam,const oom::vec3& position);
 
     /*********************************************************************************//*!
     \brief    Updates the rendering system to display to screen
@@ -69,9 +69,9 @@ private:
 
     const Camera* m_cam;
     const Transform3D* m_transform;
-    glm::mat4 m_projection;
-    glm::mat4 m_view;
-    glm::mat4 m_viewProj;
+    oom::mat4 m_projection;
+    oom::mat4 m_view;
+    oom::mat4 m_viewProj;
 };
 
 }// namespace engine

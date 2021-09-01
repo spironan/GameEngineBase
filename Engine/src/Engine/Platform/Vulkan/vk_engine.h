@@ -15,7 +15,8 @@
 #include <functional>
 #include <unordered_map>
 
-#include <../vendor/glm/glm/mat4x4.hpp>
+//#include <../vendor/glm/glm/mat4x4.hpp>
+#include <oom/oom.hpp>
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -37,9 +38,9 @@ struct UploadContext
 
 struct GPUCameraData
 {
-	glm::mat4 view;
-	glm::mat4 projection;
-	glm::mat4 viewproj;
+	oom::mat4 view;
+	oom::mat4 projection;
+	oom::mat4 viewproj;
 
 	GPUCameraData() = default;
 };
@@ -83,15 +84,15 @@ struct RenderObject
 {
 	Mesh *mesh;
 	Material *material;
-	glm::mat4 transformMatrix;
+	oom::mat4 transformMatrix;
 
 	RenderObject() = default;
 };
 
 struct MeshPushConstants
 {
-	glm::vec4 data;
-	glm::mat4 render_matrix;
+	oom::vec4 data;
+	oom::mat4 render_matrix;
 
 	MeshPushConstants() = default;
 };
@@ -136,18 +137,18 @@ public:
 
 struct GPUSceneData
 {
-	glm::vec4 fogColor; //w is for exponent
-	glm::vec4 fogDistances; // x is for min, y is for max, zw unused;
-	glm::vec4 ambientColor;
-	glm::vec4 sunlightDireciton; // w for sun power
-	glm::vec4 sunlightColor;
+	oom::vec4 fogColor; //w is for exponent
+	oom::vec4 fogDistances; // x is for min, y is for max, zw unused;
+	oom::vec4 ambientColor;
+	oom::vec4 sunlightDireciton; // w for sun power
+	oom::vec4 sunlightColor;
 
 	GPUSceneData() = default;
 };
 
 struct GPUObjectData
 {
-	glm::mat4 modelMatrix;
+	oom::mat4 modelMatrix;
 
 	GPUObjectData() = default;
 };

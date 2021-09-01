@@ -124,17 +124,17 @@ public:
 	double* GetFloatCVar(engine::utility::StringHash hash) override final;
 	int32_t* GetIntCVar(engine::utility::StringHash hash) override final;
 	const char* GetStringCVar(engine::utility::StringHash hash) override final;
-	glm::vec3* GetVec3CVar(engine::utility::StringHash hash) override final;
+	oom::vec3* GetVec3CVar(engine::utility::StringHash hash) override final;
 
 	void SetFloatCVar(engine::utility::StringHash hash, double value) override final;
 	void SetIntCVar(engine::utility::StringHash hash, int32_t value) override final;
 	void SetStringCVar(engine::utility::StringHash hash, const char* value) override final;
-	void SetVec3CVar(engine::utility::StringHash hash, glm::vec3 value) override final;
+	void SetVec3CVar(engine::utility::StringHash hash, oom::vec3 value) override final;
 
 	CVarParameter* CreateFloatCVar(const char* name, const char* description, double defaultValue, double currentValue) override final;
 	CVarParameter* CreateIntCVar(const char* name, const char* description, int32_t defaultValue, int32_t currentValue) override final;
 	CVarParameter* CreateStringCVar(const char* name, const char* description, const char* defaultValue, const char* currentValue) override final;
-	CVarParameter* CreateVec3CVar(const char* name, const char* description, glm::vec3 defaultValue, glm::vec3 currentValue) override final;
+	CVarParameter* CreateVec3CVar(const char* name, const char* description, oom::vec3 defaultValue, oom::vec3 currentValue) override final;
 
 
 	//initialize storage containers
@@ -148,7 +148,7 @@ public:
 	CVarArray<std::string> stringCVars{ MAX_STRING_CVARS };
 
 	constexpr static int MAX_VEC3_CVARS = 1000;
-	CVarArray<glm::vec3> vec3CVars{ MAX_VEC3_CVARS };
+	CVarArray<oom::vec3> vec3CVars{ MAX_VEC3_CVARS };
 
 	//using tempaltes with specializations to get the cvar arrays for each type
 	//if you try to use a type that doesnt have a specialization it will trigger a linked error
@@ -165,7 +165,7 @@ public:
 	CVarArray<std::string>* GetCVarArray() { return &stringCVars; }
 
 	template<>
-	CVarArray<glm::vec3>* GetCVarArray() { return &vec3CVars; }
+	CVarArray<oom::vec3>* GetCVarArray() { return &vec3CVars; }
 
 
 
@@ -228,9 +228,9 @@ const char* CVarSystemImpl::GetStringCVar(engine::utility::StringHash hash)
 	return GetCVarCurrent<std::string>(hash)->c_str();
 }
 
-glm::vec3* CVarSystemImpl::GetVec3CVar(engine::utility::StringHash hash)
+oom::vec3* CVarSystemImpl::GetVec3CVar(engine::utility::StringHash hash)
 {
-	return GetCVarCurrent<glm::vec3>(hash);
+	return GetCVarCurrent<oom::vec3>(hash);
 }
 
 CVarSystem* CVarSystem::Get()
@@ -268,9 +268,9 @@ void CVarSystemImpl::SetStringCVar(engine::utility::StringHash hash, const char*
 	SetCVarCurrent<std::string>(hash, value);
 }
 
-void CVarSystemImpl::SetVec3CVar(engine::utility::StringHash hash, glm::vec3 value)
+void CVarSystemImpl::SetVec3CVar(engine::utility::StringHash hash, oom::vec3 value)
 {
-	SetCVarCurrent<glm::vec3>(hash, value);
+	SetCVarCurrent<oom::vec3>(hash, value);
 }
 
 CVarParameter* CVarSystemImpl::CreateFloatCVar(const char* name, const char* description, double defaultValue, double currentValue)
@@ -312,7 +312,7 @@ CVarParameter* CVarSystemImpl::CreateStringCVar(const char* name, const char* de
 	return param;
 }
 
-CVarParameter* CVarSystemImpl::CreateVec3CVar(const char* name, const char* description, glm::vec3 defaultValue, glm::vec3 currentValue)
+CVarParameter* CVarSystemImpl::CreateVec3CVar(const char* name, const char* description, oom::vec3 defaultValue, oom::vec3 currentValue)
 {
 	std::unique_lock lock(mutex_);
 	CVarParameter* param = InitCVar(name, description);
@@ -320,7 +320,7 @@ CVarParameter* CVarSystemImpl::CreateVec3CVar(const char* name, const char* desc
 
 	param->type = CVarType::VEC_3;
 
-	GetCVarArray<glm::vec3>()->Add(defaultValue, currentValue, param);
+	GetCVarArray<oom::vec3>()->Add(defaultValue, currentValue, param);
 
 	return param;
 }
@@ -395,19 +395,19 @@ void AutoCVar_Float::Set(double val)
 }
 
 
-AutoCVar_Vec3::AutoCVar_Vec3(const char* name, const char* description, glm::vec3 defaultValue, CVarFlags flags)
+AutoCVar_Vec3::AutoCVar_Vec3(const char* name, const char* description, oom::vec3 defaultValue, CVarFlags flags)
 {
 	CVarParameter* cvar = CVarSystem::Get()->CreateVec3CVar(name, description, defaultValue, defaultValue);
 	cvar->flags = flags;
 	index = cvar->arrayIndex;
 }
 
-glm::vec3 AutoCVar_Vec3::Get()const
+oom::vec3 AutoCVar_Vec3::Get()const
 {
 	return GetCVarCurrentByIndex<CVarType>(index);
 }
 
-void AutoCVar_Vec3::Set(glm::vec3&& val)
+void AutoCVar_Vec3::Set(oom::vec3&& val)
 {
 	SetCVarCurrentByIndex<CVarType>(index, val);
 }
@@ -490,9 +490,9 @@ void CVarSystemImpl::DrawImguiEditor()
 	{
 		addToEditList(GetCVarArray<std::string>()->cvars[i].parameter);
 	}
-	for (int i = 0; i < GetCVarArray<glm::vec3>()->lastCVar; i++)
+	for (int i = 0; i < GetCVarArray<oom::vec3>()->lastCVar; i++)
 	{
-		addToEditList(GetCVarArray<glm::vec3>()->cvars[i].parameter);
+		addToEditList(GetCVarArray<oom::vec3>()->cvars[i].parameter);
 	}
 
 	if (cachedEditParameters.size() > 10)
@@ -681,7 +681,7 @@ void CVarSystemImpl::EditParameter(CVarParameter* p, float textWidth)
 			if (readonlyFlag)
 			{
 				std::string displayFormat = p->name + "= (%0.3f,%0.3f,%0.3f)";
-				glm::vec3 pos = GetCVarArray<glm::vec3>()->GetCurrent(p->arrayIndex);
+				oom::vec3 pos = GetCVarArray<oom::vec3>()->GetCurrent(p->arrayIndex);
 				ImGui::Text(displayFormat.c_str(), pos.x, pos.y, pos.z);
 			}
 			else
@@ -690,11 +690,11 @@ void CVarSystemImpl::EditParameter(CVarParameter* p, float textWidth)
 				ImGui::PushID(p->name.c_str());
 				if (dragFlag)
 				{
-					ImGui::DragFloat3("", &GetCVarArray<glm::vec3>()->GetCurrentPtr(p->arrayIndex)->x);
+					ImGui::DragFloat3("", &GetCVarArray<oom::vec3>()->GetCurrentPtr(p->arrayIndex)->x);
 				}
 				else
 				{
-					ImGui::InputFloat3("", &GetCVarArray<glm::vec3>()->GetCurrentPtr(p->arrayIndex)->x);
+					ImGui::InputFloat3("", &GetCVarArray<oom::vec3>()->GetCurrentPtr(p->arrayIndex)->x);
 				}
 				ImGui::PopID();
 			}

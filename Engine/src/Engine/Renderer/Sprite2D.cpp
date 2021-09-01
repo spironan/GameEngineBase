@@ -24,7 +24,7 @@ namespace engine
         using namespace rttr;
         registration::class_<Sprite2D>("Sprite2D")
         .property("Texture", &Sprite2D::GetTexture, select_overload<void(ooRendererID)>(&Sprite2D::SetTexture))
-        .property("Colour", &Sprite2D::GetColor, select_overload<void(glm::vec4)>(&Sprite2D::SetColor));
+        .property("Colour", &Sprite2D::GetColor, select_overload<void(oom::vec4)>(&Sprite2D::SetColor));
     }
 
 

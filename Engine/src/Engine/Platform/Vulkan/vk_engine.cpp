@@ -12,7 +12,8 @@
 #include <sdl2/SDL.h>
 #include <sdl2/SDL_vulkan.h>
 
-#include <glm/gtx/transform.hpp>
+//#include <glm/gtx/transform.hpp>
+#include <oom/oom.hpp>
 
 #include "Engine/Platform/Vulkan/vk_initializers.h"
 #include "Engine/Platform/Vulkan/vk_textures.h"
@@ -290,7 +291,7 @@ void VulkanEngine::init_scene()
 	RenderObject monkey{};
 	monkey.mesh = get_mesh("monkey");
 	monkey.material = get_material("defaultmesh");
-	monkey.transformMatrix = glm::mat4{ 1.0f };
+	monkey.transformMatrix = oom::mat4{ 1.0f };
 
 	_renderables.push_back(monkey);
 
@@ -301,8 +302,8 @@ void VulkanEngine::init_scene()
 			RenderObject tri{};
 			tri.mesh = get_mesh("triangle");
 			tri.material = get_material("defaultmesh");
-			glm::mat4 translation = glm::translate(glm::mat4{ 1.0f }, glm::vec3{x, 0, y});
-			glm::mat4 scale = glm::scale(glm::mat4{ 1.0f }, glm::vec3{ 0.2,0.2,0.2 });
+			oom::mat4 translation = oom::translate(oom::mat4{ 1.0f }, oom::vec3{x, 0, y});
+			oom::mat4 scale = oom::scale(oom::mat4{ 1.0f }, oom::vec3{ 0.2,0.2,0.2 });
 			tri.transformMatrix = translation * scale;
 
 			_renderables.push_back(tri);
@@ -1165,11 +1166,11 @@ void VulkanEngine::draw_objects(VkCommandBuffer cmd, RenderObject *first, int co
 
 	//// make a model view matrix for rendering the object
 	////camera view
-	//glm::vec3 camPos = { 0.0f,-6.0f,-10.0f };
+	//oom::vec3 camPos = { 0.0f,-6.0f,-10.0f };
 
-	//glm::mat4 view = glm::translate(glm::mat4{ 1.0f }, camPos);
+	//oom::mat4 view = oom::translate(oom::mat4{ 1.0f }, camPos);
 	////camera projection
-	//glm::mat4 projection = glm::perspective(glm::radians(70.0f), static_cast<float>(_windowExtent.width / _windowExtent.height), 0.1f, 200.0f);
+	//oom::mat4 projection = oom::perspective(oom::radians(70.0f), static_cast<float>(_windowExtent.width / _windowExtent.height), 0.1f, 200.0f);
 	//projection[1][1] *= -1.0f; // can consider flipping viewport instead of this
 
 	////fill a GPU camera struct
@@ -1360,7 +1361,7 @@ void VulkanEngine::RenderFrame()
 	VkClearValue clearValue{};
 	float flash = abs(sin(_frameNumber / 240.0f));
 	//colour 48, 10, 36
-	glm::vec3 ubuntu={ 48.0f,10.0f,36.0f };
+	oom::vec3 ubuntu={ 48.0f,10.0f,36.0f };
 	ubuntu *= flash / 255.0f;
 	clearValue.color = { ubuntu.r,ubuntu.g,ubuntu.b, 1.0f };
 

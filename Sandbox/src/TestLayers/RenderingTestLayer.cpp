@@ -4,7 +4,7 @@
 #include "ImGuizmo.h"
 
 
-glm::mat4 matrix{ 1.0f };
+oom::mat4 matrix{ 1.0f };
 
 ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
 
@@ -61,13 +61,13 @@ void RenderingTestLayer::OnImGuiRender()
         ImGuizmo::SetRect(vMin.x, vMin.y, ar*myH, myH);
         ImGuizmo::BeginFrame(); 
 
-        glm::vec3 mScale = transform.GetGlobalScale();
-        glm::vec3 mPosition = transform.GetGlobalPosition();
-        glm::vec3 mRot{0,0,(transform.GetGlobalRotationRad())};
+        oom::vec3 mScale = transform.GetGlobalScale();
+        oom::vec3 mPosition = transform.GetGlobalPosition();
+        oom::vec3 mRot{0,0,(transform.GetGlobalRotationRad())};
         
 
         // Set the object TRS
-        ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(mPosition), glm::value_ptr(mRot), glm::value_ptr(mScale), glm::value_ptr(matrix));
+        ImGuizmo::RecomposeMatrixFromComponents(oom::value_ptr(mPosition), oom::value_ptr(mRot), oom::value_ptr(mScale), oom::value_ptr(matrix));
 
         // Do your picking here. Then recompose matrix to update
         if (engine::Input::IsKeyPressed(engine::KeyCode::Q))
@@ -94,22 +94,22 @@ void RenderingTestLayer::OnImGuiRender()
         // supposed to call here but i am editing the interals to support docking
         //ImGuizmo::SetRect(vMin.x, vMin.y, myW, myH);
         ImGuizmo::SetDrawlist();
-        if (ImGuizmo::Manipulate(glm::value_ptr(view),
-                                 glm::value_ptr(projection),
+        if (ImGuizmo::Manipulate(oom::value_ptr(view),
+                                 oom::value_ptr(projection),
                                  operation,
                                  mCurrentGizmoMode,
-                                 glm::value_ptr(matrix),
+                                 oom::value_ptr(matrix),
                                  NULL,
                                  NULL))
         {
              // Return the matrix to its components so that we can update values
-            ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(matrix),
-                                                  glm::value_ptr(mPosition),
-                                                  glm::value_ptr(mRot),
-                                                  glm::value_ptr(mScale));
+            ImGuizmo::DecomposeMatrixToComponents(oom::value_ptr(matrix),
+                                                  oom::value_ptr(mPosition),
+                                                  oom::value_ptr(mRot),
+                                                  oom::value_ptr(mScale));
             transform.SetPosition(mPosition);
             transform.SetScale(mScale);
-            transform.SetRotationAngle(glm::degrees(mRot.z));
+            transform.SetRotationAngle(oom::degrees(mRot.z));
         }
 
        

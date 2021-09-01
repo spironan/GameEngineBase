@@ -30,14 +30,14 @@ Technology is prohibited.
 
 namespace engine
 {
-	void Renderer2DSystem::SetCamera(const Camera& cam, const glm::vec3& position)
+	void Renderer2DSystem::SetCamera(const Camera& cam, const oom::vec3& position)
 	{
 		m_cam = &cam;
 
 		m_projection = m_cam->GetProjection();
 		//auto transform = WorldManager::GetActiveWorld().GetComponent<Transform3D>(cam.GetEntity());
 
-		//glm::vec3 pos = m_transform->GetGlobalPosition();
+		//oom::vec3 pos = m_transform->GetGlobalPosition();
 		m_view = {
 			1.0f,	0.0f,	0.0f,	0.0f,
 			0.0f,	1.0f,	0.0f,	0.0f,
@@ -45,8 +45,8 @@ namespace engine
 			-position.x, -position.y,	-position.z,	1.0f
 		};
 
-		//m_view = glm::inverse(glm::translate(glm::mat4{ 1.0f },m_transform->GetGlobalPosition()) * m_transform->GetGlobalRotationMatrix());
-		//m_view = glm::inverse(m_transform->GetGlobalMatrix());
+		//m_view = oom::inverse(oom::translate(oom::mat4{ 1.0f },m_transform->GetGlobalPosition()) * m_transform->GetGlobalRotationMatrix());
+		//m_view = oom::inverse(m_transform->GetGlobalMatrix());
 		m_viewProj = m_projection * m_view;
 	}
 

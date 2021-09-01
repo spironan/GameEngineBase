@@ -101,19 +101,19 @@ void DebugCamera::update_camera(float deltaSeconds)
 	{
 		inputAxis = {};
 	}
-	inputAxis = glm::clamp(inputAxis, { -1.0,-1.0,-1.0 }, { 1.0,1.0,1.0 });
+	inputAxis = oom::clamp(inputAxis, { -1.0,-1.0,-1.0 }, { 1.0,1.0,1.0 });
 	
 	const float cam_vel = static_cast<float>(0.001f + !b_slowDown * 0.01f);
-	glm::vec3 forward = { 0,0, -cam_vel };
-	glm::vec3 right = { cam_vel,0,0 };
+	oom::vec3 forward = { 0,0, -cam_vel };
+	oom::vec3 right = { cam_vel,0,0 };
 
-	glm::vec3 up;
+	oom::vec3 up;
 	up = { 0,cam_vel,0 };
 
-	glm::mat4 cam_rot = get_rotation_matrix();
+	oom::mat4 cam_rot = get_rotation_matrix();
 
-	forward = cam_rot * glm::vec4(forward, 0.f);
-	right = cam_rot * glm::vec4(right, 0.f);
+	forward = cam_rot * oom::vec4(forward, 0.f);
+	right = cam_rot * oom::vec4(right, 0.f);
 
 	velocity = inputAxis.x * forward + inputAxis.y * right + inputAxis.z * up;
 
@@ -189,50 +189,50 @@ void DebugCamera::move_backwards(bool invert)
 	move_fowards(!invert);
 }
 
-glm::mat4 DebugCamera::get_view_matrix()const
+oom::mat4 DebugCamera::get_view_matrix()const
 {
-	glm::vec3 camPos = CVAR_CamPos.Get();
+	oom::vec3 camPos = CVAR_CamPos.Get();
 
-	glm::mat4 cam_rot = (get_rotation_matrix());
+	oom::mat4 cam_rot = (get_rotation_matrix());
 
-	glm::mat4 view = glm::translate(glm::mat4{ 1 }, camPos) * cam_rot;
+	oom::mat4 view = oom::translate(oom::mat4{ 1 }, camPos) * cam_rot;
 
 	//we need to invert the camera matrix
-	view = glm::inverse(view);
+	view = oom::inverse(view).value();
 
 	return view;
 }
 
-glm::mat4 DebugCamera::get_projection_matrix()const
+oom::mat4 DebugCamera::get_projection_matrix()const
 {
 	if (CVAR_ortho.Get())
 	{
 		float ar = static_cast<float>(_windowExtent.width)/ static_cast<float>(_windowExtent.height);	
 		float height = CVAR_orthoHeight.GetFloat();
-		glm::mat4 pro = glm::ortho(-ar*height, ar*height, -height, height,CVAR_Depth.Get().x, CVAR_Depth.Get().y);
+		oom::mat4 pro = oom::ortho(-ar*height, ar*height, -height, height,CVAR_Depth.Get().x, CVAR_Depth.Get().y);
 			//pro[1][1] *= -1;
 			return pro;
 	}
 	else
 	{
-		glm::mat4 pro = glm::perspective(glm::radians(CVAR_fov.Get().x), static_cast<float>(_windowExtent.width) / _windowExtent.height, CVAR_fov.Get().y, CVAR_fov.Get().z);
+		oom::mat4 pro = oom::perspective(oom::radians(CVAR_fov.Get().x), static_cast<float>(_windowExtent.width) / _windowExtent.height, CVAR_fov.Get().y, CVAR_fov.Get().z);
 		//pro[1][1] *= -1;
 		return pro;
 	}
 }
 
-glm::mat4 DebugCamera::get_rotation_matrix()const
+oom::mat4 DebugCamera::get_rotation_matrix()const
 {
-	glm::mat4 pitch_rot;
+	oom::mat4 pitch_rot;
 	if (b_Ortho)
 	{
-		glm::mat4 yaw_rot = glm::rotate(glm::mat4{ 1 }, 0.f, { 0,-1,0 });
-		pitch_rot = glm::rotate(glm::mat4{ yaw_rot }, 0.f, { -1,0,0 });
+		oom::mat4 yaw_rot = oom::rotate(oom::mat4{ 1 }, 0.f, { 0,-1,0 });
+		pitch_rot = oom::rotate(oom::mat4{ yaw_rot }, 0.f, { -1,0,0 });
 	}
 	else
 	{
-		glm::mat4 yaw_rot = glm::rotate(glm::mat4{ 1 }, yaw, { 0,-1,0 });
-		pitch_rot = glm::rotate(glm::mat4{ yaw_rot }, pitch, { -1,0,0 });
+		oom::mat4 yaw_rot = oom::rotate(oom::mat4{ 1 }, yaw, { 0,-1,0 });
+		pitch_rot = oom::rotate(oom::mat4{ yaw_rot }, pitch, { -1,0,0 });
 	}
 	
 

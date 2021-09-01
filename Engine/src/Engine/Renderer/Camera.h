@@ -13,8 +13,9 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+#include <oom/oom.hpp>
 
 #include "Engine/ECS/Component.h"
 
@@ -37,18 +38,18 @@ namespace engine
 		/*-----------------------------------------------------------------------------*/
 		/* Getter Functions                                                            */
 		/*-----------------------------------------------------------------------------*/
-		const glm::mat4& GetProjection() const { return m_projection; }
+		const oom::mat4& GetProjection() const { return m_projection; }
 
 		/*-----------------------------------------------------------------------------*/
 		/* Setter Functions                                                            */
 		/*-----------------------------------------------------------------------------*/
-		void SetProjectionMatrix(const glm::mat4& projectionMatrix) { m_projection = projectionMatrix; }
+		void SetProjectionMatrix(const oom::mat4& projectionMatrix) { m_projection = projectionMatrix; }
 
-		glm::mat4 CalculateViewMatrix(const glm::mat4& position) { return glm::inverse(position); }
+		oom::mat4 CalculateViewMatrix(const oom::mat4& position) { return oom::inverse(position).value(); }
 
 		RTTR_ENABLE();
 
 	protected:
-		glm::mat4 m_projection = glm::mat4{ 1.0f };
+		oom::mat4 m_projection = oom::mat4{ 1.0f };
 	};
 }// end namespace engine

@@ -18,9 +18,11 @@ Technology is prohibited.
 
 #include <limits>
 
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
+#include <oom/oom.hpp>
 
 #include <rttr/type>
+
 
 namespace engine
 {
@@ -71,7 +73,7 @@ namespace engine
          
         \return   Colour
         *//**********************************************************************************/
-        glm::vec4 GetColor() { return m_color; }
+        oom::vec4 GetColor() { return m_color; }
 
         /*-----------------------------------------------------------------------------*/
         /* Setter Functions                                                            */
@@ -96,7 +98,7 @@ namespace engine
          
         \param    col tint to set
         *//**********************************************************************************/
-        void SetColor(glm::vec4 col) { m_color = col; }
+        void SetColor(oom::vec4 col) { m_color = col; }
 
         /*********************************************************************************//*!
         \brief    Sets the colour tint to the RGBA value
@@ -121,7 +123,7 @@ namespace engine
 
         uint32_t m_texture{ std::numeric_limits<uint32_t>::max() };
 
-        glm::vec4 m_color{1.0f,1.0f,1.0f,1.0f};
+        oom::vec4 m_color{1.0f,1.0f,1.0f,1.0f};
 
     };
 

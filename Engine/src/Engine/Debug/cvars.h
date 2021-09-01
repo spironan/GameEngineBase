@@ -2,8 +2,8 @@
 
 #include <cstdint> //uint32_t
 #include "Utility/Hash.h"
-#include <../vendor/glm/glm/glm.hpp>
-
+//#include <../vendor/glm/glm/glm.hpp>
+#include <oom/oom.hpp>
 //forward declaration
 class CVarParameter;
 
@@ -30,18 +30,18 @@ public:
 	virtual double *GetFloatCVar(engine::utility::StringHash hash) = 0;
 	virtual int32_t *GetIntCVar(engine::utility::StringHash hash) = 0;
 	virtual const char *GetStringCVar(engine::utility::StringHash hash) = 0;
-	virtual glm::vec3* GetVec3CVar(engine::utility::StringHash hash) = 0;
+	virtual oom::vec3* GetVec3CVar(engine::utility::StringHash hash) = 0;
 
 	virtual void SetFloatCVar(engine::utility::StringHash hash, double value) = 0; 
 	virtual void SetIntCVar(engine::utility::StringHash hash, int32_t value) = 0;
 	virtual void SetStringCVar(engine::utility::StringHash hash, const char *value) = 0;
-	virtual void SetVec3CVar(engine::utility::StringHash hash, glm::vec3 value) = 0;
+	virtual void SetVec3CVar(engine::utility::StringHash hash, oom::vec3 value) = 0;
 
 	// cvar creation
 	virtual CVarParameter *CreateFloatCVar(const char *name, const char *description, double defaultValue, double currentValue) = 0;
 	virtual CVarParameter *CreateIntCVar(const char *name, const char *description, int32_t defaultValue, int32_t currentValue) = 0;
 	virtual CVarParameter *CreateStringCVar(const char *name, const char *description, const char *defaultValue, const char *currentValue) = 0;
-	virtual CVarParameter *CreateVec3CVar(const char *name, const char *description, glm::vec3 defaultValue, glm::vec3 currentValue) = 0;
+	virtual CVarParameter *CreateVec3CVar(const char *name, const char *description, oom::vec3 defaultValue, oom::vec3 currentValue) = 0;
 
 	virtual void DrawImguiEditor() = 0;
 };
@@ -80,9 +80,9 @@ struct AutoCVar_String : AutoCVar<std::string>
 	void Set(std::string&& val);
 };
 
-struct AutoCVar_Vec3 : AutoCVar<glm::vec3>
+struct AutoCVar_Vec3 : AutoCVar<oom::vec3>
 {
-	AutoCVar_Vec3(const char* name, const char* description, glm::vec3 defaultValue, CVarFlags flags = CVarFlags::None);
-	glm::vec3 Get()const;
-	void Set(glm::vec3&& val);
+	AutoCVar_Vec3(const char* name, const char* description, oom::vec3 defaultValue, CVarFlags flags = CVarFlags::None);
+	oom::vec3 Get()const;
+	void Set(oom::vec3&& val);
 };

@@ -38,7 +38,7 @@ public:
 	/*-----------------------------------------------------------------------------*/
 	ProjectionType GetProjectionType() const { return m_ProjectionType; }
 	
-	float GetPerspectiveVerticalFOV() const { return glm::degrees(m_PerspectiveFOV); }
+	float GetPerspectiveVerticalFOV() const { return oom::degrees(m_PerspectiveFOV); }
 	float GetPerspectiveNearClip() const	{ return m_PerspectiveNear; }
 	float GetPerspectiveFarClip() const		{ return m_PerspectiveFar; }
 	float GetOrthographicSize() const		{ return m_OrthographicSize; }
@@ -53,7 +53,7 @@ public:
 
 	void SetProjectionType(ProjectionType type)			{ m_ProjectionType = type; }
 	
-	void SetPerspectiveVerticalFOV(float verticalFov)	{ m_PerspectiveFOV = glm::radians(verticalFov); }
+	void SetPerspectiveVerticalFOV(float verticalFov)	{ m_PerspectiveFOV = oom::radians(verticalFov); }
 	void SetPerspectiveNearClip(float nearClip)			{ m_PerspectiveNear = nearClip; }
 	void SetPerspectiveFarClip(float farClip)			{ m_PerspectiveFar = farClip; }
 	void SetOrthographicSize(float size)				{ m_OrthographicSize = size; }
@@ -78,7 +78,7 @@ public:
 private:
 	ProjectionType m_ProjectionType = ProjectionType::Orthographic;
 
-	float m_PerspectiveFOV = glm::radians(45.0f);
+	float m_PerspectiveFOV = oom::radians(45.0f);
 	float m_PerspectiveNear = 0.1f, m_PerspectiveFar = 1000.0f;
 
 	float m_OrthographicSize = 500.0f;

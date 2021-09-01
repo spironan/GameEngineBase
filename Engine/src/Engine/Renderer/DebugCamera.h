@@ -17,8 +17,8 @@ struct DebugCamera
 	AutoCVar_Float CVAR_orthoHeight{ "camera.orthoZoom", "orthographic Height",15.0f, CVarFlags::EditFloatDrag };
 	AutoCVar_Int CVAR_ortho{ "camera.ToggleOrtho", "ortho toggling", 0, CVarFlags::EditCheckbox };
 
-	glm::vec3 velocity{};
-	glm::vec3 inputAxis{};
+	oom::vec3 velocity{};
+	oom::vec3 inputAxis{};
 	float m_cameraSpeed{ 1000.0f };
 
 	//void moveCamera();
@@ -52,8 +52,8 @@ struct DebugCamera
 
 	void update_mouse_relative(int32_t xRel, int32_t yRel);
 
-	glm::mat4 get_view_matrix()const;
-	glm::mat4 get_projection_matrix()const;
-	glm::mat4 get_rotation_matrix()const;
+	oom::mat4 get_view_matrix()const;
+	oom::mat4 get_projection_matrix()const;
+	oom::mat4 get_rotation_matrix()const;
 };
 

@@ -50,16 +50,19 @@ void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
 
 void SceneCamera::UpdateViewportSize(uint32_t width, uint32_t height)
 {
+	float ar = static_cast<float>(width) / height;
+
 	switch (m_ProjectionType)
 	{
 		case ProjectionType::Perspective:
-			m_projection = glm::perspectiveFovLH_ZO(m_PerspectiveFOV, (float)width, (float)height, m_PerspectiveNear, m_PerspectiveFar);
+			m_projection = /*oom::perspectiveFovLH_ZO*/oom::perspective(ar, m_PerspectiveFOV, m_PerspectiveNear, m_PerspectiveFar);
 			break;
 		case ProjectionType::Orthographic:
 			float aspectRatio = (float)width / (float)height;
 			float w = m_OrthographicSize * aspectRatio;
 			float h = m_OrthographicSize;
-			m_projection = glm::ortho(-w * 0.5f, w * 0.5f, -h * 0.5f, h * 0.5f);
+			//m_projection = oom::ortho(-w * 0.5f, w * 0.5f, -h * 0.5f, h * 0.5f);
+			m_projection = oom::ortho(aspectRatio, w * 0.5f, -1, 1);
 			break;
 	}
 }
