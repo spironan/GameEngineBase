@@ -12,9 +12,15 @@ without the prior written consent of DigiPen Institute of
 Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
+
+#include <memory>
+#include "Engine/Core/Assert.h"
+
+
 namespace engine
 {
 	using ooRendererID = uint32_t;
+
 
 	enum class AssetType : uint16_t
 	{
@@ -23,14 +29,32 @@ namespace engine
 		RenderTarget = 2,
 	};
 
-	/**
-	 * Data structure for handling Texture assets.
-	*/
-	struct Texture //: public Asset
+	namespace utility
 	{
-		ooRendererID id{};
-		int32_t width{}, height{};
-		int32_t bitDepth{};
-		std::string name{};
-	};
+
+		inline AssetType AssetTypeFromString(const std::string& assetType)
+		{
+			if (assetType == "None")        return AssetType::None;
+			if (assetType == "Texture")     return AssetType::Texture;
+			if (assetType == "RenderTarget")    return AssetType::RenderTarget;
+
+			ENGINE_ASSERT_MSG(false, "Unknown Asset Type");
+			return AssetType::None;
+		}
+
+		inline const char* AssetTypeToString(AssetType assetType)
+		{
+			switch (assetType)
+			{
+				case AssetType::None:        return "None";
+				case AssetType::Texture:     return "Texture";
+				case AssetType::RenderTarget:return "RenderTarget";
+			}
+
+			ENGINE_ASSERT_MSG(false, "Unknown Asset Type");
+			return "None";
+		}
+
+	}
+	
 }

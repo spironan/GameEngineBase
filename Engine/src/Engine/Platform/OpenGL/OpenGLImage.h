@@ -41,7 +41,7 @@ namespace engine
 
 		void CreateSampler(TextureProperties properties);
 
-		virtual ooRendererID GetID() const override { return (ooRendererID)m_RendererID; }
+		virtual ooRendererID& GetID() const override { return (ooRendererID)m_RendererID; }
 	private:
 		ImageSpecification m_Specification;
 		uint32_t m_Width, m_Height;

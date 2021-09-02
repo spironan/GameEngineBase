@@ -18,9 +18,10 @@ Technology is prohibited.
 
 namespace engine
 {
-	std::unordered_map<int32_t, Texture> TextureDatabase::m_nameToTexture;
-	std::unordered_map<ooRendererID, std::string> TextureDatabase::m_idToName; 
-	
+	//std::unordered_map<int32_t, Texture> TextureDatabase::m_nameToTexture;
+	//std::unordered_map<ooRendererID, std::string> TextureDatabase::m_idToName; 
+
+	std::unordered_map< utility::StringHash,std::shared_ptr<Asset> > AssetManager::m_loadedAssets;
 
 	//void AssetsManager::SubscribeToTexture(void* objectpointer, std::function<void(ooTexID)> updateFunction, ooTexKey texKey)
 	//{
@@ -63,6 +64,64 @@ namespace engine
 	//	//process other info
 	//	to.name = std::filesystem::path(str).stem().u8string();
 
+
+	AssetHandle AssetManager::ImportAsset(const std::filesystem::path& filepath)
+	{
+		//std::filesystem::path path = std::filesystem::relative(filepath, Project::GetAssetDirectory());
+
+		if(s_AssetRegistry.Contains(filepath))
+			return s_AssetRegistry[filepath].Handle;
+
+		AssetType type = GetAssetTypeFromPath(filepath);
+		if (type == AssetType::None)
+			return 0;
+
+		return AssetHandle();
+	}
+
+	AssetHandle AssetManager::ImportAsset(const std::string& filepath)
+	{
+		auto hPath = utility::StringHash(filepath);
+		if (m_loadedAssets.find(hPath) != m_loadedAssets.end())
+		{
+			return hPath;
+		}
+
+		AssetType type = GetAssetTypeFromPath(filepath);
+		if (type == AssetType::None)
+		{
+			return 0;
+		}
+
+		AssetMetadata metadata;
+		metadata.Handle = utility::StringHash(filepath);
+		metadata.FilePath = filepath;
+		metadata.Type = type;
+		//s_AssetRegistry[metadata.FilePath] = metadata;
+
+		return metadata.Handle;
+	}
+
+
+
+	AssetType AssetManager::GetAssetTypeFromPath(const std::filesystem::path& path)
+	{
+		return GetAssetTypeFromExtension(path.extension().string());
+	}
+
+	AssetType AssetManager::GetAssetTypeFromExtension(const std::string& extension)
+	{
+		std::string str = extension;
+		std::transform(str.begin(), str.end(), str.begin(),
+					   [](unsigned char c) { return std::tolower(c); });
+		if (s_assetExtensionMap.find(str) == s_assetExtensionMap.end())
+		{
+			return AssetType::None;
+		}
+
+		return s_assetExtensionMap.at(str);
+
+	}
 
 	//	s_textures.emplace(key,to);
 	//	return key;
