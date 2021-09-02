@@ -9,14 +9,14 @@
 
 namespace engine
 {
-    Manifold2D PhysicsCollision::Test2DCollision(CircleCollider2D const& circle, CircleCollider2D const& circle2)
+    Manifold2D PhysicsCollision::GenerateManifold2D(CircleCollider2D const& circle, CircleCollider2D const& circle2)
     {
         Manifold2D result {};
 
         auto circleA = circle.GetGlobalBounds();
         auto circleB = circle2.GetGlobalBounds();
 
-        if (!Collision::Test2DCircleCircle(circleA, circleB)) return result;
+        //if (!Collision::Test2DCircleCircle(circleA, circleB)) return result;
 
         vec2 dirVec = circleB.center - circleA.center;
         // find distance
@@ -48,17 +48,17 @@ namespace engine
 
     }
 
-    Manifold2D PhysicsCollision::Test2DCollision(CircleCollider2D const& circle, BoxCollider2D const& aabb)
+    Manifold2D PhysicsCollision::GenerateManifold2D(CircleCollider2D const& circle, BoxCollider2D const& aabb)
     {
         return Manifold2D{};
     }
 
-    Manifold2D PhysicsCollision::Test2DCollision(BoxCollider2D const& aabb, CircleCollider2D const& circle)
+    Manifold2D PhysicsCollision::GenerateManifold2D(BoxCollider2D const& aabb, CircleCollider2D const& circle)
     {
         return Manifold2D{};
     }
 
-    Manifold2D PhysicsCollision::Test2DCollision(BoxCollider2D const& aabb, BoxCollider2D const& aabb2)
+    Manifold2D PhysicsCollision::GenerateManifold2D(BoxCollider2D const& aabb, BoxCollider2D const& aabb2)
     {
         return Manifold2D{};
     }

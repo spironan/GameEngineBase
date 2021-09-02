@@ -30,7 +30,8 @@ Technology is prohibited.
 #include "Algorithms/PhysicsCollision.h"
 #include "Colliders.h"
 #include "ColliderCore.h"
-#include "CollisionMap.h"
+//#include "CollisionMap.h"
+#include "PhysicsUtils.h"
 
 namespace engine
 {
@@ -123,11 +124,12 @@ namespace engine
         {
             for (auto& [rigidbodyB, colliderB]: view)
             {
+                // skip same entity and everything onwards
                 if (colliderA.GetEntity() == colliderB.GetEntity()) break;
-
-                if (colliderA.IsTrigger || colliderB.IsTrigger)
+                
+                if (PhysicsUtils::TestCollision2D(colliderA, colliderB))
                 {
-                    if (CollisionMap::TestCollision2D(colliderA, colliderB))
+                    if (colliderA.IsTrigger || colliderB.IsTrigger)
                     {
                         if (colliderA.IsTrigger)
                         {
@@ -140,15 +142,9 @@ namespace engine
                             colliderB.m_current = true;
                         }
                     }
-                }
-                else
-                {
-                    Manifold2D result = CollisionMap::TestPhysicsCollision2D(colliderA, colliderB);
-
-                    //LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
-
-                    if (result.HasCollision)
+                    else
                     {
+                        Manifold2D result = PhysicsUtils::GenerateManifold2D(colliderA, colliderB);
                         result.ObjA = &rigidbodyA;
                         result.ObjB = &rigidbodyB;
                         m_collisions.emplace_back(result);
@@ -159,6 +155,41 @@ namespace engine
                         colliderA.m_current = colliderB.m_current = true;
                     }
                 }
+
+                //if (colliderA.IsTrigger || colliderB.IsTrigger)
+                //{
+                //    if (PhysicsUtils::TestCollision2D(colliderA, colliderB, false).HasCollision)
+                //    {
+                //        if (colliderA.IsTrigger)
+                //        {
+                //            colliderA.m_triggers.push_back(colliderB);
+                //            colliderA.m_current = true;
+                //        }
+                //        if (colliderB.IsTrigger)
+                //        {
+                //            colliderB.m_triggers.push_back(colliderA);
+                //            colliderB.m_current = true;
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    Manifold2D result = PhysicsUtils::TestCollision2D(colliderA, colliderB, true);
+
+                //    //LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
+
+                //    if (result.HasCollision)
+                //    {
+                //        result.ObjA = &rigidbodyA;
+                //        result.ObjB = &rigidbodyB;
+                //        m_collisions.emplace_back(result);
+
+                //        colliderA.m_collisions.push_back(result);
+                //        colliderB.m_collisions.push_back(result);
+
+                //        colliderA.m_current = colliderB.m_current = true;
+                //    }
+                //}
                 
             }
         }
@@ -295,7 +326,7 @@ namespace engine
 
     //        std::visit(TestCollision, colliderA.collider);*/
 
-    //        Manifold2D result = CollisionMap::TestCollision2D(colliderA, colliderB);//collider.TestCollision(&collider2);
+    //        Manifold2D result = PhysicsUtils::TestCollision2D(colliderA, colliderB);//collider.TestCollision(&collider2);
 
     //        LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
 

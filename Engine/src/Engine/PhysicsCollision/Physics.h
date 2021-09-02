@@ -16,7 +16,8 @@ Technology is prohibited.
 #include "ColliderCore.h"
 #include "Colliders.h"
 
-#include "CollisionMap.h"
+//#include "CollisionMap.h"
+#include "PhysicsUtils.h"
 
 #include "Rigidbody.h"
 #include "PhysicsSystem.h"

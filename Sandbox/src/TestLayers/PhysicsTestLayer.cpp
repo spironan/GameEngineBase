@@ -41,28 +41,47 @@ void PhysicsTestLayer::Init()
         m_second = CreateGameObject();
         m_second.Transform().Scale() = { 50.f, 50.f, 1.0f };
         m_second.AddComponent<engine::Sprite2D>().SetTexture(tex);
-        //m_second.AddComponent<engine::BoxCollider2D>();
         auto& c = m_second.AddComponent<engine::Collider2D>();
+        //c.IsTrigger = true;
         m_second.AddComponent<engine::CircleCollider2D>();
+        //c.SetNarrowPhaseCollider(engine::ColliderType::BOX);
+        //m_second.AddComponent<engine::BoxCollider2D>();
         c.OnTriggerEnter +=
-            [=](auto const& manifolds) 
-            { 
-                m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 0, 1 });
-                LOG_TRACE("ENTER");
-            };
+        [=](auto const& manifolds) 
+        { 
+            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 0, 1 });
+            LOG_TRACE("ON TRIGGER ENTER");
+        };
         c.OnTriggerStay +=
-            [=](auto const& manifolds)
-            {
-                m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 0, 1 });
-                LOG_TRACE("STAY");
-            };
+        [=](auto const& manifolds)
+        {
+            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 0, 1 });
+            LOG_TRACE("ON TRIGGER STAY");
+        };
         c.OnTriggerExit +=
+        [=](auto const& manifolds)
+        {
+            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 0, 1, 1 });
+            LOG_TRACE("ON TRIGGER EXIT");
+        };
+        c.OnCollisionEnter +=
             [=](auto const& manifolds)
-            {
-                m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 0, 1, 1 });
-                LOG_TRACE("EXIT");
-            };
-        c.IsTrigger = true;
+        {
+            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 1, 0, 1 });
+            LOG_TRACE("ON COLLISION ENTER");
+        };
+        c.OnCollisionStay +=
+            [=](auto const& manifolds)
+        {
+            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 1, 1 });
+            LOG_TRACE("ON COLLISION STAY");
+        };
+        c.OnCollisionExit +=
+            [=](auto const& manifolds)
+        {
+            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 1, 1 });
+            LOG_TRACE("ON COLLISION EXIT");
+        };
 
         auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
         
@@ -76,10 +95,47 @@ void PhysicsTestLayer::Init()
         m_third.Transform().Position() = { 100.f, 0.f, 0.f };
         m_third.Transform().Scale() = { 50.f, 50.f, 1.0f };
         m_third.AddComponent<engine::Sprite2D>().SetTexture(tex);
-        //m_third.AddComponent<engine::BoxCollider2D>();
         auto& c = m_third.AddComponent<engine::Collider2D>();
-        c.IsTrigger = true;
+        //c.IsTrigger = true;
+        c.OnTriggerEnter +=
+            [=](auto const& manifolds)
+        {
+            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 0, 1 });
+            LOG_TRACE("ON TRIGGER ENTER");
+        };
+        c.OnTriggerStay +=
+            [=](auto const& manifolds)
+        {
+            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 0, 1 });
+            LOG_TRACE("ON TRIGGER STAY");
+        };
+        c.OnTriggerExit +=
+            [=](auto const& manifolds)
+        {
+            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 0, 1, 1 });
+            LOG_TRACE("ON TRIGGER EXIT");
+        };
+        c.OnCollisionEnter +=
+            [=](auto const& manifolds)
+        {
+            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 1, 0, 1 });
+            LOG_TRACE("ON COLLISION ENTER");
+        };
+        c.OnCollisionStay +=
+            [=](auto const& manifolds)
+        {
+            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 1, 1 });
+            LOG_TRACE("ON COLLISION STAY");
+        };
+        c.OnCollisionExit +=
+            [=](auto const& manifolds)
+        {
+            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 1, 1 });
+            LOG_TRACE("ON COLLISION EXIT");
+        };
         m_third.AddComponent<engine::CircleCollider2D>();
+        //c.SetNarrowPhaseCollider(engine::ColliderType::BOX);
+        //m_third.AddComponent<engine::BoxCollider2D>();
         auto& pc = m_third.AddComponent<engine::Rigidbody2D>();
         pc.SetMass(1.f);
         pc.GravityScale = 0.0f;

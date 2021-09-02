@@ -31,8 +31,8 @@ namespace engine
         void Update();
 
     public:
-        bool IsTrigger = false;
-        vec2 Offset = { 0, 0 };
+        bool IsTrigger = false; // for now the entire object is either a trigger or collider
+        /*vec2 Offset = { 0, 0 };*/
 
         /*-----------------------------------------------------------------------------*/
         /* Constructors and Destructors                                                */
@@ -73,9 +73,6 @@ namespace engine
         {
             return CollisionMap::TestCollision(*this, other);
         }*/
-
-        glm::vec2 WorldScale() const;
-        glm::vec2 WorldPosition() const;
 
         // second attempt : using std::variant for collision
         //std::variant<BoxCollider2D, CircleCollider2D> collider;

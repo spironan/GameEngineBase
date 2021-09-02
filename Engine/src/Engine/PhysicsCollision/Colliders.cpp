@@ -6,25 +6,24 @@
 
 namespace engine
 {
-    /*ColliderBase2D::ColliderBase2D(Transform3D const& transform)
-        : Transform{ transform }
-        , IsTrigger{ false }
+    ColliderBase2D::ColliderBase2D(Entity entity, bool active)
+        : Component{ entity, active }
+        /*, IsTrigger{ false }*/
         , Offset{ 0.f, 0.f }
     {}
 
     glm::vec2 ColliderBase2D::WorldPosition() const
     {
-        return Transform.GetGlobalPosition();
+        return GetComponent<Transform3D>().GetGlobalPosition();
     }
 
     glm::vec2 ColliderBase2D::WorldScale() const
     {
-        return Transform.GetGlobalScale();
-    }*/
+        return GetComponent<Transform3D>().GetGlobalScale();
+    }
 
-    BoxCollider2D::BoxCollider2D(Entity entity, bool active/*Transform3D const& transform*/)
-        //: ColliderBase2D{ transform }
-        : Component{ entity, active }
+    BoxCollider2D::BoxCollider2D(Entity entity, bool active)
+        : ColliderBase2D{ entity, active }
         , Bounds{ {-0.5f, -0.5f}, { 0.5f, 0.5f } }
         , Size{ 1.f, 1.f }
     {
@@ -32,8 +31,8 @@ namespace engine
 
     AABB2D BoxCollider2D::GetGlobalBounds() const
     {
-        auto worldPos = GetComponent<Collider2D>().WorldPosition();
-        auto worldScale = GetComponent<Collider2D>().WorldScale();
+        auto worldPos = WorldPosition();
+        auto worldScale = WorldScale();
         AABB2D result
         { worldPos + Bounds.min * worldScale * Size
         , worldPos + Bounds.max * worldScale * Size
@@ -43,19 +42,18 @@ namespace engine
     }
 
     CircleCollider2D::CircleCollider2D(Entity entity, bool active/*Transform3D const& transform*/)
-        //: ColliderBase2D{ transform }
-        : Component{ entity, active }
+        : ColliderBase2D{ entity, active }
         , Bounds{ { 0.f, 0.f }, 1.f }
         , Radius{ 0.5f }
     {};
 
     Circle CircleCollider2D::GetGlobalBounds() const
     {
-        vec2 worldScale = GetComponent<Collider2D>().WorldScale();
+        vec2 worldScale = WorldScale();
         float scalar = worldScale.x >= worldScale.y ? worldScale.x : worldScale.y;
 
         return Circle
-        { GetComponent<Collider2D>().WorldPosition() + Bounds.center * GetComponent<Collider2D>().Offset
+        { WorldPosition() + Bounds.center * Offset
         , Bounds.radius * Radius * scalar
         };
     }
