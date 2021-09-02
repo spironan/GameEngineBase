@@ -14,7 +14,9 @@ Technology is prohibited.
 #pragma once
 
 #include "UtilityLayers/SceneBaseLayer.h"
-
+using namespace engine;
+static std::vector<GameObject> gameobjects;
+static std::vector<World::DeletedObjectPtr> deletedObjects;
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components
             and Systems Functionality with ECS and Gameobjects.
@@ -31,60 +33,59 @@ public:
 
     void Init() final override
     {
-        {
-            // Creates an Entity : should not be allowed
-            engine::Entity ent{};
-            // Creates a GameObject That Generates a unique Entity ID : allowed
-            engine::GameObject go0{ engine::GameObject::Create{} };
-            // Creates a GameObject with entity : should not be allowed, soln : dont allowed entity to be constructed by any tomdickharry.
-            engine::GameObject go1{ engine::Entity{} };
-            // Creates a GameObject and copy over its data from the other gameobject : allowed
-            engine::GameObject go2{ engine::GameObject{} };
-            // Creates a GameObject and move its data from the other gameobject : allowed
-            engine::GameObject go2move{ std::move(engine::GameObject{}) };
-
-            // Create an Entity base on a gameObject : allowed
-            engine::Entity ent1{ engine::GameObject{} };
-            engine::Entity ent2{ go0 };
-
-            //Copy Assignment
-            engine::GameObject go3 = go1;
-
-            //Move Assignment
-            engine::GameObject go4 = std::move(go1);
-
-            //Copy Assignment
-            engine::GameObject go5 = engine::Entity{};
-            engine::GameObject go6 = engine::GameObject{};
-
-            engine::GameObject iAmObjectA{};
-            // Copy ASSIGNMENT should not be allowed too : dk what to do with the previous object
-            iAmObjectA = engine::GameObject{};
-            //the old ObjectA is gone and no longer have a way to retrieve it.
-
-            //Do not allow for this (although it make sense) reason is copy constructor here
-            // always assumes the thing passed in has been created already (not just a random number)
-            // So Make sure only selected classes can call 
-            // engine::WorldManager::GetActiveWorld().CreateEntity()
-            engine::GameObject{ engine::WorldManager::GetActiveWorld().CreateEntity() };
-
-            //Manually do stupid shit. like creating an entity raising it to a gameobject and destroying it.
-            //engine::GameObject{ engine::Entity{1} }.Destroy();
-
-            //objects Does not get destroyed when getting out of scope!
-            go0.Destroy();
-            go1.Destroy();
-            go2.Destroy();
-            go6.Destroy();
-        }
-
+        gameobjects.clear();
+        deletedObjects.clear();
         // Create Another GameObject
-        engine::GameObject test{ engine::GameObject::Create{} };
+        GameObject test = CreateGameObject();
+		//test.AddComponent<engine::EditorComponent>();
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+        //m_scene.SetWorldAsActive();
+        if (Input::IsKeyPressed(Key::A))
+        {
+			gameobjects.emplace_back(CreateGameObject());
+			auto result1 = gameobjects.back().HasComponent<Transform3D>();
+            int i = 0;
+        }
+		if (Input::IsKeyPressed(Key::S))
+		{
+            if (gameobjects.size() > 0)
+            {
+				gameobjects.back().Destroy();
+				gameobjects.pop_back();
+            }
+		}
+		if (Input::IsKeyPressed(Key::D))
+		{
+			if (gameobjects.size() > 0)
+			{
+                deletedObjects.emplace_back(m_scene.GetWorld().StoreAsDeleted(gameobjects.back().GetID()));
+				gameobjects.back().Destroy();
+				gameobjects.pop_back();
+			}
+		}
+		if (Input::IsKeyPressed(Key::F))
+		{
+			if (deletedObjects.size() > 0)
+			{
+                auto go = m_scene.GetWorld().RestoreFromDeleted(*deletedObjects.back());
+                deletedObjects.pop_back();
+                GameObject temp{ go };
+                gameobjects.emplace_back(temp);
+				auto result1 = temp.HasComponent<Transform3D>();
+				auto result2 = temp.HasComponent<GameObjectComponent>();
+				auto result3 = temp.HasComponent<EditorComponent>();
+                int i = 0;
+			}
+		}
     }
+
+	virtual void OnUpdateEnd(engine::Timestep dt) override
+	{
+        m_scene.GetWorld().ProcessDeletions();
+	}
 
     virtual void OnImGuiRender() override
     {
