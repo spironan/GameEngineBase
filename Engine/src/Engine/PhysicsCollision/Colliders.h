@@ -4,6 +4,8 @@
 #include "Engine/ECS/Component.h"
 #include "Engine/Transform/Transform3D.h"
 
+#include <rttr/type>
+
 namespace engine
 {
     struct ColliderBase2D : public Component
@@ -22,6 +24,7 @@ namespace engine
         ColliderBase2D& operator=(ColliderBase2D const&)    = default;
         ColliderBase2D& operator=(ColliderBase2D&&)         = default;
         virtual ~ColliderBase2D()                           = default;
+
     };
     
     struct CircleCollider2D : public ColliderBase2D
@@ -39,6 +42,8 @@ namespace engine
         CircleCollider2D& operator=(CircleCollider2D const&)    = default;
         CircleCollider2D& operator=(CircleCollider2D&&)         = default;
         virtual ~CircleCollider2D()                             = default;
+
+        RTTR_ENABLE();
     };
 
     struct BoxCollider2D : public ColliderBase2D
@@ -56,6 +61,8 @@ namespace engine
         BoxCollider2D& operator=(BoxCollider2D const&)  = default;
         BoxCollider2D& operator=(BoxCollider2D&&)       = default;
         virtual ~BoxCollider2D()                        = default;
+
+        RTTR_ENABLE();
     };
 
 }

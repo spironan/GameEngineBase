@@ -5,6 +5,8 @@
 #include "Shapes.h"
 #include "Manifold.h"   // requires full definition for events to compile
 
+#include <rttr/type>
+
 namespace engine
 {
     enum class ColliderType
@@ -82,5 +84,6 @@ namespace engine
         virtual void OnTriggerStay(Collider2D collider) {};
         virtual void OnTriggerExit(Collider2D collider) {};*/
 
+        RTTR_ENABLE();
     };
 }

@@ -20,8 +20,28 @@ Technology is prohibited.
 
 #include "Engine/ECS/GameObject.h"
 
+#include <rttr/registration>
+
 namespace engine
 {
+    RTTR_REGISTRATION
+    {
+        using namespace rttr;
+        registration::class_<PhysicsMaterial>("PhysicsMaterial")
+            .property("Density", &PhysicsMaterial::Density)
+            .property("Restitution", &PhysicsMaterial::Restitution)
+            .property("DynamicFriction", &PhysicsMaterial::DynamicFriction)
+            .property("StaticFriction", &PhysicsMaterial::StaticFriction);
+
+        registration::class_<Rigidbody2D>("Rigidbody2D")
+            .enumeration<BodyType>("BodyType")(value("STATIC", BodyType::STATIC), value("KINEMATIC", BodyType::KINEMATIC), value("DYNAMIC", BodyType::DYNAMIC))
+            .property("BodyType", &Rigidbody2D::BodyType)
+            .property("UseAutoMass", &Rigidbody2D::UseAutoMass)
+            .property("GravityScale", &Rigidbody2D::GravityScale)
+            .property("Mass", &Rigidbody2D::GetMass, &Rigidbody2D::SetMass)
+            .property("Material", &Rigidbody2D::GetMaterial, &Rigidbody2D::SetMaterial);
+    }
+
     Rigidbody2D::Rigidbody2D(Entity entity, bool active)
         : Component { entity, active }
         , m_material { }

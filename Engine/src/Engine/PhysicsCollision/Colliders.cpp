@@ -4,8 +4,24 @@
 #include "Engine/ECS/WorldManager.h"
 #include "ColliderCore.h"
 
+#include <rttr/registration>
+
 namespace engine
 {
+    RTTR_REGISTRATION
+    {
+        using namespace rttr;
+        registration::class_<BoxCollider2D>("BoxCollider2D")
+            .property("Offset", &BoxCollider2D::Offset)
+            .property("Bounds", &BoxCollider2D::Bounds)
+            .property("Size", &BoxCollider2D::Size);
+        
+        registration::class_<CircleCollider2D>("CircleCollider2D")
+            .property("Offset", &CircleCollider2D::Offset)
+            .property("Bounds", &CircleCollider2D::Bounds)
+            .property("Radius", &CircleCollider2D::Radius);
+    }
+
     ColliderBase2D::ColliderBase2D(Entity entity, bool active)
         : Component{ entity, active }
         /*, IsTrigger{ false }*/
@@ -21,6 +37,7 @@ namespace engine
     {
         return GetComponent<Transform3D>().GetGlobalScale();
     }
+
 
     BoxCollider2D::BoxCollider2D(Entity entity, bool active)
         : ColliderBase2D{ entity, active }

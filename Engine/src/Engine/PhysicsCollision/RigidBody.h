@@ -20,8 +20,9 @@ Technology is prohibited.
 #include "Engine/ECS/Component.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Core/Timestep.h"
-#include "Engine/PhysicsCollision/PhysicsMaterial.h"
 #include <glm/glm.hpp>
+
+#include <rttr/type>
 
 namespace engine
 {
@@ -40,6 +41,18 @@ namespace engine
         // for rotations
         float Inertia = 0.f;
         float InverseInertia = 0.f;
+
+        RTTR_ENABLE();
+    };
+
+    struct PhysicsMaterial
+    {
+        float Density           = 1.0f;
+        float Restitution       = 0.f;
+        float DynamicFriction   = 0.6f;
+        float StaticFriction    = 0.6f;
+
+        RTTR_ENABLE();
     };
 
     class Rigidbody2D : public Component
@@ -143,6 +156,8 @@ namespace engine
 
         void SetAutoMass(bool useAutoMass);
         
+        RTTR_ENABLE();
+
     private:
 
         PhysicsMaterial m_material;

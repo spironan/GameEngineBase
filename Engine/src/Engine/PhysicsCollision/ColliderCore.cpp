@@ -4,9 +4,16 @@
 #include "Colliders.h"
 #include "Engine/ECS/GameObject.h"
 
+#include <rttr/registration>
 
 namespace engine
 {
+    RTTR_REGISTRATION
+    {
+        using namespace rttr;
+        registration::class_<Collider2D>("Collider2D")
+            .property("IsTrigger", &Collider2D::IsTrigger);
+    }
 
     Collider2D::Collider2D(Entity entity, bool active)
         : Component{ entity, active }
