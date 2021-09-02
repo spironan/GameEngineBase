@@ -27,7 +27,7 @@ Technology is prohibited.
 
 #include "Rigidbody.h"
 #include "Manifold.h"
-#include "Algorithms/PhysicsCollision.h"
+#include "Algorithms/PhysicsManifold.h"
 #include "Colliders.h"
 #include "ColliderCore.h"
 #include "PhysicsUtils.h"
@@ -313,7 +313,7 @@ namespace engine
     //        {
     //            std::visit([&](auto const& v2)
     //                {
-    //                    Manifold2D result = PhysicsCollision::Test2DCollision(v1, v2);
+    //                    Manifold2D result = PhysicsManifold::Test2DCollision(v1, v2);
     //                    if (result.HasCollision)
     //                    {
     //                        result.ObjA = colliderA.GetComponent<Rigidbody2D>();

@@ -1,5 +1,5 @@
 /************************************************************************************//*!
-\file          PhysicsCollision.h
+\file          Physics.h
 \project       <PROJECT_NAME>
 \author        Chua Teck Lee, c.tecklee, 390008420
 \par           email: c.tecklee\@digipen.edu

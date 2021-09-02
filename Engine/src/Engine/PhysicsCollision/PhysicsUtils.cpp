@@ -1,10 +1,23 @@
+/************************************************************************************//*!
+\file          PhysicsUtils.cpp
+\project       <PROJECT_NAME>
+\author        Chua Teck Lee, c.tecklee, 390008420
+\par           email: c.tecklee\@digipen.edu
+\date          September 2, 2021
+\brief
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #include "pch.h"
 #include "PhysicsUtils.h"
 
 #include "Colliders.h"
 
 #include "Manifold.h"
-#include "Algorithms/PhysicsCollision.h"
+#include "Algorithms/PhysicsManifold.h"
 #include "Algorithms/Collision.h"
 
 #include "Engine/ECS/WorldManager.h"
@@ -77,19 +90,19 @@ namespace engine
         //    switch (second.GetNarrowPhaseCollider())
         //    {
         //    case ColliderType::CIRCLE:
-        //        return PhysicsCollision::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<CircleCollider2D>());
+        //        return PhysicsManifold::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<CircleCollider2D>());
 
         //    case ColliderType::BOX:
-        //        return PhysicsCollision::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<BoxCollider2D>());
+        //        return PhysicsManifold::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<BoxCollider2D>());
         //    }
         //case ColliderType::BOX:
         //    switch (second.GetNarrowPhaseCollider())
         //    {
         //    case ColliderType::CIRCLE:
-        //        return PhysicsCollision::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<CircleCollider2D>());
+        //        return PhysicsManifold::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<CircleCollider2D>());
 
         //    case ColliderType::BOX:
-        //        return PhysicsCollision::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<BoxCollider2D>());
+        //        return PhysicsManifold::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<BoxCollider2D>());
         //    }
         //}
     }
@@ -120,22 +133,22 @@ namespace engine
 
     Manifold2D PhysicsUtils::GenerateManifold2D_BOX_BOX(Collider2D boxA, Collider2D boxB)
     {
-        return PhysicsCollision::GenerateManifold2D(boxA.GetComponent<BoxCollider2D>(), boxB.GetComponent<BoxCollider2D>());
+        return PhysicsManifold::GenerateManifold2D(boxA.GetComponent<BoxCollider2D>(), boxB.GetComponent<BoxCollider2D>());
     }
 
     Manifold2D PhysicsUtils::GenerateManifold2D_CIRCLE_CIRCLE(Collider2D circleA, Collider2D circleB)
     {
-        return PhysicsCollision::GenerateManifold2D(circleA.GetComponent<CircleCollider2D>(), circleB.GetComponent<CircleCollider2D>());
+        return PhysicsManifold::GenerateManifold2D(circleA.GetComponent<CircleCollider2D>(), circleB.GetComponent<CircleCollider2D>());
     }
 
     Manifold2D PhysicsUtils::GenerateManifold2D_CIRCLE_BOX(Collider2D circleA, Collider2D boxB)
     {
-        return PhysicsCollision::GenerateManifold2D(circleA.GetComponent<CircleCollider2D>(), boxB.GetComponent<BoxCollider2D>());
+        return PhysicsManifold::GenerateManifold2D(circleA.GetComponent<CircleCollider2D>(), boxB.GetComponent<BoxCollider2D>());
     }
 
     Manifold2D PhysicsUtils::GenerateManifold2D_BOX_CIRCLE(Collider2D boxA, Collider2D circleB)
     {
-        return PhysicsCollision::GenerateManifold2D(boxA.GetComponent<BoxCollider2D>(), circleB.GetComponent<CircleCollider2D>());
+        return PhysicsManifold::GenerateManifold2D(boxA.GetComponent<BoxCollider2D>(), circleB.GetComponent<CircleCollider2D>());
     }
 
 }
