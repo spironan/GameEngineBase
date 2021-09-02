@@ -455,6 +455,7 @@ namespace engine
 			DeletedObjectPtr temp = std::make_shared<DeletedObject>();
 			auto signature = m_EntityManager->GetSignature(entity);
 			temp->signature = signature;
+			auto max_size = m_ComponentManager->Size();
 			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
 			{
 				if (signature[type] == true)
@@ -489,9 +490,18 @@ namespace engine
 					ENGINE_ASSERT(restored_component);
 				}
 			}
+			m_EntityManager->SetSignature(entity, signature);
 			return entity;
 		}
 
+		void Clear()
+		{
+			for (auto i : m_EntityManager->m_UsedEntities)
+			{
+				DestroyEntity(i);
+			}
+			ProcessDeletions();
+		}
 		//// Event methods
 		//void AddEventListener(EventId eventId, std::function<void(Event&)> const& listener)
 		//{

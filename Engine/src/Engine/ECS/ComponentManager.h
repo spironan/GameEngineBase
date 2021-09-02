@@ -63,10 +63,15 @@ namespace engine
 			m_deletedComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity entity)->void* {
 				T* deleted_component = reinterpret_cast<T*>(new char[sizeof(T)]);
 				memcpy(deleted_component, &(cm.GetComponent<T>(entity)), sizeof(T));
+				//LOG_TRACE("store deleted component:{0}, from {1}", typeid(T).name(), entity);
 				return static_cast<void*>(deleted_component);
 				} });
 			m_restoredComponentMap.insert({ m_NextComponentType, [](ComponentManager& cm,Entity entity, void* component)->void* {
-				return static_cast<void*>( &cm.EmplaceComponent<T>( entity ,*(static_cast<T*>(component)) ) );
+				//LOG_TRACE("added restored component:{0}, to {1}", typeid(T).name(), entity);
+				T& restored_component = cm.EmplaceComponent<T>(entity, *(static_cast<T*>(component)));
+				if constexpr (std::is_base_of<Component, T>::value == true)
+					restored_component.SetEntity(entity);
+				return static_cast<void*>(&restored_component);
 				} });
 			++m_NextComponentType;
 		}
