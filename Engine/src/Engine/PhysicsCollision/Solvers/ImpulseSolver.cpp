@@ -18,10 +18,10 @@ namespace engine
             Rigidbody2D* aBody = manifold.ObjA->IsDynamic() ? manifold.ObjA : nullptr;
             Rigidbody2D* bBody = manifold.ObjB->IsDynamic() ? manifold.ObjB : nullptr;
 
-            glm::vec2 aVel = aBody ? aBody->GetVelocity() : glm::vec2{ 0.0f };
-            glm::vec2 bVel = bBody ? bBody->GetVelocity() : glm::vec2{ 0.0f };
-            glm::vec2 rVel = bVel - aVel;
-            float velAlongNormal = glm::dot(rVel, manifold.Normal);
+            oom::vec2 aVel = aBody ? aBody->GetVelocity() : oom::vec2{ 0.0f };
+            oom::vec2 bVel = bBody ? bBody->GetVelocity() : oom::vec2{ 0.0f };
+            oom::vec2 rVel = bVel - aVel;
+            float velAlongNormal = oom::dot(rVel, manifold.Normal);
 
             float aInvMass = aBody ? aBody->GetInverseMass() : 1.0f;
             float bInvMass = bBody ? bBody->GetInverseMass() : 1.0f;
@@ -39,7 +39,7 @@ namespace engine
 
             float j = -(1.0f + e) * velAlongNormal / (aInvMass + bInvMass);
 
-            glm::vec2 impluse = j * manifold.Normal;
+            oom::vec2 impluse = j * manifold.Normal;
 
             if (aBody ? !aBody->IsKinematic() : false) {
                 aVel -= impluse * aInvMass;
@@ -52,29 +52,29 @@ namespace engine
             // Friction
             rVel = bVel - aVel;
 
-            glm::vec2 tangent = rVel - glm::dot(rVel, manifold.Normal) * manifold.Normal;
+            oom::vec2 tangent = rVel - oom::dot(rVel, manifold.Normal) * manifold.Normal;
 
-            if (glm::length(tangent) > 0.0001f) { // safe normalize
-                tangent = glm::normalize(tangent);
+            if (oom::length(tangent) > 0.0001f) { // safe normalize
+                tangent = oom::normalize(tangent);
             }
 
             // Solve for magnitude to apply along the friction vector
-            float fVel = glm::dot(rVel, tangent);
+            float fVel = oom::dot(rVel, tangent);
 
             float aSF = aBody ? aBody->GetMaterial().StaticFriction : 0.0f;
             float bSF = bBody ? bBody->GetMaterial().StaticFriction : 0.0f;
             float aDF = aBody ? aBody->GetMaterial().DynamicFriction : 0.0f;
             float bDF = bBody ? bBody->GetMaterial().DynamicFriction : 0.0f;
-            float mu = glm::vec2(aSF, bSF).length();
+            float mu = oom::length(vec2(aSF, bSF));
 
             float f = -fVel / (aInvMass + bInvMass);
 
-            glm::vec2 friction;
+            oom::vec2 friction;
             if (abs(f) < j * mu) {
                 friction = f * tangent;
             }
             else {
-                mu = glm::length(glm::vec2(aDF, bDF));
+                mu = oom::length(oom::vec2(aDF, bDF));
                 friction = -j * tangent * mu;
             }
 
@@ -91,8 +91,8 @@ namespace engine
                 const float percent = 0.8f; // usually 20% to 80%
                 const float slop = 0.01f; // usually 0.01 to 0.1
                 vec2 correction = std::fmaxf(manifold.PenetrationDepth - slop, 0.0f) / (aInvMass + bInvMass)* percent* manifold.Normal;
-                if(aBody) aBody->GetComponent<Transform3D>().Position() -= glm::vec3{ aInvMass * correction , 0.f};
-                if(bBody) bBody->GetComponent<Transform3D>().Position() += glm::vec3{ bInvMass * correction , 0.f};
+                if(aBody) aBody->GetComponent<Transform3D>().Position() -= oom::vec3{ aInvMass * correction , 0.f};
+                if(bBody) bBody->GetComponent<Transform3D>().Position() += oom::vec3{ bInvMass * correction , 0.f};
             }
         }
     }

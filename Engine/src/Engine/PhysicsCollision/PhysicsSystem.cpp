@@ -30,7 +30,6 @@ Technology is prohibited.
 #include "Algorithms/PhysicsCollision.h"
 #include "Colliders.h"
 #include "ColliderCore.h"
-//#include "CollisionMap.h"
 #include "PhysicsUtils.h"
 
 namespace engine
@@ -86,7 +85,7 @@ namespace engine
 
                 //rb.ApplyForce(-Gravity * rb.GravityScale * rb.m_data.Mass); //normal gravity force acting against object
 
-                rb.SetForce(glm::vec2{ 0.f });
+                rb.SetForce(oom::vec2{ 0.f });
             }
 
             m_accumulator -= FixedDeltaTime;

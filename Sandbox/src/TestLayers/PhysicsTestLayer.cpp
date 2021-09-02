@@ -49,37 +49,37 @@ void PhysicsTestLayer::Init()
         c.OnTriggerEnter +=
         [=](auto const& manifolds) 
         { 
-            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 0, 1 });
+            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 0, 1 });
             LOG_TRACE("ON TRIGGER ENTER");
         };
         c.OnTriggerStay +=
         [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 0, 1 });
+            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 0, 1 });
             LOG_TRACE("ON TRIGGER STAY");
         };
         c.OnTriggerExit +=
         [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 0, 1, 1 });
+            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0, 1, 1 });
             LOG_TRACE("ON TRIGGER EXIT");
         };
         c.OnCollisionEnter +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 1, 0, 1 });
+            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 1, 0, 1 });
             LOG_TRACE("ON COLLISION ENTER");
         };
         c.OnCollisionStay +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 1, 1 });
+            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 1, 1 });
             LOG_TRACE("ON COLLISION STAY");
         };
         c.OnCollisionExit +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 1, 1 });
+            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 1, 1 });
             LOG_TRACE("ON COLLISION EXIT");
         };
 
@@ -100,37 +100,37 @@ void PhysicsTestLayer::Init()
         c.OnTriggerEnter +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 0, 1 });
+            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 0, 1 });
             LOG_TRACE("ON TRIGGER ENTER");
         };
         c.OnTriggerStay +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 0, 1 });
+            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 0, 1 });
             LOG_TRACE("ON TRIGGER STAY");
         };
         c.OnTriggerExit +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 0, 1, 1 });
+            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0, 1, 1 });
             LOG_TRACE("ON TRIGGER EXIT");
         };
         c.OnCollisionEnter +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 1, 0, 1 });
+            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 1, 0, 1 });
             LOG_TRACE("ON COLLISION ENTER");
         };
         c.OnCollisionStay +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 0, 1, 1, 1 });
+            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 1, 1 });
             LOG_TRACE("ON COLLISION STAY");
         };
         c.OnCollisionExit +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(glm::vec4{ 1, 0, 1, 1 });
+            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 1, 1 });
             LOG_TRACE("ON COLLISION EXIT");
         };
         m_third.AddComponent<engine::CircleCollider2D>();
@@ -166,27 +166,27 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
 
     if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, force });
+        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, force });
     }
 
     if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, -force });
+        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, -force });
     }
 
     if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ force, 0 });
+        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ force, 0 });
     }
 
     if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ -force, 0 });
+        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ -force, 0 });
     }
 
     if (engine::Input::IsKeyPressed(ENGINE_KEY_SPACE))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(glm::vec2{ 0, jumpforce });
+        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, jumpforce });
     }
 
     /*auto rootsForce = m_second.GetComponent<engine::Rigidbody2D>().GetForce();

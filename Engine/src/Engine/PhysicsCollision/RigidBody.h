@@ -20,7 +20,8 @@ Technology is prohibited.
 #include "Engine/ECS/Component.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Core/Timestep.h"
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
+#include <oom/oom.hpp>
 
 #include <rttr/type>
 
@@ -85,7 +86,7 @@ namespace engine
                 vector indicating the direction and strength of the force to apply onto
                 this object. 
         *//**********************************************************************************/
-        void ApplyForce(glm::vec2 force) { if(IsDynamic()) m_force += force; }
+        void ApplyForce(oom::vec2 force) { if(IsDynamic()) m_force += force; }
         
         /*********************************************************************************//*!
         \brief    Applies a velocity to the rigidbody
@@ -96,7 +97,7 @@ namespace engine
                 vector indicating the direction and strength of the force to apply onto
                 this object's velocity
         *//**********************************************************************************/
-        void ApplyVelocity(glm::vec2 velocity) { if (IsKinematic()) m_linearVelocity += velocity; }
+        void ApplyVelocity(oom::vec2 velocity) { if (IsKinematic()) m_linearVelocity += velocity; }
 
         /*********************************************************************************//*!
         \brief    Set the mass of the rigidbody with new mass
@@ -123,14 +124,14 @@ namespace engine
         \param    newVel
                 The new velocity to assign this rigidbody's velocity to.
         *//**********************************************************************************/
-        void SetVelocity(glm::vec2 newVel) { m_linearVelocity = newVel; }
+        void SetVelocity(oom::vec2 newVel) { m_linearVelocity = newVel; }
 
         /*********************************************************************************//*!
         \brief    Retrieve the current velocity of the rigidbody
 
         \return   the current velocity of the rigidbody.
         *//**********************************************************************************/
-        glm::vec2 GetVelocity() const { return m_linearVelocity; }
+        oom::vec2 GetVelocity() const { return m_linearVelocity; }
         
         /*********************************************************************************//*!
         \brief    Set the force of the rigidbody with new force.
@@ -138,14 +139,14 @@ namespace engine
         \param    newForce
                 The new force to assign this rigidbody's force to.
         *//**********************************************************************************/
-        void SetForce(glm::vec2 newForce) { m_force = newForce; }
+        void SetForce(oom::vec2 newForce) { m_force = newForce; }
 
         /*********************************************************************************//*!
         \brief    Retrieve the current force of the rigidbody
 
         \return   the current force of the rigidbody.
         *//**********************************************************************************/
-        glm::vec2 GetForce() const { return m_force; }
+        oom::vec2 GetForce() const { return m_force; }
         
         bool IsStatic()     const { return BodyType == BodyType::STATIC; }
         bool IsKinematic()  const { return BodyType == BodyType::KINEMATIC; }
@@ -164,15 +165,15 @@ namespace engine
 
         MassData m_data;
 
-        glm::vec2 m_linearVelocity;
-        glm::vec2 m_force;
+        oom::vec2 m_linearVelocity;
+        oom::vec2 m_force;
 
         //// Angular components
         //float m_orientation;
         //float m_angularVelocity;
         //float m_torque;
 
-        glm::vec3 m_prevPos;
+        oom::vec3 m_prevPos;
 
         friend class PhysicsSystem;
 
@@ -184,7 +185,7 @@ namespace engine
         \param    gravity
                     Gravity of the world to apply to this rigidbody.
         *//**********************************************************************************/
-        void ApplyGravity(glm::vec2 gravity);
+        void ApplyGravity(oom::vec2 gravity);
 
         /*********************************************************************************//*!
         \brief    Updates the Velocity of the object with forces.

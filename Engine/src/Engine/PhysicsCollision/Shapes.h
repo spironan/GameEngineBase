@@ -70,7 +70,7 @@ namespace engine
     //struct OBB3D
     //{
     //    vec3 center;
-    //    glm::mat3 orientation;
+    //    oom::mat3 orientation;
     //    vec3 halfExtents;
     //};
 

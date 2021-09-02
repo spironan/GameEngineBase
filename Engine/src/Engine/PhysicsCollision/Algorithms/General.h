@@ -13,8 +13,8 @@ namespace engine
     //Plane ComputePlane(vec3 a, vec3 b, vec3 c)
     //{
     //    Plane p;
-    //    p.normal = glm::normalize(glm::cross(b - a, c - a));
-    //    p.dist = glm::dot(p.normal, a);
+    //    p.normal = oom::normalize(oom::cross(b - a, c - a));
+    //    p.dist = oom::dot(p.normal, a);
     //    return p;
     //}
 

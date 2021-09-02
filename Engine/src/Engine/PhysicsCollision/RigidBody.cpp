@@ -83,14 +83,14 @@ namespace engine
     void Rigidbody2D::Interpolate(float alpha)
     {
         Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform();
-        glm::vec3 previous = m_prevPos * alpha;
-        glm::vec3 current = trans.GetPosition() * (1.f - alpha);
+        oom::vec3 previous = m_prevPos * alpha;
+        oom::vec3 current = trans.GetPosition() * (1.f - alpha);
         trans.Position() = previous + current;
 
         m_prevPos = trans.GetPosition();
     }
 
-    /*void Rigidbody2D::ApplyGravity(glm::vec2 gravity)
+    /*void Rigidbody2D::ApplyGravity(oom::vec2 gravity)
     {
         ApplyForce(gravity * m_mass * GravityScale);
     }*/
@@ -108,7 +108,7 @@ namespace engine
     {
         Transform3D& trans = static_cast<GameObject>(GetEntity()).Transform();
         //m_previoiusPosition = trans.GetPosition();
-        trans.Position() += glm::vec3{ m_linearVelocity, 0.f } * static_cast<float>(dt);
+        trans.Position() += oom::vec3{ m_linearVelocity, 0.f } * static_cast<float>(dt);
 
         //m_orientation += m_angularVelocity * static_cast<float>(dt);
     }

@@ -208,7 +208,7 @@ public:
 
             // rttr code below
             //auto rttrProps = transform.get_type().get_properties();
-            //rttrProps[0].set_value(transform, glm::vec3{ 100, 0, 100 });
+            //rttrProps[0].set_value(transform, oom::vec3{ 100, 0, 100 });
         }
     }
 

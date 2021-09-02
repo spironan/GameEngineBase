@@ -7,31 +7,31 @@ namespace engine
 {
     //bool Collision::TestSpherePlane(Sphere sphere, Plane plane)
     //{
-    //    float dist = glm::dot(sphere.center, plane.normal) - plane.dist;
+    //    float dist = oom::dot(sphere.center, plane.normal) - plane.dist;
     //    return abs(dist) <= sphere.radius;
     //}
 
     //bool Collision::TestSphereBehindPlane(Sphere sphere, Plane plane)
     //{
-    //    float dist = glm::dot(sphere.center, plane.normal) - plane.dist;
+    //    float dist = oom::dot(sphere.center, plane.normal) - plane.dist;
     //    return dist < -sphere.radius;
     //}
 
     //bool Collision::TestSphereHalfSpace(Sphere sphere, Plane plane)
     //{
-    //    float dist = glm::dot(sphere.center, plane.normal) - plane.dist;
+    //    float dist = oom::dot(sphere.center, plane.normal) - plane.dist;
     //    return dist <= sphere.radius;
     //}
 
     //bool Collision::TestOBBPlane(OBB3D obb, Plane plane)
     //{
     //    // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
-    //    float r = obb.halfExtents[0] * abs(glm::dot(plane.normal, obb.orientation[0])) +
-    //              obb.halfExtents[1] * abs(glm::dot(plane.normal, obb.orientation[1])) +
-    //              obb.halfExtents[2] * abs(glm::dot(plane.normal, obb.orientation[2]));
+    //    float r = obb.halfExtents[0] * abs(oom::dot(plane.normal, obb.orientation[0])) +
+    //              obb.halfExtents[1] * abs(oom::dot(plane.normal, obb.orientation[1])) +
+    //              obb.halfExtents[2] * abs(oom::dot(plane.normal, obb.orientation[2]));
 
     //    // Compute signed distance of box center from plane
-    //    float s = glm::dot(plane.normal, obb.center) - plane.dist;
+    //    float s = oom::dot(plane.normal, obb.center) - plane.dist;
 
     //    // Intersection occurs when distance s falls within [-r, +r] interval
     //    // Note : It is not neccesary to normalize the plane's normal as both s and r will both be in the units of |n|
@@ -41,12 +41,12 @@ namespace engine
     //bool Collision::TestOBBBehindPlane(OBB3D obb, Plane plane)
     //{
     //    // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
-    //    float r = obb.halfExtents[0] * abs(glm::dot(plane.normal, obb.orientation[0])) +
-    //        obb.halfExtents[1] * abs(glm::dot(plane.normal, obb.orientation[1])) +
-    //        obb.halfExtents[2] * abs(glm::dot(plane.normal, obb.orientation[2]));
+    //    float r = obb.halfExtents[0] * abs(oom::dot(plane.normal, obb.orientation[0])) +
+    //        obb.halfExtents[1] * abs(oom::dot(plane.normal, obb.orientation[1])) +
+    //        obb.halfExtents[2] * abs(oom::dot(plane.normal, obb.orientation[2]));
 
     //    // Compute signed distance of box center from plane
-    //    float s = glm::dot(plane.normal, obb.center) - plane.dist;
+    //    float s = oom::dot(plane.normal, obb.center) - plane.dist;
 
     //    // Intersection occurs when distance s falls within [-r, +r] interval
     //    // Note : It is not neccesary to normalize the plane's normal as both s and r will both be in the units of |n|
@@ -56,12 +56,12 @@ namespace engine
     //bool Collision::TestOBBInsidePlane(OBB3D obb, Plane plane)
     //{
     //    // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
-    //    float r = obb.halfExtents[0] * abs(glm::dot(plane.normal, obb.orientation[0])) +
-    //        obb.halfExtents[1] * abs(glm::dot(plane.normal, obb.orientation[1])) +
-    //        obb.halfExtents[2] * abs(glm::dot(plane.normal, obb.orientation[2]));
+    //    float r = obb.halfExtents[0] * abs(oom::dot(plane.normal, obb.orientation[0])) +
+    //        obb.halfExtents[1] * abs(oom::dot(plane.normal, obb.orientation[1])) +
+    //        obb.halfExtents[2] * abs(oom::dot(plane.normal, obb.orientation[2]));
 
     //    // Compute signed distance of box center from plane
-    //    float s = glm::dot(plane.normal, obb.center) - plane.dist;
+    //    float s = oom::dot(plane.normal, obb.center) - plane.dist;
 
     //    // Intersection occurs when distance s falls within [-r, +r] interval
     //    // Note : It is not neccesary to normalize the plane's normal as both s and r will both be in the units of |n|
@@ -77,7 +77,7 @@ namespace engine
     //    // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
     //    float r = e[0] * abs(plane.normal[0]) + e[1] * abs(plane.normal[1]) + e[2] * abs(plane.normal[2]);
     //    // Compute distance of box center from plane
-    //    float s = glm::dot(plane.normal, c) - plane.dist;
+    //    float s = oom::dot(plane.normal, c) - plane.dist;
 
     //    // Intersection occurs when distance s falls within [-r, +r] interval
     //    return abs(s) <= r;
@@ -92,7 +92,7 @@ namespace engine
     //    // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
     //    float r = e[0] * abs(plane.normal[0]) + e[1] * abs(plane.normal[1]) + e[2] * abs(plane.normal[2]);
     //    // Compute distance of box center from plane
-    //    float s = glm::dot(plane.normal, c) - plane.dist;
+    //    float s = oom::dot(plane.normal, c) - plane.dist;
 
     //    // Intersection occurs when distance s falls within [-r, +r] interval
     //    // Note : It is not neccesary to normalize the plane's normal as both s and r will both be in the units of |n|
@@ -108,7 +108,7 @@ namespace engine
     //    // Compute the projection interval radius of b onto L(t) = b.c + t * p.n
     //    float r = e[0] * abs(plane.normal[0]) + e[1] * abs(plane.normal[1]) + e[2] * abs(plane.normal[2]);
     //    // Compute distance of box center from plane
-    //    float s = glm::dot(plane.normal, c) - plane.dist;
+    //    float s = oom::dot(plane.normal, c) - plane.dist;
 
     //    // Intersection occurs when distance s falls within [-r, +r] interval
     //    // Note : It is not neccesary to normalize the plane's normal as both s and r will both be in the units of |n|
@@ -117,7 +117,7 @@ namespace engine
 
     bool Collision::Test2DCircleCircle(Circle circle, Circle circle2)
     {
-        float sqDist = glm::dot((circle.center - circle2.center), (circle.center - circle2.center));
+        float sqDist = oom::dot((circle.center - circle2.center), (circle.center - circle2.center));
         return sqDist <= (circle.radius + circle2.radius) * (circle.radius + circle2.radius);
     }
 
@@ -138,7 +138,7 @@ namespace engine
     //    // Sphere and AABB intersect if the (squared) distance from sphere
     //    // center to point p is less than the (squared) sphere radius
     //    vec3 v = closestPoint - sphere.center;
-    //    return glm::dot(v, v) <= sphere.radius * sphere.radius;
+    //    return oom::dot(v, v) <= sphere.radius * sphere.radius;
     //}
 
     bool Collision::Test2DAABBAABB(AABB2D aabb, AABB2D aabb2)
@@ -150,9 +150,9 @@ namespace engine
     bool Collision::Test2DPlaneCircle(Plane2D plane2d, Circle circle)
     {
         // For a normalized plane ( plane2d.normal = 1 ), evaluating the plane equation
-        float dist = glm::dot(circle.center, plane2d.normal) - plane2d.dist;
+        float dist = oom::dot(circle.center, plane2d.normal) - plane2d.dist;
         // If sphere center within +/-radius from plane, plane intersects sphere
-        return glm::abs(dist) <= circle.radius;
+        return oom::abs(dist) <= circle.radius;
     }
 
     bool Collision::Test2DPlaneAABB(Plane2D plane2d, AABB2D aabb)
@@ -162,12 +162,12 @@ namespace engine
         vec2 extents = aabb.max - center;   // compute positive extents
 
         // Compute the projection interval radius of aabb onto L(t) = aabb.c + t * plane2d.n
-        float r = extents[0] * glm::abs(plane2d.normal[0]) + extents[1] * glm::abs(plane2d.normal[1]);
+        float r = extents[0] * oom::abs(plane2d.normal[0]) + extents[1] * oom::abs(plane2d.normal[1]);
         // Compute distance of box center from plane
-        float s = glm::dot(plane2d.normal, center) - plane2d.dist;
+        float s = oom::dot(plane2d.normal, center) - plane2d.dist;
 
         // Intersection occurs when distance s falls within [-r, +r] interval
-        return glm::abs(s) <= r;
+        return oom::abs(s) <= r;
     }
 
     /*bool Collision::Test2DAABBOBB(AABB2D aabb, OBB2D obb)
@@ -192,7 +192,7 @@ namespace engine
     //    // Sphere and AABB intersect if the (squared) distance from sphere
     //    // center to point p is less than the (squared) sphere radius
     //    vec3 v = closestPoint - sphere.center;
-    //    return glm::dot(v,v) <= sphere.radius * sphere.radius;
+    //    return oom::dot(v,v) <= sphere.radius * sphere.radius;
     //}
 
     //bool Collision::TestSphereOBB(Sphere sphere, OBB3D obb, vec3& closestPoint)
@@ -203,7 +203,7 @@ namespace engine
     //    // Sphere and AABB intersect if the (squared) distance from sphere
     //    // center to point p is less than the (squared) sphere radius
     //    vec3 v = closestPoint - sphere.center;
-    //    return glm::dot(v,v) <= sphere.radius * sphere.radius;
+    //    return oom::dot(v,v) <= sphere.radius * sphere.radius;
     //}
 
     //bool Collision::TestSphereTriangle(Sphere sphere, Triangle3D triangle, vec3& closestPoint)
@@ -213,6 +213,6 @@ namespace engine
     //    // Sphere and triangle intersect if the (squared) distance from sphere
     //    // center to point p is less than the (squared) sphere radius
     //    vec3 v = closestPoint - sphere.center;
-    //    return glm::dot(v, v) <= sphere.radius * sphere.radius;
+    //    return oom::dot(v, v) <= sphere.radius * sphere.radius;
     //}
 }

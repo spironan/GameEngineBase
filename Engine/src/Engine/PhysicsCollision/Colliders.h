@@ -13,8 +13,8 @@ namespace engine
         /*bool IsTrigger;*/
         vec2 Offset;
 
-        glm::vec2 WorldScale() const;
-        glm::vec2 WorldPosition() const;
+        oom::vec2 WorldScale() const;
+        oom::vec2 WorldPosition() const;
 
         explicit ColliderBase2D(Entity entity, bool active = true);
 

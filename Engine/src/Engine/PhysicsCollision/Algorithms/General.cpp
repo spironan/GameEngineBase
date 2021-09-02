@@ -32,7 +32,7 @@ namespace engine
     //// the value also corresponds to six times the signed volume of the tetrahedron formed by the four points ABCD.
     //float Orient3D(vec3 a, vec3 b, vec3 c, vec3 d)
     //{
-    //    return glm::dot(a - d, glm::cross(b - d, c - d));
+    //    return oom::dot(a - d, oom::cross(b - d, c - d));
     //    //return (a - d).dot((b - d).cross(c - d));
     //}
 
@@ -48,11 +48,11 @@ namespace engine
     //void Barycentric(vec3 a, vec3 b, vec3 c, vec3 p, float& u, float& v, float& w)
     //{
     //    // unnormalized triangle normal
-    //    vec3 m = glm::cross(b - a, c - a);
+    //    vec3 m = oom::cross(b - a, c - a);
     //    // nominators and one-over-denominator for u and v ratios
     //    float nu, nv, ood;
     //    // absolute components for determining projection plane
-    //    float x = glm::abs(m.x), y = glm::abs(m.y), z = glm::abs(m.z);
+    //    float x = oom::abs(m.x), y = oom::abs(m.y), z = oom::abs(m.z);
 
 
     //    if (x >= y && x >= z)
@@ -81,11 +81,11 @@ namespace engine
     //    w = 1.f - u - w;
 
     //    /*vec3 v0 = b - a, v1 = c - a, v2 = p - a;
-    //    float d00 = glm::dot(v0, v0);
-    //    float d01 = glm::dot(v0, v1);
-    //    float d11 = glm::dot(v1, v1);
-    //    float d20 = glm::dot(v2, v0);
-    //    float d21 = glm::dot(v2, v1);
+    //    float d00 = oom::dot(v0, v0);
+    //    float d01 = oom::dot(v0, v1);
+    //    float d11 = oom::dot(v1, v1);
+    //    float d20 = oom::dot(v2, v0);
+    //    float d21 = oom::dot(v2, v1);
 
     //    float denom = d00 * d11 - d01 * d01;
     //    v = (d11 * d20 - d01 * d21) / denom;
@@ -109,15 +109,15 @@ namespace engine
     //// refer to real-time collision book page 61
     //bool IsConvexQuad(vec3 a, vec3 b, vec3 c, vec3 d)
     //{
-    //    vec3 bda = glm::cross(d - b, a - b); //(d - b).cross(a - b);
-    //    vec3 bdc = glm::cross(d - b, c - b); //(d - b).cross(c - b);
-    //    if (/*bda.dot(bdc) */ glm::dot(bda, bdc) >= 0.f) return false;  // Quad is not convex if dot product of resulting 2 cross products are >= 0
+    //    vec3 bda = oom::cross(d - b, a - b); //(d - b).cross(a - b);
+    //    vec3 bdc = oom::cross(d - b, c - b); //(d - b).cross(c - b);
+    //    if (/*bda.dot(bdc) */ oom::dot(bda, bdc) >= 0.f) return false;  // Quad is not convex if dot product of resulting 2 cross products are >= 0
 
     //    // Quad is now convex if Dot product is lesser then 0
-    //    vec3 acd = glm::cross(c - a, d - a); //(c - a).cross(d - a);
-    //    vec3 acb = glm::cross(c - a, b - a); //(c - a).cross(b - a);
+    //    vec3 acd = oom::cross(c - a, d - a); //(c - a).cross(d - a);
+    //    vec3 acb = oom::cross(c - a, b - a); //(c - a).cross(b - a);
 
-    //    return glm::dot(acd, acb) < 0.f;
+    //    return oom::dot(acd, acb) < 0.f;
     //    //return acd.dot(acb) < 0.f;
     //}
 
@@ -126,8 +126,8 @@ namespace engine
     //    vec2 dirVec = end - start;
     //    vec2 normal{ -dirVec.y, dirVec.x };
     //    //normal.normalize();
-    //    normal = glm::normalize(normal);
-    //    float dist = glm::dot(start - point, normal) ;
+    //    normal = oom::normalize(normal);
+    //    float dist = oom::dot(start - point, normal) ;
     //    return dist * dist;
     //}
 
@@ -139,7 +139,7 @@ namespace engine
     //    vec3 ab = b - a;
     //    // Project c onto ab, but deferring divide by Dot(ab,ab)
     //    
-    //    t = glm::dot(c - d, ab); //(c - a).dot(ab);
+    //    t = oom::dot(c - d, ab); //(c - a).dot(ab);
     //    if (t <= 0.f)
     //    {
     //        // c projects outside the [a,b] interval, on the a side; clamp to a
@@ -148,7 +148,7 @@ namespace engine
     //    }
     //    else
     //    {
-    //        float denom = glm::dot(ab, ab); // ab.dot(ab);   // always positive since denom ||ab||^2
+    //        float denom = oom::dot(ab, ab); // ab.dot(ab);   // always positive since denom ||ab||^2
     //        if (t >= denom)
     //        {
     //            // c projects outside the [a,b] interval, on the b side; clamp to b
@@ -168,13 +168,13 @@ namespace engine
     //float SqDistancePointSegment(vec3 a, vec3 b, vec3 c)
     //{
     //    vec3 ab = b - a, ac = c - a, bc = c - b;
-    //    float e = glm::dot(ac, ab); // ac.dot(ab);
+    //    float e = oom::dot(ac, ab); // ac.dot(ab);
     //    // handle cases where c projects outside ab
-    //    if (e <= 0.f) return glm::dot(ac, ac); // ac.dot(ac);
-    //    float f = glm::dot(ab, ab); // ab.dot(ab);
-    //    if (e >= f) return glm::dot(bc, bc);// bc.dot(bc);
+    //    if (e <= 0.f) return oom::dot(ac, ac); // ac.dot(ac);
+    //    float f = oom::dot(ab, ab); // ab.dot(ab);
+    //    if (e >= f) return oom::dot(bc, bc);// bc.dot(bc);
     //    // handle cases where c projects onto ab
-    //    return /*ac.dot(ac) */ glm::dot(ac, ac) - e * e / f;
+    //    return /*ac.dot(ac) */ oom::dot(ac, ac) - e * e / f;
     //}
 
     //// Given point p, return the point q on or in AABB b that is closest to p
@@ -266,9 +266,9 @@ namespace engine
     //{
     //    vec2 dirVec = end - start;
     //    vec2 normal{ -dirVec.y, dirVec.x };
-    //    normal = glm::normalize(normal);
+    //    normal = oom::normalize(normal);
     //    //normal.normalize();
-    //    return glm::dot(start - point, normal)* glm::dot(start - end, normal);
+    //    return oom::dot(start - point, normal)* oom::dot(start - end, normal);
     //    //return (start - point).dot(normal) * (start - point).dot(normal);
     //}
 
@@ -360,7 +360,7 @@ namespace engine
     //    {
     //        // ...project d onto that axis to get the distance
     //        // along the axis of d from the box center
-    //        float dist = glm::dot(d, obb.orientation[i]);
+    //        float dist = oom::dot(d, obb.orientation[i]);
     //        // if distance farther than the box extents, clamp to the box
     //        if (dist > obb.halfExtents[i]) dist = obb.halfExtents[i];
     //        if (dist < -obb.halfExtents[i]) dist = -obb.halfExtents[i];
@@ -377,15 +377,15 @@ namespace engine
     //    vec3 ap = point - triangle.a;
 
 
-    //    float d1 = glm::dot(ab, ap);
-    //    float d2 = glm::dot(ac, ap);
+    //    float d1 = oom::dot(ab, ap);
+    //    float d2 = oom::dot(ac, ap);
     //    if (d1 <= 0.f && d2 <= 0.f) return triangle.a;    // barycentric coordinates (1,0,0)
 
     //    // Check if P in vertex region outside B
     //    vec3 bp = point - triangle.b;
 
-    //    float d3 = glm::dot(ab, bp);
-    //    float d4 = glm::dot(ac, bp);
+    //    float d3 = oom::dot(ab, bp);
+    //    float d4 = oom::dot(ac, bp);
     //    if (d3 >= 0.f && d4 <= d3) return triangle.b;    // barycentric coordinates (0, 1, 0)
 
     //    float vc = d1 * d4 - d3 * d2;
@@ -398,8 +398,8 @@ namespace engine
     //    // Check if P in vertex region outside C
     //    vec3 cp = point - triangle.c;
 
-    //    float d5 = glm::dot(ab, cp);
-    //    float d6 = glm::dot(ac, cp);
+    //    float d5 = oom::dot(ab, cp);
+    //    float d6 = oom::dot(ac, cp);
     //    if (d6 >= 0.f && d5 <= d6) return triangle.c; // barycentric coordinates (0, 0, 1)
 
     //    // Check if P in edge region of AC, if so return projection of P onto AC

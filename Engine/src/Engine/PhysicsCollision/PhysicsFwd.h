@@ -1,14 +1,14 @@
 #pragma once
 
-#include <glm/glm.hpp>
-//#include <oom/oom.hpp>
+//#include <glm/glm.hpp>
+#include <oom/oom.hpp>
 
 namespace engine
 {
-    using vec2 = glm::vec2;
-    using vec3 = glm::vec3;
-    using mat2 = glm::mat2;
-    using mat3 = glm::mat3;
+    using vec2 = oom::vec2;
+    using vec3 = oom::vec3;
+    using mat2 = oom::mat2;
+    using mat3 = oom::mat3;
 
     class Rigidbody2D;
 

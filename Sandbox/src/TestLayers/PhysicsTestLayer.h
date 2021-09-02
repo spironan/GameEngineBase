@@ -22,7 +22,7 @@ private:
     int width{}, height{};
     engine::GameObject m_second, m_third;
 
-    glm::vec2 upperbounds, lowerbounds;
+    oom::vec2 upperbounds, lowerbounds;
 
 public:
 

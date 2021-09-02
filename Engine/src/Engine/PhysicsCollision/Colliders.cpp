@@ -28,12 +28,12 @@ namespace engine
         , Offset{ 0.f, 0.f }
     {}
 
-    glm::vec2 ColliderBase2D::WorldPosition() const
+    oom::vec2 ColliderBase2D::WorldPosition() const
     {
         return GetComponent<Transform3D>().GetGlobalPosition();
     }
 
-    glm::vec2 ColliderBase2D::WorldScale() const
+    oom::vec2 ColliderBase2D::WorldScale() const
     {
         return GetComponent<Transform3D>().GetGlobalScale();
     }

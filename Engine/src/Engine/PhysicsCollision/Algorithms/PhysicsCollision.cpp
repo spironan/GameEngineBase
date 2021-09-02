@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "PhysicsCollision.h"
 
+#include <oom/oom.hpp>
+
 #include "Collision.h"
 #include "Engine/PhysicsCollision/Manifold.h"
 
@@ -20,7 +22,7 @@ namespace engine
 
         vec2 dirVec = circleB.center - circleA.center;
         // find distance
-        float dist = glm::length(dirVec);
+        float dist = oom::length(dirVec);
 
         // if the two circles are placed onto each other
         if (dist == 0.f)
