@@ -35,7 +35,7 @@ public:
     void OnAttach() final override
     {
         // Purposeful breaking if uncommented out and choosing to run it.
-        //debugLayers.emplace_back(new GameObjectTestLayer());
+        debugLayers.emplace_back(new GameObjectTestLayer());
 
         debugLayers.emplace_back(new TransformTestLayer());
         debugLayers.emplace_back(new PhysicsTestLayer());
