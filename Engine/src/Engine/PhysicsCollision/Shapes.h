@@ -15,6 +15,8 @@ Technology is prohibited.
 
 #include "PhysicsFwd.h"
 
+#include <rttr/type>
+
 namespace engine
 {
     //struct Triangle2D
@@ -36,11 +38,19 @@ namespace engine
     {
         vec2 normal;
         float dist;
+        
+        Plane2D(vec2, float);
+
+        RTTR_ENABLE();
     };
 
     struct AABB2D
     {
         vec2 min, max;
+        
+        AABB2D(vec2, vec2);
+
+        RTTR_ENABLE();
     };
 
     //struct OBB2D
@@ -54,6 +64,10 @@ namespace engine
     {
         vec2 center;
         float radius;
+
+        Circle(vec2, float);
+
+        RTTR_ENABLE();
     };
 
     //struct Capsule2D
