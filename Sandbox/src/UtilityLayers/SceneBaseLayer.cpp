@@ -19,6 +19,7 @@ SceneBaseLayer::SceneBaseLayer(std::string scene_name)
     : Layer { scene_name }
     , m_scene { engine::SceneManager::CreateScene(scene_name) }
 {
+    m_scene.SetWorldAsActive();
 }
 
 SceneBaseLayer::~SceneBaseLayer()
