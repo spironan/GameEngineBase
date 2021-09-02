@@ -74,7 +74,11 @@ namespace engine
 				return;
 			if (id == GetInstance().m_active_world)
 				GetInstance().m_active_world = -1;
+
+			GetInstance().worlds.at(id).Clear();
 			GetInstance().worlds.erase(id);
+
+
 			if (GetInstance().worlds.size() > 1)
 				GetInstance().m_active_world = (*GetInstance().worlds.begin()).first;
 
