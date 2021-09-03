@@ -44,8 +44,10 @@ private:
 		{
 			return;
 		}
-		
 		ImGui::PushID(component.get_type().get_name().c_str());
+		ImGui::Dummy({ 5,0 });//indent spacing
+		ImGui::SameLine();
+		ImGui::BeginGroup();
 		for (const rttr::property& element : types)
 		{
 			is_readonly = element.is_readonly();
@@ -188,7 +190,7 @@ private:
 			}
 			else if (element.get_type().get_properties().size())
 			{
-				ImGui::Dummy({ 15,0 });//give some padding
+				ImGui::Dummy({ 5,0 });//give some padding
 				ImGui::SameLine();
 				ImGui::BeginGroup();
 				ReadComponents(element.get_value(component), object);
@@ -219,7 +221,7 @@ private:
 				ImGui::PopStyleColor();
 
 		}
-		
+		ImGui::EndGroup();
 		ImGui::PopID();
 	}
 	
