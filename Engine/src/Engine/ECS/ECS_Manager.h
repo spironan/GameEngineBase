@@ -455,7 +455,6 @@ namespace engine
 			DeletedObjectPtr temp = std::make_shared<DeletedObject>();
 			auto signature = m_EntityManager->GetSignature(entity);
 			temp->signature = signature;
-			auto max_size = m_ComponentManager->Size();
 			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
 			{
 				if (signature[type] == true)
