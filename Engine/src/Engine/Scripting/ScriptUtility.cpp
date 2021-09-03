@@ -104,7 +104,6 @@ namespace engine
                 MonoType* type = mono_class_get_type(_class);
                 int id = componentMap.size();
                 componentMap.insert({ type, search->second });
-                componentIDMap.insert({ type, id });
             }
         }
 
@@ -126,7 +125,6 @@ namespace engine
             scripting = nullptr;
             classInfoList.clear();
             componentMap.clear();
-            componentIDMap.clear();
         }
 
         /*-----------------------------------------------------------------------------*/
@@ -177,13 +175,6 @@ namespace engine
         {
             auto& search = g_SystemInfo.componentMap.find(type);
             ENGINE_ASSERT(search != g_SystemInfo.componentMap.end());
-            return search->second;
-        }
-
-        size_t GetRegisteredComponentID(MonoType* type)
-        {
-            auto& search = g_SystemInfo.componentIDMap.find(type);
-            ENGINE_ASSERT(search != g_SystemInfo.componentIDMap.end());
             return search->second;
         }
 

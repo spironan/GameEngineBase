@@ -438,8 +438,13 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     uint32_t Scripting::AddComponentInterface(const char* name_space, const char* name)
     {
-        // create Component interface
+        // if component interface is already created, return it
         MonoClass* compClass = ScriptUtility::GetMonoClass(name_space, name);
+        ComponentType compID = ScriptUtility::GetRegisteredComponent(mono_class_get_type(compClass)).Index();
+        if (compID < componentList.size() && componentList[compID] != 0)
+            return componentList[compID];
+
+        // create Component interface
         MonoObject* component = ScriptUtility::MonoObjectNew(compClass);
         uint32_t componentPtr = mono_gchandle_new(component, false);
         mono_runtime_object_init(component);
@@ -450,7 +455,6 @@ namespace engine
         mono_field_set_value(component, objField, gameObject);
 
         // set Component's instanceID
-        size_t compID = ScriptUtility::GetRegisteredComponentID(mono_class_get_type(compClass));
         MonoClassField* idField = mono_class_get_field_from_name(compClass, "m_InstanceID");
         mono_field_set_value(component, idField, &compID);
 
@@ -465,7 +469,7 @@ namespace engine
     uint32_t Scripting::GetComponentInterface(const char* name_space, const char* name)
     {
         MonoClass* compClass = ScriptUtility::GetMonoClass(name_space, name);
-        size_t compID = ScriptUtility::GetRegisteredComponentID(mono_class_get_type(compClass));
+        ComponentType compID = ScriptUtility::GetRegisteredComponent(mono_class_get_type(compClass)).Index();
         if (compID >= componentList.size())
             return 0;
         return componentList[compID];
@@ -474,7 +478,7 @@ namespace engine
     void Scripting::RemoveComponentInterface(const char* name_space, const char* name)
     {
         MonoClass* compClass = ScriptUtility::GetMonoClass(name_space, name);
-        size_t compID = ScriptUtility::GetRegisteredComponentID(mono_class_get_type(compClass));
+        ComponentType compID = ScriptUtility::GetRegisteredComponent(mono_class_get_type(compClass)).Index();
         if (compID >= componentList.size() || componentList[compID] == 0)
             return;
         mono_gchandle_free(componentList[compID]);

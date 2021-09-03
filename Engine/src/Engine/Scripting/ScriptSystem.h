@@ -78,6 +78,7 @@ namespace engine
         public:
             std::function<void(Entity)> Add;
             std::function<bool(Entity)> Has;
+            std::function<ComponentType(void)> Index;
             std::function<void(Entity)> Remove;
         };
 
@@ -101,12 +102,16 @@ namespace engine
             {
                 return WorldManager::GetActiveWorld().HasComponent<Component>(entity);
             };
+            std::function<ComponentType(void)> index = [](void)
+            {
+                return WorldManager::GetActiveWorld().GetComponentType<Component>();
+            };
             std::function<void(Entity)> remove = [](Entity entity)
             {
                 WorldManager::GetActiveWorld().RemoveComponent<Component>(entity);
             };
             size_t id = s_ComponentMap.size();
-            s_ComponentMap.insert({ interfaceTypeName, { add, has, remove } });
+            s_ComponentMap.insert({ interfaceTypeName, { add, has, index, remove } });
         }
 
         /*-----------------------------------------------------------------------------*/

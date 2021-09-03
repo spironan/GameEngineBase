@@ -35,7 +35,6 @@ namespace engine
             MonoImage* scripting;
             std::vector<ScriptClassInfo> classInfoList;
             std::unordered_map<MonoType*, ScriptSystem::RegisteredComponent> componentMap;
-            std::unordered_map<MonoType*, size_t> componentIDMap;
 
             inline ScriptSystemInfo() : domain{ nullptr }, scripting{ nullptr } {};
 
@@ -149,16 +148,6 @@ namespace engine
         \return     the RegisteredComponent from ScriptSystem of the desired type
         *//**********************************************************************************/
         ScriptSystem::RegisteredComponent const& GetRegisteredComponent(MonoType* type);
-
-        /*********************************************************************************//*!
-        \brief      Helper function to get the index of the ScriptSystem's RegisteredComponent by C# Type
-
-        \param      type
-                the C# type of the desired registered component
-
-        \return     the index of the RegisteredComponent from ScriptSystem of the desired type
-        *//**********************************************************************************/
-        size_t GetRegisteredComponentID(MonoType* type);
 
         /*********************************************************************************//*!
         \brief      Helper function to check if a given C# class field is marked public
