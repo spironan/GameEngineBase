@@ -17,6 +17,8 @@ Technology is prohibited.
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Transform/TransformSystem.h"
 
+#include "Engine/Scripting/Scripting.h"
+
 // editor component - damn sus to be here
 #include "Engine/Prefab/EditorComponent.h"
 
@@ -42,6 +44,7 @@ namespace engine
     {
         AddComponent<Transform3D>();
         AddComponent<GameObjectComponent>();
+        AddComponent<Scripting>();
 
         // could be moved... should also be removed if editor is not enabled...
         AddComponent<EditorComponent>();
