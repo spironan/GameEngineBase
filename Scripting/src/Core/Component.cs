@@ -11,10 +11,18 @@ namespace Ouroboros
 
         public GameObject gameObject
         {
-            get
-            {
-                return m_GameObject;
-            }
+            get { return m_GameObject; }
+        }
+
+        //public Transform transform
+        //{
+        //    get { return gameObject.transform; }
+        //}
+
+        public string name
+        {
+            get { return gameObject.name; }
+            set { gameObject.name = value; }
         }
 
         public int GetInstanceID()
