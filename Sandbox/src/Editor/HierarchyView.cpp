@@ -22,7 +22,7 @@ Technology is prohibited.
 //action stack stuff
 #include "ActionStack/EditorActionStack.h"//add and remove action
 #include "ActionStack/ParentActionStack.h"
-//#include "ActionStack/DeleteItemActionStack.h"
+#include "ActionStack/DeleteItemActionStack.h"
 
 #include "Engine/Prefab/PrefabComponentSystem.h"
 #include "Engine/Prefab/EditorComponent.h"
@@ -79,9 +79,8 @@ void HierarchyView::HierarchyPopUp()
 	}
 	if (ImGui::MenuItem("Delete",nullptr,nullptr,ObjectGroup::s_FocusedObject))
 	{
-		engine::SceneManager::GetActiveWorld().StoreAsDeleted(ObjectGroup::s_FocusedObject);
-		//std::string temp = "Deleted item : " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
-		//ActionStack::AllocateInBuffer(new DeleteItemActionStack(temp, ObjectGroup::s_FocusedObject));
+		std::string temp = "Deleted item : " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
+		ActionStack::AllocateInBuffer(new DeleteItemActionStack(temp, ObjectGroup::s_FocusedObject));
 		ObjectGroup::s_FocusedObject = 0;
 	}
 	ImGui::Separator();
@@ -89,6 +88,11 @@ void HierarchyView::HierarchyPopUp()
 	{
 		ToggleLockUI();
 	}
+	if (ImGui::MenuItem("test"))
+	{
+		engine::SceneManager::GetActiveWorld().CreateEntity();
+	}
+
 }
 
 void HierarchyView::ShowHierarchy()
@@ -116,8 +120,8 @@ void HierarchyView::ListHierarchy()
 	static const ImVec4 prefab_text_color = { 0.0f,0.8f,0.8f,1.0f };
 
 	ImVec4 current_color = default_textCol;
-	//display the root node
 	ImGui::BeginChild("##ListHierarchy");
+	//display the root node
 	if (transformList.size())
 	{
 		ImGui::Separator();
@@ -137,6 +141,11 @@ void HierarchyView::ListHierarchy()
 		depth.emplace_back(root);
 		++treePop;
 	}
+	else
+	{
+		ImGui::EndChild();
+		return;
+	}
 
 	for (auto iter = transformList.begin() + 1; iter != transformList.end(); ++iter)//skip the root node
 	{
@@ -144,7 +153,7 @@ void HierarchyView::ListHierarchy()
 		engine::Transform3D& transform = *iter;
 		engine::GameObject& gameObj = static_cast<engine::GameObject>(iter->GetID());
 
-		if (gameObj.TryGetComponent<engine::EditorComponent>())
+		if (gameObj.HasComponent<engine::EditorComponent>())
 			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
 		else//is a prefab instance == skip
 			continue;

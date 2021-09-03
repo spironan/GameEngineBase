@@ -49,6 +49,10 @@ void SceneBaseLayer::OnDetach()
 
 void SceneBaseLayer::Init() { };
 
+void SceneBaseLayer::OnUpdateEnd(engine::Timestep dt)
+{
+	m_scene.GetWorld().ProcessDeletions();
+}
 void SceneBaseLayer::Exit() { };
 
 /*********************************************************************************//*!

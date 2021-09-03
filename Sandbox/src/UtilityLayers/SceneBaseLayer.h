@@ -43,7 +43,7 @@ public:
 protected:
     
     virtual void Init();
-
+	virtual void OnUpdateEnd(engine::Timestep dt) override;
     virtual void Exit();
 
     /*********************************************************************************//*!
