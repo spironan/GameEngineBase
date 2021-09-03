@@ -11,5 +11,14 @@ namespace Ouroboros
         {
 
         }
+
+        [DllImport("__Internal")] private static extern void SetScriptEnabled(int entityID, int scriptID, bool enabled);
+        [DllImport("__Internal")] private static extern bool CheckScriptEnabled(int entityID, int scriptID);
+
+        public bool enabled
+        {
+            get { return CheckScriptEnabled(gameObject.GetInstanceID(), GetInstanceID()); ; }
+            set { SetScriptEnabled(gameObject.GetInstanceID(), GetInstanceID(), value); }
+        }
     }
 }
