@@ -1,4 +1,3 @@
-using System;
 using Ouroboros;
 
 public class EnemyScript : MonoBehaviour
@@ -7,8 +6,7 @@ public class EnemyScript : MonoBehaviour
 
     private void Awake()
     {
-        Random rnd = new Random();
-        attackDamage = rnd.Next(1, 11);
+        attackDamage = Random.Range(1, 11);
     }
 
     public int GetAttackDamage()
