@@ -203,4 +203,9 @@ namespace engine
         void UpdatePosition(Timestep dt);
     };
 
+    extern "C"
+    {
+        __declspec(dllexport) float Rigidbody2D_GetGravityScale(int instanceID);
+        __declspec(dllexport) void Rigidbody2D_SetGravityScale(int instanceID, float value);
+    }
 }

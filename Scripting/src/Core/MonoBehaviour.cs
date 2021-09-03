@@ -17,8 +17,8 @@ namespace Ouroboros
 
         public bool enabled
         {
-            get { return CheckScriptEnabled(gameObject.GetInstanceID(), GetInstanceID()); ; }
-            set { SetScriptEnabled(gameObject.GetInstanceID(), GetInstanceID(), value); }
+            get { return CheckScriptEnabled(gameObject.GetInstanceID(), GetComponentID()); ; }
+            set { SetScriptEnabled(gameObject.GetInstanceID(), GetComponentID(), value); }
         }
     }
 }

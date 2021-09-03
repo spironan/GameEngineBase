@@ -76,7 +76,7 @@ public class PlayerScript : MonoBehaviour
     {
         GameObject instance = new GameObject("PlayerBody_" + (bodyList.Count + 1));
         instance.AddComponent<PlayerBodyScript>();
-        instance.AddComponent<Rigidbody2D>();
+        instance.AddComponent<Rigidbody2D>().gravityScale = 0;
         instance.AddComponent<Collider2D>().isTrigger = true;
         instance.AddComponent<CircleCollider2D>();
         instance.AddComponent<SpriteRenderer>().color = new Vector4(0, 1.0f / (bodyList.Count + 2), 1, 1);

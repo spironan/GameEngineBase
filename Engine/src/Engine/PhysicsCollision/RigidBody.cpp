@@ -113,4 +113,13 @@ namespace engine
         //m_orientation += m_angularVelocity * static_cast<float>(dt);
     }
 
+    float Rigidbody2D_GetGravityScale(int instanceID)
+    {
+        return WorldManager::GetActiveWorld().GetComponent<Rigidbody2D>(instanceID).GravityScale;
+    }
+
+    void Rigidbody2D_SetGravityScale(int instanceID, float value)
+    {
+        WorldManager::GetActiveWorld().GetComponent<Rigidbody2D>(instanceID).GravityScale = value;
+    }
 }

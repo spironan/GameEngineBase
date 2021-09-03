@@ -455,8 +455,8 @@ namespace engine
         MonoObject* gameObject = mono_gchandle_get_target(gameObjPtr);
         mono_field_set_value(component, objField, gameObject);
 
-        // set Component's instanceID
-        MonoClassField* idField = mono_class_get_field_from_name(compClass, "m_InstanceID");
+        // set Component's id
+        MonoClassField* idField = mono_class_get_field_from_name(compClass, "m_ComponentID");
         mono_field_set_value(component, idField, &compID);
 
         // store ptr in componentList
@@ -508,9 +508,9 @@ namespace engine
         MonoObject* gameObject = mono_gchandle_get_target(gameObjPtr);
         mono_field_set_value(script, gameObjectField, gameObject);
 
-        // set instanceID field
+        // set componentID field
         int id = scriptList.size() - 1;
-        MonoClassField* idField = mono_class_get_field_from_name(klass, "m_InstanceID");
+        MonoClassField* idField = mono_class_get_field_from_name(klass, "m_ComponentID");
         mono_field_set_value(script, idField, &id);
 
         // call Awake, if wanted

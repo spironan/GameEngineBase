@@ -7,7 +7,7 @@ namespace Ouroboros
     public class Component : Object
     {
         private GameObject m_GameObject = null;
-        private int m_InstanceID = -1;
+        private int m_ComponentID = -1;
 
         public GameObject gameObject
         {
@@ -25,9 +25,9 @@ namespace Ouroboros
             set { gameObject.name = value; }
         }
 
-        public int GetInstanceID()
+        public int GetComponentID()
         {
-            return m_InstanceID;
+            return m_ComponentID;
         }
 
         protected Component()

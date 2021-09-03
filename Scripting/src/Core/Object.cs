@@ -34,7 +34,7 @@ namespace Ouroboros
             else if (type == typeof(MonoBehaviour) || type.IsSubclassOf(typeof(MonoBehaviour))) // MonoBehaviour (C# Scripts)
             {
                 MonoBehaviour script = obj as MonoBehaviour;
-                DestroyScript(script.gameObject.GetInstanceID(), script.GetInstanceID());
+                DestroyScript(script.gameObject.GetInstanceID(), script.GetComponentID());
             }
             else if(type == typeof(Component) || type.IsSubclassOf(typeof(Component))) // C++ Components
             {
