@@ -10,9 +10,22 @@ namespace Ouroboros
     public class GameObject : Object
     {
         private int m_InstanceID = -1;
-        //private Transform m_Transform = null;
+        private Transform m_Transform = null;
 
-        public GameObject() { }
+        [DllImport("__Internal")] private static extern int CreateEntity();
+
+        public GameObject()
+        {
+            m_InstanceID = CreateEntity();
+            m_Transform = GetComponent<Transform>();
+        }
+
+        public GameObject(string name)
+        {
+            m_InstanceID = CreateEntity();
+            this.name = name;
+            m_Transform = GetComponent<Transform>();
+        }
 
         public int GetInstanceID()
         {
@@ -49,10 +62,10 @@ namespace Ouroboros
 
         #region Script/Component
 
-        //public Transform transform
-        //{
-        //    get { return m_Transform; }
-        //}
+        public Transform transform
+        {
+            get { return m_Transform; }
+        }
 
         [DllImport("__Internal")] private static extern IntPtr AddScript(int id, string name_space, string _type);
         [DllImport("__Internal")] private static extern IntPtr AddComponentFromScript(int id, string name_space, string name);

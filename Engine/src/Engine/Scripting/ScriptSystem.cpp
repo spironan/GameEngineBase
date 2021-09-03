@@ -228,12 +228,21 @@ namespace engine
     /* Entity Functions for C#                                                     */
     /*-----------------------------------------------------------------------------*/
 
-    uint32_t CreateEntity()
+    int CreateEntity()
     {
-        engine::GameObject instance{ engine::WorldManager::GetActiveWorld().CreateEntity() };
-        auto& scripting = instance.AddComponent<engine::Scripting>();
+        GameObject instance{ GameObject::Create{} };
+        auto& scripting = instance.GetComponent<Scripting>();
         scripting.SetUpPlay();
         // scripting.StartPlay();
+        return scripting.GetEntity();
+    }
+
+    uint32_t InstantiateEntity(int src)
+    {
+        engine::GameObject instance = GameObject::Instantiate(GameObject(src));
+        auto& scripting = instance.GetComponent<Scripting>();
+        scripting.SetUpPlay();
+        scripting.StartPlay();
         return scripting.GetGameObjectPtr();
     }
 

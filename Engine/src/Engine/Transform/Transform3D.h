@@ -237,4 +237,13 @@ namespace engine
         bool m_hasChanged;
     };
 
+    extern "C"
+    {
+        __declspec(dllexport) void Transform_GetLocalPosition(int instanceID, float* x, float* y, float* z);
+        __declspec(dllexport) void Transform_SetLocalPosition(int instanceID, float x, float y, float z);
+
+        __declspec(dllexport) void Transform_GetLocalScale(int instanceID, float* x, float* y, float* z);
+        __declspec(dllexport) void Transform_SetLocalScale(int instanceID, float x, float y, float z);
+    }
+
 } // namespace Engine

@@ -5,12 +5,19 @@ namespace Ouroboros
 {
     public class Object
     {
-        [DllImport("__Internal")] private static extern IntPtr CreateEntity();
+        [DllImport("__Internal")] private static extern IntPtr InstantiateEntity(int src);
 
-        public static GameObject Instantiate()
-        {
-            return (GameObject)GCHandle.FromIntPtr(CreateEntity()).Target;
-        }
+        //public static T Instantiate<T>(T original) where T : Object
+        //{
+        //    Type type = original.GetType();
+        //    if(type == typeof(GameObject) || type.IsSubclassOf(typeof(GameObject)))
+        //    {
+        //        GameObject src = original as GameObject;
+        //        IntPtr ptr = InstantiateEntity(src.GetInstanceID());
+        //        return GCHandle.FromIntPtr(ptr).Target as T;
+        //    }
+        //    return null;
+        //}
 
         [DllImport("__Internal")] private static extern void DestroyEntity(int id);
         [DllImport("__Internal")] private static extern void DestroyScript(int entityID, int scriptID);

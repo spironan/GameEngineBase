@@ -387,6 +387,39 @@ namespace engine
             InvokeFunctionAll(functionName, paramCount, params);
         }
 
+        /*********************************************************************************//*!
+        \brief      invokes the OnTriggerEnter2D function in all script instances attached to this GameObject
+
+        \warning    this should only be called during play mode as no script instances
+                    exist during edit mode to invoke functions from.
+
+        \param      other
+                the scripting component of the other gameObject that was triggered
+        *//**********************************************************************************/
+        void InvokeTriggerEnter2D(Scripting& other);
+
+        /*********************************************************************************//*!
+        \brief      invokes the OnTriggerStay2D function in all script instances attached to this GameObject
+
+        \warning    this should only be called during play mode as no script instances
+                    exist during edit mode to invoke functions from.
+
+        \param      other
+                the scripting component of the other gameObject that was triggered
+        *//**********************************************************************************/
+        void InvokeTriggerStay2D(Scripting& other);
+
+        /*********************************************************************************//*!
+        \brief      invokes the OnTriggerExit2D function in all script instances attached to this GameObject
+
+        \warning    this should only be called during play mode as no script instances
+                    exist during edit mode to invoke functions from.
+
+        \param      other
+                the scripting component of the other gameObject that was triggered
+        *//**********************************************************************************/
+        void InvokeTriggerExit2D(Scripting& other);
+
         /*-----------------------------------------------------------------------------*/
         /* Getters                                                                     */
         /*-----------------------------------------------------------------------------*/

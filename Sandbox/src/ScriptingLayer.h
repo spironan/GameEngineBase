@@ -8,7 +8,11 @@ public:
     ScriptingLayer() : Layer("Scripting Layer")
     {
         // Register ECS Components here
-        // engine::ScriptSystem::RegisterComponent<engine::Transform3D>("Transform");
+        engine::ScriptSystem::RegisterComponent<engine::Transform3D>("Ouroboros.Transform");
+        engine::ScriptSystem::RegisterComponent<engine::Sprite2D>("Ouroboros.SpriteRenderer");
+        engine::ScriptSystem::RegisterComponent<engine::Rigidbody2D>("Ouroboros.Rigidbody2D");
+        engine::ScriptSystem::RegisterComponent<engine::Collider2D>("Ouroboros.Collider2D");
+        engine::ScriptSystem::RegisterComponent<engine::CircleCollider2D>("Ouroboros.CircleCollider2D");
     }
 
     ~ScriptingLayer()
@@ -26,9 +30,9 @@ public:
     //    dispatcher.Dispatch<engine::WindowFocusEvent>(ENGINE_BIND_EVENT_FN(ScriptingLayer::Compile));
     //}
 
-    bool Compile(engine::WindowFocusEvent& e)
-    {
-        engine::ScriptSystem::Compile();
-        return true;
-    }
+    //bool Compile(engine::WindowFocusEvent& e)
+    //{
+    //    engine::ScriptSystem::Compile();
+    //    return true;
+    //}
 };

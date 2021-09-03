@@ -34,7 +34,7 @@ public class TweenScript : MonoBehaviour
     //public TweenValue[] tweenArray = new TweenValue[5];
     //public TweenValue testValue;
 
-    private List<TweenValue> temp;
+    //private List<TweenValue> temp;
 
     private void Awake()
     {

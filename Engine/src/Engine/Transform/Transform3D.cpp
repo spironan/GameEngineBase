@@ -268,4 +268,32 @@ namespace engine
         return oom::vec3{ oom::length(m_globalTransform[0]), oom::length(m_globalTransform[1]), oom::length(m_globalTransform[2]) };
     }
 
+    void Transform_GetLocalPosition(int instanceID, float* x, float* y, float* z)
+    {
+        Transform3D& transform = WorldManager::GetActiveWorld().GetComponent<Transform3D>(instanceID);
+        oom::vec3 position = transform.GetPosition();
+        *x = position.x;
+        *y = position.y;
+        *z = position.z;
+    }
+
+    void Transform_SetLocalPosition(int instanceID, float x, float y, float z)
+    {
+        Transform3D& transform = WorldManager::GetActiveWorld().GetComponent<Transform3D>(instanceID);
+        transform.SetPosition({ x, y, z });
+    }
+
+    void Transform_GetLocalScale(int instanceID, float* x, float* y, float* z)
+    {
+        oom::vec3 const& scale = WorldManager::GetActiveWorld().GetComponent<Transform3D>(instanceID).GetScale();
+        *x = scale.x;
+        *y = scale.y;
+        *z = scale.z;
+    }
+
+    void Transform_SetLocalScale(int instanceID, float x, float y, float z)
+    {
+        WorldManager::GetActiveWorld().GetComponent<Transform3D>(instanceID).SetScale({ x, y, z });
+    }
+
 } // namespace engine

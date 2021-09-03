@@ -204,8 +204,7 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
 
         /*********************************************************************************//*!
-        \brief      Creates a new GameObject in the currently active world with a Scripting component
-                    in play mode attached.
+        \brief      Creates a new GameObject in the currently active world.
                     This function's main purpose is to enable scripts in the C# side to create entities
                     during play mode
 
@@ -214,7 +213,19 @@ namespace engine
 
         \return     the IntPtr to the newly created GameObject in C# side
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t CreateEntity();
+        __declspec(dllexport) int CreateEntity();
+
+        /*********************************************************************************//*!
+        \brief      Creates a copy of a given source GameObject in the currently active world.
+                    This function's main purpose is to enable scripts in the C# side to instantiate entities
+                    during play mode
+
+        \warning    this function should only be called during play mode as instances in C# side
+                    are created in this function, which will break if a recompile is triggered
+
+        \return     the IntPtr to the newly created GameObject in C# side
+        *//**********************************************************************************/
+        __declspec(dllexport) uint32_t InstantiateEntity(int src);
 
         /*********************************************************************************//*!
         \brief      Removes a GameObject in the currently active world with a specific entity id.

@@ -19,6 +19,7 @@ Technology is prohibited.
 #include "Utility/Hash.h"
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/ECS/GameObjectComponent.h"
+#include "Engine/PhysicsCollision/ColliderCore.h"
 
 namespace engine
 {
@@ -669,7 +670,7 @@ namespace engine
         MonoClass* _class = ScriptUtility::GetGameObjectMonoClass();
         MonoObject* gameObject = ScriptUtility::MonoObjectNew(_class);
         gameObjPtr = mono_gchandle_new(gameObject, false);
-        mono_runtime_object_init(gameObject);
+        // mono_runtime_object_init(gameObject);
 
         // set GameObject instance id
         MonoClassField* idField = mono_class_get_field_from_name(_class, "m_InstanceID");
@@ -677,13 +678,13 @@ namespace engine
         mono_field_set_value(gameObject, idField, &id);
 
         // create Transform interface
-        //MonoClass* transformClass = ScriptUtility::GetTransformMonoClass();
-        //uint32_t transformPtr = AddComponentInterface(mono_class_get_namespace(transformClass), mono_class_get_name(transformClass));
-        //MonoObject* transform = mono_gchandle_get_target(transformPtr);
+        MonoClass* transformClass = ScriptUtility::GetTransformMonoClass();
+        uint32_t transformPtr = AddComponentInterface(mono_class_get_namespace(transformClass), mono_class_get_name(transformClass));
+        MonoObject* transform = mono_gchandle_get_target(transformPtr);
 
         // set GameObject's transform
-        //MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_Transform");
-        //mono_field_set_value(gameObject, transformField, transform);
+        MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_Transform");
+        mono_field_set_value(gameObject, transformField, transform);
 
         // create all script instances
         for (auto const& scriptInfo : scriptInfoMap)
@@ -750,10 +751,12 @@ namespace engine
         mono_runtime_invoke(method, script, params, &exception);
         if (exception)
         {
-            MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
-            MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
-
-            LOG_CRITICAL(mono_string_to_utf8(excMsg));
+            MonoMethod* stringMethod = mono_class_get_method_from_name(mono_get_exception_class(), "ToString", 0);
+            MonoString* excString = (MonoString*)mono_runtime_invoke(stringMethod, exception, NULL, NULL);
+            LOG_CRITICAL(mono_string_to_utf8(excString));
+            //MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
+            //MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
+            //LOG_CRITICAL(mono_string_to_utf8(excMsg));
             // mono_print_unhandled_exception(exception);
         }
         //__try
@@ -781,6 +784,42 @@ namespace engine
                 continue;
             InvokeFunction(scriptList[i].handle, functionName, paramCount, params);
         }
+    }
+
+    void Scripting::InvokeTriggerEnter2D(Scripting& other)
+    {
+        if (gameObjPtr == 0 || other.gameObjPtr == 0)
+            return;
+        ComponentType compID = WorldManager::GetActiveWorld().GetComponentType<Collider2D>();
+        if (compID >= other.componentList.size() || compID == 0)
+            return;
+        MonoObject* comp = mono_gchandle_get_target(other.componentList[compID]);
+        void* params[1] = { comp };
+        InvokeFunctionAll("OnTriggerEnter2D", 1, params);
+    }
+
+    void Scripting::InvokeTriggerStay2D(Scripting& other)
+    {
+        if (gameObjPtr == 0 || other.gameObjPtr == 0)
+            return;
+        ComponentType compID = WorldManager::GetActiveWorld().GetComponentType<Collider2D>();
+        if (compID >= other.componentList.size() || compID == 0)
+            return;
+        MonoObject* comp = mono_gchandle_get_target(other.componentList[compID]);
+        void* params[1] = { comp };
+        InvokeFunctionAll("OnTriggerStay2D", 1, params);
+    }
+
+    void Scripting::InvokeTriggerExit2D(Scripting& other)
+    {
+        if (gameObjPtr == 0 || other.gameObjPtr == 0)
+            return;
+        ComponentType compID = WorldManager::GetActiveWorld().GetComponentType<Collider2D>();
+        if (compID >= other.componentList.size() || compID == 0)
+            return;
+        MonoObject* comp = mono_gchandle_get_target(other.componentList[compID]);
+        void* params[1] = { comp };
+        InvokeFunctionAll("OnTriggerExit2D", 1, params);
     }
 
     /*-----------------------------------------------------------------------------*/

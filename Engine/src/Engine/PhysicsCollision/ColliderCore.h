@@ -99,4 +99,10 @@ namespace engine
 
         RTTR_ENABLE();
     };
+
+    extern "C"
+    {
+        __declspec(dllexport) bool Collider2D_GetIsTriggered(int instanceID);
+        __declspec(dllexport) void Collider2D_SetIsTriggered(int instanceID, bool value);
+    }
 }
