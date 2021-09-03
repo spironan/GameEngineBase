@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Engine/Prefab/EditorComponent.h"
-
+#include "Editor/EditorObjectGroup.h"
 DeleteItemActionStack::DeleteItemActionStack(const std::string& desc, engine::Entity object)
 	:ActionBehaviour{ desc }
 {

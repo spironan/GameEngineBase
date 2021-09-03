@@ -10,6 +10,12 @@ namespace engine
 	RTTR_REGISTRATION
 	{
 		using namespace rttr;
+		
+		registration::enumeration<SceneCamera::ProjectionType>("Projection Type")(
+				value("Perspective",SceneCamera::ProjectionType::Perspective),
+				value("Orthographic", SceneCamera::ProjectionType::Orthographic)
+			);
+
 		registration::class_<SceneCamera>("Camera")
 		.property("Camera Type", &SceneCamera::GetProjectionType, &SceneCamera::SetProjectionType)
 		

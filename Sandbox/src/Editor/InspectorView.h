@@ -4,6 +4,7 @@
 #include <rttr/property.h>
 #include <rttr/variant.h>
 #include <vector>
+#include <imgui.h>
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Prefab/EditorComponent.h"
 #include "RttrTypeID.h"
@@ -39,8 +40,10 @@ private:
 			//do smth
 		}
 		ImGui::EndGroup();
-		if (is_collapsed)	
+		if (is_collapsed)
+		{
 			return;
+		}
 		
 		ImGui::PushID(component.get_type().get_name().c_str());
 		for (const rttr::property& element : types)
@@ -137,6 +140,59 @@ private:
 				ImGui::PopID();
 				if (activated)
 					element.set_value(component, value);
+			}
+			//new types add here
+
+
+
+			//these should be the last 
+			else if (element.is_enumeration())
+			{
+				rttr::variant value = element.get_value(component);
+				
+				if (!element.is_readonly())
+					current_value = value;
+
+				auto& listNames = element.get_enumeration().get_names();
+				auto& listValues = element.get_enumeration().get_values();
+				
+				char temp[64];
+				std::strcpy(temp, element.get_enumeration().value_to_name(value).data());
+				ImGui::PushID(element.get_name().c_str());
+				ImGui::InputText("##Identifyer", temp, 64, ImGuiInputTextFlags_ReadOnly);
+				ImGui::SameLine();
+
+				static bool dropdown = false;
+				if (ImGui::Button("Expand"))
+					dropdown = !dropdown;
+				if (dropdown)
+				{
+					if (ImGui::BeginListBox(element.get_name().c_str()))
+					{
+						bool selected ;
+						for (size_t iter = 0; iter < listNames.size(); ++iter)
+						{
+							selected = (listValues[iter] == value);
+							if (ImGui::Selectable(listNames[iter].c_str(), &selected))
+							{
+								element.set_value(component,listValues[iter]);
+								current_value = value;
+							}
+							if(selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndListBox();
+					}
+				}
+				ImGui::PopID();
+			}
+			else if (element.get_type().get_properties().size())
+			{
+				ImGui::Dummy({ 15,0 });//give some padding
+				ImGui::SameLine();
+				ImGui::BeginGroup();
+				ReadComponents(element.get_value(component), object);
+				ImGui::EndGroup();
 			}
 			//undo and redo instructions
 			{

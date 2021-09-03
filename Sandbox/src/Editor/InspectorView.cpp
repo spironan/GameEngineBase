@@ -16,12 +16,19 @@
 
 //components
 #include "Engine/ECS/GameObjectComponent.h"
+
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/PhysicsCollision/RigidBody.h"
+#include "Engine/PhysicsCollision/Colliders.h"
+#include "Engine/PhysicsCollision/ColliderCore.h"
+
 #include "Engine/Renderer/Sprite2D.h"
 #include "Engine/Renderer/Camera.h"
+#include "Engine/Renderer/SceneCamera.h"
+
 #include "Engine/Prefab/EditorComponent.h"
 #include "Engine/Prefab/PrefabComponent.h"
+
 #include "Engine/Scripting/Scripting.h"
 #include "Engine/Scripting/ScriptInfo.h"
 
@@ -66,27 +73,37 @@ void InspectorView::Show()
 	ImGui::EndMenuBar();
 	ImGui::BeginChild("Preview items",ImVec2(0,ImGui::GetContentRegionMax().y - 75));
 	{
-		if (!ObjectGroup::s_FocusedObject)
+		auto& go = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject);
+		if (!ObjectGroup::s_FocusedObject || !go.HasComponent<engine::GameObjectComponent>())
 		{
 			ImGui::EndChild();
 		}
 		else
 		{
-			auto& go = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject);
 			
 			ShowGameObjectDetails(go);
 
-			if(go.TryGetComponent<engine::Transform3D>())
+			if(go.HasComponent<engine::Transform3D>())
 				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
-			if (go.TryGetComponent<engine::Camera>())
-				ReadComponents(go.GetComponent<engine::Camera>(), go);
 
-			if (go.TryGetComponent<engine::Sprite2D>())
+			if (go.HasComponent<engine::SceneCamera>())
+				ReadComponents(go.GetComponent<engine::SceneCamera>(), go);
+			if (go.HasComponent<engine::Camera>())
+				ReadComponents(go.GetComponent<engine::Camera>(), go);
+			if (go.HasComponent<engine::Sprite2D>())
 				ReadComponents(go.GetComponent<engine::Sprite2D>(), go);
+
+			if (go.HasComponent<engine::Collider2D>())
+				ReadComponents(go.GetComponent<engine::Collider2D>(), go);
+			if (go.HasComponent<engine::CircleCollider2D>())
+				ReadComponents(go.GetComponent<engine::CircleCollider2D>(), go);
+			if (go.HasComponent<engine::BoxCollider2D>())
+				ReadComponents(go.GetComponent<engine::BoxCollider2D>(), go);
+
 
 			if (m_showReadOnly)
 			{
-				if (go.TryGetComponent<engine::EditorComponent>())
+				if (go.HasComponent<engine::EditorComponent>())
 					ReadComponents(go.GetComponent<engine::EditorComponent>(), go);
 			}
 
