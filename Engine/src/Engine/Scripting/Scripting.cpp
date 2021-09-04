@@ -17,7 +17,7 @@ Technology is prohibited.
 #include "ScriptUtility.h"
 
 #include "Utility/Hash.h"
-#include "Engine/ECS/WorldManager.h"
+#include "Engine/Scene/SceneManager.h"
 #include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/PhysicsCollision/ColliderCore.h"
 
@@ -790,7 +790,7 @@ namespace engine
     {
         if (gameObjPtr == 0 || other.gameObjPtr == 0)
             return;
-        ComponentType compID = WorldManager::GetActiveWorld().GetComponentType<Collider2D>();
+        ComponentType compID = SceneManager::GetActiveWorld().GetComponentType<Collider2D>();
         if (compID >= other.componentList.size() || compID == 0)
             return;
         MonoObject* comp = mono_gchandle_get_target(other.componentList[compID]);
@@ -802,7 +802,7 @@ namespace engine
     {
         if (gameObjPtr == 0 || other.gameObjPtr == 0)
             return;
-        ComponentType compID = WorldManager::GetActiveWorld().GetComponentType<Collider2D>();
+        ComponentType compID = SceneManager::GetActiveWorld().GetComponentType<Collider2D>();
         if (compID >= other.componentList.size() || compID == 0)
             return;
         MonoObject* comp = mono_gchandle_get_target(other.componentList[compID]);
@@ -814,7 +814,7 @@ namespace engine
     {
         if (gameObjPtr == 0 || other.gameObjPtr == 0)
             return;
-        ComponentType compID = WorldManager::GetActiveWorld().GetComponentType<Collider2D>();
+        ComponentType compID = SceneManager::GetActiveWorld().GetComponentType<Collider2D>();
         if (compID >= other.componentList.size() || compID == 0)
             return;
         MonoObject* comp = mono_gchandle_get_target(other.componentList[compID]);
@@ -856,89 +856,89 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     uint32_t GameObject_GetName(int id)
     {
-        std::string const& name = WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).Name;
+        std::string const& name = SceneManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).Name;
         MonoString* string = ScriptUtility::MonoStringNew(name.c_str());
         return mono_gchandle_new((MonoObject*)string, false);
     }
 
     void GameObject_SetName(int id, const char* newName)
     {
-        WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).Name = newName;
+        SceneManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).Name = newName;
     }
 
     bool GameObject_GetActive(int id)
     {
-        return WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).ActiveSelf;
+        return SceneManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).ActiveSelf;
     }
 
     void GameObject_SetActive(int id, bool value)
     {
-        WorldManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).ActiveSelf = value;
+        SceneManager::GetActiveWorld().GetComponent<GameObjectComponent>(id).ActiveSelf = value;
     }
 
 
 
     uint32_t AddScript(int id, const char* name_space, const char* name)
     {
-        return WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(name_space, name);
+        return SceneManager::GetActiveWorld().GetComponent<engine::Scripting>(id).AddScript(name_space, name);
     }
 
     uint32_t GetScript(int id, const char* name_space, const char* name)
     {
-        return WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(name_space, name);
+        return SceneManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetScript(name_space, name);
     }
 
     void RemoveScript(int id, const char* name_space, const char* name)
     {
-        WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(name_space, name);
+        SceneManager::GetActiveWorld().GetComponent<engine::Scripting>(id).RemoveScript(name_space, name);
     }
 
     void DestroyScript(int entityID, int scriptID)
     {
-        WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(entityID).RemoveScript(scriptID);
+        SceneManager::GetActiveWorld().GetComponent<engine::Scripting>(entityID).RemoveScript(scriptID);
     }
 
     void SetScriptEnabled(int entityID, int scriptID, bool enabled)
     {
         if(enabled)
-            WorldManager::GetActiveWorld().GetComponent<Scripting>(entityID).EnableScript(scriptID);
+            SceneManager::GetActiveWorld().GetComponent<Scripting>(entityID).EnableScript(scriptID);
         else
-            WorldManager::GetActiveWorld().GetComponent<Scripting>(entityID).DisableScript(scriptID);
+            SceneManager::GetActiveWorld().GetComponent<Scripting>(entityID).DisableScript(scriptID);
     }
 
     bool CheckScriptEnabled(int entityID, int scriptID)
     {
-        return WorldManager::GetActiveWorld().GetComponent<Scripting>(entityID).GetScript(scriptID)->enabled;
+        return SceneManager::GetActiveWorld().GetComponent<Scripting>(entityID).GetScript(scriptID)->enabled;
     }
 
 
 
     uint32_t AddComponentFromScript(int id, const char* name_space, const char* name)
     {
-        uint32_t currPtr = WorldManager::GetActiveWorld().GetComponent<Scripting>(id).GetComponentInterface(name_space, name);
+        uint32_t currPtr = SceneManager::GetActiveWorld().GetComponent<Scripting>(id).GetComponentInterface(name_space, name);
         if (currPtr != 0)
             return currPtr;
 
         MonoType* type = mono_class_get_type(ScriptUtility::GetMonoClass(name_space, name));
         ScriptSystem::RegisteredComponent const& component = ScriptUtility::GetRegisteredComponent(type);
         component.Add(id);
-        return WorldManager::GetActiveWorld().GetComponent<Scripting>(id).AddComponentInterface(name_space, name);
+        return SceneManager::GetActiveWorld().GetComponent<Scripting>(id).AddComponentInterface(name_space, name);
     }
 
     uint32_t GetComponentFromScript(int id, const char* name_space, const char* name)
     {
-        return WorldManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetComponentInterface(name_space, name);
+        return SceneManager::GetActiveWorld().GetComponent<engine::Scripting>(id).GetComponentInterface(name_space, name);
     }
 
     void RemoveComponentFromScript(int id, const char* name_space, const char* name)
     {
-        uint32_t currPtr = WorldManager::GetActiveWorld().GetComponent<Scripting>(id).GetComponentInterface(name_space, name);
+        uint32_t currPtr = SceneManager::GetActiveWorld().GetComponent<Scripting>(id).GetComponentInterface(name_space, name);
         if (currPtr == 0)
             return;
 
         MonoType* type = mono_class_get_type(ScriptUtility::GetMonoClass(name_space, name));
         ScriptSystem::RegisteredComponent const& component = ScriptUtility::GetRegisteredComponent(type);
         component.Remove(id);
-        WorldManager::GetActiveWorld().GetComponent<Scripting>(id).RemoveComponentInterface(name_space, name);
+        SceneManager::GetActiveWorld().GetComponent<Scripting>(id).RemoveComponentInterface(name_space, name);
     }
 }

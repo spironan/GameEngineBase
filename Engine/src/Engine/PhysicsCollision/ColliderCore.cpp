@@ -18,6 +18,7 @@ Technology is prohibited.
 #include "Engine/ECS/GameObject.h"
 
 #include "Engine/Scripting/Scripting.h"
+#include "Engine/Scene/SceneManager.h"
 
 #include <rttr/registration>
 
@@ -30,10 +31,37 @@ namespace engine
             .property("IsTrigger", &Collider2D::IsTrigger);
     }
 
-    Collider2D::Collider2D(Entity entity, bool active)
+        Collider2D::Collider2D(Entity entity, bool active)
         : Component{ entity, active }
         //, collider{ BoxCollider2D{ GetComponent<Transform3D>() } }
     {
+        OnTriggerEnter += [this](const auto& triggers)
+        {
+            Scripting& scripting = GetComponent<Scripting>();
+            for (Collider2D trigger : triggers)
+            {
+                Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
+                scripting.InvokeTriggerEnter2D(other);
+            }
+        };
+        OnTriggerStay += [this](const auto& triggers)
+        {
+            Scripting& scripting = GetComponent<Scripting>();
+            for (Collider2D trigger : triggers)
+            {
+                Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
+                scripting.InvokeTriggerStay2D(other);
+            }
+        };
+        OnTriggerExit += [this](const auto& triggers)
+        {
+            Scripting& scripting = GetComponent<Scripting>();
+            for (Collider2D trigger : triggers)
+            {
+                Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
+                scripting.InvokeTriggerExit2D(other);
+            }
+        };
     };
 
     void Collider2D::SetNarrowPhaseCollider(ColliderType narrowPhaseCollider)
@@ -67,29 +95,14 @@ namespace engine
             if (!m_previous && m_current)
             {
                 OnTriggerEnter(m_triggers);
-                for (Collider2D trigger : m_triggers)
-                {
-                    Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
-                    scripting.InvokeTriggerEnter2D(other);
-                }
             }
             else if (m_previous && m_current)
             {
                 OnTriggerStay(m_triggers);
-                for (Collider2D trigger : m_triggers)
-                {
-                    Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
-                    scripting.InvokeTriggerStay2D(other);
-                }
             }
             else if (m_previous && !m_current)
             {
                 OnTriggerExit(m_triggers);
-                for (Collider2D trigger : m_triggers)
-                {
-                    Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
-                    scripting.InvokeTriggerExit2D(other);
-                }
             }
             m_triggers.clear();
         }
@@ -115,11 +128,11 @@ namespace engine
 
     bool Collider2D_GetIsTriggered(int instanceID)
     {
-        return WorldManager::GetActiveWorld().GetComponent<Collider2D>(instanceID).IsTrigger;
+        return SceneManager::GetActiveWorld().GetComponent<Collider2D>(instanceID).IsTrigger;
     }
 
     void Collider2D_SetIsTriggered(int instanceID, bool value)
     {
-        WorldManager::GetActiveWorld().GetComponent<Collider2D>(instanceID).IsTrigger = value;
+        SceneManager::GetActiveWorld().GetComponent<Collider2D>(instanceID).IsTrigger = value;
     }
 }

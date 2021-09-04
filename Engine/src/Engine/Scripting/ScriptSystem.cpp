@@ -24,7 +24,7 @@ namespace fs = std::filesystem;
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Input.h"
 
-#include "Engine/ECS/WorldManager.h"
+#include "Engine/Scene/SceneManager.h"
 #include "Engine/ECS/GameObject.h"
 
 namespace engine
@@ -116,7 +116,7 @@ namespace engine
         LOG_ENGINE_TRACE("Script Compiling Successful");
         ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str(), s_ComponentMap);
 
-        ScriptSystem* ss = WorldManager::GetActiveWorld().TryGetSystem<ScriptSystem>();
+        ScriptSystem* ss = SceneManager::GetActiveWorld().TryGetSystem<ScriptSystem>();
         if (ss != nullptr)
             ss->RefreshScriptInfoAll();
     }
@@ -230,7 +230,7 @@ namespace engine
 
     int CreateEntity()
     {
-        GameObject instance{ GameObject::Create{} };
+        GameObject& instance = SceneManager::GetActiveScene().CreateGameObject();
         auto& scripting = instance.GetComponent<Scripting>();
         scripting.SetUpPlay();
         // scripting.StartPlay();
@@ -248,7 +248,7 @@ namespace engine
 
     void DestroyEntity(int id)
     {
-        engine::WorldManager::GetActiveWorld().DestroyEntity(id);
+        SceneManager::GetActiveWorld().DestroyEntity(id);
     }
 
     /*-----------------------------------------------------------------------------*/

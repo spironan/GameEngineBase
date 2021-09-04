@@ -16,7 +16,7 @@ Technology is prohibited.
 
 #include <rttr/registration>
 
-#include "Engine/ECS/WorldManager.h"
+#include "Engine/Scene/SceneManager.h"
 
 namespace engine
 {
@@ -49,7 +49,7 @@ void Sprite2D::SetTexture(Texture tex)
 
 void Sprite2D_GetColor(int instanceID, float* r, float* g, float* b, float* a)
 {
-    oom::vec4& color = WorldManager::GetActiveWorld().GetComponent<Sprite2D>(instanceID).GetColor();
+    oom::vec4& color = SceneManager::GetActiveWorld().GetComponent<Sprite2D>(instanceID).GetColor();
     *r = color.r;
     *g = color.g;
     *b = color.b;
@@ -58,7 +58,7 @@ void Sprite2D_GetColor(int instanceID, float* r, float* g, float* b, float* a)
 
 void Sprite2D_SetColor(int instanceID, float r, float g, float b, float alpha)
 {
-    WorldManager::GetActiveWorld().GetComponent<Sprite2D>(instanceID).SetColor(r, g, b, alpha);
+    SceneManager::GetActiveWorld().GetComponent<Sprite2D>(instanceID).SetColor(r, g, b, alpha);
 }
 
 }

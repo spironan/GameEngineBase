@@ -100,15 +100,15 @@ namespace engine
             };
             std::function<bool(Entity)> has = [](Entity entity)
             {
-                return WorldManager::GetActiveWorld().HasComponent<Component>(entity);
+                return SceneManager::GetActiveWorld().HasComponent<Component>(entity);
             };
             std::function<ComponentType(void)> index = [](void)
             {
-                return WorldManager::GetActiveWorld().GetComponentType<Component>();
+                return SceneManager::GetActiveWorld().GetComponentType<Component>();
             };
             std::function<void(Entity)> remove = [](Entity entity)
             {
-                WorldManager::GetActiveWorld().RemoveComponent<Component>(entity);
+                SceneManager::GetActiveWorld().RemoveComponent<Component>(entity);
             };
             size_t id = s_ComponentMap.size();
             s_ComponentMap.insert({ interfaceTypeName, { add, has, index, remove } });
