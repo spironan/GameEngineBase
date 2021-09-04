@@ -67,7 +67,7 @@ namespace engine
         case ScriptValueType::GAMEOBJECT:
         {
             Entity entity = value.GetValue<Entity>();
-            if (entity == (Entity)-1)
+            if (entity == -1)
                 break;
             GameObject gameObject{ value.GetValue<Entity>() };
             Scripting* scripting = gameObject.TryGetComponent<Scripting>();
@@ -673,7 +673,7 @@ namespace engine
 
         // set GameObject instance id
         MonoClassField* idField = mono_class_get_field_from_name(_class, "m_InstanceID");
-        int id = GetEntity();
+        Entity id = GetEntity();
         mono_field_set_value(gameObject, idField, &id);
 
         // create Transform interface
@@ -856,7 +856,7 @@ namespace engine
     /*-----------------------------------------------------------------------------*/
     /* Script Functions for C#                                                     */
     /*-----------------------------------------------------------------------------*/
-    uint32_t GameObject_GetName(int id)
+    uint32_t GameObject_GetName(Entity id)
     {
         GameObject obj{ id };
         std::string const& name = obj.GetComponent<GameObjectComponent>().Name;
@@ -864,19 +864,19 @@ namespace engine
         return mono_gchandle_new((MonoObject*)string, false);
     }
 
-    void GameObject_SetName(int id, const char* newName)
+    void GameObject_SetName(Entity id, const char* newName)
     {
         GameObject obj{ id };
         obj.GetComponent<GameObjectComponent>().Name = newName;
     }
 
-    bool GameObject_GetActive(int id)
+    bool GameObject_GetActive(Entity id)
     {
         GameObject obj{ id };
         return obj.GetComponent<GameObjectComponent>().ActiveSelf;
     }
 
-    void GameObject_SetActive(int id, bool value)
+    void GameObject_SetActive(Entity id, bool value)
     {
         GameObject obj{ id };
         obj.GetComponent<GameObjectComponent>().ActiveSelf = value;
@@ -884,40 +884,40 @@ namespace engine
 
 
 
-    uint32_t AddScript(int id, const char* name_space, const char* name)
+    uint32_t AddScript(Entity id, const char* name_space, const char* name)
     {
         GameObject obj{ id };
         return obj.GetComponent<Scripting>().AddScript(name_space, name);
     }
 
-    uint32_t GetScript(int id, const char* name_space, const char* name)
+    uint32_t GetScript(Entity id, const char* name_space, const char* name)
     {
         GameObject obj{ id };
         return obj.GetComponent<Scripting>().GetScript(name_space, name);
     }
 
-    void RemoveScript(int id, const char* name_space, const char* name)
+    void RemoveScript(Entity id, const char* name_space, const char* name)
     {
         GameObject obj{ id };
         obj.GetComponent<Scripting>().RemoveScript(name_space, name);
     }
 
-    void DestroyScript(int entityID, int scriptID)
+    void DestroyScript(Entity entityID, int scriptID)
     {
         GameObject obj{ entityID };
         obj.GetComponent<Scripting>().RemoveScript(scriptID);
     }
 
-    void SetScriptEnabled(int entityID, int scriptID, bool enabled)
+    void SetScriptEnabled(Entity entityID, int scriptID, bool enabled)
     {
-        GameObject obj{entityID };
+        GameObject obj{ entityID };
         if(enabled)
             obj.GetComponent<Scripting>().EnableScript(scriptID);
         else
             obj.GetComponent<Scripting>().DisableScript(scriptID);
     }
 
-    bool CheckScriptEnabled(int entityID, int scriptID)
+    bool CheckScriptEnabled(Entity entityID, int scriptID)
     {
         GameObject obj{ entityID };
         return obj.GetComponent<Scripting>().GetScript(scriptID)->enabled;
@@ -925,7 +925,7 @@ namespace engine
 
 
 
-    uint32_t AddComponentFromScript(int id, const char* name_space, const char* name)
+    uint32_t AddComponentFromScript(Entity id, const char* name_space, const char* name)
     {
         GameObject obj{ id };
         uint32_t currPtr = obj.GetComponent<Scripting>().GetComponentInterface(name_space, name);
@@ -938,13 +938,13 @@ namespace engine
         return obj.GetComponent<Scripting>().AddComponentInterface(name_space, name);
     }
 
-    uint32_t GetComponentFromScript(int id, const char* name_space, const char* name)
+    uint32_t GetComponentFromScript(Entity id, const char* name_space, const char* name)
     {
         GameObject obj{ id };
         return obj.GetComponent<engine::Scripting>().GetComponentInterface(name_space, name);
     }
 
-    void RemoveComponentFromScript(int id, const char* name_space, const char* name)
+    void RemoveComponentFromScript(Entity id, const char* name_space, const char* name)
     {
         GameObject obj{ id };
         uint32_t currPtr = obj.GetComponent<Scripting>().GetComponentInterface(name_space, name);

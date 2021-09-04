@@ -129,8 +129,8 @@ namespace engine
 
     extern "C"
     {
-        __declspec(dllexport) void Sprite2D_GetColor(int instanceID, float* r, float* g, float* b, float* a);
-        __declspec(dllexport) void Sprite2D_SetColor(int instanceID, float r, float g, float b, float alpha = 1.0f);
+        __declspec(dllexport) void Sprite2D_GetColor(Entity instanceID, float* r, float* g, float* b, float* a);
+        __declspec(dllexport) void Sprite2D_SetColor(Entity instanceID, float r, float g, float b, float alpha = 1.0f);
     }
 
 } // namespace Engine

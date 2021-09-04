@@ -125,13 +125,13 @@ namespace engine
         m_current = false;
     }
 
-    bool Collider2D_GetIsTriggered(int instanceID)
+    bool Collider2D_GetIsTriggered(Entity instanceID)
     {
         GameObject obj{ instanceID };
         return obj.GetComponent<Collider2D>().IsTrigger;
     }
 
-    void Collider2D_SetIsTriggered(int instanceID, bool value)
+    void Collider2D_SetIsTriggered(Entity instanceID, bool value)
     {
         GameObject obj{ instanceID };
         obj.GetComponent<Collider2D>().IsTrigger = value;

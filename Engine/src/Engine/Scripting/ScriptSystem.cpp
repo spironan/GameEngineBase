@@ -229,7 +229,7 @@ namespace engine
     /* Entity Functions for C#                                                     */
     /*-----------------------------------------------------------------------------*/
 
-    int CreateEntity()
+    Entity CreateEntity()
     {
         GameObject& instance = SceneManager::GetActiveScene().CreateGameObject();
         auto& scripting = instance.GetComponent<Scripting>();
@@ -238,7 +238,7 @@ namespace engine
         return scripting.GetEntity();
     }
 
-    uint32_t InstantiateEntity(int src)
+    uint32_t InstantiateEntity(Entity src)
     {
         engine::GameObject instance = GameObject::Instantiate(GameObject(src));
         auto& scripting = instance.GetComponent<Scripting>();
@@ -247,7 +247,7 @@ namespace engine
         return scripting.GetGameObjectPtr();
     }
 
-    void DestroyEntity(int id)
+    void DestroyEntity(Entity id)
     {
         GameObject obj{ id };
         obj.Destroy();

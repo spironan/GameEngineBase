@@ -47,7 +47,7 @@ void Sprite2D::SetTexture(Texture tex)
     m_texture = tex.id;
 }
 
-void Sprite2D_GetColor(int instanceID, float* r, float* g, float* b, float* a)
+void Sprite2D_GetColor(Entity instanceID, float* r, float* g, float* b, float* a)
 {
     GameObject obj{ instanceID };
     oom::vec4& color = obj.GetComponent<Sprite2D>().GetColor();
@@ -57,7 +57,7 @@ void Sprite2D_GetColor(int instanceID, float* r, float* g, float* b, float* a)
     *a = color.a;
 }
 
-void Sprite2D_SetColor(int instanceID, float r, float g, float b, float alpha)
+void Sprite2D_SetColor(Entity instanceID, float r, float g, float b, float alpha)
 {
     GameObject obj{ instanceID };
     obj.GetComponent<Sprite2D>().SetColor(r, g, b, alpha);

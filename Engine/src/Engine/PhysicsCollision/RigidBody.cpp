@@ -113,13 +113,13 @@ namespace engine
         //m_orientation += m_angularVelocity * static_cast<float>(dt);
     }
 
-    float Rigidbody2D_GetGravityScale(int instanceID)
+    float Rigidbody2D_GetGravityScale(Entity instanceID)
     {
         GameObject obj{ instanceID };
         return obj.GetComponent<Rigidbody2D>().GravityScale;
     }
 
-    void Rigidbody2D_SetGravityScale(int instanceID, float value)
+    void Rigidbody2D_SetGravityScale(Entity instanceID, float value)
     {
         GameObject obj{ instanceID };
         obj.GetComponent<Rigidbody2D>().GravityScale = value;

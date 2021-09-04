@@ -268,7 +268,7 @@ namespace engine
         return oom::vec3{ oom::length(m_globalTransform[0]), oom::length(m_globalTransform[1]), oom::length(m_globalTransform[2]) };
     }
 
-    void Transform_GetLocalPosition(int instanceID, float* x, float* y, float* z)
+    void Transform_GetLocalPosition(Entity instanceID, float* x, float* y, float* z)
     {
         GameObject obj{ instanceID };
         Transform3D& transform = obj.GetComponent<Transform3D>();
@@ -278,14 +278,14 @@ namespace engine
         *z = position.z;
     }
 
-    void Transform_SetLocalPosition(int instanceID, float x, float y, float z)
+    void Transform_SetLocalPosition(Entity instanceID, float x, float y, float z)
     {
         GameObject obj{ instanceID };
         Transform3D& transform = obj.GetComponent<Transform3D>();
         transform.SetPosition({ x, y, z });
     }
 
-    void Transform_GetLocalScale(int instanceID, float* x, float* y, float* z)
+    void Transform_GetLocalScale(Entity instanceID, float* x, float* y, float* z)
     {
         GameObject obj{ instanceID };
         oom::vec3 const& scale = obj.GetComponent<Transform3D>().GetScale();
@@ -294,7 +294,7 @@ namespace engine
         *z = scale.z;
     }
 
-    void Transform_SetLocalScale(int instanceID, float x, float y, float z)
+    void Transform_SetLocalScale(Entity instanceID, float x, float y, float z)
     {
         GameObject obj{ instanceID };
         obj.GetComponent<Transform3D>().SetScale({ x, y, z });

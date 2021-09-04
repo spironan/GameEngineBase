@@ -104,8 +104,7 @@ namespace engine
             };
             std::function<ComponentType(void)> index = [](void)
             {
-                GameObject obj{ entity };
-                return obj.GetComponentType<Component>();
+                return SceneManager::GetActiveWorld().GetComponentType<Component>();
             };
             std::function<void(Entity)> remove = [](Entity entity)
             {
@@ -215,7 +214,7 @@ namespace engine
 
         \return     the IntPtr to the newly created GameObject in C# side
         *//**********************************************************************************/
-        __declspec(dllexport) int CreateEntity();
+        __declspec(dllexport) Entity CreateEntity();
 
         /*********************************************************************************//*!
         \brief      Creates a copy of a given source GameObject in the currently active world.
@@ -227,7 +226,7 @@ namespace engine
 
         \return     the IntPtr to the newly created GameObject in C# side
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t InstantiateEntity(int src);
+        __declspec(dllexport) uint32_t InstantiateEntity(Entity src);
 
         /*********************************************************************************//*!
         \brief      Removes a GameObject in the currently active world with a specific entity id.
@@ -237,7 +236,7 @@ namespace engine
         \param      id
                 the entity id of the GameObject to be destroyed
         *//**********************************************************************************/
-        __declspec(dllexport) void DestroyEntity(int id);
+        __declspec(dllexport) void DestroyEntity(Entity id);
 
         /*-----------------------------------------------------------------------------*/
         /* Input Functions for C#                                                      */

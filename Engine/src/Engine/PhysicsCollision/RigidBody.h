@@ -205,7 +205,7 @@ namespace engine
 
     extern "C"
     {
-        __declspec(dllexport) float Rigidbody2D_GetGravityScale(int instanceID);
-        __declspec(dllexport) void Rigidbody2D_SetGravityScale(int instanceID, float value);
+        __declspec(dllexport) float Rigidbody2D_GetGravityScale(Entity instanceID);
+        __declspec(dllexport) void Rigidbody2D_SetGravityScale(Entity instanceID, float value);
     }
 }

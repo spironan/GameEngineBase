@@ -469,7 +469,7 @@ namespace engine
 
         \return     the IntPtr to the newly created MonoString (C# string) containing the name
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t GameObject_GetName(int id);
+        __declspec(dllexport) uint32_t GameObject_GetName(Entity id);
 
         /*********************************************************************************//*!
         \brief      sets the name of a GameObject specified by its entity id
@@ -482,7 +482,7 @@ namespace engine
         \param      newName
                 the GameObject's new name
         *//**********************************************************************************/
-        __declspec(dllexport) void GameObject_SetName(int id, const char* newName);
+        __declspec(dllexport) void GameObject_SetName(Entity id, const char* newName);
 
         /*********************************************************************************//*!
         \brief      gets the active state of a GameObject specified by its entity id
@@ -494,7 +494,7 @@ namespace engine
 
         \return     true if it is active, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool GameObject_GetActive(int id);
+        __declspec(dllexport) bool GameObject_GetActive(Entity id);
 
         /*********************************************************************************//*!
         \brief      sets the active state of a GameObject specified by its entity id
@@ -507,7 +507,7 @@ namespace engine
         \param     activeSelf
                 the desired active state of the GameObject
         *//**********************************************************************************/
-        __declspec(dllexport) void GameObject_SetActive(int id, bool value);
+        __declspec(dllexport) void GameObject_SetActive(Entity id, bool value);
 
         /*********************************************************************************//*!
         \brief      creates and attaches a new script instance of a given C# class to a specific GameObject.
@@ -527,7 +527,7 @@ namespace engine
 
         \return     the IntPtr to the newly created script
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t AddScript(int id, const char* name_space, const char* name);
+        __declspec(dllexport) uint32_t AddScript(Entity id, const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      gets a script instance of a given C# class from the GameObject, if any.
@@ -546,7 +546,7 @@ namespace engine
 
         \return     the IntPtr to the desired script instance, 0 if not found
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t GetScript(int id, const char* name_space, const char* name);
+        __declspec(dllexport) uint32_t GetScript(Entity id, const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      deletes and removes a script instance of a given C# class from the GameObject, if any.
@@ -563,7 +563,7 @@ namespace engine
         \param      name
                 the name of the desired script (nested classes won't work)
         *//**********************************************************************************/
-        __declspec(dllexport) void RemoveScript(int id, const char* name_space, const char* name);
+        __declspec(dllexport) void RemoveScript(Entity id, const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      deletes and removes a script instance by its index from the GameObject, if any.
@@ -578,7 +578,7 @@ namespace engine
         \param      scriptID
                 the index of the desired script instance in the target GameObject's script list
         *//**********************************************************************************/
-        __declspec(dllexport) void DestroyScript(int entityID, int scriptID);
+        __declspec(dllexport) void DestroyScript(Entity entityID, int scriptID);
 
         /*********************************************************************************//*!
         \brief      sets the active state of a given script instance so that behavioural functions
@@ -596,7 +596,7 @@ namespace engine
         \param      enabled
                 the desired active state of the script instance
         *//**********************************************************************************/
-        __declspec(dllexport) void SetScriptEnabled(int entityID, int scriptID, bool enabled);
+        __declspec(dllexport) void SetScriptEnabled(Entity entityID, int scriptID, bool enabled);
 
         /*********************************************************************************//*!
         \brief      gets the active state of a given script instance
@@ -613,7 +613,7 @@ namespace engine
 
         \return     the active state of the specified script instance
         *//**********************************************************************************/
-        __declspec(dllexport) bool CheckScriptEnabled(int entityID, int scriptID);
+        __declspec(dllexport) bool CheckScriptEnabled(Entity entityID, int scriptID);
 
         /*********************************************************************************//*!
         \brief      creates and attaches a new ECS component and its corresponding C# interface
@@ -634,7 +634,7 @@ namespace engine
 
         \return     the IntPtr to the newly created component interface
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t AddComponentFromScript(int id, const char* name_space, const char* name);
+        __declspec(dllexport) uint32_t AddComponentFromScript(Entity id, const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      gets the ECS Component's C# interface from the GameObject, if any
@@ -653,7 +653,7 @@ namespace engine
 
         \return     the IntPtr to the desired component interface
         *//**********************************************************************************/
-        __declspec(dllexport) uint32_t GetComponentFromScript(int id, const char* name_space, const char* name);
+        __declspec(dllexport) uint32_t GetComponentFromScript(Entity id, const char* name_space, const char* name);
 
         /*********************************************************************************//*!
         \brief      deletes and removes an ECS component and its corresponding C# interface
@@ -671,6 +671,6 @@ namespace engine
         \param      name
                 the name of the desired ECS Component's C# interface (nested classes won't work)
         *//**********************************************************************************/
-        __declspec(dllexport) void RemoveComponentFromScript(int id, const char* name_space, const char* name);
+        __declspec(dllexport) void RemoveComponentFromScript(Entity id, const char* name_space, const char* name);
     }
 }

@@ -102,7 +102,7 @@ namespace engine
 
     extern "C"
     {
-        __declspec(dllexport) bool Collider2D_GetIsTriggered(int instanceID);
-        __declspec(dllexport) void Collider2D_SetIsTriggered(int instanceID, bool value);
+        __declspec(dllexport) bool Collider2D_GetIsTriggered(Entity instanceID);
+        __declspec(dllexport) void Collider2D_SetIsTriggered(Entity instanceID, bool value);
     }
 }
