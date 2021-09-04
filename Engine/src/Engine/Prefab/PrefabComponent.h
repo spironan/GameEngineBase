@@ -10,7 +10,7 @@ namespace engine
 		\brief
 		 Default Constructors
 		*//**********************************************************************************/
-		PrefabComponent() = delete;
+		PrefabComponent() = default;
 		PrefabComponent(const PrefabComponent&) = default;
 		PrefabComponent(PrefabComponent&&) = default;
 		PrefabComponent& operator=(PrefabComponent const&) = default;

@@ -2,7 +2,6 @@
 #include "Engine/Scene/SceneManager.h"
 #include "Engine/ECS/ECS_Manager.h"
 #include "Engine/ECS/GameObject.h"
-
 #include <algorithm>
 #include <vector>
 
@@ -55,7 +54,7 @@ void DeleteItemActionStack::undo()
 		parent.AddChild(go);
 	}
 	
-	engine::SceneManager::GetActiveRoot().AddChild(m_undoData);
+	static_cast<engine::GameObject>(m_orignalParent).AddChild(m_undoData);
 }
 void DeleteItemActionStack::redo()
 {
