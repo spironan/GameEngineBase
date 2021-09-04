@@ -18,7 +18,6 @@ Technology is prohibited.
 #include "Engine/ECS/GameObject.h"
 
 #include "Engine/Scripting/Scripting.h"
-#include "Engine/Scene/SceneManager.h"
 
 #include <rttr/registration>
 
@@ -128,11 +127,13 @@ namespace engine
 
     bool Collider2D_GetIsTriggered(int instanceID)
     {
-        return SceneManager::GetActiveWorld().GetComponent<Collider2D>(instanceID).IsTrigger;
+        GameObject obj{ instanceID };
+        return obj.GetComponent<Collider2D>().IsTrigger;
     }
 
     void Collider2D_SetIsTriggered(int instanceID, bool value)
     {
-        SceneManager::GetActiveWorld().GetComponent<Collider2D>(instanceID).IsTrigger = value;
+        GameObject obj{ instanceID };
+        obj.GetComponent<Collider2D>().IsTrigger = value;
     }
 }

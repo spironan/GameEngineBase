@@ -17,7 +17,6 @@ Technology is prohibited.
 #include "Engine/ECS/System.h"
 #include "ScriptInfo.h"
 #include "Scripting.h"
-#include "Engine/ECS/WorldManager.h"
 
 #include <functional>
 
@@ -95,20 +94,23 @@ namespace engine
         {
             std::function<void(Entity)> add = [](Entity entity)
             {
-                GameObject gameObject(entity);
-                gameObject.AddComponent<Component>();
+                GameObject obj{ entity };
+                obj.AddComponent<Component>();
             };
             std::function<bool(Entity)> has = [](Entity entity)
             {
-                return SceneManager::GetActiveWorld().HasComponent<Component>(entity);
+                GameObject obj{ entity };
+                return obj.HasComponent<Component>();
             };
             std::function<ComponentType(void)> index = [](void)
             {
-                return SceneManager::GetActiveWorld().GetComponentType<Component>();
+                GameObject obj{ entity };
+                return obj.GetComponentType<Component>();
             };
             std::function<void(Entity)> remove = [](Entity entity)
             {
-                SceneManager::GetActiveWorld().RemoveComponent<Component>(entity);
+                GameObject obj{ entity };
+                return obj.RemoveComponent<Component>();
             };
             size_t id = s_ComponentMap.size();
             s_ComponentMap.insert({ interfaceTypeName, { add, has, index, remove } });

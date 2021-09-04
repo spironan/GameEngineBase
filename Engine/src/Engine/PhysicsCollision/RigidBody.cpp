@@ -19,7 +19,6 @@ Technology is prohibited.
 #include "Rigidbody.h"
 
 #include "Engine/ECS/GameObject.h"
-#include "Engine/Scene/SceneManager.h"
 
 #include <rttr/registration>
 
@@ -116,11 +115,13 @@ namespace engine
 
     float Rigidbody2D_GetGravityScale(int instanceID)
     {
-        return SceneManager::GetActiveWorld().GetComponent<Rigidbody2D>(instanceID).GravityScale;
+        GameObject obj{ instanceID };
+        return obj.GetComponent<Rigidbody2D>().GravityScale;
     }
 
     void Rigidbody2D_SetGravityScale(int instanceID, float value)
     {
-        SceneManager::GetActiveWorld().GetComponent<Rigidbody2D>(instanceID).GravityScale = value;
+        GameObject obj{ instanceID };
+        obj.GetComponent<Rigidbody2D>().GravityScale = value;
     }
 }

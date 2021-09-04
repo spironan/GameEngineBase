@@ -24,8 +24,9 @@ namespace fs = std::filesystem;
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Input.h"
 
-#include "Engine/Scene/SceneManager.h"
 #include "Engine/ECS/GameObject.h"
+
+#include "Engine/Scene/SceneManager.h"
 
 namespace engine
 {
@@ -248,7 +249,8 @@ namespace engine
 
     void DestroyEntity(int id)
     {
-        SceneManager::GetActiveWorld().DestroyEntity(id);
+        GameObject obj{ id };
+        obj.Destroy();
     }
 
     /*-----------------------------------------------------------------------------*/

@@ -23,7 +23,6 @@ Technology is prohibited.
 
 #include <rttr/registration>
 #include "Engine/ECS/GameObject.h"
-#include "Engine/Scene/SceneManager.h"
 
 namespace engine 
 {
@@ -271,7 +270,8 @@ namespace engine
 
     void Transform_GetLocalPosition(int instanceID, float* x, float* y, float* z)
     {
-        Transform3D& transform = SceneManager::GetActiveWorld().GetComponent<Transform3D>(instanceID);
+        GameObject obj{ instanceID };
+        Transform3D& transform = obj.GetComponent<Transform3D>();
         oom::vec3 position = transform.GetPosition();
         *x = position.x;
         *y = position.y;
@@ -280,13 +280,15 @@ namespace engine
 
     void Transform_SetLocalPosition(int instanceID, float x, float y, float z)
     {
-        Transform3D& transform = SceneManager::GetActiveWorld().GetComponent<Transform3D>(instanceID);
+        GameObject obj{ instanceID };
+        Transform3D& transform = obj.GetComponent<Transform3D>();
         transform.SetPosition({ x, y, z });
     }
 
     void Transform_GetLocalScale(int instanceID, float* x, float* y, float* z)
     {
-        oom::vec3 const& scale = SceneManager::GetActiveWorld().GetComponent<Transform3D>(instanceID).GetScale();
+        GameObject obj{ instanceID };
+        oom::vec3 const& scale = obj.GetComponent<Transform3D>().GetScale();
         *x = scale.x;
         *y = scale.y;
         *z = scale.z;
@@ -294,7 +296,8 @@ namespace engine
 
     void Transform_SetLocalScale(int instanceID, float x, float y, float z)
     {
-        SceneManager::GetActiveWorld().GetComponent<Transform3D>(instanceID).SetScale({ x, y, z });
+        GameObject obj{ instanceID };
+        obj.GetComponent<Transform3D>().SetScale({ x, y, z });
     }
 
 } // namespace engine

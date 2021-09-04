@@ -14,9 +14,9 @@ Technology is prohibited.
 #include "pch.h"
 #include "Sprite2D.h"
 
-#include <rttr/registration>
+#include "Engine/ECS/GameObject.h"
 
-#include "Engine/Scene/SceneManager.h"
+#include <rttr/registration>
 
 namespace engine
 {
@@ -49,7 +49,8 @@ void Sprite2D::SetTexture(Texture tex)
 
 void Sprite2D_GetColor(int instanceID, float* r, float* g, float* b, float* a)
 {
-    oom::vec4& color = SceneManager::GetActiveWorld().GetComponent<Sprite2D>(instanceID).GetColor();
+    GameObject obj{ instanceID };
+    oom::vec4& color = obj.GetComponent<Sprite2D>().GetColor();
     *r = color.r;
     *g = color.g;
     *b = color.b;
@@ -58,7 +59,8 @@ void Sprite2D_GetColor(int instanceID, float* r, float* g, float* b, float* a)
 
 void Sprite2D_SetColor(int instanceID, float r, float g, float b, float alpha)
 {
-    SceneManager::GetActiveWorld().GetComponent<Sprite2D>(instanceID).SetColor(r, g, b, alpha);
+    GameObject obj{ instanceID };
+    obj.GetComponent<Sprite2D>().SetColor(r, g, b, alpha);
 }
 
 }
