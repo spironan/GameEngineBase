@@ -32,7 +32,6 @@ public class PlayerScript : MonoBehaviour
     public void AddScore(int add)
     {
         score += add;
-        AddLength();
         Debug.Log("Score: " + score);
     }
 
@@ -72,7 +71,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    private void AddLength()
+    public void AddLength()
     {
         GameObject instance = new GameObject("PlayerBody_" + (bodyList.Count + 1));
         instance.AddComponent<PlayerBodyScript>();

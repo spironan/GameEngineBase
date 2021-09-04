@@ -21,8 +21,13 @@ class FoodScript : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log(name + " TRIGGER ENTER: " + other.name);
-        other.GetComponent<PlayerScript>().AddScore(10);
-        RandomizePosition();
+        PlayerScript player = other.GetComponent<PlayerScript>();
+        if(player != null)
+        {
+            player.AddScore(10);
+            player.AddLength();
+            RandomizePosition();
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other)
