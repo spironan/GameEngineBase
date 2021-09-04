@@ -142,7 +142,7 @@ namespace engine
         template<typename Component>
         void RemoveComponent() const
         {
-            WorldManager::GetActiveWorld().RemoveComponent<Component>(entity.uniqueID);
+            WorldManager::GetActiveWorld().RemoveComponent<Component>(m_entity);
         }
 
         template<>

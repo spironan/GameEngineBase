@@ -9,7 +9,7 @@
 #include "Engine/Prefab/EditorComponent.h"
 #include "RttrTypeID.h"
 
-
+#include <iostream>
 class InspectorView
 {
 public:
@@ -32,19 +32,24 @@ private:
 		bool is_collapsed;
 		std::vector<rttr::property> types = component.get_type().get_properties();
 		rttr::variant current_value;
+		ImGui::PushID(component.get_type().get_name().c_str());
+
 		ImGui::BeginGroup();
 		is_collapsed = (ImGui::TreeNodeEx(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen) == false);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 50.0f);//button width
-		if (ImGui::Button("Reset", ImVec2(0,ImGui::GetFontSize())))
+		if (object.HasComponent<Component>())
 		{
-			//do smth
+			if (ImGui::Button("Remove", ImVec2(0,ImGui::GetFontSize())))
+			{
+				object.RemoveComponent<Component>();
+			}
 		}
 		ImGui::EndGroup();
+		ImGui::Separator();
 		if (is_collapsed)
 		{
 			return;
 		}
-		ImGui::PushID(component.get_type().get_name().c_str());
 		ImGui::Dummy({ 5,0 });//indent spacing
 		ImGui::SameLine();
 		ImGui::BeginGroup();
