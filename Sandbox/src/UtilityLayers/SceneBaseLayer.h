@@ -24,6 +24,8 @@ class SceneBaseLayer : public engine::Layer
 protected:
     engine::Scene& m_scene;
 
+    engine::World* m_world = nullptr;
+
 public:
 
     SceneBaseLayer(std::string scene_name);

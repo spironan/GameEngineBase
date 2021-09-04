@@ -28,7 +28,7 @@ void TransformTestLayer::Init()
 
     cam.UpdateViewportSize(width,height);
 
-    auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
+    auto& rs = m_world->RegisterSystem<engine::Renderer2DSystem>(cam);
 
     auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
     auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
@@ -85,9 +85,9 @@ void TransformTestLayer::OnUpdate(engine::Timestep dt)
 {
     float deltaTime = static_cast<float>(dt);
 
-    engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
+    engine::WorldManager::SetActiveWorld(m_world->GetID());
 
-    m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
+    m_world->GetSystem<engine::TransformSystem>()->Update();
 
     if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
     {
@@ -168,5 +168,5 @@ void TransformTestLayer::OnUpdate(engine::Timestep dt)
 
 void TransformTestLayer::OnImGuiRender()
 {
-    m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
+    m_world->GetSystem<engine::Renderer2DSystem>()->Update();
 }

@@ -29,7 +29,7 @@ namespace engine
 		using ID_type = utility::StringHash::size_type;
 
 	private:
-
+		
 		std::string m_filename{};
 		World* m_world = nullptr;
 		//GameObject m_root{};

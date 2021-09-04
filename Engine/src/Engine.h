@@ -30,8 +30,9 @@ Technology is prohibited.
 #include "Engine/ECS/GameObject.h"
 #include "Engine/ECS/ECS.h"
 #include "Engine/Transform/Transform.h"
-#include "Engine/PhysicsCollision/Physics.h"
 #include "Engine/Scripting/ScriptSystem.h"
+// -- Physics
+#include "Engine/PhysicsCollision/Physics.h";
 
 // Asset management
 #include "Engine/Asset/AssetsManager.h"
@@ -43,5 +44,8 @@ Technology is prohibited.
 #include "Engine/Renderer/2DRendering.h"
 
 
-// -- Physics
-#include "Engine/PhysicsCollision/Physics.h";
+// -- Prefab -- Editor : something to think about
+#include "Engine/Prefab/EditorComponent.h"
+#include "Engine/Prefab/EditorComponentSystem.h"
+#include "Engine/Prefab/PrefabComponent.h"
+#include "Engine/Prefab/PrefabComponentSystem.h"

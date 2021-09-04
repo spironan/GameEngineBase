@@ -103,7 +103,7 @@ namespace engine
         }
 
         template<typename Component>
-        ComponentType GetComponentType()
+        static ComponentType GetComponentType()
         {
             return WorldManager::GetActiveWorld().GetComponentType<Component>();
         }

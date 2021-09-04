@@ -23,6 +23,10 @@ Technology is prohibited.
 #include "EditorLayer.h"
 //Scripting Layer
 #include "ScriptingLayer.h"
+// Official Scene Layers
+#include "UtilityLayers/EditorSceneLayer.h"
+#include "UtilityLayers/GameSceneLayer.h"
+#include "UtilityLayers/SimulationSceneLayer.h"
 
 // for debugging
 #include "TestLayers/InputDebugLayer.h"
@@ -84,6 +88,10 @@ public:
         PushOverlay(new EditorLayer());
         // Scripting Layer
         PushOverlay(new ScriptingLayer());
+
+        // Official Original Layer
+        PushOverlay(new EditorSceneLayer());    // -- editor layer
+        //PushOverlay(new GameSceneLayer());      // -- actual game scene layer
 
         // Debug Layers!
         PushOverlay(new DebugLayer(*this));

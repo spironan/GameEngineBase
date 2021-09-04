@@ -63,7 +63,7 @@ public:
         //cam.SetOrthographic(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
 
         LOG_ENGINE_INFO(cam.GetEntity());
-        auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
+        auto& rs = m_world->RegisterSystem<engine::Renderer2DSystem>(cam);
 
         auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
 
@@ -121,9 +121,9 @@ public:
     {
         float deltaTime = static_cast<float>(dt);
 
-        engine::WorldManager::SetActiveWorld(m_scene.GetWorld().GetID());
+        engine::WorldManager::SetActiveWorld(m_world->GetID());
 
-        m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
+        m_world->GetSystem<engine::TransformSystem>()->Update();
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
         {
@@ -184,11 +184,11 @@ public:
         }
 
 
-        auto view = m_scene.GetWorld().GetComponentView<engine::Transform3D>();
+        auto view = m_world->GetComponentView<engine::Transform3D>();
 
         for (auto[transform] : view)
         {
-            //auto& transform = m_scene.GetWorld().GetComponent<engine::Transform3D>(ent);
+            //auto& transform = m_world->GetComponent<engine::Transform3D>(ent);
 
             /*LOG_INFO("ent {0}: position ({1},{2})  parent : {3} childs : {4}"
                 , ent

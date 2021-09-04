@@ -1,3 +1,4 @@
+#pragma once
 #include "Engine/ECS/System.h"
 #include <map>
 #include "Utility/Hash.h"
