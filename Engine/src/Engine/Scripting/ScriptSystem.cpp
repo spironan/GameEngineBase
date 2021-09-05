@@ -161,16 +161,6 @@ namespace engine
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {
             scripting.SetUpPlay();
-            for (auto const& component : ScriptUtility::g_SystemInfo.componentMap)
-            {
-                if (component.second.Has(scripting.GetEntity()))
-                {
-                    MonoClass* _class = mono_type_get_class(component.first);
-                    const char* name_space = mono_class_get_namespace(_class);
-                    const char* name = mono_class_get_name(_class);
-                    scripting.AddComponentInterface(name_space, name);
-                }
-            }
         }
         for (auto& scripting : m_ECS_Manager.GetComponentDenseArray<Scripting>())
         {

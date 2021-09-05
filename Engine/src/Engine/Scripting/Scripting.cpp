@@ -419,6 +419,11 @@ namespace engine
 
     }
 
+    Scripting::Scripting(Scripting const& ref) : Component{ ref.GetEntity(), ref.IsActive() }, gameObjPtr{ 0 }, scriptInfoMap{ ref.scriptInfoMap }
+    {
+
+    }
+
     Scripting::~Scripting()
     {
         StopPlay();
@@ -684,6 +689,18 @@ namespace engine
         // set GameObject's transform
         MonoClassField* transformField = mono_class_get_field_from_name(_class, "m_Transform");
         mono_field_set_value(gameObject, transformField, transform);
+
+        // add all other Components
+        for (auto const& component : ScriptUtility::g_SystemInfo.componentMap)
+        {
+            if (component.second.Has(GetEntity()))
+            {
+                MonoClass* _class = mono_type_get_class(component.first);
+                const char* name_space = mono_class_get_namespace(_class);
+                const char* name = mono_class_get_name(_class);
+                AddComponentInterface(name_space, name);
+            }
+        }
 
         // create all script instances
         for (auto const& scriptInfo : scriptInfoMap)

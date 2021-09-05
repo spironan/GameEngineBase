@@ -28,8 +28,8 @@ namespace engine
         /* Constructors and Destructors                                                */
         /*-----------------------------------------------------------------------------*/
         Scripting() = delete;
-        Scripting(Scripting const&) = default;
-        Scripting(Scripting&&) = default;
+        Scripting(Scripting const&);
+        //Scripting(Scripting&&) = default;
 
         /****************************************************************************//*!
          @brief     Copies the relevant data of scripting component while retaining
