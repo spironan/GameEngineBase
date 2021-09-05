@@ -27,14 +27,22 @@ namespace engine
     /*---------------------------------------------------------------------------------*/
     /* Static Functions                                                                */
     /*---------------------------------------------------------------------------------*/
-    GameObject& GameObject::Instantiate(GameObject const& source)
+    GameObject GameObject::Instantiate(GameObject source)
     {
         return static_cast<GameObject>(WorldManager::GetActiveWorld().DuplicateEntity(source));
     }
 
-    void GameObject::DestroyGameObject(Entity entt)
+    void GameObject::DestroyGameObject(GameObject go)
     {
-        WorldManager::GetActiveWorld().DestroyEntity(entt);
+        //go.ActiveSelf() = false;
+
+        auto& tf = go.Transform();
+        /*tf.DetachFromRoot();*/
+        
+        for(auto const& child : WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetChildren(tf))
+            WorldManager::GetActiveWorld().DestroyEntity(child.GetEntity());
+
+        WorldManager::GetActiveWorld().DestroyEntity(go);
     }
 
 

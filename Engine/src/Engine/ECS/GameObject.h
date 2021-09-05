@@ -57,8 +57,8 @@ namespace engine
         /* Static Functions                                                                */
         /*---------------------------------------------------------------------------------*/
         // Duplicating objects
-        static void GameObject::DestroyGameObject(Entity entt);
-        static GameObject& Instantiate(GameObject const& source);
+        static void DestroyGameObject(GameObject entt);
+        static GameObject Instantiate(GameObject source);
 
 
         // use with caution, this should not immediately delete the object!
