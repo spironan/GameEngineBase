@@ -155,6 +155,8 @@ void HierarchyView::ListHierarchy()
 			current_color = editor_component.IsPrefab() ? prefab_text_color : default_textCol;
 		else//is a prefab instance == skip
 			continue;
+		else//is a prefab instance == skip
+			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
 
 		if (ObjectGroup::s_FocusedObject == objEntity)
 		{
