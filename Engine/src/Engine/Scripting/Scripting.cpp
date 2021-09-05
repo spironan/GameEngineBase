@@ -770,26 +770,7 @@ namespace engine
             MonoMethod* stringMethod = mono_class_get_method_from_name(mono_get_exception_class(), "ToString", 0);
             MonoString* excString = (MonoString*)mono_runtime_invoke(stringMethod, exception, NULL, NULL);
             LOG_CRITICAL(mono_string_to_utf8(excString));
-            //MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
-            //MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
-            //LOG_CRITICAL(mono_string_to_utf8(excMsg));
-            // mono_print_unhandled_exception(exception);
         }
-        //__try
-        //{
-        //    mono_runtime_invoke(method, script, NULL, (MonoObject**)&exception);
-        //}
-        //__finally
-        //{
-        //    //std::cout << "SOMETHING" << std::endl;
-        //    if (exception)
-        //    {
-        //        MonoProperty* excMsgProperty = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
-        //        MonoString* excMsg = (MonoString*)mono_property_get_value(excMsgProperty, exception, NULL, NULL);
-        //        LOG_ERROR(mono_string_to_utf8(excMsg));
-        //        mono_print_unhandled_exception(exception);
-        //    }
-        //}
     }
 
     void Scripting::InvokeFunctionAll(const char* functionName, int paramCount, void** params)
