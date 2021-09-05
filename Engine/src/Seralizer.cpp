@@ -20,6 +20,9 @@
 #include "Engine/ECS/GameObject.h"
 #include "Engine/Prefab/PrefabComponent.h"
 #include "Engine/Prefab/EditorComponent.h"
+#include "Engine/Scripting/Scripting.h"
+#include "Engine/Scripting/ScriptSystem.h"
+
 
 engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 {
@@ -104,6 +107,7 @@ void Serializer::LoadWorld(const std::string& path)
 		LoadComponent(arr, object);
 	}
 
+
 	for (auto& hierarchyItem : hierarchymap)
 	{
 		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
@@ -141,11 +145,13 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 	writer.Uint(go.GetEntity());
 	writer.Uint(go.GetComponent<engine::Transform3D>().GetParentId());//parent id first
 
-	if (go.TryGetComponent<engine::GameObjectComponent>())
+	if (go.HasComponent<engine::GameObjectComponent>())
 		SaveComponent<engine::GameObjectComponent>(go.GetComponent<engine::GameObjectComponent>(), writer);
-	if (go.TryGetComponent<engine::Transform3D>())
+	if (go.HasComponent<engine::Transform3D>())
 		SaveComponent<engine::Transform3D>(go.GetComponent<engine::Transform3D>(), writer);
 	
+	if (go.HasComponent<engine::Scripting>())
+		SaveScripts(go, writer);
 	writer.EndArray();
 }
 
@@ -164,7 +170,7 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& 
 			goComponent.Active = component_data[0].GetBool();
 			goComponent.Name = component_data[1].GetString();
 		}
-		if (component == rttr::type::get<engine::Transform3D>().get_name())
+		else if (component == rttr::type::get<engine::Transform3D>().get_name())
 		{
 			auto& trans = arr[count].GetArray();
 			engine::Transform3D& transform = go.GetComponent<engine::Transform3D>();
@@ -172,10 +178,117 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& 
 			transform.SetPosition(GetVec3(trans[0]));
 			transform.SetRotationAxis(GetVec3(trans[1]));
 			transform.SetRotationAngle(trans[2].GetFloat());
+			
 		}
-		if (component == rttr::type::get<engine::PrefabComponent>().get_name())
+		else if (component == rttr::type::get<engine::PrefabComponent>().get_name())
 		{
+
+		}
+		else if (component == "Scripting")
+		{
+			LoadScripts(arr[count].GetArray(), go);
 		}
 	}
 }
 
+void Serializer::SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+{
+	auto& scriptInfoList = go.GetComponent<engine::Scripting>().GetScriptInfoAll();
+	std::string temp = "Scripting";
+	writer.String(temp.c_str(),temp.size());
+	writer.StartArray();
+	
+	for (auto& script : scriptInfoList)
+	{
+		temp = script.second.classInfo.ToString();
+		writer.String(temp.c_str(), temp.size());
+		writer.StartArray();
+		for (auto& values : script.second.fieldMap)
+		{
+			engine::ScriptFieldValue& sfValue = values.second.value;
+			switch (sfValue.GetValueType())
+			{
+				case engine::ScriptValueType::BOOL:
+				{
+					writer.Bool(sfValue.GetValue<bool>());
+					break;
+				}
+				case engine::ScriptValueType::INT:
+				{
+					writer.Int(sfValue.GetValue<int>());
+					break;
+				}
+				case engine::ScriptValueType::FLOAT:
+				{
+					writer.Double(sfValue.GetValue<float>());
+					break;
+				}
+				case engine::ScriptValueType::STRING:
+				{
+					temp = sfValue.GetValue<std::string>();
+					writer.String(temp.c_str(), temp.size());
+					break;
+				}
+				case engine::ScriptValueType::GAMEOBJECT:
+				{
+					writer.Uint(sfValue.GetValue<engine::Entity>());
+					break;
+				}
+			}
+		}
+		writer.EndArray();
+	}
+	writer.EndArray();
+}
+
+
+void Serializer::LoadScripts(rapidjson::Value::Array& arr, engine::GameObject& go)
+{
+	std::string componentName;
+	engine::Scripting& scriptComponent = go.EnsureComponent<engine::Scripting>();
+	for (rapidjson::SizeType iter = 0; iter < arr.Size(); ++iter)
+	{
+		componentName = arr[iter].GetString();
+		size_t pos = componentName.find_last_of('.');
+		pos = (pos == std::string::npos) ? 0 : pos;
+		engine::ScriptInfo& info = scriptComponent.AddScriptInfo({ componentName.substr(0, pos), componentName.substr(pos) });
+		
+		++iter;//added component
+		//populate data
+		auto & componentData = arr[iter].GetArray();
+		size_t component_iter = 0;
+		for (auto& field : info.fieldMap)
+		{
+			engine::ScriptFieldValue& sfValue = field.second.value;
+			switch (sfValue.GetValueType())
+			{
+			case engine::ScriptValueType::BOOL:
+			{
+				sfValue.SetValue<bool>(componentData[component_iter].GetBool());
+				break;
+			}
+			case engine::ScriptValueType::INT:
+			{
+				sfValue.SetValue<int>(componentData[component_iter].GetInt());
+				break;
+			}
+			case engine::ScriptValueType::FLOAT:
+			{
+				sfValue.SetValue<float>(componentData[component_iter].GetFloat());
+				break;
+			}
+			case engine::ScriptValueType::STRING:
+			{
+				sfValue.SetValue<std::string>(componentData[component_iter].GetString());
+				
+				break;
+			}
+			case engine::ScriptValueType::GAMEOBJECT:
+			{
+				break;
+			}
+			}
+			++component_iter;
+		}
+	}
+}

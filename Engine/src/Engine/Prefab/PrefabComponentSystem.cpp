@@ -5,7 +5,7 @@
 #include "Engine/Prefab/EditorComponentSystem.h"
 #include "Utility/Hash.h"
 #include "Seralizer.h"
-
+#include "Engine/Scripting/Scripting.h"
 //components
 #include "PrefabComponent.h"
 #include "EditorComponent.h"
@@ -29,7 +29,7 @@ Entity PrefabComponentSystem::AddPrefab(const std::string& filepath)
 
 	//use serializer to serialize prefab
 	Entity headNode = Serializer::LoadObject(filepath, 500);//not shown in hierarchy
-	ENGINE_ASSERT(headNode != 0);//means seralization failed
+	ENGINE_ASSERT(headNode);//means seralization failed
 
 	static_cast<GameObject>(headNode).GetComponent<PrefabComponent>().m_RootNode = true;
 	m_prefabDetails[fileHash] = FileDetails{ headNode,filepath };
@@ -54,8 +54,9 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 	Transform3D& trans = GO.GetComponent<Transform3D>();
 	
 	Transform3D& headTrans = head.GetComponent<Transform3D>();
-	headTrans.CopyComponent(trans);
-
+	
+	engine::SceneManager::GetActiveWorld().DuplicateEntity(GO, head);
+	
 	auto& childList = GO.GetChildren();
 	std::vector<Entity> orignal{GO};
 	std::vector<Entity> current{head};
@@ -79,9 +80,7 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		
 
 		{//TODO fix this once its done
-			engine::Transform3D& newTrans = static_cast<engine::GameObject>(copyObject).GetComponent<engine::Transform3D>();
-			engine::Transform3D& childTrans = child.GetComponent<engine::Transform3D>();
-			childTrans.CopyComponent(newTrans);
+			engine::SceneManager::GetActiveWorld().DuplicateEntity(copyObject, child);
 		}
 
 		const engine::Entity parentid = copyTransform.GetParentId();
@@ -119,7 +118,7 @@ void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& 
 	auto& prefabChild = prefab.GetChildren();
 	auto& childList = head.GetChildren();
 	
-	if (head.TryGetComponent<EditorComponent>())
+	if (head.HasComponent<EditorComponent>())
 	{
 		EditorComponent& ec = head.GetComponent<EditorComponent>();
 		ec.SetPrefabReference(prefab.GetEntity(),head);

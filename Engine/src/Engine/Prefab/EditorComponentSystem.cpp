@@ -12,6 +12,7 @@
 #include "EditorComponentSystem.h"
 #include "PrefabComponentSystem.h"
 #include "EditorComponent.h"
+#include "Engine/Scripting/Scripting.h"
 #include "Seralizer.h"
 namespace engine
 {
@@ -37,19 +38,19 @@ void EditorComponentSystem::UpdatedPrefab(value_reference object)
 	engine::GameObject& Prefab = (engine::GameObject)id;
 	object.SetPrefabDirty(false);
 	GameObject& go = (GameObject)object.GetEntity();//remove later
-	engine::Transform3D& prefabTransform = Prefab.Transform();
-	Prefab.CopyComponent<Transform3D>(go);
+	engine::SceneManager::GetActiveWorld().DuplicateEntity(go, Prefab);
 
 	//update users
 	for (auto ent : iter->second)
 	{
-		engine::GameObject& gameobject = (engine::GameObject)ent;
-		gameobject.CopyComponent<Transform3D>(Prefab);
+		engine::SceneManager::GetActiveWorld().DuplicateEntity(Prefab, ent);
 	}
 	//updating prefab to file
+	engine::GameObject& headref = static_cast<GameObject>(object.GetHeadReference());
+	engine::GameObject prefabRef = headref.GetComponent<EditorComponent>().GetPrefabReference();
 
 	engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->
-		SavePrefab(static_cast<GameObject>(object.GetHeadReference()));
+		SavePrefab(prefabRef);
 }
 
 void EditorComponentSystem::RegisterNewUser(Entity prefab,value_reference object)

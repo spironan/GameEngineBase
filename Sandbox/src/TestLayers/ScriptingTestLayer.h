@@ -15,7 +15,8 @@ Technology is prohibited.
 #pragma once
 
 #include "UtilityLayers/SceneBaseLayer.h"
-
+#include "Engine/Prefab/PrefabComponentSystem.h"
+#include "Engine/Prefab/EditorComponentSystem.h"
 class ScriptingTestLayer : public SceneBaseLayer
 {
 private:

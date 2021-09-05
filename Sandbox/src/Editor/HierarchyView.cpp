@@ -25,6 +25,7 @@ Technology is prohibited.
 #include "ActionStack/DeleteItemActionStack.h"
 
 #include "Engine/Prefab/PrefabComponentSystem.h"
+#include "Engine/Prefab/PrefabComponent.h"
 #include "Engine/Prefab/EditorComponent.h"
 
 #include "Engine/ECS/DeletedGameObject.h"
@@ -150,10 +151,10 @@ void HierarchyView::ListHierarchy()
 		engine::Entity objEntity = transformList[iter].GetEntity();
 		engine::GameObject& gameObj = static_cast<engine::GameObject>(objEntity);
 
-		if (gameObj.HasComponent<engine::EditorComponent>())
-			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
-		else//is a prefab instance == skip
+		if (gameObj.HasComponent<engine::PrefabComponent>())
 			continue;
+		else//is a prefab instance == skip
+			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
 
 		if (ObjectGroup::s_FocusedObject == objEntity)
 		{
@@ -468,9 +469,8 @@ void HierarchyView::Paste()
 		child.AddComponent<engine::EditorComponent>();
 
 		{//TODO fix this once its done
-			child.GetComponent<engine::Transform3D>().CopyComponent(copyObject.GetComponent<engine::Transform3D>());
+			engine::SceneManager::GetActiveWorld().DuplicateEntity(copyObject, child);
 			child.GetComponent<engine::EditorComponent>().SetHead(parent);
-			child.GetComponent<engine::EditorComponent>().CopyComponent(copyObject.GetComponent<engine::EditorComponent>());
 		}
 
 		const engine::Entity parentid = copyTransform.GetParentId();

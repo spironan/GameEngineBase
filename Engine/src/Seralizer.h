@@ -3,8 +3,8 @@
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/document.h>
-
 #include "Engine/ECS/GameObject.h"
+
 class Serializer
 {
 public:
@@ -21,6 +21,8 @@ private:
 	static void SaveComponent(Component & component, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer);
 	static void LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& go);
 
+	static void SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer);
+	static void LoadScripts(rapidjson::Value::Array& arr, engine::GameObject& go);
 	static oom::vec3 GetVec3(rapidjson::Value& val)
 	{
 		auto& arr = val.GetArray();
@@ -32,7 +34,7 @@ template<typename Component>
 void Serializer::SaveComponent(Component& component, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
 	std::string temp = rttr::type::get<Component>().get_name();
-	writer.String(temp.c_str());
+	writer.String(temp.c_str(),temp.size());
 	writer.StartArray();
 	std::vector<rttr::property> list = rttr::type::get<Component>().get_properties();
 	rttr::type::type_id id;
