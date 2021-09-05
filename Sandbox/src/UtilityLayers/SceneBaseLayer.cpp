@@ -36,7 +36,8 @@ void SceneBaseLayer::OnAttach()
 {
     engine::SceneManager::SetActiveScene(m_scene.GetID());
     m_scene.Load();
-    m_scene.GetWorld().RegisterSystem<engine::TransformSystem>();
+    m_world = &m_scene.GetWorld();
+    m_world->RegisterSystem<engine::TransformSystem>();
     Init();
 }
 
@@ -45,6 +46,7 @@ void SceneBaseLayer::OnDetach()
     //engine::SceneManager::SetActiveScene(m_scene.GetID()); -- guaranteed to be exiting correctly
     Exit();
     m_scene.Unload();
+    m_world = nullptr;
 }
 
 void SceneBaseLayer::Init() { };
