@@ -32,7 +32,7 @@ Technology is prohibited.
 #include "Engine/Transform/Transform.h"
 #include "Engine/Scripting/ScriptSystem.h"
 // -- Physics
-#include "Engine/PhysicsCollision/Physics.h";
+#include "Engine/PhysicsCollision/Physics.h"
 
 // Asset management
 #include "Engine/Asset/AssetsManager.h"
