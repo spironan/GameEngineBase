@@ -36,6 +36,12 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
 
         /*********************************************************************************//*!
+        \brief      loads the currently compiled scripts, if any. This should be called only
+                    after registering all components into the ScriptSystem
+        *//**********************************************************************************/
+        static void Initialize();
+
+        /*********************************************************************************//*!
         \brief      executes the required actions to compile all user made scripts during runtime
         *//**********************************************************************************/
         static void Compile();

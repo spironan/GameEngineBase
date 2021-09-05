@@ -36,12 +36,20 @@ namespace engine
     static std::string s_ProjDir = "../Scripting/Scripting.csproj";
     static std::string s_OutputDir = "../Sandbox/scripting";
     static std::string s_OutputFileName = "scripting";
+    static std::string s_OutputFilePath = s_OutputDir + "/" + s_OutputFileName + ".dll";
     static std::string s_ErrorsLogFile = "../Sandbox/scripting/errors.log";
     static std::string s_WarningsLogFile = "../Sandbox/scripting/warnings.log";
 
     /*-----------------------------------------------------------------------------*/
     /* Compiling                                                                   */
     /*-----------------------------------------------------------------------------*/
+
+    void ScriptSystem::Initialize()
+    {
+        if (!fs::exists(s_OutputFilePath))
+            return;
+        ScriptUtility::g_SystemInfo.Initialize(s_OutputFilePath.c_str(), s_ComponentMap);
+    }
 
     void ScriptSystem::Compile()
     {
@@ -115,7 +123,7 @@ namespace engine
 
         // load all system info for later use
         LOG_ENGINE_TRACE("Script Compiling Successful");
-        ScriptUtility::g_SystemInfo.Initialize((s_OutputDir + "/" + s_OutputFileName + ".dll").c_str(), s_ComponentMap);
+        ScriptUtility::g_SystemInfo.Initialize(s_OutputFilePath.c_str(), s_ComponentMap);
 
         ScriptSystem* ss = SceneManager::GetActiveWorld().TryGetSystem<ScriptSystem>();
         if (ss != nullptr)
