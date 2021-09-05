@@ -90,7 +90,7 @@ public:
         PushOverlay(new ScriptingLayer());
 
         // Official Original Layer
-        PushOverlay(new EditorSceneLayer());    // -- editor layer
+        //PushOverlay(new EditorSceneLayer());    // -- editor layer
         //PushOverlay(new GameSceneLayer());      // -- actual game scene layer
 
         // Debug Layers!
