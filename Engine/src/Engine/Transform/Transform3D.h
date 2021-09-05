@@ -51,16 +51,16 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Getter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-        float     const& GetRotationAngle()    const    { return oom::degrees(m_rotationAngle); }
         oom::vec3 const& GetPosition()         const    { return m_position; }
         oom::vec3 const& GetRotationAxis()     const    { return m_rotationAxis; }
         oom::vec3 const& GetScale()            const    { return m_scale;    }
         oom::mat4 const& GetLocalMatrix()      const    { return m_localTransform;}
         oom::mat4 const& GetGlobalMatrix()     const    { return m_globalTransform; }
-        int       const& GetChildCount()       const    { return m_childCount; }
-        Entity    const& GetParentId()         const    { return m_parentId; }
-        bool      const& IsDirty()             const    { return m_dirty; }
-        bool      const& HasChanged()          const    { return m_hasChanged; }
+        float            GetRotationAngle()    const    { return oom::degrees(m_rotationAngle); }
+        int              GetChildCount()       const    { return m_childCount; }
+        Entity           GetParentId()         const    { return m_parentId; }
+        bool             IsDirty()             const    { return m_dirty; }
+        bool             HasChanged()          const    { return m_hasChanged; }
 
         /*-----------------------------------------------------------------------------*/
         /* Setter Functions                                                            */
@@ -73,7 +73,7 @@ namespace engine
 
         void SetPosition(oom::vec3 const& pos)          { m_dirty = true; m_position = pos; }
         void SetRotationAxis(oom::vec3 const& rotAxis)  { m_dirty = true; m_rotationAxis = rotAxis; }
-        void SetRotationAngle(float const& angle)       { m_dirty = true; m_rotationAngle = oom::radians(angle); }
+        void SetRotationAngle(float angle)              { m_dirty = true; m_rotationAngle = oom::radians(angle); }
         void SetScale(oom::vec3 const& scale)           { m_dirty = true; m_scale = scale; }
         
         oom::mat4 const& GetConversionMatrix() { return m_conversionMatrix; }
@@ -182,6 +182,8 @@ namespace engine
         *//*****************************************************************************/
         void ConvertCoordinates() { m_dirty = true; m_conversion = true; }
         
+
+        void DetachFromRoot();
 
         // Temporary way to get the id of the transform component : should delete
         // and find better fix.[TODO]

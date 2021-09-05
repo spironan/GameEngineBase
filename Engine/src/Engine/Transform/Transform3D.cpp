@@ -24,6 +24,8 @@ Technology is prohibited.
 #include <rttr/registration>
 #include "Engine/ECS/GameObject.h"
 
+#include "TransformSystem.h"
+
 namespace engine 
 {
     /********************************************************************************//*!
@@ -118,6 +120,22 @@ namespace engine
         }
         
         m_globalTransform = parentMtx * m_localTransform;
+    }
+
+    void engine::Transform3D::DetachFromRoot()
+    {
+        // Reduce child count of current parent if parent isnt itself.
+        if (m_parentId != m_entity)
+        {
+            static_cast<GameObject>(m_parentId).Transform().DecrementChildCount(1 + m_childCount);
+        }
+
+        m_parentId = m_entity;
+
+        /*SetActive(false);
+        auto& result = WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetChildren(*this);
+
+        return result;*/
     }
 
     /****************************************************************************//*!
