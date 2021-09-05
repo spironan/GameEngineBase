@@ -73,7 +73,7 @@ namespace engine
 		\return   True if scene has a world loaded, false otherwise
 		
 		*//**********************************************************************************/
-		bool IsLoaded();
+		bool IsLoaded() const;
 		/*********************************************************************************//*!
 		\brief    Unloads a world from a scene. Calls SaveToFile() to save world to
 		scene file
@@ -100,7 +100,7 @@ namespace engine
 		\return   reference to the loaded world
 		
 		*//**********************************************************************************/
-		World& GetWorld();
+		World& GetWorld() const;
 		/*********************************************************************************//*!
 		\brief    Returns reference to the root gameobject of the world loaded in the scene
 		 
@@ -115,19 +115,19 @@ namespace engine
 		\return   created gameobject
 		
 		*//**********************************************************************************/
-		GameObject CreateGameObject();
+		GameObject CreateGameObject() const;
 		/*********************************************************************************//*!
 		\brief    Sets this world as the active world in the world manager
 		 
 		
 		*//**********************************************************************************/
-		void SetWorldAsActive();
+		void SetWorldAsActive() const;
 		/*********************************************************************************//*!
 		\brief    Get the id of this scene
 		 
 		\return   id of this scene
 		
 		*//**********************************************************************************/
-		ID_type GetID();
+		ID_type GetID() const;
 	};
 }

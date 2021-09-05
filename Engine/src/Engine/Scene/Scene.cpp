@@ -40,12 +40,14 @@ World& Scene::Load()
 	m_world = &WorldManager::CreateWorld();
 	WorldManager::SetActiveWorld(m_world->GetID());
 	m_root = GameObject{GameObject::Create{}};	//instantiate root game object
+	// debug stuff
+	m_root.Name() = GetSceneName() + " Root";
 	//deserialise scene file and load objects here
 
 	return *m_world;
 }
 
-bool Scene::IsLoaded()
+bool Scene::IsLoaded() const
 {
 	return m_world != nullptr;
 }
@@ -69,7 +71,7 @@ void Scene::SaveToFileName(std::string const& filename)
 	//save data to file here
 }
 
-World& Scene::GetWorld()
+World& Scene::GetWorld() const
 {
 	ENGINE_ASSERT(IsLoaded());
 	return *m_world;
@@ -81,7 +83,7 @@ GameObject& Scene::GetRoot()
 	return m_root;
 }
 
-GameObject Scene::CreateGameObject()
+GameObject Scene::CreateGameObject() const
 {
 	ENGINE_ASSERT(IsLoaded());
 	GameObject temp{ engine::GameObject::Create{} };
@@ -89,12 +91,12 @@ GameObject Scene::CreateGameObject()
 	return temp;
 }
 
-void Scene::SetWorldAsActive()
+void Scene::SetWorldAsActive() const
 {
 	WorldManager::SetActiveWorld(m_world->GetID());
 }
 
-Scene::ID_type Scene::GetID()
+Scene::ID_type Scene::GetID() const
 {
 	return m_id;
 }
