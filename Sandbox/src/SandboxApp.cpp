@@ -20,13 +20,13 @@ Technology is prohibited.
 #include <oom/oom.hpp>
 
 //Editor Layer
-#include "EditorLayer.h"
+#include "CoreLayers/EditorLayer.h"
 //Scripting Layer
-#include "ScriptingLayer.h"
+#include "CoreLayers/ScriptingLayer.h"
 // Official Scene Layers
-#include "UtilityLayers/EditorSceneLayer.h"
-#include "UtilityLayers/GameSceneLayer.h"
-#include "UtilityLayers/SimulationSceneLayer.h"
+#include "CoreLayers/EditorControllerLayer.h"
+#include "CoreLayers/GameSceneLayer.h"
+#include "CoreLayers/SimulationSceneLayer.h"
 
 // for debugging
 #include "TestLayers/InputDebugLayer.h"
@@ -83,15 +83,17 @@ public:
         //// For Input Debugging
         //PushOverlay(new InputDebugLayer());
 
-        // Everything below uses SceneBaseLayer
+        // Official Original Layer
         // Editor Layer
         PushOverlay(new EditorLayer());
         // Scripting Layer
         PushOverlay(new ScriptingLayer());
-
-        // Official Original Layer
-        //PushOverlay(new EditorSceneLayer());    // -- editor layer
-        //PushOverlay(new GameSceneLayer());      // -- actual game scene layer
+        // -- editor controller layer
+        PushOverlay(new EditorControllerLayer());
+        // -- actual Game scene layer
+        //PushOverlay(new GameSceneLayer());
+        // Set Default EDITOR Camera
+        //editorController->SetEditorCamera();
 
         // Debug Layers!
         PushOverlay(new DebugLayer(*this));

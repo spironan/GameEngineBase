@@ -24,18 +24,11 @@ PhysicsTestLayer::PhysicsTestLayer()
 
 void PhysicsTestLayer::Init()
 {
-    engine::Window& x = engine::Application::Get().GetWindow();
-    width = x.GetSize().first;
-    height = x.GetSize().second; 
-
     auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
     auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
 
-    auto& cam = m_camera.AddComponent<engine::SceneCamera>();
-    cam.UpdateViewportSize(width, height);
-
-    auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
-    auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();
+    auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
+    auto& ps = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
 
     {
         m_second = CreateGameObject();
@@ -158,8 +151,8 @@ void PhysicsTestLayer::Init()
 
 void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
 {
-    m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
-    m_scene.GetWorld().GetSystem<engine::PhysicsSystem>()->Update(dt);
+    GetWorld()->GetSystem<engine::TransformSystem>()->Update();
+    GetWorld()->GetSystem<engine::PhysicsSystem>()->Update(dt);
 
     constexpr float force = 300.f;
     constexpr float jumpforce = 10000.f;
@@ -193,10 +186,10 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
     LOG_TRACE("{0}{1}", rootsForce.x, rootsForce.y );*/
 
     // transform objects
-    auto view = m_scene.GetWorld().GetComponentView<engine::Transform3D>();
+    auto view = GetWorld()->GetComponentView<engine::Transform3D>();
     for (auto [transform] : view)
     {
-        //auto& transform = m_scene.GetWorld().GetComponent<engine::Transform3D>(ent);
+        //auto& transform = GetWorld()->GetComponent<engine::Transform3D>(ent);
         if (transform.Position().y < lowerbounds.y)
         {
             transform.Position().y = upperbounds.y;
@@ -219,6 +212,6 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
 
 void PhysicsTestLayer::OnImGuiRender()
 {
-    m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
+    GetWorld()->GetSystem<engine::Renderer2DSystem>()->Update();
 }
 

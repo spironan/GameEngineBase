@@ -4,7 +4,8 @@
 \author     Lim Guan Hui, l.guanhui , 390009020
 \par        email: l.guanhui\@digipen.edu
 \date       July 28, 2021
-\brief      Base scene layer class
+\brief      A base scene to be inherited from to have convienience for ECS and 
+ Gameobjects.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -38,6 +39,16 @@ void SceneBaseLayer::OnAttach()
     m_scene.Load();
     m_world = &m_scene.GetWorld();
     m_world->RegisterSystem<engine::TransformSystem>();
+
+    //Create Default Camera
+    engine::Window& x = engine::Application::Get().GetWindow();
+    auto [width, height] = x.GetSize();
+    m_defaultCamera = CreateGameObject();
+    m_defaultCamera.Name() = "Default Camera";
+    auto& cam = m_defaultCamera.AddComponent<engine::SceneCamera>();
+    cam.UpdateViewportSize(width, height);
+
+    // Initialize Scene
     Init();
 }
 
@@ -49,13 +60,10 @@ void SceneBaseLayer::OnDetach()
     m_world = nullptr;
 }
 
-void SceneBaseLayer::Init() { };
-
 void SceneBaseLayer::OnUpdateEnd(engine::Timestep dt)
 {
 	m_scene.GetWorld().ProcessDeletions();
 }
-void SceneBaseLayer::Exit() { };
 
 /*********************************************************************************//*!
 \brief    Create a gameobject from the scene
@@ -75,6 +83,11 @@ engine::GameObject SceneBaseLayer::CreateGameObject()
 engine::GameObject SceneBaseLayer::RootGameObject()
 {
     return m_scene.GetRoot();
+}
+
+engine::SceneCamera SceneBaseLayer::DefaultCamera()
+{
+    return m_defaultCamera.GetComponent<engine::SceneCamera>();
 }
 /*********************************************************************************//*!
 \brief    Saves the scene to its scene file

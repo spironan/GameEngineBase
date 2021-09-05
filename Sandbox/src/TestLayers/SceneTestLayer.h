@@ -48,8 +48,8 @@ public:
         engine::GameObject testrootGO = RootGameObject();
         testrootGO.Name() = "Scene";
         std::vector<engine::GameObject> entities;
-		m_world->RegisterSystem<engine::PrefabComponentSystem>();
-		m_world->RegisterSystem<engine::EditorComponentSystem>();
+		GetWorld()->RegisterSystem<engine::PrefabComponentSystem>();
+		GetWorld()->RegisterSystem<engine::EditorComponentSystem>();
 
         Serializer::LoadWorld(m_scene_path);
     }

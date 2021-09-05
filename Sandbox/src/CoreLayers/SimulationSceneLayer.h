@@ -1,14 +1,11 @@
 #pragma once
 
-#include "SceneBaseLayer.h"
+#include "UtilityLayers/SceneBaseLayer.h"
 
-class GameSceneLayer : public SceneBaseLayer
+class SimulationSceneLayer : public SceneBaseLayer
 {
-private:
-    engine::GameObject m_defaultCamera;
-
 public:
-    GameSceneLayer();
+    SimulationSceneLayer();
 
     virtual void Init() override;
 

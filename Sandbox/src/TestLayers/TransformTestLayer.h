@@ -27,7 +27,7 @@ private:
     std::vector<engine::GameObject>::iterator m_controller;
     std::vector<engine::GameObject>::iterator m_target;
 
-    engine::GameObject m_camera;
+    //engine::GameObject m_camera;
 
     static constexpr float scaling = 50.f;
 

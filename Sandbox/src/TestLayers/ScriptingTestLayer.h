@@ -20,7 +20,7 @@ class ScriptingTestLayer : public SceneBaseLayer
 {
 private:
     std::vector<engine::GameObject> goList;
-    engine::GameObject m_Camera;
+    
     bool isPlaying;
 
 public:
@@ -32,18 +32,9 @@ public:
 
     void Init() final override
     {
-        // initilization of camera
-        engine::Window& x = engine::Application::Get().GetWindow();
-        int width = x.GetSize().first;
-        int height = x.GetSize().second;
-        m_Camera = CreateGameObject();
-        m_Camera.Name() = "Main Camera";
-        auto& cam = m_Camera.AddComponent<engine::SceneCamera>();
-        cam.UpdateViewportSize(width, height);
-
-        auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
-        auto& ss = m_scene.GetWorld().RegisterSystem<engine::ScriptSystem>();
-        auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();
+        auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
+        auto& ss = GetWorld()->RegisterSystem<engine::ScriptSystem>();
+        auto& ps = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
 
         // Player
         {
@@ -76,14 +67,15 @@ public:
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
-        m_scene.SetWorldAsActive();
+        //GetScene().SetWorldAsActive();
+        engine::WorldManager::SetActiveWorld(GetWorld()->GetID());
 
-        auto ss = m_scene.GetWorld().GetSystem<engine::ScriptSystem>();
+        auto ss = GetWorld()->GetSystem<engine::ScriptSystem>();
         ss->InvokeFunctionAll("Update", 1, (float)dt);
-        m_scene.GetWorld().GetSystem<engine::PhysicsSystem>()->Update(dt);
-        m_scene.GetWorld().GetSystem<engine::TransformSystem>()->Update();
+        GetWorld()->GetSystem<engine::PhysicsSystem>()->Update(dt);
+        GetWorld()->GetSystem<engine::TransformSystem>()->Update();
 
-        m_scene.GetWorld().ProcessDeletions();
+        //GetWorld()->ProcessDeletions();
 
         if (engine::Input::IsKeyPressed(engine::KeyCode::DEL))
         {
@@ -110,6 +102,6 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        m_scene.GetWorld().GetSystem<engine::Renderer2DSystem>()->Update();
+        GetWorld()->GetSystem<engine::Renderer2DSystem>()->Update();
     }
 };

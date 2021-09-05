@@ -14,8 +14,8 @@ void RenderingTestLayer::OnImGuiRender()
 {
     fb = engine::FramebufferPool::Get("2D_Framebuffer")->GetImage()->GetID();
 
-    m_world->GetSystem<engine::Renderer2DSystem>()->SetCamera(m_camera.GetComponent<engine::SceneCamera>(), m_camera.GetComponent<engine::Transform3D>().GetGlobalPosition());
-    m_world->GetSystem<engine::Renderer2DSystem>()->Update();
+    GetWorld()->GetSystem<engine::Renderer2DSystem>()->SetCamera(DefaultCamera(), m_defaultCamera.Transform().GetGlobalPosition());
+    GetWorld()->GetSystem<engine::Renderer2DSystem>()->Update();
 
     auto& transform = m_child.GetComponent<engine::Transform3D>();
 
@@ -81,8 +81,8 @@ void RenderingTestLayer::OnImGuiRender()
             operation = ImGuizmo::SCALE;
         }
 
-        auto& cam = m_camera.GetComponent<engine::SceneCamera>();
-        auto& camTrans = m_camera.GetComponent<engine::Transform3D>();
+        auto& cam = DefaultCamera();
+        auto& camTrans = m_defaultCamera.Transform();
 
         // TODO : way for camera to do view matrix
         auto& projection = cam.GetProjection();

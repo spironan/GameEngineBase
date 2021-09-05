@@ -37,55 +37,50 @@ public:
         deletedObjects.clear();
         // Create Another GameObject
         GameObject test = CreateGameObject();
-		//test.AddComponent<engine::EditorComponent>();
+        //test.AddComponent<engine::EditorComponent>();
     }
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
-        //m_scene.SetWorldAsActive();
+        //GetScene().SetWorldAsActive();
         if (Input::IsKeyPressed(Key::A))
         {
-			gameobjects.emplace_back(CreateGameObject());
-			auto result1 = gameobjects.back().HasComponent<Transform3D>();
+            gameobjects.emplace_back(CreateGameObject());
+            auto result1 = gameobjects.back().HasComponent<Transform3D>();
             int i = 0;
         }
-		if (Input::IsKeyPressed(Key::S))
-		{
+        if (Input::IsKeyPressed(Key::S))
+        {
             if (gameobjects.size() > 0)
             {
-				gameobjects.back().Destroy();
-				gameobjects.pop_back();
+                gameobjects.back().Destroy();
+                gameobjects.pop_back();
             }
-		}
-		if (Input::IsKeyPressed(Key::D))
-		{
-			if (gameobjects.size() > 0)
-			{
-                deletedObjects.emplace_back(m_scene.GetWorld().StoreAsDeleted(gameobjects.back().GetID()));
-				gameobjects.back().Destroy();
-				gameobjects.pop_back();
-			}
-		}
-		if (Input::IsKeyPressed(Key::F))
-		{
-			if (deletedObjects.size() > 0)
-			{
-                auto go = m_scene.GetWorld().RestoreFromDeleted(*deletedObjects.back());
+        }
+        if (Input::IsKeyPressed(Key::D))
+        {
+            if (gameobjects.size() > 0)
+            {
+                deletedObjects.emplace_back(GetWorld()->StoreAsDeleted(gameobjects.back().GetID()));
+                gameobjects.back().Destroy();
+                gameobjects.pop_back();
+            }
+        }
+        if (Input::IsKeyPressed(Key::F))
+        {
+            if (deletedObjects.size() > 0)
+            {
+                auto go = GetWorld()->RestoreFromDeleted(*deletedObjects.back());
                 deletedObjects.pop_back();
                 GameObject temp{ go };
                 gameobjects.emplace_back(temp);
-				auto result1 = temp.HasComponent<Transform3D>();
-				auto result2 = temp.HasComponent<GameObjectComponent>();
-				auto result3 = temp.HasComponent<EditorComponent>();
+                auto result1 = temp.HasComponent<Transform3D>();
+                auto result2 = temp.HasComponent<GameObjectComponent>();
+                auto result3 = temp.HasComponent<EditorComponent>();
                 int i = 0;
-			}
-		}
+            }
+        }
     }
-
-	virtual void OnUpdateEnd(engine::Timestep dt) override
-	{
-        m_scene.GetWorld().ProcessDeletions();
-	}
 
     virtual void OnImGuiRender() override
     {

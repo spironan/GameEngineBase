@@ -29,7 +29,7 @@ class RenderingTestLayer : public SceneBaseLayer
 {
 private:
     engine::GameObject m_child;
-    engine::GameObject m_camera;
+    //engine::GameObject m_camera;
 
     std::vector<engine::GameObject> m_gos;
     std::vector<engine::GameObject>::iterator m_controller;
@@ -48,22 +48,8 @@ public:
 
     virtual void Init() override
     {
-
-        // initilization of camera
-        engine::Window& x = engine::Application::Get().GetWindow();
-        int width = x.GetSize().first;
-        int height = x.GetSize().second;
-        float ar = (float)width / height;
-        //auto& cam = m_camera.AddComponent<engine::Camera>(true, -100*ar,100*ar,-100,100);
-
-        m_camera = CreateGameObject();
-        auto& cam = m_camera.AddComponent<engine::SceneCamera>();
-        cam.UpdateViewportSize(width, height);
-        
-        //cam.SetOrthographic(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f);
-
-        LOG_ENGINE_INFO(cam.GetEntity());
-        auto& rs = m_world->RegisterSystem<engine::Renderer2DSystem>(cam);
+        LOG_ENGINE_INFO(DefaultCamera().GetEntity());
+        auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
 
         auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
 
@@ -121,9 +107,9 @@ public:
     {
         float deltaTime = static_cast<float>(dt);
 
-        engine::WorldManager::SetActiveWorld(m_world->GetID());
+        engine::WorldManager::SetActiveWorld(GetWorld()->GetID());
 
-        m_world->GetSystem<engine::TransformSystem>()->Update();
+        GetWorld()->GetSystem<engine::TransformSystem>()->Update();
 
         if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
         {
@@ -184,11 +170,11 @@ public:
         }
 
 
-        auto view = m_world->GetComponentView<engine::Transform3D>();
+        auto view = GetWorld()->GetComponentView<engine::Transform3D>();
 
         for (auto[transform] : view)
         {
-            //auto& transform = m_world->GetComponent<engine::Transform3D>(ent);
+            //auto& transform = GetWorld()->GetComponent<engine::Transform3D>(ent);
 
             /*LOG_INFO("ent {0}: position ({1},{2})  parent : {3} childs : {4}"
                 , ent

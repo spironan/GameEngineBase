@@ -18,7 +18,6 @@ Technology is prohibited.
 class PhysicsTestLayer : public SceneBaseLayer
 {
 private:
-    engine::GameObject m_camera{ engine::GameObject::Create{} };
     int width{}, height{};
     engine::GameObject m_second, m_third;
 

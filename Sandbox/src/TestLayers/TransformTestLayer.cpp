@@ -19,16 +19,7 @@ void TransformTestLayer::SelectNewTarget()
 
 void TransformTestLayer::Init()
 {
-    engine::Window& x = engine::Application::Get().GetWindow();
-    int width = x.GetSize().first;
-    int height = x.GetSize().second;
-
-    m_camera = CreateGameObject();
-    auto& cam = m_camera.AddComponent<engine::SceneCamera>();
-
-    cam.UpdateViewportSize(width,height);
-
-    auto& rs = m_world->RegisterSystem<engine::Renderer2DSystem>(cam);
+    auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
 
     auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
     auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
@@ -48,7 +39,7 @@ void TransformTestLayer::Init()
 
     engine::Entity prev = m_child;
 
-    for (int i = 1; i < 10; ++i)
+    for (int i = 1; i < 2; ++i)
     {
         engine::GameObject ent = CreateGameObject();
 
@@ -85,9 +76,7 @@ void TransformTestLayer::OnUpdate(engine::Timestep dt)
 {
     float deltaTime = static_cast<float>(dt);
 
-    engine::WorldManager::SetActiveWorld(m_world->GetID());
-
-    m_world->GetSystem<engine::TransformSystem>()->Update();
+    GetWorld()->GetSystem<engine::TransformSystem>()->Update();
 
     if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
     {
@@ -168,5 +157,5 @@ void TransformTestLayer::OnUpdate(engine::Timestep dt)
 
 void TransformTestLayer::OnImGuiRender()
 {
-    m_world->GetSystem<engine::Renderer2DSystem>()->Update();
+    GetWorld()->GetSystem<engine::Renderer2DSystem>()->Update();
 }

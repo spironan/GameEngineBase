@@ -1,11 +1,10 @@
 #pragma once
+#include "UtilityLayers/SceneBaseLayer.h"
 
-#include "SceneBaseLayer.h"
-
-class SimulationSceneLayer : public SceneBaseLayer
+class GameSceneLayer : public SceneBaseLayer
 {
 public:
-    SimulationSceneLayer();
+    GameSceneLayer();
 
     virtual void Init() override;
 

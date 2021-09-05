@@ -2,6 +2,9 @@
 
 #include <Engine.h>
 
+//Non Debug Layers
+#include "CoreLayers/GameSceneLayer.h"
+
 //TestLayers
 #include "TestLayers/TransformTestLayer.h"
 #include "TestLayers/GameObjectTestLayer.h"
@@ -34,6 +37,9 @@ public:
 
     void OnAttach() final override
     {
+        // NON DEBUG LAYER JUST FOR TESTING PURPOSES
+        debugLayers.emplace_back(new GameSceneLayer());
+
         // Purposeful breaking if uncommented out and choosing to run it.
         debugLayers.emplace_back(new GameObjectTestLayer());
 
@@ -43,14 +49,21 @@ public:
         debugLayers.emplace_back(new RenderingTestLayer());
         debugLayers.emplace_back(new ScriptingTestLayer());
         
-        //currentLayer = debugLayers.front();
-        //application.PushOverlay(currentLayer);
+        if (debugLayers.size() > 0)
+        {
+            // Immediately set the first layer to be loaded.
+            currentLayer = debugLayers.front();
+            application.PushOverlay(currentLayer);
+        }
     }
 
     void OnUpdate(engine::Timestep dt) final override
     {
-        if(currentLayer)
-            engine::SceneManager::SetActiveScene(currentLayer->GetID());
+        //if (currentLayer)
+        //{
+        //    engine::SceneManager::SetActiveScene(currentLayer->GetID());
+        //    //engine::WorldManager::SetActiveWorld(currentLayer->getworld()->get)
+        //}
     }
 
     void OnImGuiRender() final override
@@ -63,7 +76,7 @@ public:
                 application.PopOverlay(currentLayer);
 
                 currentLayer = debugLayer;
-                application.PushOverlay(debugLayer);
+                application.PushOverlay(currentLayer);
             }
         ImGui::End();
     }
