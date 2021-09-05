@@ -45,8 +45,6 @@ public:
         auto& ss = m_scene.GetWorld().RegisterSystem<engine::ScriptSystem>();
         auto& ps = m_scene.GetWorld().RegisterSystem<engine::PhysicsSystem>();
 
-        engine::ScriptSystem::Compile();
-
         // Player
         {
             engine::GameObject obj = CreateGameObject();

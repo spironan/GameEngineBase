@@ -13,6 +13,9 @@ public:
         engine::ScriptSystem::RegisterComponent<engine::Rigidbody2D>("Ouroboros.Rigidbody2D");
         engine::ScriptSystem::RegisterComponent<engine::Collider2D>("Ouroboros.Collider2D");
         engine::ScriptSystem::RegisterComponent<engine::CircleCollider2D>("Ouroboros.CircleCollider2D");
+
+        // load scripting.dll
+        engine::ScriptSystem::Initialize();
     }
 
     ~ScriptingLayer()
