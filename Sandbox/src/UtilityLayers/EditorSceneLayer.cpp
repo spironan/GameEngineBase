@@ -13,7 +13,8 @@ void EditorSceneLayer::Init()
     engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
     engine::TextureDatabase::AddTexture("ogre", tex);
     auto& testObject = CreateGameObject();
-    testObject.AddComponent<engine::Sprite2D>().SetTexture(tex);
+    auto& sprite = testObject.AddComponent<engine::Sprite2D>(); 
+    //sprite.SetTexture(tex);
     testObject.Transform().Scale() = { 50, 50, 1 };
     
     m_defaultCamera = CreateGameObject();
@@ -47,24 +48,25 @@ void EditorSceneLayer::OnUpdate(engine::Timestep dt)
     
     //Editor Scene-only input detection and resolution.
     // move camera here
+    float deltaTime = static_cast<float>(dt);
 
     if (engine::Input::IsMouseButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
     {
         if (engine::Input::IsKeyDown(ENGINE_KEY_W))
         {
-            m_editorCamera.Transform().Position().y += CameraMovingSpeed * dt;
+            m_editorCamera.Transform().Position().y += CameraMovingSpeed * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_S))
         {
-            m_editorCamera.Transform().Position().y -= CameraMovingSpeed * dt;
+            m_editorCamera.Transform().Position().y -= CameraMovingSpeed * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_D))
         {
-            m_editorCamera.Transform().Position().x += CameraMovingSpeed * dt;
+            m_editorCamera.Transform().Position().x += CameraMovingSpeed * deltaTime;
         }
         if (engine::Input::IsKeyDown(ENGINE_KEY_A))
         {
-            m_editorCamera.Transform().Position().x -= CameraMovingSpeed * dt;
+            m_editorCamera.Transform().Position().x -= CameraMovingSpeed * deltaTime;
         }
     }
 
