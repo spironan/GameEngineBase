@@ -432,8 +432,6 @@ namespace engine
     Component& Scripting::CopyComponent(Component const& comp)
     {
         auto& scripting = reinterpret_cast<Scripting const&>(comp);
-        componentList = scripting.componentList;
-        scriptList = scripting.scriptList;
         scriptInfoMap = scripting.scriptInfoMap;
         return *this;
     }
