@@ -28,8 +28,8 @@ void PhysicsTestLayer::Init()
     width = x.GetSize().first;
     height = x.GetSize().second; 
 
-    engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
-    engine::TextureDatabase::AddTexture("ogre", tex);
+    auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
+    auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
 
     auto& cam = m_camera.AddComponent<engine::SceneCamera>();
     cam.UpdateViewportSize(width, height);

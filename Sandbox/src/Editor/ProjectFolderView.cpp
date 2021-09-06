@@ -281,7 +281,8 @@ bool ProjectFolderView::IconButtons(const std::string& ext , float imgsize)
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
 	if (ext.empty())
 	{
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Folder").id), {imgsize, imgsize});
+		auto tex = engine::AssetManager::GetAsset<engine::Texture>("Icons/Ouroboros_Folder.png");
+		selected = ImGui::ImageButton(tex->Get_IMTEXTURE_ID(), {imgsize, imgsize});
 		ImGui::PopStyleColor();
 		return selected;
 	}
@@ -289,15 +290,15 @@ bool ProjectFolderView::IconButtons(const std::string& ext , float imgsize)
 	engine::utility::StringHash::size_type curr_item = engine::utility::StringHash(ext);
 
 	if(curr_item == ext_hash[0])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_PNG").id), { imgsize, imgsize });
+		selected = ImGui::ImageButton(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_PNG")->Get_IMTEXTURE_ID(), { imgsize, imgsize });
 	else if(curr_item == ext_hash[1])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_WAV").id), { imgsize, imgsize });
+		selected = ImGui::ImageButton(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_WAV")->Get_IMTEXTURE_ID(), { imgsize, imgsize });
 	else if (curr_item == ext_hash[2])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_MP3").id), { imgsize, imgsize });
+		selected = ImGui::ImageButton(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_MP3")->Get_IMTEXTURE_ID(), { imgsize, imgsize });
 	else if (curr_item == ext_hash[3])
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id), { imgsize, imgsize });
+		selected = ImGui::ImageButton(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab")->Get_IMTEXTURE_ID(), { imgsize, imgsize });
 	else
-		selected = ImGui::ImageButton(reinterpret_cast<ImTextureID>(engine::TextureDatabase::GetTexture("Ouroboros_GenericFile").id), { imgsize, imgsize });
+		selected = ImGui::ImageButton(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_GenericFile")->Get_IMTEXTURE_ID(), { imgsize, imgsize });
 
 	ImGui::PopStyleColor();
 	return selected;

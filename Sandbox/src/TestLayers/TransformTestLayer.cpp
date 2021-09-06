@@ -30,8 +30,8 @@ void TransformTestLayer::Init()
 
     auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
 
-    engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
-    engine::TextureDatabase::AddTexture("ogre", tex);
+    auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
+    auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
 
     /*auto& rootSpr = m_root.AddComponent<engine::Sprite2D>();
     rootSpr.SetTexture(tex);

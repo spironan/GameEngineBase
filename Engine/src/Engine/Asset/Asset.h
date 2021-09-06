@@ -59,10 +59,13 @@ namespace engine
 
         virtual bool Loaded() const = 0;
 
-        virtual uint64_t GetID() const = 0;
+        virtual ooRendererID& GetID() const = 0;
         virtual void* Get_IMTEXTURE_ID() const = 0;
 
         virtual TextureType GetType() const = 0;
+
+        static AssetType GetStaticType() { return AssetType::Texture; }
+        virtual AssetType GetAssetType() const override { return GetStaticType(); }
     };
 
     /**
@@ -76,7 +79,7 @@ namespace engine
         static std::shared_ptr<Texture2D>Create(ImageFormat format, uint32_t width, uint32_t height, const void* data = nullptr, TextureProperties properties = TextureProperties());
         static std::shared_ptr<Texture2D>Create(const std::string& path, TextureProperties properties = TextureProperties());
         
-        virtual std::shared_ptr<Image2D> GetImage()const = 0;
+        virtual std::shared_ptr<Image2D> GetImage() const = 0;
 
         virtual void Resize(uint32_t width, uint32_t height) = 0;
 

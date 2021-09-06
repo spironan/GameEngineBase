@@ -20,30 +20,57 @@ Technology is prohibited.
 #include "Asset.h"
 #include "Engine/Asset/AssetExtensions.h"
 #include "Engine/Asset/AssetMetadata.h"
+#include "Engine/Asset/AssetRegistry.h"
+#include "Engine/Asset/AssetSerializer.h"
 #include "Utility/Hash.h"
 #include "TextureLoader.h"
 namespace engine
 {
 	class AssetManager
 	{
+	public:
 
 		static AssetHandle ImportAsset(const std::string& filepath);
 
 		//static bool ReloadData(AssetHandle assetHandle);
 
+		static AssetMetadata& GetMetadata(AssetHandle handle);
+
 		template<typename T>
-		static std::shared_ptr<T> GetAsset(utility::StringHash assetHandle)
+		static std::shared_ptr<T> GetAsset(AssetHandle assetHandle)
 		{
-			//auto& metadata = GetMetadata(assetHandle);
+			auto& metadata = GetMetadata(assetHandle);
+
 			std::shared_ptr<Asset> asset = nullptr;
-			if (m_loadedAssets.find(assetHandle) != m_loadedAssets.end())
+			if (!metadata.IsDataLoaded)
 			{
-				return (asset = m_loadedAssets[assetHandle]);
+				auto ts = TextureSerializer(); //temporary
+				metadata.IsDataLoaded = ts.TryLoadData(metadata, asset);
+				if (!metadata.IsDataLoaded)
+				{
+					return nullptr;
+				}
+
+				m_loadedAssets[assetHandle] = asset;
 			}
-			return asset;
+			
+			asset =	m_loadedAssets[assetHandle];
+
+			return std::dynamic_pointer_cast<T>(asset);
 		}
 
 		template<typename T>
+		static std::shared_ptr<T> GetAsset(utility::StringHash assetHandle)
+		{
+			return GetAsset<T>(AssetHandle(assetHandle));
+		}
+
+		template<typename T>
+		static std::shared_ptr<T> GetNamedAsset(const std::string& name)
+		{
+			return GetAsset<T>(m_assetRegistry.GetNamedHandle(utility::StringHash(name)));
+		}
+		/*template<typename T>
 		static std::shared_ptr<T> GetAsset(const std::string& filepath)
 		{
 			auto hPath = utility::StringHash(filepath);
@@ -54,8 +81,8 @@ namespace engine
 			}
 
 			return asset;
-			//return GetAsset<T>(GetAssetHandleFromFilePath(fp));
-		}
+			return GetAsset<T>(GetAssetHandleFromFilePath(fp));
+		}*/
 
 		template<typename T>
 		static std::vector<std::shared_ptr<T>> GetAll()
@@ -79,7 +106,9 @@ namespace engine
 		//	return FileSystem::Exists(Project::GetActive()->GetAssetDirectory() / metadata.FilePath);
 		//}
 	private:
-		static std::unordered_map<utility::StringHash, std::shared_ptr<Asset>> m_loadedAssets;
+		static std::unordered_map<utility::StringHash::size_type, std::shared_ptr<Asset>> m_loadedAssets;
+		static AssetRegistry m_assetRegistry;
+		static AssetMetadata m_nullMetadata;
 	};
 
 	class TextureFileWatcher

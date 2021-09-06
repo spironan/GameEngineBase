@@ -103,7 +103,7 @@ namespace engine
 
 		virtual void CreatePerLayerImageViews() = 0;
 
-		virtual ooRendererID& GetID() const = 0;
+		virtual  ooRendererID& GetID()  = 0;
 
 		// TODO: usage (eg. shader read)
 	};

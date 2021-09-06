@@ -14,8 +14,10 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/Component.h"
-#include "Engine/Asset/AssetTypes.h"
 
+#include "Engine/Asset/Asset.h"
+
+#include <memory>
 #include <limits>
 
 //#include <glm/glm.hpp>
@@ -91,7 +93,21 @@ namespace engine
 
         \param    Texture asset
         *//**********************************************************************************/
-        void SetTexture(Texture tex);
+        void SetTexture(const Texture2D& tex);
+
+         /*********************************************************************************//*!
+        \brief    Sets the texture ID using a texture2d asset
+
+        \param    Texture asset
+        *//**********************************************************************************/
+        void SetTexture(std::shared_ptr<Texture2D> tex);
+
+          /*********************************************************************************//*!
+        \brief    Sets the texture ID using a texture asset
+
+        \param    Texture asset
+        *//**********************************************************************************/
+        void SetTexture(std::shared_ptr<Texture> tex);
 
         /*********************************************************************************//*!
         \brief    Sets the colour tint

@@ -9,23 +9,14 @@
 #include "Engine/Platform/Vulkan/vk_initializers.h"
 
 // This ignores all warnings raised inside External headers
-namespace stbi_local
-{
-
-#pragma warning(push, 0)
-#ifndef STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#endif // STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#pragma warning(pop, 0)
-}
 
 
 bool vkutil::load_image_from_file(VulkanEngine &engine, const char *file, AllocatedImage &outImage)
 {
     int texWidth, texHeight, texChannels;
 
-    stbi_local::stbi_uc *pixels = stbi_local::stbi_load(file, &texWidth, &texHeight, &texChannels, stbi_local::STBI_rgb_alpha);
+    stbi_uc *pixels = stbi_load(file, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
     if (!pixels)
     {
@@ -49,7 +40,7 @@ bool vkutil::load_image_from_file(VulkanEngine &engine, const char *file, Alloca
     vmaUnmapMemory(engine._allocator, stagingBuffer._allocation);
 
     // the data is loaded, we no longer need the pixel data
-    stbi_local::stbi_image_free(pixels);
+    stbi_image_free(pixels);
 
     VkExtent3D imageExtent{};
     imageExtent.width = static_cast<uint32_t>(texWidth);

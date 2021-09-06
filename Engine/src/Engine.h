@@ -33,6 +33,9 @@ Technology is prohibited.
 #include "Engine/PhysicsCollision/Physics.h"
 #include "Engine/Scripting/ScriptSystem.h"
 
+// Asset management
+#include "Engine/Asset/AssetsManager.h"
+
 //Scene
 #include "Engine/Scene/SceneManager.h"
 

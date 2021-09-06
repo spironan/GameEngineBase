@@ -143,7 +143,7 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	
 	static char buf[100];
 	strcpy(buf,object.Name().data());
-	ImGui::Image((ImTextureID)engine::TextureDatabase::GetTexture("Ouroboros_Prefab").id, {50,50});
+	ImGui::Image(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab")->Get_IMTEXTURE_ID(), {50,50});
 	ImGui::SameLine();
 
 	ImGui::BeginGroup();

@@ -42,9 +42,19 @@ void Sprite2D::SetTexture(ooRendererID textureID)
      m_texture = textureID; 
 }
 
-void Sprite2D::SetTexture(Texture tex)
+void Sprite2D::SetTexture(const Texture2D& tex)
 {
-    m_texture = tex.id;
+    m_texture = tex.GetID();
+}
+
+void Sprite2D::SetTexture(std::shared_ptr<Texture2D> tex)
+{
+    m_texture = tex->GetID();
+}
+
+void Sprite2D::SetTexture(std::shared_ptr<Texture> tex)
+{
+    m_texture = tex->GetID();
 }
 
 void Sprite2D_GetColor(Entity instanceID, float* r, float* g, float* b, float* a)

@@ -82,6 +82,8 @@ namespace utility
         StringHash(const StringHash& other) = default;
 
         constexpr operator size_type()noexcept { return computedHash; }
+        constexpr bool operator==(const StringHash other)noexcept { return computedHash == other.computedHash; }
+        //constexpr bool operator<(const StringHash other)noexcept { return computedHash < other.computedHash; }
     };
 
 }}

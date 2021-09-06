@@ -65,15 +65,18 @@ public:
         LOG_ENGINE_INFO(cam.GetEntity());
         auto& rs = m_scene.GetWorld().RegisterSystem<engine::Renderer2DSystem>(cam);
 
-        engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
-        engine::TextureDatabase::AddTexture("ogre", tex);
+        auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
+
+        auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
+        //std::shared_ptr<engine::Texture> tex = engine::AssetManager::GetAsset<engine::Texture>("../Engine/assets/images/ogre.png");
+        //engine::TextureDatabase::AddTexture("ogre", tex);
 
         //base world scaling
         //RootGameObject().Transform().Scale() = { scaling, scaling, 1.0f };
 
         m_child = CreateGameObject();
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
-        childSpr.SetTexture(tex);
+        childSpr.SetTexture(tex->GetID());
         m_child.Transform().Scale() = { scaling, scaling, 1.0f };
 
         m_gos.emplace_back(m_child);
@@ -89,7 +92,7 @@ public:
             ent.Transform().RotationAngle() += 90.f;
             ent.Transform().Scale() = { scaling, scaling, 1.0f };
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
-            objSprite.SetTexture(tex);
+            objSprite.SetTexture(tex->GetID());
 
         }
 

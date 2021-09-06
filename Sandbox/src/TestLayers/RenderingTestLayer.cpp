@@ -46,7 +46,7 @@ void RenderingTestLayer::OnImGuiRender()
 
         // opengl loves saving framebuffers upside down, 
         // so we flip the UVW in imgui::image()
-        ImGui::Image((ImTextureID)fb, ImVec2{ ar*myH, myH }, { 0.0f,1.0f }, { 1.0f,0.0f });
+        ImGui::Image((ImTextureID)static_cast<uint64_t>(fb), ImVec2{ ar*myH, myH }, { 0.0f,1.0f }, { 1.0f,0.0f });
         
         //Debug Red box
         //ImGui::GetForegroundDrawList()->AddRect(vMin, vMax, ImU32(0xFF0000FF));
