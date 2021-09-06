@@ -15,8 +15,9 @@ Technology is prohibited.
 
 // single-include file to get all the relevant functions from our engine.
 #include <Engine.h>
+// specially include this file only at the entry point of the engine.
 #include <EntryPoint.h>
-
+// custom math library.
 #include <oom/oom.hpp>
 
 //Editor Layer

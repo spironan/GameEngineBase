@@ -3,9 +3,11 @@
 \project    <PROJECT_NAME>
 \author     Lim Guan Hui, l.guanhui , 390009020
 \par        email: l.guanhui\@digipen.edu
-\date       July 28, 2021
+\author     Chua Teck Lee, c.tecklee, 390008420
+\par        email: c.tecklee\@digipen.edu
+\date       Sept 5, 2021
 \brief      A base scene to be inherited from to have convienience for ECS and 
- Gameobjects.
+            Gameobjects.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
