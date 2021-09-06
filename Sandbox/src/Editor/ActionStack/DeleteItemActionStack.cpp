@@ -18,9 +18,10 @@ DeleteItemActionStack::DeleteItemActionStack(const std::string& desc, engine::En
 	auto& orignalChild = head.GetChildren();
 	orignalCopy.insert(orignalCopy.begin(), orignalChild.begin(), orignalChild.end());
 
+	//head.Transform().DetachFromRoot();
 	
+	// parentID still stored
 	m_redoData.push_back(activeWorld.StoreAsDeleted(object));
-	activeWorld.DestroyEntity(object);
 
 	m_sparseHierarchy.emplace_back(0);
 	for (engine::Entity child : orignalChild)
@@ -29,9 +30,9 @@ DeleteItemActionStack::DeleteItemActionStack(const std::string& desc, engine::En
 		m_sparseHierarchy.emplace_back(std::distance(orignalCopy.begin(), iter));
 
 		m_redoData.push_back(activeWorld.StoreAsDeleted(child));
-		activeWorld.DestroyEntity(child);
 	}
 
+	engine::GameObject::DestroyGameObject(head);
 };
 DeleteItemActionStack::~DeleteItemActionStack()
 {
@@ -62,11 +63,6 @@ void DeleteItemActionStack::redo()
 	engine::GameObject& head = static_cast<engine::GameObject>(m_undoData);
 	auto& childList = head.GetChildren();
 
-	activeWorld.DestroyEntity(m_undoData);
-	
-	for (engine::Entity child : childList)
-	{
-		activeWorld.DestroyEntity(child);
-	}
+	engine::GameObject::DestroyGameObject(head);
 
 };
