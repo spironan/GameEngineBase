@@ -33,8 +33,8 @@ void GameSceneLayer::Init()
 
 
     // Randomly create ogre texture in the middle
-    engine::Texture tex = engine::TextureLoader::LoadFromFilePath("../Engine/assets/images/ogre.png");
-    engine::TextureDatabase::AddTexture("ogre", tex);
+    auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
+    auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
     auto& testObject = CreateGameObject();
     auto& sprite = testObject.AddComponent<engine::Sprite2D>();
     sprite.SetTexture(tex);
