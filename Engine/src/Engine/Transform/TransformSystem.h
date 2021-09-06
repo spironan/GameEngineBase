@@ -48,7 +48,19 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Lifecycle Functions                                                         */
         /*-----------------------------------------------------------------------------*/
-   
+
+        /****************************************************************************//*!
+         @brief    Function that assume the dense array is ordered properly in hierarchy
+                   and updates all transforms to make sure that it is. 
+                   If the assumption is not true, this function will produce breaking
+                   behaviour. USE WITH GREAT CARE AND AWARENESS.
+
+         @caution  Use this Function with care and make sure you know exactly what is
+                   you're doing. Inappropriate use will cause UDB and break the whole
+                   engine.
+        *//*****************************************************************************/
+        void UseDenseArrayAsHierarchy();
+
         /****************************************************************************//*!
          @brief    Function that defines the per-frame updates for the Runtime.
         *//*****************************************************************************/

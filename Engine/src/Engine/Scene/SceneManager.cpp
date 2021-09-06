@@ -83,7 +83,6 @@ namespace engine
 	{
 		ENGINE_VERIFY(GetInstance().m_scenes.find(id) != GetInstance().m_scenes.end());
 		return GetInstance().m_scenes.find(id)->second;
-
 	}
 	/*********************************************************************************//*!
 	\brief    Sets the current active scene as the scene with the specified filename

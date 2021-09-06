@@ -28,6 +28,26 @@ namespace engine
     /* Lifecycle Functions                                                         */
     /*-----------------------------------------------------------------------------*/
 
+    void TransformSystem::UseDenseArrayAsHierarchy()
+    {
+        auto& root = m_ECS_Manager.GetComponentDenseArray<Transform3D>().front();
+        std::stack<Entity> parentStack;
+        for(int i = 0; i < root.GetChildCount(); ++i) parentStack.emplace(root.GetID());
+
+        // Grab Transforms from ECS manager and assumes its ordered correctly
+        for (auto& iter = m_ECS_Manager.GetComponentDenseArray<Transform3D>().begin() + 1;
+            iter != m_ECS_Manager.GetComponentDenseArray<Transform3D>().end(); ++iter)
+        {
+            iter->m_parentId = parentStack.top();
+            parentStack.pop();
+            if (iter->m_childCount > 0)
+            {
+                for (int i = 0; i < iter->GetChildCount(); ++i)
+                    parentStack.emplace(iter->GetID());
+            }
+        }
+    }
+
     void TransformSystem::Update()
     {
         // Algorithm that needs to happen! If this cannot be done, the scenegraph optimization suggestion following this will not be possible.
