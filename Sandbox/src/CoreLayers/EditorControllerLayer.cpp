@@ -29,7 +29,7 @@ void EditorControllerLayer::OnUpdate(engine::Timestep dt)
     // move camera here
     float deltaTime = static_cast<float>(dt);
 
-    if (engine::Input::IsMouseButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
+    /*if (engine::Input::IsMouseButtonDown(ENGINE_MOUSE_BUTTON_RIGHT))
     {
         if (engine::Input::IsKeyDown(ENGINE_KEY_W))
         {
@@ -47,6 +47,6 @@ void EditorControllerLayer::OnUpdate(engine::Timestep dt)
         {
             m_editorCamera.Transform().Position().x -= CameraMovingSpeed * deltaTime;
         }
-    }
+    }*/
 
 }
