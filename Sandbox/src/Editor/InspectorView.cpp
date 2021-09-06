@@ -81,8 +81,8 @@ void InspectorView::Show()
 			
 			ShowGameObjectDetails(go);
 
-			if(go.HasComponent<engine::Transform3D>())
-				ReadComponents(go.GetComponent<engine::Transform3D>(),go);
+			if(auto* ptr = go.TryGetComponent<engine::Transform3D>())
+				ReadComponents(*ptr,go);
 
 			if (go.HasComponent<engine::SceneCamera>())
 				ReadComponents(go.GetComponent<engine::SceneCamera>(), go);
@@ -98,6 +98,7 @@ void InspectorView::Show()
 			if (go.HasComponent<engine::BoxCollider2D>())
 				ReadComponents(go.GetComponent<engine::BoxCollider2D>(), go);
 
+			
 
 			if (m_showReadOnly)
 			{
@@ -199,10 +200,10 @@ void InspectorView::ComponentAddButton(float x ,float y)
 			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
 			AddComponent |= ComponentAddOptions<engine::Camera>(go);
 			AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
-			AddComponent |= ScriptAddOptions(go);
 			AddComponent |= ComponentAddOptions<engine::Rigidbody2D>(go);
 			AddComponent |= ComponentAddOptions<engine::BoxCollider2D>(go);
 			AddComponent |= ComponentAddOptions<engine::CircleCollider2D>(go);
+			AddComponent |= ScriptAddOptions(go);
 		}
 		ImGui::EndChild();
 

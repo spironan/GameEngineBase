@@ -29,30 +29,33 @@ private:
 	void ReadComponents(Component& component,engine::GameObject& object)
 	{
 		bool is_readonly;
-		bool is_collapsed;
+		bool is_open;
+
 		std::vector<rttr::property> types = component.get_type().get_properties();
 		rttr::variant current_value;
-		ImGui::PushID(component.get_type().get_name().c_str());
 
 		ImGui::BeginGroup();
-		is_collapsed = (ImGui::TreeNodeEx(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen) == false);
+		is_open = ImGui::TreeNodeEx(component.get_type().get_name().c_str(), ImGuiTreeNodeFlags_DefaultOpen |ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_NoTreePushOnOpen);
 		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 50.0f);//button width
 		if (object.HasComponent<Component>())
 		{
+			ImGui::PushID(component.get_type().get_name().c_str());
 			if (ImGui::Button("Remove", ImVec2(0,ImGui::GetFontSize())))
 			{
 				object.RemoveComponent<Component>();
 			}
+			ImGui::PopID();
 		}
 		ImGui::EndGroup();
 		ImGui::Separator();
-		if (is_collapsed)
+		if (!is_open)
 		{
 			return;
 		}
 		ImGui::Dummy({ 5,0 });//indent spacing
 		ImGui::SameLine();
 		ImGui::BeginGroup();
+		ImGui::PushID(component.get_type().get_name().c_str());
 		for (const rttr::property& element : types)
 		{
 			is_readonly = element.is_readonly();
