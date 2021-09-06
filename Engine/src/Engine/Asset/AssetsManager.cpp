@@ -23,7 +23,7 @@ namespace engine
 
 	std::unordered_map< utility::StringHash::size_type,std::shared_ptr<Asset> > AssetManager::m_loadedAssets;
 
-	AssetRegistry AssetManager::m_assetRegistry;
+	AssetRegistry AssetManager::m_registry;
 	AssetMetadata AssetManager::m_nullMetadata{};
 
 	//void AssetsManager::SubscribeToTexture(void* objectpointer, std::function<void(ooTexID)> updateFunction, ooTexKey texKey)
@@ -68,12 +68,17 @@ namespace engine
 	//	to.name = std::filesystem::path(str).stem().u8string();
 
 
+	void AssetManager::Init()
+	{
+		AssetImporter::Init();
+	}
+
 	AssetHandle AssetManager::ImportAsset(const std::string& filepath)
 	{
 		auto hPath = utility::StringHash(filepath);
-		if (m_assetRegistry.Contains(hPath))
+		if (m_registry.Contains(hPath))
 		{
-			return m_assetRegistry[hPath].Handle;
+			return m_registry[hPath].Handle;
 		}
 
 		AssetType type = GetAssetTypeFromPath(filepath);
@@ -86,19 +91,19 @@ namespace engine
 		metadata.Handle = hPath;
 		metadata.FilePath = filepath;
 		metadata.Type = type;
-		m_assetRegistry[metadata.FilePath] = metadata;
+		m_registry[metadata.FilePath] = metadata;
 
 		//store a named copy of the handle
 		auto lastSlash = filepath.find_last_of("/") + 1;
 		std::string assetName = filepath.substr(lastSlash, filepath.find_last_of(".") - lastSlash);
-		m_assetRegistry.SetNamedHandle(assetName, metadata.Handle);
+		m_registry.SetNamedHandle(assetName, metadata.Handle);
 
 		return metadata.Handle;
 	}
 
 	AssetMetadata& AssetManager::GetMetadata(AssetHandle handle)
 	{
-		for (auto& [filepath, metadata] : m_assetRegistry)
+		for (auto& [filepath, metadata] : m_registry)
 		{
 			if (metadata.Handle == handle)
 				return metadata;

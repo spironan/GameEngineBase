@@ -27,6 +27,7 @@ Technology is prohibited.
 // for debugging
 #include "TestLayers/InputDebugLayer.h"
 #include "DebugLayer.h" 
+#include "AssetManagementLayer.h" 
 
 class ExampleLayer : public engine::Layer
 {
@@ -69,6 +70,8 @@ public:
         LOG_WARN("Warning Log!");
         LOG_ERROR("Error Log!");
         LOG_CRITICAL("Critical Log!");
+
+        PushLayer(new AssetManagementLayer());
         
         ////Default Samples Layers (inherit from engine::Layer)
         PushLayer(new ExampleLayer());      // contains ability to quit progrom with esc

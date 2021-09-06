@@ -1,3 +1,17 @@
+/************************************************************************************//*!
+\file          AssetRegistry.h
+\project       <PROJECT_NAME>
+\author        Jamie Kong, j.kong , 390004720
+\par           email: j.kong\@digipen.edu
+\date          September 6, 2021
+\brief         This file contains API for the asset registry class. The class stores a bank of information about
+				necessary asset metadata. This will allow for loading of assets and tracking of filepaths and handles.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 #include<unordered_map>
 
