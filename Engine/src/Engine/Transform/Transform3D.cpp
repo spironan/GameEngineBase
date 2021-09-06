@@ -37,7 +37,7 @@ namespace engine
         using namespace rttr;
         registration::class_<Transform3D>("Transform3D")
             .property("Position", &Transform3D::GetPosition, &Transform3D::SetPosition)
-            .property("Rotation Axis", &Transform3D::GetRotationAxis, &Transform3D::SetRotationAxis)
+            .property_readonly("Rotation Axis", &Transform3D::GetRotationAxis)
             .property("Rotation Angle", &Transform3D::GetRotationAngle, &Transform3D::SetRotationAngle)
             .property("Scaling", &Transform3D::GetScale, &Transform3D::SetScale)
             .property_readonly("My ID", &Transform3D::GetID)
