@@ -66,24 +66,18 @@ namespace engine
     void Collider2D::SetNarrowPhaseCollider(ColliderType narrowPhaseCollider)
     {
         if (m_narrowPhaseCollider == narrowPhaseCollider) return;
-
-        /*switch (m_narrowPhaseCollider)
+        //remove to achieve one collider per objet
+        switch (m_narrowPhaseCollider)
         {
-        case ColliderType::BOX: RemoveComponent<BoxCollider2D>();
+        case ColliderType::BOX: TryRemoveComponent<BoxCollider2D>();
             break;
-        case ColliderType::CIRCLE: RemoveComponent<CircleCollider2D>();
+        case ColliderType::CIRCLE: TryRemoveComponent<CircleCollider2D>();
             break;
-        };*/
+        };
 
         m_narrowPhaseCollider = narrowPhaseCollider;
-
-        /*switch (m_narrowPhaseCollider)
-        {
-        case ColliderType::BOX: AddComponent<BoxCollider2D>();
-            break;
-        case ColliderType::CIRCLE: AddComponent<CircleCollider2D>();
-            break;
-        };*/
+        
+        // no need to add because the interface to add is via the derived colliders.
     }
 
     void Collider2D::Update()

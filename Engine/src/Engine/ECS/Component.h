@@ -24,6 +24,21 @@ namespace engine
 
         void SetActive(bool _active) { m_active = _active; }
 
+        template<typename Derived, typename T2 = engine::WorldManager, typename... Args>
+        std::enable_if_t<std::is_base_of_v<Component, Derived>, Derived& >
+        AddComponent(Args... args) const
+        {
+            return T2::GetActiveWorld().EmplaceComponent<Derived>(m_entity, true, args...);
+        }
+        
+        template<typename NotDerived, typename T2 = engine::WorldManager, typename... Args>
+        std::enable_if_t<!std::is_base_of_v<Component, NotDerived>, NotDerived& >
+        AddComponent(Args... args) const
+        {
+            return T2::GetActiveWorld().EmplaceComponent<NotDerived>(m_entity, args...);
+        }
+
+
         template<typename T, typename T2 = engine::WorldManager>
         T& GetComponent() const
         {
@@ -40,6 +55,21 @@ namespace engine
         bool HasComponent() const
         {
             return T2::GetActiveWorld().HasComponent<T>(m_entity);
+        }
+
+        template<typename T, typename T2 = engine::WorldManager, typename... Args>
+        T& EnsureComponent(Args... args) const
+        {
+            return HasComponent<T>() ? GetComponent<T>() : AddComponent<T>(args...);
+        }
+
+        template<typename T, typename T2 = engine::WorldManager>
+        bool TryRemoveComponent() const
+        {
+            if (!T2::GetActiveWorld().HasComponent<T>(m_entity)) return false;
+            
+            T2::GetActiveWorld().RemoveComponent<T>(m_entity);
+            return true;
         }
 
         RTTR_ENABLE()

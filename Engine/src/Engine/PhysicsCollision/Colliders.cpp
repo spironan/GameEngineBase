@@ -14,6 +14,8 @@ Technology is prohibited.
 #include "pch.h"
 #include "Colliders.h"
 
+#include "Engine/ECS/GameObject.h"
+
 #include "Engine/ECS/WorldManager.h"
 #include "ColliderCore.h"
 
@@ -39,7 +41,9 @@ namespace engine
         : Component{ entity, active }
         /*, IsTrigger{ false }*/
         , Offset{ 0.f, 0.f }
-    {}
+    {
+        EnsureComponent<Collider2D>();
+    }
 
     oom::vec2 ColliderBase2D::WorldPosition() const
     {
@@ -57,6 +61,7 @@ namespace engine
         , Bounds{ {-0.5f, -0.5f}, { 0.5f, 0.5f } }
         , Size{ 1.f, 1.f }
     {
+        GetComponent<Collider2D>().SetNarrowPhaseCollider(engine::ColliderType::BOX);
     };
 
     AABB2D BoxCollider2D::GetGlobalBounds() const
@@ -75,7 +80,9 @@ namespace engine
         : ColliderBase2D{ entity, active }
         , Bounds{ { 0.f, 0.f }, 1.f }
         , Radius{ 0.5f }
-    {};
+    {
+        GetComponent<Collider2D>().SetNarrowPhaseCollider(engine::ColliderType::CIRCLE);
+    };
 
     Circle CircleCollider2D::GetGlobalBounds() const
     {
