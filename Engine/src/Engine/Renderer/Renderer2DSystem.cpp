@@ -27,6 +27,9 @@ Technology is prohibited.
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Transform/TransformSystem.h"
 
+#include "Engine/PhysicsCollision/Colliders.h"
+#include "Engine/PhysicsCollision/ColliderCore.h"
+
 namespace engine
 {
 	void Renderer2DSystem::SetCamera(const Camera& cam, const oom::vec3& position)
@@ -51,8 +54,19 @@ namespace engine
 
 	void Renderer2DSystem::Update()
 	{
-		auto view = m_ECS_Manager.GetComponentView<Transform3D, Sprite2D>();
+		
 		engine::Renderer2D::BeginScene( m_viewProj, m_view);
+
+		DrawSprites();
+		
+		DrawDebug();
+		
+		engine::Renderer2D::EndScene();
+	}
+
+	void Renderer2DSystem::DrawSprites()
+	{
+		auto view = m_ECS_Manager.GetComponentView<Transform3D, Sprite2D>();
 		for (auto [transform, sprite] : view)
 		{
 			Renderer2D::DrawRotatedQuad(transform.GetGlobalPosition(),
@@ -60,12 +74,34 @@ namespace engine
 										transform.GetGlobalRotationDeg(),
 										sprite.GetTexture(), 1.0f,
 										sprite.GetColor());
-			Renderer2D::DrawCircle(transform.GetGlobalPosition(),
-								   transform.GetGlobalRotationDeg(),
-								   transform.GetGlobalScale().x / 2.f,
-								   sprite.GetColor());
 		}
-		engine::Renderer2D::EndScene();
+	}
+
+	void Renderer2DSystem::DrawDebug()
+	{
+		auto view = m_ECS_Manager.GetComponentView<Transform3D, Collider2D>();
+		for (auto [transform, collider] : view)
+		{
+			switch (collider.GetNarrowPhaseCollider())
+			{
+				case ColliderType::BOX:
+					{
+						auto box = collider.GetComponent<BoxCollider2D>().GetGlobalBounds();
+						Renderer2D::DrawAABB2D(box,
+											   m_debugColour);
+					}break;
+				case ColliderType::CIRCLE:
+					{
+						Renderer2D::DrawCircle(transform.GetGlobalPosition(),
+											   transform.GetGlobalRotationDeg(),
+											   collider.GetComponent<CircleCollider2D>().GetGlobalBounds().radius,
+											   m_debugColour);
+					}break;
+				default:
+					LOG_ENGINE_ERROR("No collider debug type implemented!");
+					break;
+			}			
+		}
 	}
 
 };

@@ -548,6 +548,15 @@ void Renderer2D::DrawLine(const oom::vec3& p0, const oom::vec3& p1, const oom::v
 	//s_Data.Stats.LineCount++;
 }
 
+void Renderer2D::DrawAABB2D(const AABB2D& aabb,  const oom::vec4& color)
+{
+
+	DrawLine({aabb.min ,0.0f }, {aabb.max.x,aabb.min.y ,0.0f }, color);
+	DrawLine({ aabb.max.x,aabb.min.y ,0.0f }, { aabb.max ,0.0f }, color);
+	DrawLine({ aabb.max ,0.0f }, { aabb.min.x,aabb.max.y, 0.0f }, color);
+	DrawLine({ aabb.min.x,aabb.max.y, 0.0f },{aabb.min ,0.0f }, color);
+}
+
 void Renderer2D::ResetStats()
 {
 	s_Data.Stats.DrawCalls = 0;

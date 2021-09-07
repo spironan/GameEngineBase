@@ -18,6 +18,7 @@ Technology is prohibited.
 #include "Engine/Asset/AssetTypes.h"
 #include "Engine/Renderer/DebugCamera.h"
 #include "Engine/Renderer/Camera.h"
+#include "Engine/PhysicsCollision/Shapes.h"
 
 
 namespace engine
@@ -75,7 +76,7 @@ namespace engine
 
 		static void DrawLine(const oom::vec3& p0, const oom::vec3& p1, const oom::vec4& color = oom::vec4(1.0f));
 
-		//static void DrawAABB(const AABB& aabb, const oom::mat4& transform, const oom::vec4& color = oom::vec4(1.0f));
+		static void DrawAABB2D(const AABB2D& aabb,  const oom::vec4& color = oom::vec4(1.0f));
 
 		//static void DrawSprite(const oom::mat4& transform, SpriteRendererComponent& src, int entityID);
 

@@ -20,13 +20,11 @@ Technology is prohibited.
 
 namespace engine
 {
-    //forward declaration
-    class Sprite2D;
+//forward declaration
+class Sprite2D;
 
 class Renderer2DSystem final : public System
 {
-  
-
 public:
     /*-----------------------------------------------------------------------------*/
     /* Class Specific Type Aliases                                                 */
@@ -58,6 +56,15 @@ public:
     *//**********************************************************************************/
     void SetCamera(const Camera& cam,const oom::vec3& position);
 
+    void SetDebugColour(const oom::vec4& colour)
+    {
+        m_debugColour = colour;
+    }
+
+    void SetDebugColour(float r, float g, float b, float a = 1.0f)
+    {
+        m_debugColour = oom::vec4{r,g,b,a};
+    }
     /*********************************************************************************//*!
     \brief    Updates the rendering system to display to screen
      
@@ -66,12 +73,16 @@ public:
     void Update() /*override*/;
 
 private:
+    void DrawSprites();
+    void DrawDebug();
 
     const Camera* m_cam;
     const Transform3D* m_transform;
     oom::mat4 m_projection;
     oom::mat4 m_view;
     oom::mat4 m_viewProj;
+
+    oom::vec4 m_debugColour{0.1f,1.0f,0.1f,1.0f};
 };
 
 }// namespace engine
