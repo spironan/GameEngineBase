@@ -45,66 +45,11 @@ namespace engine
     bool PhysicsUtils::TestCollision2D(Collider2D const& first, Collider2D const& second)
     {
         return m_collisionMap[std::make_pair(first.GetNarrowPhaseCollider(), second.GetNarrowPhaseCollider())](first, second);
-
-        /*switch (first.GetNarrowPhaseCollider())
-        {
-        case ColliderType::CIRCLE:
-        {
-            auto const& circle = first.GetComponent<CircleCollider2D>().GetGlobalBounds();
-
-            switch (second.GetNarrowPhaseCollider())
-            {
-            case ColliderType::CIRCLE:
-                return Collision::Test2DCircleCircle(circle, second.GetComponent<CircleCollider2D>().GetGlobalBounds());
-
-
-            case ColliderType::BOX:
-                return Collision::Test2DCircleAABB(circle, second.GetComponent<BoxCollider2D>().GetGlobalBounds());
-            }
-        }
-
-        case ColliderType::BOX:
-        {
-            auto const& box = first.GetComponent<BoxCollider2D>().GetGlobalBounds();
-            switch (second.GetNarrowPhaseCollider())
-            {
-            case ColliderType::BOX:
-                return Collision::Test2DAABBAABB(box, second.GetComponent<BoxCollider2D>().GetGlobalBounds());
-
-
-            case ColliderType::CIRCLE:
-                return Collision::Test2DCircleAABB(second.GetComponent<CircleCollider2D>().GetGlobalBounds(), box);
-
-            }
-        }
-        }*/
     }
 
     Manifold2D PhysicsUtils::GenerateManifold2D(Collider2D const& first, Collider2D const& second)
     {
         return m_manifoldMap[std::make_pair(first.GetNarrowPhaseCollider(), second.GetNarrowPhaseCollider())](first, second);
-
-        //switch (first.GetNarrowPhaseCollider())
-        //{
-        //case ColliderType::CIRCLE:
-        //    switch (second.GetNarrowPhaseCollider())
-        //    {
-        //    case ColliderType::CIRCLE:
-        //        return PhysicsManifold::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<CircleCollider2D>());
-
-        //    case ColliderType::BOX:
-        //        return PhysicsManifold::Test2DCollision(first.GetComponent<CircleCollider2D>(), second.GetComponent<BoxCollider2D>());
-        //    }
-        //case ColliderType::BOX:
-        //    switch (second.GetNarrowPhaseCollider())
-        //    {
-        //    case ColliderType::CIRCLE:
-        //        return PhysicsManifold::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<CircleCollider2D>());
-
-        //    case ColliderType::BOX:
-        //        return PhysicsManifold::Test2DCollision(first.GetComponent<BoxCollider2D>(), second.GetComponent<BoxCollider2D>());
-        //    }
-        //}
     }
 
 
