@@ -15,10 +15,12 @@ Technology is prohibited.
 
 PhysicsTestLayer::PhysicsTestLayer()
     : SceneBaseLayer{ "PhysicsTestLayer" }
-    , upperbounds{ 500,  200 }
-    , lowerbounds{ -500, -200 }
-    , m_second{ }
-    , m_third{ }
+    , m_upperbounds{ 500,  200 }
+    , m_lowerbounds{ -500, -200 }
+    , m_spawnPosController { 0, 0, 0 }
+    , m_spawnPosOther { 75, 0, 0 }
+    , m_controller{ }
+    , m_other{ }
 {
 }
 
@@ -27,60 +29,62 @@ void PhysicsTestLayer::Init()
     auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
     auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);
 
+    DefaultCamera().SetOrthographic(1000);
     auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
     auto& ps = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
 
     {
-        m_second = CreateGameObject();
-        m_second.Transform().Scale() = { 50.f, 50.f, 1.0f };
-        //m_second.AddComponent<engine::Sprite2D>().SetTexture(tex);
+        m_controller = CreateGameObject();
+        m_controller.Transform().Scale() = { 50.f, 50.f, 1.0f };
+        m_controller.Transform().Position() = m_spawnPosController;
+        m_controller.AddComponent<engine::Sprite2D>();
 
-        auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
+        auto& pc = m_controller.AddComponent<engine::Rigidbody2D>();
         pc.SetMass(1.f);
         pc.GravityScale = 0.0f;
-        RootGameObject().AddChild(m_second);
+        RootGameObject().AddChild(m_controller);
 
-        m_second.AddComponent<engine::BoxCollider2D>();
-        auto& c = m_second.GetComponent<engine::Collider2D>();
+        m_controller.AddComponent<engine::BoxCollider2D>();
+        auto& c = m_controller.GetComponent<engine::Collider2D>();
         //c.IsTrigger = true;
         
         //c.SetNarrowPhaseCollider(engine::ColliderType::BOX);
-        //m_second.AddComponent<engine::BoxCollider2D>();
+        //m_controller.AddComponent<engine::BoxCollider2D>();
 
         c.OnTriggerEnter +=
             [=](auto const& manifolds) 
         { 
-            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 0, 1 });
+            m_controller.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0.5, 0, 1 });
             LOG_TRACE("ON TRIGGER ENTER");
         };
         c.OnTriggerStay +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 0, 1 });
+            m_controller.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0, 0.5, 1 });
             LOG_TRACE("ON TRIGGER STAY");
         };
         c.OnTriggerExit +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0, 1, 1 });
+            m_controller.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0.5, 0, 0, 1 });
             LOG_TRACE("ON TRIGGER EXIT");
         };
         c.OnCollisionEnter +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 1, 0, 1 });
+            m_controller.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0.5, 0.5, 1 });
             LOG_TRACE("ON COLLISION ENTER");
         };
         c.OnCollisionStay +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 1, 1 });
+            m_controller.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0.5, 0.5, 0, 1 });
             LOG_TRACE("ON COLLISION STAY");
         };
         c.OnCollisionExit +=
             [=](auto const& manifolds)
         {
-            m_second.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 1, 1 });
+            m_controller.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0.5, 0.5, 1 });
             LOG_TRACE("ON COLLISION EXIT");
         };
 
@@ -88,57 +92,57 @@ void PhysicsTestLayer::Init()
     }
 
     {
-        m_third = CreateGameObject();
-        m_third.Transform().Position() = { -100.f, 0.f, 0.f };
-        m_third.Transform().Scale() = { 50.f, 50.f, 1.0f };
-        //m_third.AddComponent<engine::Sprite2D>();// .SetTexture(tex);
+        m_other = CreateGameObject();
+        m_other.Transform().Position() = m_spawnPosOther;
+        m_other.Transform().Scale() = { 50.f, 50.f, 1.0f };
+        m_other.AddComponent<engine::Sprite2D>();
         
-        auto& pc = m_third.AddComponent<engine::Rigidbody2D>();
-        pc.SetMass(1.f);
+        auto& pc = m_other.AddComponent<engine::Rigidbody2D>();
+        pc.SetMass(1000.f);
         pc.GravityScale = 0.0f;
-        RootGameObject().AddChild(m_third);
+        RootGameObject().AddChild(m_other);
 
-        m_third.AddComponent<engine::BoxCollider2D>();
-        auto& c = m_third.GetComponent<engine::Collider2D>();
+        m_other.AddComponent<engine::BoxCollider2D>();
+        auto& c = m_other.GetComponent<engine::Collider2D>();
         //c.IsTrigger = true;
         c.OnTriggerEnter +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 0, 1 });
+            m_other.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 0, 1 });
             LOG_TRACE("ON TRIGGER ENTER");
         };
         c.OnTriggerStay +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 0, 1 });
+            m_other.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 0, 1 });
             LOG_TRACE("ON TRIGGER STAY");
         };
         c.OnTriggerExit +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0, 1, 1 });
+            m_other.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 0, 1, 1 });
             LOG_TRACE("ON TRIGGER EXIT");
         };
         c.OnCollisionEnter +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 1, 0, 1 });
+            m_other.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 1, 0, 1 });
             LOG_TRACE("ON COLLISION ENTER");
         };
         c.OnCollisionStay +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 1, 1 });
+            m_other.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 0, 1, 1, 1 });
             LOG_TRACE("ON COLLISION STAY");
         };
         c.OnCollisionExit +=
             [=](auto const& manifolds)
         {
-            m_third.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 1, 1 });
+            m_other.GetComponent<engine::Sprite2D>().SetColor(oom::vec4{ 1, 0, 1, 1 });
             LOG_TRACE("ON COLLISION EXIT");
         };
         //c.SetNarrowPhaseCollider(engine::ColliderType::BOX);
-        //m_third.AddComponent<engine::BoxCollider2D>();
+        //m_other.AddComponent<engine::BoxCollider2D>();
     }
 
     ////Ground
@@ -160,35 +164,46 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
     GetWorld()->GetSystem<engine::TransformSystem>()->Update();
     GetWorld()->GetSystem<engine::PhysicsSystem>()->Update(dt);
 
+    //reset
+    if (engine::Input::IsKeyDown(ENGINE_KEY_R))
+    {
+        m_controller.Transform().Position() = m_spawnPosController;
+        m_controller.GetComponent<engine::Rigidbody2D>().SetForce({ 0,0 });
+        m_other.Transform().Position() = m_spawnPosOther;
+        m_other.GetComponent<engine::Rigidbody2D>().SetForce({ 0,0 });
+    }
+
     constexpr float force = 300.f;
     constexpr float jumpforce = 10000.f;
+    
+
 
     if (engine::Input::IsKeyHeld(ENGINE_KEY_UP))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, force });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, force });
     }
 
     if (engine::Input::IsKeyHeld(ENGINE_KEY_DOWN))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, -force });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, -force });
     }
 
     if (engine::Input::IsKeyHeld(ENGINE_KEY_RIGHT))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ force, 0 });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ force, 0 });
     }
 
     if (engine::Input::IsKeyHeld(ENGINE_KEY_LEFT))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ -force, 0 });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ -force, 0 });
     }
 
     if (engine::Input::IsKeyPressed(ENGINE_KEY_SPACE))
     {
-        m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, jumpforce });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, jumpforce });
     }
 
-    /*auto rootsForce = m_second.GetComponent<engine::Rigidbody2D>().GetForce();
+    /*auto rootsForce = m_controller.GetComponent<engine::Rigidbody2D>().GetForce();
     LOG_TRACE("{0}{1}", rootsForce.x, rootsForce.y );*/
 
     // transform objects
@@ -196,21 +211,21 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
     for (auto [transform] : view)
     {
         //auto& transform = GetWorld()->GetComponent<engine::Transform3D>(ent);
-        if (transform.Position().y < lowerbounds.y)
+        if (transform.Position().y < m_lowerbounds.y)
         {
-            transform.Position().y = upperbounds.y;
+            transform.Position().y = m_upperbounds.y;
         }
-        if (transform.Position().y > upperbounds.y)
+        if (transform.Position().y > m_upperbounds.y)
         {
-            transform.Position().y = lowerbounds.y;
+            transform.Position().y = m_lowerbounds.y;
         }
-        if (transform.Position().x < lowerbounds.x)
+        if (transform.Position().x < m_lowerbounds.x)
         {
-            transform.Position().x = upperbounds.x;
+            transform.Position().x = m_upperbounds.x;
         }
-        if (transform.Position().x > upperbounds.x)
+        if (transform.Position().x > m_upperbounds.x)
         {
-            transform.Position().x = lowerbounds.x;
+            transform.Position().x = m_lowerbounds.x;
         }
 
     }

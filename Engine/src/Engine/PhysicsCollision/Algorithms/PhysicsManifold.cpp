@@ -85,7 +85,7 @@ namespace engine
         if (closest == dirVec)
         {
             inside = true;
-            if (oom::abs(dirVec.x) > oom::abs(dirVec.y))
+            if (oom::abs(dirVec.x) < oom::abs(dirVec.y))
             {
                 if (closest.x > 0) closest.x = x_extent;
                 else closest.x = -x_extent;
@@ -97,8 +97,11 @@ namespace engine
             }
         }
 
-        result.Normal = oom::normalize(boxCenter - closest);
-        result.PenetrationDepth = circleA.radius - oom::length(boxCenter - closest);
+        oom::vec2 normal = dirVec - closest;
+        float d = oom::length(normal);
+
+        result.Normal = oom::normalize(normal);
+        result.PenetrationDepth = circleA.radius - d;
 
         if (inside)
         {

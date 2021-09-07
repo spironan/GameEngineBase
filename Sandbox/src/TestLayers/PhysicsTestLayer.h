@@ -19,9 +19,11 @@ class PhysicsTestLayer : public SceneBaseLayer
 {
 private:
     int width{}, height{};
-    engine::GameObject m_second, m_third;
+    engine::GameObject m_controller, m_other;
 
-    oom::vec2 upperbounds, lowerbounds;
+    oom::vec2 m_upperbounds, m_lowerbounds;
+
+    oom::vec3 m_spawnPosController, m_spawnPosOther;
 
 public:
 
