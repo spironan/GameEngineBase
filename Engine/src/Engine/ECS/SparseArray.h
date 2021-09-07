@@ -190,6 +190,52 @@ namespace engine
             std::swap(m_index[*(m_sparse.begin() + index1)], m_index[*(m_sparse.begin() + index2)]);
         }
 
+        /*********************************************************************************//*!
+        \brief    Shift elements from start_index all the way to end of container, to index
+        indicated by insert_index. 
+         
+        \param    insert_index
+        index at which elements shifted into, e.g if this is index 2, the shifted elements will be 
+        inserted such that the first of the shifted elements will now be at index 2
+        \param    start_index
+        index of the first element to be shifted from, elements starting from this element and onwards,
+        all the way to the end will be shifted
+        *//**********************************************************************************/
+		void ShiftElementsFromBackToIndex(size_type insert_index, size_type start_index)
+		{
+            if (start_index >= m_dense.size())
+            {
+                LOG_ENGINE_WARN("SwapElementsAtBack start_index:{0} invalid", start_index);
+                return;
+            }
+			dense_container d_temp;
+			sparse_container s_temp;
+            for (dense_container::iterator i = m_dense.begin() + start_index;i != m_dense.end(); ++i )
+				d_temp.emplace_back((*i));
+			for (sparse_container::iterator i = m_sparse.begin() + start_index; i != m_sparse.end(); ++i)
+                s_temp.emplace_back((*i));
+
+            std::size_t num = d_temp.size();
+            while (num)
+            {
+                m_dense.pop_back();
+                m_sparse.pop_back();
+                --num;
+            }
+
+			dense_container::iterator d_curr = m_dense.begin() + insert_index;
+			sparse_container::iterator s_curr = m_sparse.begin() + insert_index;
+            for (std::size_t i = 0; i < d_temp.size(); ++i)
+            {
+                d_curr = m_dense.emplace(++d_curr, d_temp[i]);
+                s_curr = m_sparse.emplace(++s_curr, s_temp[i]);
+
+                m_index[*s_curr] = d_curr - m_dense.begin();
+            }
+
+		}
+
+
         dense_container& GetDenseContainer()
         {
             return m_dense;
