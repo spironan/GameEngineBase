@@ -33,7 +33,8 @@ void PhysicsTestLayer::Init()
     {
         m_second = CreateGameObject();
         m_second.Transform().Scale() = { 50.f, 50.f, 1.0f };
-        m_second.AddComponent<engine::Sprite2D>().SetTexture(tex);
+        //m_second.AddComponent<engine::Sprite2D>().SetTexture(tex);
+
         auto& pc = m_second.AddComponent<engine::Rigidbody2D>();
         pc.SetMass(1.f);
         pc.GravityScale = 0.0f;
@@ -41,7 +42,7 @@ void PhysicsTestLayer::Init()
 
         m_second.AddComponent<engine::BoxCollider2D>();
         auto& c = m_second.GetComponent<engine::Collider2D>();
-        c.IsTrigger = true;
+        //c.IsTrigger = true;
         
         //c.SetNarrowPhaseCollider(engine::ColliderType::BOX);
         //m_second.AddComponent<engine::BoxCollider2D>();
@@ -88,18 +89,18 @@ void PhysicsTestLayer::Init()
 
     {
         m_third = CreateGameObject();
-        m_third.Transform().Position() = { 100.f, 0.f, 0.f };
+        m_third.Transform().Position() = { -100.f, 0.f, 0.f };
         m_third.Transform().Scale() = { 50.f, 50.f, 1.0f };
-        m_third.AddComponent<engine::Sprite2D>().SetTexture(tex);
+        //m_third.AddComponent<engine::Sprite2D>();// .SetTexture(tex);
         
         auto& pc = m_third.AddComponent<engine::Rigidbody2D>();
         pc.SetMass(1.f);
         pc.GravityScale = 0.0f;
         RootGameObject().AddChild(m_third);
 
-        m_third.AddComponent<engine::CircleCollider2D>();
+        m_third.AddComponent<engine::BoxCollider2D>();
         auto& c = m_third.GetComponent<engine::Collider2D>();
-        c.IsTrigger = true;
+        //c.IsTrigger = true;
         c.OnTriggerEnter +=
             [=](auto const& manifolds)
         {
