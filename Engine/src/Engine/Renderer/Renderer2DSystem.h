@@ -56,15 +56,15 @@ public:
     *//**********************************************************************************/
     void SetCamera(const Camera& cam,const oom::vec3& position);
 
-    void SetDebugColour(const oom::vec4& colour)
-    {
-        m_debugColour = colour;
-    }
-
-    void SetDebugColour(float r, float g, float b, float a = 1.0f)
-    {
-        m_debugColour = oom::vec4{r,g,b,a};
-    }
+    //void SetDebugColour(const oom::vec4& colour)
+    //{
+    //    m_debugColour = colour;
+    //}
+    //
+    //void SetDebugColour(float r, float g, float b, float a = 1.0f)
+    //{
+    //    m_debugColour = oom::vec4{r,g,b,a};
+    //}
     /*********************************************************************************//*!
     \brief    Updates the rendering system to display to screen
      
@@ -82,7 +82,7 @@ private:
     oom::mat4 m_view;
     oom::mat4 m_viewProj;
 
-    oom::vec4 m_debugColour{0.1f,1.0f,0.1f,1.0f};
+    //oom::vec4 m_debugColour{0.1f,1.0f,0.1f,1.0f};
 };
 
 }// namespace engine

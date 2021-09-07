@@ -20,6 +20,9 @@ Technology is prohibited.
 
 #include "UtilityLayers/SceneBaseLayer.h"
 
+#include "Engine/PhysicsCollision/ColliderCore.h"
+
+
 
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components
@@ -71,6 +74,7 @@ public:
 
         for (int i = 1; i < 10; ++i)
         {
+            using namespace engine;
             engine::GameObject ent = CreateGameObject();
             m_gos.emplace_back(ent);
 
@@ -78,6 +82,9 @@ public:
             ent.Transform().RotationAngle() += 90.f;
             ent.Transform().Scale() = { scaling, scaling, 1.0f };
             auto& objSprite = ent.AddComponent<engine::Sprite2D>();
+            ent.AddComponent<Collider2D>().SetNarrowPhaseCollider(ColliderType::BOX);
+            auto& col = ent.AddComponent<BoxCollider2D>();
+            ent.AddComponent<ColliderDebugDraw>().SetColor((float)i/10, (float)i/20, (float)i/30);
             objSprite.SetTexture(tex->GetID());
 
         }

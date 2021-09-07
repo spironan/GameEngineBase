@@ -7,3 +7,6 @@
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/SceneCamera.h"
+
+//Debug drawing
+#include "Engine/Renderer/Debug/ColliderDebugDraw.h"

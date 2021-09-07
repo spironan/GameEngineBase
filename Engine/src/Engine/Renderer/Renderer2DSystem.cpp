@@ -30,6 +30,8 @@ Technology is prohibited.
 #include "Engine/PhysicsCollision/Colliders.h"
 #include "Engine/PhysicsCollision/ColliderCore.h"
 
+#include "Engine/Renderer/Debug/ColliderDebugDraw.h"
+
 namespace engine
 {
 	void Renderer2DSystem::SetCamera(const Camera& cam, const oom::vec3& position)
@@ -79,8 +81,8 @@ namespace engine
 
 	void Renderer2DSystem::DrawDebug()
 	{
-		auto view = m_ECS_Manager.GetComponentView<Transform3D, Collider2D>();
-		for (auto [transform, collider] : view)
+		auto view = m_ECS_Manager.GetComponentView<Transform3D, Collider2D, ColliderDebugDraw>();
+		for (auto [transform, collider, debugCol] : view)
 		{
 			switch (collider.GetNarrowPhaseCollider())
 			{
@@ -88,14 +90,14 @@ namespace engine
 					{
 						auto box = collider.GetComponent<BoxCollider2D>().GetGlobalBounds();
 						Renderer2D::DrawAABB2D(box,
-											   m_debugColour);
+											   debugCol.GetColor());
 					}break;
 				case ColliderType::CIRCLE:
 					{
 						Renderer2D::DrawCircle(transform.GetGlobalPosition(),
 											   transform.GetGlobalRotationDeg(),
 											   collider.GetComponent<CircleCollider2D>().GetGlobalBounds().radius,
-											   m_debugColour);
+											   debugCol.GetColor());
 					}break;
 				default:
 					LOG_ENGINE_ERROR("No collider debug type implemented!");
