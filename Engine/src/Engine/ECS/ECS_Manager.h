@@ -436,10 +436,63 @@ namespace engine
 				if (signature[type] == true)
 				{
 					bool result = m_ComponentManager->CopyComponentByTypeID(source, dest, type);
+					LOG_ENGINE_WARN("Component {0} failed to copy from entity {1} to {2}", type, source, dest);
+				}
+			}
+			return dest;
+		}
+
+		/*********************************************************************************//*!
+		\brief    Copies an entity's(source) components and attaches it to a given entity(dest),
+		and templated types can be given as a filter as to which components are not required to
+		be copied
+
+		\param    source
+		source entity
+		\param    dest
+		entity to receive copy of source's components
+		\return
+		dest
+		*//**********************************************************************************/
+		template<typename... Component>
+		Entity CloneEntityButWithout(Entity source, Entity dest)
+		{
+			int num_filter_components = sizeof...(Component);
+			auto signature = m_EntityManager->GetSignature(dest);
+			Signature components_signature = ComponentSignature<Component...>();
+			signature &= components_signature.flip();
+			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
+			{
+				if (signature[type] == true)
+				{
+					bool result = m_ComponentManager->CopyComponentByTypeID(source, dest, type);
 					ENGINE_ASSERT(result);
 				}
 			}
 			return dest;
+		}
+
+		/*********************************************************************************//*!
+		\brief    Returns a vector container of rttr::type according to the components 
+		an entity has
+		 
+		\param    entity
+		entity to get the components from
+		\return   
+		vector container of rttr::type
+		*//**********************************************************************************/
+		std::vector<rttr::type> GetComponentRTTRTypes(Entity entity)
+		{
+			std::vector<rttr::type> output;
+			auto signature = m_EntityManager->GetSignature(entity);
+			for (ComponentType type = 0; type < m_ComponentManager->Size(); ++type)
+			{
+				if (signature[type] == true)
+				{
+					output.emplace_back(m_ComponentManager->GetComponentRTTRTypeByTypeID(type));
+				}
+			}
+			return output;
 		}
 		/*********************************************************************************//*!
 		\brief    Stores an entity as a special deleted object, which allows it to be restored
@@ -523,5 +576,21 @@ namespace engine
 		//std::unique_ptr<EventManager> mEventManager;
 		std::unique_ptr<SystemManager> m_SystemManager;
 		std::set<Entity> deleteList;
+
+		template<typename Component>
+		Signature ComponentSignature()
+		{
+			Signature signature;
+			signature[m_ComponentManager->GetComponentID<Component>()] = true;
+			return signature;
+		}
+
+		template<typename Component, typename Component2>
+		Signature ComponentSignature()
+		{
+			Signature signature;
+			signature[m_ComponentManager->GetComponentID<Component>()] = true;
+			return signature | ComponentSignature<Component2>();
+		}
 	};
 }

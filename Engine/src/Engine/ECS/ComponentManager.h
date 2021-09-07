@@ -15,7 +15,7 @@ Technology is prohibited.
 #pragma once
 
 #include "ComponentArray.h"
-
+#include "rttr/type.h"
 namespace engine
 {
 	class ComponentManager
@@ -34,7 +34,8 @@ namespace engine
 		using DeletedComponentMap = std::unordered_map<ComponentType, DeletedComponentCallback>;
 		using RestoredComponentCallback = std::function<void* (ComponentManager&, Entity, void*)>;
 		using RestoredComponentMap = std::unordered_map<ComponentType, RestoredComponentCallback>;
-
+		using RTTRComponentCallback = std::function<rttr::type()>;
+		using RTTRComponentMap = std::unordered_map<ComponentType, RTTRComponentCallback>;
 		/*****************************************************************//**
 		 * @brief Registers a component to be used. Creates a ComponentArray
 		 * of type T and inserts it into m_ComponentArrays
@@ -73,6 +74,11 @@ namespace engine
 					restored_component.SetEntity(entity);
 				return static_cast<void*>(&restored_component);
 				} });
+			m_rttrComponentMap.insert({ m_NextComponentType, []()->rttr::type {
+				static rttr::type reflected_type = rttr::type::get<T>();
+				return reflected_type;
+				} });
+
 			++m_NextComponentType;
 		}
 
@@ -194,6 +200,12 @@ namespace engine
 			if (type >= Size())
 				return nullptr;
 			return m_getComponentMap[type](*this,type);
+		}
+
+		rttr::type GetComponentRTTRTypeByTypeID(ComponentType type)
+		{
+			ENGINE_ASSERT(type < Size());
+			return m_rttrComponentMap[type]();
 		}
 
 		template<typename... Component>
@@ -351,6 +363,7 @@ namespace engine
 		CopyComponentMap m_copyComponentMap{};
 		DeletedComponentMap m_deletedComponentMap{};
 		RestoredComponentMap m_restoredComponentMap{};
+		RTTRComponentMap m_rttrComponentMap{};
 
 		template<typename T>
 		std::shared_ptr<ComponentArray<T>> GetComponentArray()
