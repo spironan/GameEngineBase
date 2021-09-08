@@ -63,7 +63,6 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 	Entity prevParent = head;
 
 	auto& headEditorComponent = head.EnsureComponent<EditorComponent>();
-
 	headEditorComponent.SetPrefabReference(obj,head);
 
 	for (GameObject childs : childList)

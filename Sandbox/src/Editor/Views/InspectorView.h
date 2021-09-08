@@ -9,6 +9,7 @@
 #include "Engine/Prefab/EditorComponent.h"
 #include "../RttrTypeID.h"
 
+#include <oom/oom.hpp>
 #include <iostream>
 class InspectorView
 {
@@ -67,6 +68,7 @@ private:
 					continue;
 			}
 			current_value.clear();
+
 			const rttr::type::type_id id = element.get_type().get_id();
 			if (id == m_tracked_ids[type_INT])
 			{
@@ -120,6 +122,20 @@ private:
 			{
 				ImGui::Text("%s : %u", element.get_name().c_str(), element.get_value(component).to_uint32());
 			}
+			//else if (id == m_tracked_ids[type_VEC2])
+			//{
+			//	oom::vec2 value = element.get_value(component).get_value<oom::vec2>();
+			//	ImGuiSliderFlags flag = 0;
+			//	if (element.is_readonly())
+			//		flag = ImGuiSliderFlags_ReadOnly | ImGuiSliderFlags_NoInput;
+			//	else
+			//		current_value = value;
+			//	
+			//	if (ImGui::DragFloat2(element.get_name().c_str(), oom::value_ptr(value), 1, 0, 0, "%.3f", flag))
+			//	{
+			//		element.set_value(component, value);
+			//	}
+			//}
 			else if (id == m_tracked_ids[type_VEC3])
 			{
 				oom::vec3 value = element.get_value(component).get_value<oom::vec3>();
@@ -205,6 +221,7 @@ private:
 				ImGui::EndGroup();
 			}
 			//undo and redo instructions
+			if(is_readonly == false)
 			{
 				static rttr::variant undo;
 				static rttr::variant redo;

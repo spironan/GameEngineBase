@@ -20,6 +20,10 @@ using namespace rttr_type_ID;
 
 InspectorView::InspectorView() :m_showReadOnly{ false },m_docked {false},m_addComponent{false}
 {
+	for (auto& item : m_tracked_ids)
+	{
+		std::cout << item << std::endl;
+	}
 }
 void InspectorView::Show()
 {
@@ -59,7 +63,7 @@ void InspectorView::Show()
 		else
 		{
 			ShowGameObjectDetails(go);
-
+			
 			if(auto* ptr = go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(*ptr,go);
 

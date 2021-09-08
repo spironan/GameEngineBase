@@ -13,6 +13,7 @@ RTTR_REGISTRATION
 registration::class_<EditorComponent>("Editor Component")
 	.property_readonly("Is Prefab",&EditorComponent::IsPrefab)
 	.property_readonly("Is Dirty" ,&EditorComponent::IsPrefabDirty)
+	.property_readonly("Is Shown", &EditorComponent::GetIsShownInEditor)
 	.property_readonly("Prefab Reference",&EditorComponent::GetPrefabReference);
 }
 

@@ -14,6 +14,7 @@ namespace rttr_type_ID
 		type_STRING,
 		type_BOOL,
 		type_ENTITY,
+		type_VEC2,
 		type_VEC3,
 		type_MAT4,
 	};
@@ -25,6 +26,7 @@ namespace rttr_type_ID
 		rttr::type::get<std::string>().get_id(),
 		rttr::type::get<bool>().get_id(),
 		rttr::type::get<engine::Entity>().get_id(),
+		rttr::type::get<oom::vec2>().get_id(),
 		rttr::type::get<oom::vec3>().get_id(),
 		rttr::type::get<oom::mat4>().get_id()
 

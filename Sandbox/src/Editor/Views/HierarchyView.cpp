@@ -151,10 +151,10 @@ void HierarchyView::ListHierarchy()
 		engine::Entity objEntity = transformList[iter].GetEntity();
 		engine::GameObject& gameObj = static_cast<engine::GameObject>(objEntity);
 		engine::EditorComponent& editor_component = gameObj.GetComponent<engine::EditorComponent>();
-		if (gameObj.GetComponent<engine::EditorComponent>())
-			continue;
+		if (editor_component.GetIsShownInEditor())
+			current_color = editor_component.IsPrefab() ? prefab_text_color : default_textCol;
 		else//is a prefab instance == skip
-			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
+			continue;
 
 		if (ObjectGroup::s_FocusedObject == objEntity)
 		{

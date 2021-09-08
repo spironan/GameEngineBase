@@ -44,6 +44,7 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 		object.EnsureComponent<engine::PrefabComponent>();
+		object.EnsureComponent<engine::EditorComponent>().SetShownInEditor(false);
 	}
 	engine::Entity head = 0;
 	for (auto& hierarchyItem : hierarchymap)
@@ -106,7 +107,6 @@ void Serializer::LoadWorld(const std::string& path)
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 	}
-
 
 	for (auto& hierarchyItem : hierarchymap)
 	{

@@ -63,6 +63,14 @@ void Serializer::SaveComponent(Component& component, rapidjson::PrettyWriter<rap
 		{
 			writer.Uint(element.get_value(component).get_value<engine::Entity>());
 		}
+		else if (id == rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC2])
+		{
+			writer.StartArray();
+			oom::vec2 value = element.get_value(component).get_value<oom::vec3>();
+			writer.Double(value.x);
+			writer.Double(value.y);
+			writer.EndArray();
+		}
 		else if (id == rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC3])
 		{
 			writer.StartArray();
