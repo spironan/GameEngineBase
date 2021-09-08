@@ -61,6 +61,10 @@ engine::Entity engine::EditorComponent::GetHeadReference()
 {
 	return m_headReference;
 }
+bool engine::EditorComponent::GetIsShownInEditor()
+{
+    return m_isShown_inEditor;
+}
 void EditorComponent::SetPrefabDirty(bool pd)
 {
 
@@ -73,6 +77,11 @@ void engine::EditorComponent::SetIsPrefab(bool ip)
 void engine::EditorComponent::SetHead(Entity head)
 {
 	m_headReference = head;
+}
+
+void engine::EditorComponent::SetShownInEditor(bool isShown)
+{
+	m_isShown_inEditor = isShown;
 }
 
 void engine::EditorComponent::SetPrefabReference(Entity reference, Entity head)

@@ -8,31 +8,8 @@
 #include "../ActionStack/ScriptActionStack.h"
 
 ////engine code
-//#include "glm/gtc/type_ptr.hpp"
-//#include "Engine/ECS/GameObject.h"
-//#include "Engine/Asset/AssetsManager.h"
-//#include "Engine/Scripting/ScriptSystem.h"
-//
-////components
-//#include "Engine/ECS/GameObjectComponent.h"
-//
-//#include "Engine/Transform/Transform3D.h"
-//#include "Engine/PhysicsCollision/RigidBody.h"
-//#include "Engine/PhysicsCollision/Colliders.h"
-//#include "Engine/PhysicsCollision/ColliderCore.h"
-//
-//#include "Engine/Renderer/Sprite2D.h"
-//#include "Engine/Renderer/Camera.h"
-//#include "Engine/Renderer/SceneCamera.h"
-//
-//#include "Engine/Prefab/EditorComponent.h"
-//#include "Engine/Prefab/PrefabComponent.h"
-//
-//#include "Engine/Scripting/Scripting.h"
-//#include "Engine/Scripting/ScriptInfo.h"
-
-//libs
 #include "Engine.h"
+//libs
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -81,11 +58,11 @@ void InspectorView::Show()
 		}
 		else
 		{
-			
 			ShowGameObjectDetails(go);
 
 			if(auto* ptr = go.TryGetComponent<engine::Transform3D>())
 				ReadComponents(*ptr,go);
+
 
 			if (go.HasComponent<engine::SceneCamera>())
 				ReadComponents(go.GetComponent<engine::SceneCamera>(), go);

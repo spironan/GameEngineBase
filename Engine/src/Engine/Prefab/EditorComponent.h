@@ -30,6 +30,7 @@ public:
 	bool IsPrefabDirty();
 	engine::Entity GetPrefabReference();
 	engine::Entity GetHeadReference();
+	bool GetIsShownInEditor();
 	/*********************************************************************************//*!
 	\brief
 	 Setters
@@ -37,6 +38,7 @@ public:
 	void SetPrefabDirty(bool pd) ;
 	void SetIsPrefab(bool ip);
 	void SetHead(Entity head);
+	void SetShownInEditor(bool isShown);
 	/*********************************************************************************//*!
 	\brief    
 	 Unregister the old prefab reference 
@@ -63,7 +65,7 @@ private:
 private:
 	bool m_isPrefab = false;
 	bool m_isPrefab_Dirty = false;
-
+	bool m_isShown_inEditor = true;
 	engine::Entity m_prefabReference = 0;
 	engine::Entity m_headReference = 0;
 	//custom icon

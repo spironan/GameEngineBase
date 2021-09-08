@@ -150,8 +150,8 @@ void HierarchyView::ListHierarchy()
 		engine::Transform3D& transform = transformList[iter];
 		engine::Entity objEntity = transformList[iter].GetEntity();
 		engine::GameObject& gameObj = static_cast<engine::GameObject>(objEntity);
-
-		if (gameObj.HasComponent<engine::PrefabComponent>())
+		engine::EditorComponent& editor_component = gameObj.GetComponent<engine::EditorComponent>();
+		if (gameObj.GetComponent<engine::EditorComponent>())
 			continue;
 		else//is a prefab instance == skip
 			current_color = gameObj.GetComponent<engine::EditorComponent>().IsPrefab() ? prefab_text_color : default_textCol;
