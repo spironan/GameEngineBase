@@ -37,19 +37,19 @@ public class PlayerScript : MonoBehaviour
 
     private void Update(float deltaTime)
     {
-        if (Input.GetKeyDown(KeyCode.UP))
+        if (Input.IsKeyPressed(KeyCode.UP))
         {
             moveDir = new Vector3(0, 1, 0);
         }
-        if (Input.GetKeyDown(KeyCode.DOWN))
+        if (Input.IsKeyPressed(KeyCode.DOWN))
         {
             moveDir = new Vector3(0, -1, 0);
         }
-        if (Input.GetKeyDown(KeyCode.LEFT))
+        if (Input.IsKeyPressed(KeyCode.LEFT))
         {
             moveDir = new Vector3(-1, 0, 0);
         }
-        if (Input.GetKeyDown(KeyCode.RIGHT))
+        if (Input.IsKeyPressed(KeyCode.RIGHT))
         {
             moveDir = new Vector3(1, 0, 0);
         }

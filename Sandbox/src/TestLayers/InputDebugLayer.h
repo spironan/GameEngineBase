@@ -42,9 +42,9 @@ public:
             LOG_TRACE("key 0 Pressed ");
         }
 
-        if (engine::Input::IsAnyKeyDown())
+        if (engine::Input::IsAnyKeyHeld())
         {
-            for (engine::KeyCode key : engine::Input::GetKeysDown())
+            for (engine::KeyCode key : engine::Input::GetKeysHeld())
             {
                 LOG_TRACE("Key {0} down", key);
             }
@@ -66,9 +66,9 @@ public:
             }
         }
 
-        if (engine::Input::IsAnyMouseButtonDown())
+        if (engine::Input::IsAnyMouseButtonHeld())
         {
-            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsDown())
+            for (engine::MouseCode mousecode : engine::Input::GetMouseButtonsHeld())
             {
                 LOG_TRACE("Mouse Button {0} Down", mousecode);
             }
@@ -90,7 +90,7 @@ public:
             }
         }
 
-        if (engine::Input::IsKeyDown(engine::Key::W))
+        if (engine::Input::IsKeyHeld(engine::Key::W))
         {
             LOG_TRACE("key W down!");
         }
@@ -103,7 +103,7 @@ public:
             LOG_TRACE("key W released!");
         }
 
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonLeft))
+        if (engine::Input::IsMouseButtonHeld(engine::Mouse::ButtonLeft))
         {
             LOG_TRACE("mouse button Left is Down!");
         }
@@ -116,7 +116,7 @@ public:
             LOG_TRACE("mouse button Left is Released!");
         }
 
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonRight))
+        if (engine::Input::IsMouseButtonHeld(engine::Mouse::ButtonRight))
         {
             LOG_TRACE("mouse button Right is Down!");
         }
@@ -130,7 +130,7 @@ public:
         }
 
 
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonMiddle))
+        if (engine::Input::IsMouseButtonHeld(engine::Mouse::ButtonMiddle))
         {
             LOG_TRACE("mouse button Middle is Down!");
         }
@@ -143,7 +143,7 @@ public:
             LOG_TRACE("mouse button Middle is Released!");
         }
 
-        if (engine::Input::IsMouseButtonDown(engine::Mouse::ButtonLast))
+        if (engine::Input::IsMouseButtonHeld(engine::Mouse::ButtonLast))
         {
             LOG_TRACE("mouse button Last is Down!");
         }

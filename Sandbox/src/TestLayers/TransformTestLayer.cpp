@@ -78,43 +78,43 @@ void TransformTestLayer::OnUpdate(engine::Timestep dt)
 
     GetWorld()->GetSystem<engine::TransformSystem>()->Update();
 
-    if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_UP))
     {
         m_controller->Transform().Position().y += MOVESPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_DOWN))
     {
         m_controller->Transform().Position().y -= MOVESPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_LEFT))
     {
         m_controller->Transform().Position().x -= MOVESPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_RIGHT))
     {
         m_controller->Transform().Position().x += MOVESPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_Z))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_Z))
     {
         m_controller->Transform().RotationAngle() -= ROTATIONSPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_X))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_X))
     {
         m_controller->Transform().RotationAngle() += ROTATIONSPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_C))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_C))
     {
         m_controller->Transform().Scale().x -= SCALINGSPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_V))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_V))
     {
         m_controller->Transform().Scale().x += SCALINGSPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_B))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_B))
     {
         m_controller->Transform().Scale().y -= SCALINGSPEED * deltaTime;
     }
-    if (engine::Input::IsKeyDown(ENGINE_KEY_N))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_N))
     {
         m_controller->Transform().Scale().y += SCALINGSPEED * deltaTime;
     }

@@ -157,22 +157,22 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
     constexpr float force = 300.f;
     constexpr float jumpforce = 10000.f;
 
-    if (engine::Input::IsKeyDown(ENGINE_KEY_UP))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_UP))
     {
         m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, force });
     }
 
-    if (engine::Input::IsKeyDown(ENGINE_KEY_DOWN))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_DOWN))
     {
         m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, -force });
     }
 
-    if (engine::Input::IsKeyDown(ENGINE_KEY_RIGHT))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_RIGHT))
     {
         m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ force, 0 });
     }
 
-    if (engine::Input::IsKeyDown(ENGINE_KEY_LEFT))
+    if (engine::Input::IsKeyHeld(ENGINE_KEY_LEFT))
     {
         m_second.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ -force, 0 });
     }

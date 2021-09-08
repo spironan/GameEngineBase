@@ -65,7 +65,7 @@ namespace engine
     }
 
 
-    bool Input::IsKeyDown(const KeyCode keycode)
+    bool Input::IsKeyHeld(const KeyCode keycode)
     {
         return m_keyboardState[static_cast<int>(keycode)];
     }
@@ -80,11 +80,11 @@ namespace engine
         return m_prevKeyboardState[static_cast<int>(keycode)] && !m_keyboardState[static_cast<int>(keycode)];
     }
     
-    bool Input::IsAnyKeyDown()
+    bool Input::IsAnyKeyHeld()
     {
         for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
         {
-            if (IsKeyDown(keycode)) return true;
+            if (IsKeyHeld(keycode)) return true;
         }
 
         return false;
@@ -110,13 +110,13 @@ namespace engine
         return false;
     }
 
-    std::vector<KeyCode> Input::GetKeysDown()
+    std::vector<KeyCode> Input::GetKeysHeld()
     {
         std::vector<KeyCode> keys;
         
         for (KeyCode keycode{ 0 }; keycode < m_keyLength; ++keycode)
         {
-            if (IsKeyDown(keycode)) keys.emplace_back(keycode);
+            if (IsKeyHeld(keycode)) keys.emplace_back(keycode);
         }
 
         return keys;
@@ -147,7 +147,7 @@ namespace engine
     }
 
 
-    bool Input::IsMouseButtonDown(const MouseCode button)
+    bool Input::IsMouseButtonHeld(const MouseCode button)
     {
         Uint32 mask = 0;
 
@@ -226,11 +226,11 @@ namespace engine
         return (m_prevMouseState & mask) && !(m_mouseState & mask);
     }
 
-    bool Input::IsAnyMouseButtonDown()
+    bool Input::IsAnyMouseButtonHeld()
     {
         for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
-            if (IsMouseButtonDown(mousecode)) return true;
+            if (IsMouseButtonHeld(mousecode)) return true;
         }
 
         return false;
@@ -258,13 +258,13 @@ namespace engine
         return false;
     }
 
-    std::vector<MouseCode> Input::GetMouseButtonsDown()
+    std::vector<MouseCode> Input::GetMouseButtonsHeld()
     {
         std::vector<MouseCode> mouseButtons;
 
         for (MouseCode mousecode{ 0 }; mousecode <= Mouse::ButtonLast; ++mousecode)
         {
-            if (IsMouseButtonDown(mousecode)) mouseButtons.emplace_back(mousecode);
+            if (IsMouseButtonHeld(mousecode)) mouseButtons.emplace_back(mousecode);
         }
 
         return mouseButtons;

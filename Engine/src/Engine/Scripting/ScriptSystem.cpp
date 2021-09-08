@@ -255,32 +255,32 @@ namespace engine
     /* Input Functions for C#                                                      */
     /*-----------------------------------------------------------------------------*/
 
-    bool AnyKey()
-    {
-        return Input::IsAnyKeyDown();
-    }
-
-    bool AnyKeyDown()
+    bool IsAnyKeyPressed()
     {
         return Input::IsAnyKeyPressed();
     }
 
-    bool AnyKeyUp()
+    bool IsAnyKeyHeld()
+    {
+        return Input::IsAnyKeyHeld();
+    }
+
+    bool IsAnyKeyReleased()
     {
         return Input::IsAnyKeyReleased();
     }
 
-    bool GetKey(int key)
-    {
-        return Input::IsKeyDown(static_cast<KeyCode>(key));
-    }
-
-    bool GetKeyDown(int key)
+    bool IsKeyPressed(int key)
     {
         return Input::IsKeyPressed(static_cast<KeyCode>(key));
     }
 
-    bool GetKeyUp(int key)
+    bool IsKeyHeld (int key)
+    {
+        return Input::IsKeyHeld(static_cast<KeyCode>(key));
+    }
+
+    bool IsKeyReleased(int key)
     {
         return Input::IsKeyReleased(static_cast<KeyCode>(key));
     }
@@ -299,32 +299,32 @@ namespace engine
         *y = mouseDelta.second;
     }
 
-    bool AnyMouseButton()
-    {
-        return Input::IsAnyMouseButtonDown();
-    }
-
-    bool AnyMouseButtonDown()
+    bool IsAnyMouseButtonPressed()
     {
         return Input::IsAnyMouseButtonPressed();
     }
 
-    bool AnyMouseButtonUp()
+    bool IsAnyMouseButtonHeld()
+    {
+        return Input::IsAnyMouseButtonHeld();
+    }
+
+    bool IsAnyMouseButtonReleased()
     {
         return Input::IsAnyMouseButtonReleased();
     }
 
-    bool GetMouseButton(int button)
-    {
-        return Input::IsMouseButtonDown(static_cast<MouseCode>(button));
-    }
-
-    bool GetMouseButtonDown(int button)
+    bool IsMouseButtonPressed(int button)
     {
         return Input::IsMouseButtonPressed(static_cast<MouseCode>(button));
     }
 
-    bool GetMouseButtonUp(int button)
+    bool IsMouseButtonHeld(int button)
+    {
+        return Input::IsMouseButtonHeld(static_cast<MouseCode>(button));
+    }
+
+    bool IsMouseButtonReleased(int button)
     {
         return Input::IsMouseButtonReleased(static_cast<MouseCode>(button));
     }

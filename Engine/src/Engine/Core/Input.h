@@ -42,7 +42,7 @@ namespace engine
 
          @return    Whether the key is currently down.
         *//*****************************************************************************/
-        static bool IsKeyDown(KeyCode keycode);
+        static bool IsKeyHeld(KeyCode keycode);
         /****************************************************************************//*!
          @brief     Determine if a key by the given keycode has been triggered within
                     this frame.
@@ -68,7 +68,7 @@ namespace engine
 
          @return    Whether any key is pressed down
         *//*****************************************************************************/
-        static bool IsAnyKeyDown();
+        static bool IsAnyKeyHeld();
         /****************************************************************************//*!
          @brief     Determine if any supported key has been triggered within
                     this frame.
@@ -90,7 +90,7 @@ namespace engine
 
          @return    Returns a vector to all supported keys that is released 
         *//*****************************************************************************/
-        static std::vector<KeyCode> GetKeysDown();
+        static std::vector<KeyCode> GetKeysHeld();
         /****************************************************************************//*!
          @brief     Retrieve a vector of supported keys that are currently pressed.
 
@@ -113,7 +113,7 @@ namespace engine
 
          @return    Whether the mouse button is currently down.
         *//*****************************************************************************/
-        static bool IsMouseButtonDown(MouseCode button);
+        static bool IsMouseButtonHeld(MouseCode button);
         /****************************************************************************//*!
          @brief     Determine if a mouse button by the given mouse code is
                     has been triggered this frame.
@@ -135,7 +135,7 @@ namespace engine
 
          @return    Whether any supported mouse button is currently down.
         *//*****************************************************************************/
-        static bool IsAnyMouseButtonDown();
+        static bool IsAnyMouseButtonHeld();
         /****************************************************************************//*!
          @brief     Determine if any supported mouse button is has 
                     been triggered this frame.
@@ -156,7 +156,7 @@ namespace engine
          @return    Return a vector to all supported mouse buttons that are currently
                     held down.
         *//*****************************************************************************/
-        static std::vector<MouseCode> GetMouseButtonsDown();
+        static std::vector<MouseCode> GetMouseButtonsHeld();
         /****************************************************************************//*!
          @brief     Retrieve all supported mouse button that is pressed this frame
 

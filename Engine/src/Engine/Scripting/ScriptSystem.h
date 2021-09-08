@@ -249,22 +249,22 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
 
         /*********************************************************************************//*!
-        \brief      Determine if any supported key is currently held down.
-                    
-        \note       Mainly used for C# side calling
-
-        \return     true if any supported key is currently held down, else false
-        *//**********************************************************************************/
-        __declspec(dllexport) bool AnyKey();
-
-        /*********************************************************************************//*!
         \brief      Determine if any supported key has been triggered during this frame
 
         \note       Mainly used for C# side calling
 
         \return     true if any supported key was triggered during this frame, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool AnyKeyDown();
+        __declspec(dllexport) bool IsAnyKeyPressed();
+
+        /*********************************************************************************//*!
+        \brief      Determine if any supported key is currently held down.
+                    
+        \note       Mainly used for C# side calling
+
+        \return     true if any supported key is currently held down, else false
+        *//**********************************************************************************/
+        __declspec(dllexport) bool IsAnyKeyHeld();
 
         /*********************************************************************************//*!
         \brief      Determine if any supported key has been released during this frame
@@ -273,16 +273,7 @@ namespace engine
 
         \return     true if any supported key was released during this frame, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool AnyKeyUp();
-
-        /*********************************************************************************//*!
-        \brief      Determine if a supported key by the given keycode is currently held down
-
-        \note       Mainly used for C# side calling
-
-        \return     true if the specified key is currently held down, else false
-        *//**********************************************************************************/
-        __declspec(dllexport) bool GetKey(int key);
+        __declspec(dllexport) bool IsAnyKeyReleased();
 
         /*********************************************************************************//*!
         \brief      Determine if a supported key by the given keycode has been triggered during this frame
@@ -291,7 +282,16 @@ namespace engine
 
         \return     true if the specified key was triggered during this frame, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool GetKeyDown(int key);
+        __declspec(dllexport) bool IsKeyPressed(int key);
+
+        /*********************************************************************************//*!
+        \brief      Determine if a supported key by the given keycode is currently held down
+
+        \note       Mainly used for C# side calling
+
+        \return     true if the specified key is currently held down, else false
+        *//**********************************************************************************/
+        __declspec(dllexport) bool IsKeyHeld(int key);
 
         /*********************************************************************************//*!
         \brief      Determine if a supported key by the given keycode has been released during this frame
@@ -300,7 +300,7 @@ namespace engine
 
         \return     true if the specified key was released during this frame, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool GetKeyUp(int key);
+        __declspec(dllexport) bool IsKeyReleased(int key);
 
         /*********************************************************************************//*!
         \brief      Retrieves the current mouse position in screen coordinates
@@ -331,22 +331,22 @@ namespace engine
         __declspec(dllexport) void GetMouseDelta(int* x, int* y);
 
         /*********************************************************************************//*!
-        \brief      Determine if any supported mouse button is currently held down
-
-        \note       Mainly used for C# side calling
-
-        \return     true if any supported mouse button is currently held down, else false
-        *//**********************************************************************************/
-        __declspec(dllexport) bool AnyMouseButton();
-
-        /*********************************************************************************//*!
         \brief      Determine if any supported mouse button has been triggered during this frame
 
         \note       Mainly used for C# side calling
 
         \return     true if any supported mouse button has been triggered during this frame, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool AnyMouseButtonDown();
+        __declspec(dllexport) bool IsAnyMouseButtonPressed();
+
+        /*********************************************************************************//*!
+        \brief      Determine if any supported mouse button is currently held down
+
+        \note       Mainly used for C# side calling
+
+        \return     true if any supported mouse button is currently held down, else false
+        *//**********************************************************************************/
+        __declspec(dllexport) bool IsAnyMouseButtonHeld();
 
         /*********************************************************************************//*!
         \brief      Determine if any supported mouse button has been released during this frame
@@ -355,7 +355,16 @@ namespace engine
 
         \return     true if any supported mouse button has been released during this frame else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool AnyMouseButtonUp();
+        __declspec(dllexport) bool IsAnyMouseButtonReleased();
+
+        /*********************************************************************************//*!
+        \brief      Determine if a supported mouse button by the given mousecode has been triggered during this frame
+
+        \note       Mainly used for C# side calling
+
+        \return     true if the specified mouse button has been triggered during this frame, else false
+        *//**********************************************************************************/
+        __declspec(dllexport) bool IsMouseButtonPressed(int button);
 
         /*********************************************************************************//*!
         \brief      Determine if a supported mouse button by the given mousecode is currently held down
@@ -364,7 +373,7 @@ namespace engine
 
         \return     true if the specified mouse button is currently held down, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool GetMouseButton(int button);
+        __declspec(dllexport) bool IsMouseButtonHeld(int button);
 
         /*********************************************************************************//*!
         \brief      Determine if a supported mouse button by the given mousecode has been triggered during this frame
@@ -373,15 +382,6 @@ namespace engine
 
         \return     true if the specified mouse button has been triggered during this frame, else false
         *//**********************************************************************************/
-        __declspec(dllexport) bool GetMouseButtonDown(int button);
-
-        /*********************************************************************************//*!
-        \brief      Determine if a supported mouse button by the given mousecode has been triggered during this frame
-
-        \note       Mainly used for C# side calling
-
-        \return     true if the specified mouse button has been triggered during this frame, else false
-        *//**********************************************************************************/
-        __declspec(dllexport) bool GetMouseButtonUp(int button);
+        __declspec(dllexport) bool IsMouseButtonReleased(int button);
     }
 }

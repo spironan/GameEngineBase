@@ -3,31 +3,25 @@ using System.Runtime.InteropServices;
 
 namespace Ouroboros
 {
-    public class Input
+    public static class Input
     {
         [DllImport("__Internal")]
-        private static extern bool AnyKey();
-        
-        public static bool anyKey { get { return AnyKey(); } }
+        public static extern bool IsAnyKeyPressed();
 
         [DllImport("__Internal")]
-        private static extern bool AnyKeyDown();
-
-        public static bool anyKeyDown { get { return AnyKeyDown(); } }
+        public static extern bool IsAnyKeyHeld();
 
         [DllImport("__Internal")]
-        private static extern bool AnyKeyUp();
-
-        public static bool anyKeyUp { get { return AnyKeyUp(); } }
+        public static extern bool IsAnyKeyReleased();
 
         [DllImport("__Internal")]
-        public static extern bool GetKey(KeyCode key);
+        public static extern bool IsKeyPressed(KeyCode key);
 
         [DllImport("__Internal")]
-        public static extern bool GetKeyDown(KeyCode key);
+        public static extern bool IsKeyHeld(KeyCode key);
 
         [DllImport("__Internal")]
-        public static extern bool GetKeyUp(KeyCode key);
+        public static extern bool IsKeyReleased(KeyCode key);
 
         [DllImport("__Internal")]
         private static extern void GetMousePosition(out int x, out int y);
@@ -56,27 +50,21 @@ namespace Ouroboros
         }
 
         [DllImport("__Internal")]
-        private static extern bool AnyMouseButton();
-
-        public static bool anyMouseButton { get { return AnyMouseButton(); } }
+        public static extern bool IsAnyMouseButtonPressed();
 
         [DllImport("__Internal")]
-        private static extern bool AnyMouseButtonDown();
-
-        public static bool anyMouseButtonDown { get { return AnyMouseButtonDown(); } }
+        public static extern bool IsAnyMouseButtonHeld();
 
         [DllImport("__Internal")]
-        private static extern bool AnyMouseButtonUp();
-
-        public static bool anyMouseButtonUp { get { return AnyMouseButtonUp(); } }
+        public static extern bool IsAnyMouseButtonReleased();
 
         [DllImport("__Internal")]
-        public static extern bool GetMouseButton(MouseCode button);
+        public static extern bool IsMouseButtonPressed(MouseCode button);
 
         [DllImport("__Internal")]
-        public static extern bool GetMouseButtonDown(MouseCode button);
+        public static extern bool IsMouseButtonHeld(MouseCode button);
 
         [DllImport("__Internal")]
-        public static extern bool GetMouseButtonUp(MouseCode button);
+        public static extern bool IsMouseButtonReleased(MouseCode button);
     }
 }
