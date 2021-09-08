@@ -291,7 +291,6 @@ void Serializer::LoadWorld(const std::string& path)
 		}
 	}
 
-
 	for (auto& hierarchyItem : hierarchymap)
 	{
 		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
