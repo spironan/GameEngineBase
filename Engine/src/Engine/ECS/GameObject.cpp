@@ -34,11 +34,12 @@ namespace engine
 
     void GameObject::DestroyGameObject(GameObject go)
     {
-        //go.ActiveSelf() = false;
+        ////go.ActiveSelf() = false;
+        ///*tf.DetachFromRoot();*/
+        
+        WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Store(go);
 
         auto& tf = go.Transform();
-        /*tf.DetachFromRoot();*/
-        
         for(auto const& child : WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetChildren(tf))
             WorldManager::GetActiveWorld().DestroyEntity(child.GetEntity());
 
@@ -52,7 +53,7 @@ namespace engine
     {
         AddComponent<Transform3D>();
         AddComponent<GameObjectComponent>();
-        AddComponent<Scripting>();
+        /*AddComponent<Scripting>();*/
 
         // could be moved... should also be removed if editor is not enabled...
         AddComponent<EditorComponent>();

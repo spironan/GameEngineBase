@@ -2,6 +2,7 @@
 #include "Engine/Scene/SceneManager.h"
 #include "Engine/ECS/ECS_Manager.h"
 #include "Engine/ECS/GameObject.h"
+#include "Engine/Transform/TransformSystem.h"
 #include <algorithm>
 #include <vector>
 
@@ -55,7 +56,7 @@ void DeleteItemActionStack::undo()
 		parent.AddChild(go);
 	}
 	
-	static_cast<engine::GameObject>(m_orignalParent).AddChild(m_undoData);
+	activeWorld.GetSystem<engine::TransformSystem>()->Restore(m_undoData);
 }
 void DeleteItemActionStack::redo()
 {

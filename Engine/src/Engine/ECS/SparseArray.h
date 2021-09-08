@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Engine/Core/Base.h"
 #include "Engine/Memory/MemoryCommon.h"
 #include "ECS_Utility.h"
 
