@@ -12,17 +12,17 @@ without the prior written consent of DigiPen Institute of
 Technology is prohibited.
  *********************************************************************/
 #include "HierarchyView.h"
-#include "EditorObjectGroup.h"
-#include "EditorFileGroup.h"
-#include "Editor.h"
+#include "../EditorObjectGroup.h"
+#include "../EditorFileGroup.h"
+#include "../Editor.h"
 #include "Engine/Scene/SceneManager.h"
 
 #include "Seralizer.h"
 
 //action stack stuff
-#include "ActionStack/EditorActionStack.h"//add and remove action
-#include "ActionStack/ParentActionStack.h"
-#include "ActionStack/DeleteItemActionStack.h"
+#include "../ActionStack/EditorActionStack.h"//add and remove action
+#include "../ActionStack/ParentActionStack.h"
+#include "../ActionStack/DeleteItemActionStack.h"
 
 #include "Engine/Prefab/PrefabComponentSystem.h"
 #include "Engine/Prefab/PrefabComponent.h"

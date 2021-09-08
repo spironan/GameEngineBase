@@ -19,12 +19,12 @@ Technology is prohibited.
 #include <stack>//std::stack
 #include <imgui.h>
 //widgets
-#include "HierarchyView.h"
-#include "InspectorView.h"
-#include "ProjectFolderView.h"
-#include "ProjectRootView.h"
-#include "WarningView.h"
-#include "ToolbarView.h"
+#include "Editor/Views/HierarchyView.h"
+#include "Editor/Views/InspectorView.h"
+#include "Editor/Views/ProjectFolderView.h"
+#include "Editor/Views/ProjectRootView.h"
+#include "Editor/Views/WarningView.h"
+#include "Editor/Views/ToolbarView.h"
 
 #include "Widgets/LoggingView.h"
 #include "Widgets/KeyBindingView.h"

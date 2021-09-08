@@ -1,5 +1,5 @@
 #include "StyleEditorView.h"
-#include "../WarningView.h"
+#include "../Views/WarningView.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>

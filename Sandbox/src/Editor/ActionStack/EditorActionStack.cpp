@@ -3,7 +3,7 @@
 #include "Engine/Core/KeyCode.h"
 //sandbox
 #include "EditorActionStack.h"
-#include "../WarningView.h"
+#include "Editor/Views/WarningView.h"
 //global
 #include <imgui.h>
 #include <iterator>//std::distance

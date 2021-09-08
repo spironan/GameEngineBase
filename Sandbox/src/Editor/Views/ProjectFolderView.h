@@ -20,7 +20,7 @@ Technology is prohibited.
 #include <rttr/type.h>
 #include <rttr/property.h>
 
-#include "RttrTypeID.h"
+#include "../RttrTypeID.h"
 #include "Engine/ECS/GameObject.h"
 
 

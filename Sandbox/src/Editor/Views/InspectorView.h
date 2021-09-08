@@ -7,7 +7,7 @@
 #include <imgui.h>
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Prefab/EditorComponent.h"
-#include "RttrTypeID.h"
+#include "../RttrTypeID.h"
 
 #include <iostream>
 class InspectorView

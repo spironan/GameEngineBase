@@ -10,8 +10,8 @@ without the prior written consent of DigiPen Institute of
 Technology is prohibited.
  *********************************************************************/
 #include "ProjectRootView.h"
-#include "EditorFileGroup.h"
-#include "Editor.h"
+#include "../EditorFileGroup.h"
+#include "../Editor.h"
 #include <imgui.h>
 #include <rttr/type>
 #include <filesystem>

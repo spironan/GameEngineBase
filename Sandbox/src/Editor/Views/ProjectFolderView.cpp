@@ -9,14 +9,14 @@
 //sandbox
 #include "ProjectFolderView.h"
 #include "Editor/Editor.h"
-#include "EditorFileGroup.h"
-#include "EditorObjectGroup.h"
+#include "../EditorFileGroup.h"
+#include "../EditorObjectGroup.h"
 //engine
 #include "Engine/Scene/SceneManager.h"
 #include "Engine/Prefab/PrefabComponentSystem.h"
 
 //util
-#include "RttrTypeID.h"
+#include "../RttrTypeID.h"
 #include "Seralizer.h"
 #include "Engine/Asset/AssetsManager.h"
 #include "Utility/Hash.h"
