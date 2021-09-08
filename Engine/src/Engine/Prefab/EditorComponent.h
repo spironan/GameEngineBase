@@ -66,7 +66,6 @@ private:
 	bool m_isPrefab = false;
 	bool m_isPrefab_Dirty = false;
 	bool m_isShown_inEditor = true;
-
 	engine::Entity m_prefabReference = 0;
 	engine::Entity m_headReference = 0;
 	//custom icon
