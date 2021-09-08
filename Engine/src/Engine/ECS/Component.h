@@ -5,6 +5,18 @@
 
 namespace engine
 {
+    //Convinience macro to be put in anything that inherits from component
+    #define DEFAULT_COMPONENT_CONSTRUCTORS(component)\
+    component()                             = delete;\
+    component(component const&)             = default;\
+    component(component&&)                  = default;\
+    component& operator=(component const&)  = default;\
+    component& operator=(component&&)       = default;
+
+    #define DEFAULT_COMPONENT(component)\
+    DEFAULT_COMPONENT_CONSTRUCTORS(component);\
+    virtual ~component()                    = default;
+
     class WorldManager;
     class Component
     {
@@ -72,7 +84,15 @@ namespace engine
             return true;
         }
 
-        RTTR_ENABLE()
+        template<typename T, typename T2 = engine::WorldManager>
+        void EnsureRemove() const
+        {
+            if (!T2::GetActiveWorld().HasComponent<T>(m_entity)) return;
+
+            T2::GetActiveWorld().RemoveComponent<T>(m_entity);
+        }
+        
+        RTTR_ENABLE();
 
     protected:
         Entity m_entity;

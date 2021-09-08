@@ -30,38 +30,88 @@ namespace engine
             .property("IsTrigger", &Collider2D::IsTrigger);
     }
 
-        Collider2D::Collider2D(Entity entity, bool active)
+    CollisionInfo::CollisionInfo(Entity entity, bool active)
         : Component{ entity, active }
-        //, collider{ BoxCollider2D{ GetComponent<Transform3D>() } }
     {
-        OnTriggerEnter += [this](const auto& triggers)
+        OnTriggerEnter += [this](const auto& trigger)
         {
             Scripting& scripting = GetComponent<Scripting>();
-            for (Collider2D trigger : triggers)
-            {
-                Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
-                scripting.InvokeTriggerEnter2D(other);
-            }
+            Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
+            scripting.InvokeTriggerEnter2D(other);
         };
-        OnTriggerStay += [this](const auto& triggers)
+        OnTriggerStay += [this](const auto& trigger)
         {
             Scripting& scripting = GetComponent<Scripting>();
-            for (Collider2D trigger : triggers)
-            {
-                Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
-                scripting.InvokeTriggerStay2D(other);
-            }
+            Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
+            scripting.InvokeTriggerStay2D(other);
         };
-        OnTriggerExit += [this](const auto& triggers)
+        OnTriggerExit += [this](const auto& trigger)
         {
             Scripting& scripting = GetComponent<Scripting>();
-            for (Collider2D trigger : triggers)
-            {
-                Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
-                scripting.InvokeTriggerExit2D(other);
-            }
+            Scripting& other = GameObject(trigger.GetEntity()).GetComponent<Scripting>();
+            scripting.InvokeTriggerExit2D(other);
         };
+    }
+
+    void CollisionInfo::Update()
+    {
+        if (GetComponent<Collider2D>().IsTrigger)
+        {
+            for (auto const& [entity, trigger] : m_triggers)
+            {
+                // if previously not collided with this object
+                if (m_previousTriggers.find(entity) == m_previousTriggers.end())
+                    OnTriggerEnter(trigger);
+                else
+                    OnTriggerStay(trigger);
+            }
+
+            for (auto const& [entity, prevTrigger] : m_previousTriggers)
+            {
+                // if currently not trigger with this object
+                if (m_triggers.find(entity) == m_triggers.end())
+                    OnTriggerExit(prevTrigger);
+            }
+
+            m_previousTriggers.clear();
+            m_previousTriggers = std::move(m_triggers);
+            m_triggers.clear();
+        }
+        else
+        {
+            for (auto const& [entity, collider] : m_collisions)
+            {
+                // if previously not collided with this object
+                if (m_previousCollisions.find(entity) == m_previousCollisions.end())
+                    OnCollisionEnter(collider);
+                else
+                    OnCollisionStay(collider);
+            }
+
+            for (auto const& [entity, prevTrigger] : m_previousCollisions)
+            {
+                // if currently not colliding with this object
+                if (m_collisions.find(entity) == m_collisions.end())
+                    OnCollisionExit(prevTrigger);
+            }
+
+            m_previousCollisions.clear();
+            m_previousCollisions = std::move(m_collisions);
+            m_collisions.clear();
+        }
+    }
+
+
+    Collider2D::Collider2D(Entity entity, bool active)
+        : Component{ entity, active }
+    {
+        EnsureComponent<CollisionInfo>();
     };
+
+    Collider2D::~Collider2D()
+    {
+        //EnsureRemove<CollisionInfo>();
+    }
 
     void Collider2D::SetNarrowPhaseCollider(ColliderType narrowPhaseCollider)
     {
@@ -80,44 +130,6 @@ namespace engine
         // no need to add because the interface to add is via the derived colliders.
     }
 
-    void Collider2D::Update()
-    {
-        if (IsTrigger)
-        {
-            Scripting& scripting = GetComponent<Scripting>();
-            if (!m_previous && m_current)
-            {
-                OnTriggerEnter(m_triggers);
-            }
-            else if (m_previous && m_current)
-            {
-                OnTriggerStay(m_triggers);
-            }
-            else if (m_previous && !m_current)
-            {
-                OnTriggerExit(m_triggers);
-            }
-            m_triggers.clear();
-        }
-        else
-        {
-            if (!m_previous && m_current)
-            {
-                OnCollisionEnter(m_collisions);
-            }
-            else if (m_previous && m_current)
-            {
-                OnCollisionStay(m_collisions);
-            }
-            else if (m_previous && !m_current)
-            {
-                OnCollisionExit(m_collisions);
-            }
-            m_collisions.clear();
-        }
-        m_previous = m_current;
-        m_current = false;
-    }
 
     bool Collider2D_GetIsTriggered(Entity instanceID)
     {

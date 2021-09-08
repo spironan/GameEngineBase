@@ -117,11 +117,87 @@ namespace engine
         //Generate Manifold : Rigidbody only. If trigger : 2 flags and set them
         //_mm_rsqrt_ss
 
-        auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, Collider2D>();
+        //{
+        //    // retrieve all colliders.
+        //    auto view = m_ECS_Manager.GetComponentView<Collider2D>();
+        //    // perform sort and sweep and prune for all colliders.
+
+
+        //    // sort remaining colliders(potentially colliding) into two categories : triggers and rigidbodies.
+        //    for (auto& [collider] : view)
+        //    {
+        //        if (collider.IsTrigger)
+        //        {
+        //            //add to triggers list
+        //            m_narrowPhaseTriggers.emplace_back(std::move(collider));
+        //        }
+        //        else if (collider.HasComponent<Rigidbody2D>())  // not a trigger and has rigidbody
+        //        {
+        //            //add to physics list
+        //            m_narrowPhaseColliders.emplace_back(std::move(collider));
+        //        }
+        //    }
+
+        //    // narrowphase physics.
+        //    for (auto& colliderA : m_narrowPhaseColliders)
+        //    {
+        //        for (auto& colliderB : m_narrowPhaseColliders)
+        //        {
+        //            if (colliderA.GetEntity() == colliderB.GetEntity()) break;
+
+        //            if (PhysicsUtils::TestCollision2D(colliderA, colliderB))
+        //            {
+        //                Manifold2D result = PhysicsUtils::GenerateManifold2D(colliderA, colliderB);
+        //                result.ObjA = &colliderA.GetComponent<Rigidbody2D>();
+        //                result.ObjB = &colliderB.GetComponent<Rigidbody2D>();
+        //                m_collisions.emplace_back(result);
+
+        //                colliderA.m_collisions.emplace(colliderB.GetEntity(), result);
+        //                colliderB.m_collisions.emplace(colliderA.GetEntity(), result);
+        //            }
+        //        }
+        //    }
+
+        //    //// narrowphase triggers.
+        //    //for (auto& triggerA : m_narrowPhaseTriggers)
+        //    //{
+        //    //    // check against other triggers
+        //    //    for (auto& triggerB : m_narrowPhaseTriggers)
+        //    //    {
+        //    //        if (triggerA.GetEntity() == triggerB.GetEntity()) break;
+
+        //    //        if (PhysicsUtils::TestCollision2D(triggerA, triggerB))
+        //    //        {
+        //    //            triggerA.m_triggers.emplace(triggerB.GetEntity(), triggerB);
+        //    //            triggerB.m_triggers.emplace(triggerA.GetEntity(), triggerA);
+        //    //        }
+        //    //    }
+
+        //    //    // check against colliders
+        //    //    for (auto& colliderB : m_narrowPhaseColliders)
+        //    //    {
+        //    //        // there will never be a trigger that is also a collider(no need to check itself)
+
+        //    //        if (PhysicsUtils::TestCollision2D(triggerA, colliderB))
+        //    //        {
+        //    //            triggerA.m_triggers.emplace(colliderB.GetEntity(), colliderB);
+        //    //        }
+        //    //    }
+        //    //}
+
+        //    // Update all colliders
+        //    for (auto& [collider] : view)
+        //    {
+        //        collider.Update();
+        //    }
+        //}
+
+
+        auto view = m_ECS_Manager.GetComponentView<Rigidbody2D, Collider2D, CollisionInfo>();
         
-        for (auto& [rigidbodyA, colliderA]: view)
+        for (auto& [rigidbodyA, colliderA, collisionInfoA]: view)
         {
-            for (auto& [rigidbodyB, colliderB]: view)
+            for (auto& [rigidbodyB, colliderB, collisionInfoB]: view)
             {
                 // skip same entity and everything onwards
                 if (colliderA.GetEntity() == colliderB.GetEntity()) break;
@@ -132,13 +208,11 @@ namespace engine
                     {
                         if (colliderA.IsTrigger)
                         {
-                            colliderA.m_triggers.push_back(colliderB);
-                            colliderA.m_current = true;
+                            collisionInfoA.m_triggers.emplace(colliderB.GetEntity(), colliderB);
                         }
                         if (colliderB.IsTrigger)
                         {
-                            colliderB.m_triggers.push_back(colliderA);
-                            colliderB.m_current = true;
+                            collisionInfoB.m_triggers.emplace(colliderA.GetEntity(), colliderA);
                         }
                     }
                     else
@@ -148,55 +222,18 @@ namespace engine
                         result.ObjB = &rigidbodyB;
                         m_collisions.emplace_back(result);
 
-                        colliderA.m_collisions.push_back(result);
-                        colliderB.m_collisions.push_back(result);
-
-                        colliderA.m_current = colliderB.m_current = true;
+                        collisionInfoA.m_collisions.emplace(colliderB.GetEntity(), result);
+                        collisionInfoB.m_collisions.emplace(colliderA.GetEntity(), result);
                     }
                 }
-
-                //if (colliderA.IsTrigger || colliderB.IsTrigger)
-                //{
-                //    if (PhysicsUtils::TestCollision2D(colliderA, colliderB, false).HasCollision)
-                //    {
-                //        if (colliderA.IsTrigger)
-                //        {
-                //            colliderA.m_triggers.push_back(colliderB);
-                //            colliderA.m_current = true;
-                //        }
-                //        if (colliderB.IsTrigger)
-                //        {
-                //            colliderB.m_triggers.push_back(colliderA);
-                //            colliderB.m_current = true;
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    Manifold2D result = PhysicsUtils::TestCollision2D(colliderA, colliderB, true);
-
-                //    //LOG_INFO("Collision {0} Normal ({1},{2}) PenDepth {3}", result.HasCollision, result.Normal.x, result.Normal.y, result.PenetrationDepth);
-
-                //    if (result.HasCollision)
-                //    {
-                //        result.ObjA = &rigidbodyA;
-                //        result.ObjB = &rigidbodyB;
-                //        m_collisions.emplace_back(result);
-
-                //        colliderA.m_collisions.push_back(result);
-                //        colliderB.m_collisions.push_back(result);
-
-                //        colliderA.m_current = colliderB.m_current = true;
-                //    }
-                //}
                 
             }
         }
 
-        // Update all colliders
-        for (auto& [rigidbody, collider] : view)
+        // Update all collision callbacks
+        for (auto& [rigidbody, collider, collisionInfo] : view)
         {
-            collider.Update();
+            collisionInfo.Update();
         }
     }
 

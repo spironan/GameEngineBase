@@ -45,12 +45,17 @@ namespace engine
         EnsureComponent<Collider2D>();
     }
 
-    oom::vec2 ColliderBase2D::WorldPosition() const
+    ColliderBase2D::~ColliderBase2D()
+    {
+        //EnsureRemove<Collider2D>();
+    }
+
+    vec2 ColliderBase2D::WorldPosition() const
     {
         return GetComponent<Transform3D>().GetGlobalPosition();
     }
 
-    oom::vec2 ColliderBase2D::WorldScale() const
+    vec2 ColliderBase2D::WorldScale() const
     {
         return GetComponent<Transform3D>().GetGlobalScale();
     }

@@ -77,6 +77,9 @@ namespace engine
 
         double m_accumulator;
 
+        std::vector<Collider2D> m_narrowPhaseTriggers;
+        std::vector<Collider2D> m_narrowPhaseColliders;
+
         std::vector<Manifold2D> m_collisions;
         std::vector<Manifold2D> m_triggers;
         std::vector<Solver*> m_solvers;

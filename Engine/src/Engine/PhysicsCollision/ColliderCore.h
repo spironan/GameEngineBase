@@ -27,6 +27,37 @@ namespace engine
         CIRCLE,
         BOX
     };
+    
+    class CollisionInfo : public Component
+    {
+    public:
+        /*-----------------------------------------------------------------------------*/
+        /* Constructors and Destructors                                                */
+        /*-----------------------------------------------------------------------------*/
+        DEFAULT_COMPONENT(CollisionInfo);
+
+        explicit CollisionInfo(Entity entity, bool active = true);
+
+        /*-----------------------------------------------------------------------------*/
+        /* Supported Event Callbacks                                                   */
+        /*-----------------------------------------------------------------------------*/
+        EventCallback<Manifold2D> OnCollisionEnter;
+        EventCallback<Manifold2D> OnCollisionStay;
+        EventCallback<Manifold2D> OnCollisionExit;
+
+        EventCallback<Collider2D> OnTriggerEnter;
+        EventCallback<Collider2D> OnTriggerStay;
+        EventCallback<Collider2D> OnTriggerExit;
+    
+    private:
+        friend class PhysicsSystem;
+        void Update();
+
+        std::unordered_map<Entity, Manifold2D> m_previousCollisions{};
+        std::unordered_map<Entity, Collider2D> m_previousTriggers{};
+        std::unordered_map<Entity, Manifold2D> m_collisions{};
+        std::unordered_map<Entity, Collider2D> m_triggers{};
+    };
 
     class Collider2D : public Component
     {
@@ -39,44 +70,23 @@ namespace engine
         ColliderType m_broadphaseCollider   = ColliderType::BOX;
         ColliderType m_narrowPhaseCollider  = ColliderType::CIRCLE;
 
-        bool m_previous = false, m_current = false;
-        std::vector<Manifold2D> m_collisions{};
-        std::vector<Collider2D> m_triggers{};
-        friend class PhysicsSystem;
-        void Update();
+        //std::unordered_map<Entity, Manifold2D> m_previousCollisions{};
+        //std::unordered_map<Entity, Collider2D> m_previousTriggers{};
+        //std::unordered_map<Entity, Manifold2D> m_collisions{};
+        //std::unordered_map<Entity, Collider2D> m_triggers{};
+
+        /*friend class PhysicsSystem;
+        void Update();*/
 
     public:
         bool IsTrigger = false; // for now the entire object is either a trigger or collider
-        /*vec2 Offset = { 0, 0 };*/
 
         /*-----------------------------------------------------------------------------*/
         /* Constructors and Destructors                                                */
         /*-----------------------------------------------------------------------------*/
-        Collider2D()                            = delete;
-        Collider2D(Collider2D const&)           = default;
-        Collider2D(Collider2D &&)               = default;
-        Collider2D& operator=(Collider2D const&)= default;
-        Collider2D& operator=(Collider2D &&)    = default;
-        virtual ~Collider2D()                   = default;
-
         explicit Collider2D(Entity entity, bool active = true);
-
-        /*-----------------------------------------------------------------------------*/
-        /* Supported Event Callbacks                                                   */
-        /*-----------------------------------------------------------------------------*/
-        
-        EventCallback<std::vector<Manifold2D>> OnCollisionEnter;
-        EventCallback<std::vector<Manifold2D>> OnCollisionStay;
-        EventCallback<std::vector<Manifold2D>> OnCollisionExit;
-
-        EventCallback<std::vector<Collider2D>> OnTriggerEnter;
-        EventCallback<std::vector<Collider2D>> OnTriggerStay;
-        EventCallback<std::vector<Collider2D>> OnTriggerExit;
-        
-
-        /*-----------------------------------------------------------------------------*/
-        /* Supported Event Callbacks                                                   */
-        /*-----------------------------------------------------------------------------*/
+        virtual ~Collider2D();
+        DEFAULT_COMPONENT_CONSTRUCTORS(Collider2D);
 
         // third attempt : double components - function map collision
         ColliderType GetBroadPhaseCollider() const { return m_broadphaseCollider; }

@@ -23,6 +23,8 @@ namespace engine
         using StaticTriggerCollisionFnc = bool((*)(Collider2D, Collider2D));
         using GenerateManifoldFnc = Manifold2D((*)(Collider2D, Collider2D));
 
+        //static void ResolveStaticCollisions(Collider2D const& first, Collider2D const& second);
+
         // non physics - triggers only test
         static bool TestCollision2D(Collider2D const& first, Collider2D const& second);
 
@@ -30,6 +32,13 @@ namespace engine
         static Manifold2D GenerateManifold2D(Collider2D const& first, Collider2D const& second);
 
     private:
+
+        //Collision Maps
+        //static std::map<Entity, std::map<Entity, Collider2D>> S_PreviousTriggers;
+        //static std::map<Entity, std::map<Entity, Collider2D>> S_CurrentTriggers;
+        //static std::map<Entity, std::map<Entity, Manifold2D>> S_PreviousCollisions;
+        //static std::map<Entity, std::map<Entity, Manifold2D>> S_CurrentCollisions;
+
         //Maps
         static std::map<CombinationKey, StaticTriggerCollisionFnc> m_collisionMap;
         static std::map<CombinationKey, GenerateManifoldFnc> m_manifoldMap;

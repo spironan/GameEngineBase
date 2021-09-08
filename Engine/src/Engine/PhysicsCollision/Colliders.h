@@ -30,14 +30,9 @@ namespace engine
         oom::vec2 WorldPosition() const;
 
         explicit ColliderBase2D(Entity entity, bool active = true);
+        virtual ~ColliderBase2D();
 
-        ColliderBase2D()                                    = delete;
-        ColliderBase2D(ColliderBase2D const&)               = default;
-        ColliderBase2D(ColliderBase2D&&)                    = default;
-        ColliderBase2D& operator=(ColliderBase2D const&)    = default;
-        ColliderBase2D& operator=(ColliderBase2D&&)         = default;
-        virtual ~ColliderBase2D()                           = default;
-
+        DEFAULT_COMPONENT_CONSTRUCTORS(ColliderBase2D);
     };
     
     struct CircleCollider2D : public ColliderBase2D
@@ -48,13 +43,7 @@ namespace engine
         Circle GetGlobalBounds() const;
 
         explicit CircleCollider2D(Entity entity, bool active = true);
-
-        CircleCollider2D()                                      = delete;
-        CircleCollider2D(CircleCollider2D const&)               = default;
-        CircleCollider2D(CircleCollider2D&&)                    = default;
-        CircleCollider2D& operator=(CircleCollider2D const&)    = default;
-        CircleCollider2D& operator=(CircleCollider2D&&)         = default;
-        virtual ~CircleCollider2D()                             = default;
+        DEFAULT_COMPONENT(CircleCollider2D);
 
         RTTR_ENABLE();
     };
@@ -67,15 +56,24 @@ namespace engine
         AABB2D GetGlobalBounds() const;
 
         explicit BoxCollider2D(Entity entity, bool active = true);
-
-        BoxCollider2D()                                 = delete;
-        BoxCollider2D(BoxCollider2D const&)             = default;
-        BoxCollider2D(BoxCollider2D&&)                  = default;
-        BoxCollider2D& operator=(BoxCollider2D const&)  = default;
-        BoxCollider2D& operator=(BoxCollider2D&&)       = default;
-        virtual ~BoxCollider2D()                        = default;
+        DEFAULT_COMPONENT(BoxCollider2D);
 
         RTTR_ENABLE();
     };
 
+    /*struct PlaneCollider2D 
+    {
+        AABB2D GetGlobalBounds() const;
+
+        explicit BoxCollider2D(Entity entity, bool active = true);
+
+        BoxCollider2D() = delete;
+        BoxCollider2D(BoxCollider2D const&) = default;
+        BoxCollider2D(BoxCollider2D&&) = default;
+        BoxCollider2D& operator=(BoxCollider2D const&) = default;
+        BoxCollider2D& operator=(BoxCollider2D&&) = default;
+        virtual ~BoxCollider2D() = default;
+
+        RTTR_ENABLE();
+    };*/
 }
