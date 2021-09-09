@@ -24,9 +24,6 @@ Technology is prohibited.
 #include <spdlog/fmt/ostr.h>
 #pragma warning(pop)
 
-#include <ostream>
-#include <iostream>
-
 namespace engine
 {
     /********************************************************************************//*!
@@ -42,21 +39,21 @@ namespace engine
         static void Init();
 
         /********************************************************************************//*!
-         @brief     Retrieve the ostream output that is stored for logging.
+         @brief     Releasing of logging library. Performed in main
         *//*********************************************************************************/
-        static std::ostringstream& GetOstreamOutput();
+        static void Shutdown();
 
         /********************************************************************************//*!
          @brief     Retrieve the core logger used to store logging information of
                     Game Engine
         *//*********************************************************************************/
-        inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()      { return s_coreLogger; }
+        static std::shared_ptr<spdlog::logger>& GetCoreLogger()      { return s_coreLogger; }
 
         /********************************************************************************//*!
          @brief     Retrieve the client logger used to store logging information of
                     Client Application
         *//*********************************************************************************/
-        inline static std::shared_ptr<spdlog::logger>& GetClientLogger()    { return s_clientLogger; }
+        static std::shared_ptr<spdlog::logger>& GetClientLogger()    { return s_clientLogger; }
 
 
     protected:
@@ -67,8 +64,6 @@ namespace engine
     private:
         static std::shared_ptr<spdlog::logger> s_coreLogger;
         static std::shared_ptr<spdlog::logger> s_clientLogger;
-        static std::ostringstream oss;
-		//callback sink
     };
 
     /*-----------------------------------------------------------------------------*/

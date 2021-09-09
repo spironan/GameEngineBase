@@ -1,0 +1,16 @@
+[16:18:58] [info] ENGINE: size: 256 filename: E:\Digipen\SchoolWork\GAM200\GameEngineBase\Sandbox\src\SandboxApp.cpp line: 115
+[16:18:58] [info] ENGINE: Creating Windows window using SDL: [Sandbox 1600x900]
+[16:18:58] [info] ENGINE: OpenGL Info:
+[16:18:58] [info] ENGINE:   Vendor   : NVIDIA Corporation
+[16:18:58] [info] ENGINE:   Renderer : NVIDIA GeForce GTX 1060 6GB/PCIe/SSE2
+[16:18:58] [info] ENGINE:   Version  : 4.5.0 NVIDIA 465.89
+[16:18:58] [info] ENGINE: Set Vsync : true
+[16:18:58] [info] ENGINE: size: 3840000 filename: E:\Digipen\SchoolWork\GAM200\GameEngineBase\Engine\src\Engine\Renderer\Renderer2D.cpp line: 172
+[16:18:58] [info] ENGINE: size: 240000 filename: E:\Digipen\SchoolWork\GAM200\GameEngineBase\Engine\src\Engine\Renderer\Renderer2D.cpp line: 176
+[16:18:58] [info] ENGINE: size: 1280000 filename: E:\Digipen\SchoolWork\GAM200\GameEngineBase\Engine\src\Engine\Renderer\Renderer2D.cpp line: 249
+[16:18:59] [info] ENGINE: Loading texture ../Engine/assets/images/ogre.png, srgb=RGBA
+[16:18:59] [info] ENGINE: Loading texture Icons/Ouroboros_Folder.png, srgb=RGBA
+[16:18:59] [info] ENGINE: Loading texture Icons/Ouroboros_GenericFile.png, srgb=RGBA
+[16:18:59] [info] ENGINE: Loading texture Icons/Ouroboros_Log_Icon_Black.png, srgb=RGBA
+[16:18:59] [info] ENGINE: Loading texture Icons/Ouroboros_Warning_Icon_Yellow.png, srgb=RGBA
+[16:18:59] [info] ENGINE: Loading texture Icons/Ouroboros_Error_Icon_Red.png, srgb=RGBA

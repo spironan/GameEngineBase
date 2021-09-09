@@ -51,6 +51,9 @@ int main(int argc, char** argv)
     ENGINE_PROFILE_BEGIN_SESSION("Shutdown", "EngineProfile-Shutdown.json");
     delete app;
     ENGINE_PROFILE_END_SESSION();
+
+    // Shutdown logging system
+    engine::Log::Shutdown();
 }
 
 #endif

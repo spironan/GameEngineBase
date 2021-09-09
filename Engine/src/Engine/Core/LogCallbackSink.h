@@ -11,7 +11,7 @@ without the prior written consent of DigiPen Institute of
 Technology is prohibited.
  *********************************************************************/
 #pragma once
-#include "spdlog/sinks/base_sink.h"
+#include <spdlog/sinks/base_sink.h>
 #include <functional>
 #include <string>
 #include <vector>

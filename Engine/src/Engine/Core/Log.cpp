@@ -17,54 +17,69 @@ Technology is prohibited.
 // This ignores all warnings raised inside External headers
 #pragma warning(push, 0)
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/ostream_sink.h>
-#include <spdlog/sinks/dup_filter_sink.h>
-#include "LogCallbackSink.h"
+#include <spdlog/sinks/basic_file_sink.h>
 #pragma warning(pop)
+
+#include "LogCallbackSink.h"
+
+#include <filesystem>
 
 namespace engine
 {
     //static defines
     std::shared_ptr<spdlog::logger> Log::s_coreLogger;
     std::shared_ptr<spdlog::logger> Log::s_clientLogger;
-    std::ostringstream Log::oss;
+    
     void Log::Init()
     {
+        // Create logging directory if it doesn't exist.
+        std::string logsDirectory = "logs";
+        if (!std::filesystem::exists(logsDirectory))
+            std::filesystem::create_directories(logsDirectory);
+
+        std::vector<spdlog::sink_ptr> coreSinks =
+        {
+            // Creates a multi-threaded, Colored std out console
+            std::make_shared<spdlog::sinks::stdout_color_sink_mt>(),
+            std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/CoreEngine.log", true),
+            std::make_shared<CallbackSink_mt>()
+        };
+
+        std::vector<spdlog::sink_ptr> clientSinks =
+        {
+            // Creates a multi-threaded, Colored std out console
+            std::make_shared<spdlog::sinks::stdout_color_sink_mt>(),
+            std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/Client.log", true),
+            std::make_shared<CallbackSink_mt>()
+        };
+
         // %^	== Color
         // [%T] == Timestamp
+        // [%l] == Message Level
         // %n	== Name of Logger
         // %v%$ == Log Message
-        spdlog::set_pattern("%^ [%T] %n: %v%$");
-        
-        // Creates a multi-threaded, Colored std out console
-        s_coreLogger = spdlog::stdout_color_mt("ENGINE");
+        coreSinks[0]->set_pattern("%^ [%T] %n: %v%$");
+        coreSinks[1]->set_pattern("[%T] [%l] %n: %v");
+
+        clientSinks[0]->set_pattern("%^ [%T] %n: %v%$");
+        clientSinks[1]->set_pattern("[%T] [%l] %n: %v");
+
+        // Create core logger
+        s_coreLogger = std::make_shared<spdlog::logger>("ENGINE", coreSinks.begin(), coreSinks.end());
         // Set logging level to trace : lowest level therefore traces everything
         s_coreLogger->set_level(spdlog::level::trace);
 
-        // Creates a multi-threaded, Colored std out console
-        s_clientLogger = spdlog::stdout_color_mt("CLIENT");
+        // Create client logger
+        s_clientLogger = std::make_shared<spdlog::logger>("CLIENT", clientSinks.begin(), clientSinks.end());
         // Set logging level to trace : lowest level therefore traces everything
         s_clientLogger->set_level(spdlog::level::trace);
-
-        /*auto dup_filter_sink = std::make_shared<spdlog::sinks::dup_filter_sink_mt>(std::chrono::seconds(1));
-        s_coreLogger->sinks().push_back(dup_filter_sink);
-        s_clientLogger->sinks().push_back(dup_filter_sink);*/
-
-        // this can be broken down so that it takes in user defined oss.
-        // create the ostream sink
-        auto ostream_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
-		auto callback_sink = std::make_shared<CallbackSink_mt>();
-        // link them to both loggers
-        s_coreLogger->sinks().push_back(ostream_sink);
-        s_clientLogger->sinks().push_back(ostream_sink);
-		s_coreLogger->sinks().push_back(callback_sink);
-		s_clientLogger->sinks().push_back(callback_sink);
-        //spdlog::flush_every(std::chrono::seconds(3));
     }
 
-    std::ostringstream& Log::GetOstreamOutput()
+    void Log::Shutdown()
     {
-        return oss;
+        s_coreLogger.reset();
+        s_clientLogger.reset();
+        spdlog::drop_all();
     }
 
     /*-----------------------------------------------------------------------------*/
