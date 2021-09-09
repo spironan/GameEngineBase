@@ -228,8 +228,8 @@ namespace engine
 			sparse_container::iterator s_curr = m_sparse.begin() + insert_index;
             for (std::size_t i = 0; i < d_temp.size(); ++i)
             {
-                d_curr = m_dense.emplace(++d_curr, d_temp[i]);
-                s_curr = m_sparse.emplace(++s_curr, s_temp[i]);
+                d_curr = m_dense.emplace(d_curr, d_temp[i]);
+                s_curr = m_sparse.emplace(s_curr, s_temp[i]);
 
                 m_index[*s_curr] = d_curr - m_dense.begin();
             }

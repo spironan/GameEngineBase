@@ -21,6 +21,8 @@ Technology is prohibited.
 #include "Engine/ECS/ECS_Manager.h"
 
 #include "Engine/ECS/GameObjectComponent.h"
+#include "Engine/ECS/GameObject.h"
+
 
 namespace engine
 {
@@ -104,15 +106,15 @@ namespace engine
 
     }
 
+    // Grab Transforms from ECS manager and assumes its ordered correctly and child count is correct.
     void TransformSystem::UseDenseArrayAsHierarchy()
     {
-        auto& root = m_ECS_Manager.GetComponentDenseArray<Transform3D>().front();
+        auto& tfDense = m_ECS_Manager.GetComponentDenseArray<Transform3D>();
+        auto& root = tfDense.front();
         std::stack<Entity> parentStack;
-        for (int i = 0; i < root.GetChildCount(); ++i) parentStack.emplace(root.GetID());
+        for (int i = 1; i < tfDense.size(); ++i) parentStack.emplace(root.GetID());
 
-        // Grab Transforms from ECS manager and assumes its ordered correctly
-        for (auto& iter = m_ECS_Manager.GetComponentDenseArray<Transform3D>().begin() + 1;
-            iter != m_ECS_Manager.GetComponentDenseArray<Transform3D>().end(); ++iter)
+        for (auto& iter = tfDense.begin() + 1; iter != tfDense.end(); ++iter)
         {
             iter->m_parentId = parentStack.top();
             parentStack.pop();
@@ -123,19 +125,43 @@ namespace engine
             }
         }
     }
-    
+
+    // Grab Transforms from ECS manager and assumes its ordered correctly and parent id is correct
+    void TransformSystem::RefreshHierarchy()
+    {
+        auto& root = m_ECS_Manager.GetComponentDenseArray<Transform3D>().front();
+
+        for (auto& iter : m_ECS_Manager.GetComponentDenseArray<Transform3D>())
+        {
+            m_ECS_Manager.GetComponent<Transform3D>(iter.m_parentId).m_childCount += 1;
+        }
+    }
+
     void TransformSystem::Store(Entity entity)
     {
-        m_restoreLocation = m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(entity);
+        //auto& tf = m_ECS_Manager.GetComponent<Transform3D>(entity);
+        
+        // starting location in the dense array to recover to
+        //m_restoreLocation = m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(entity);
+
+        m_restorationStack.emplace(m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(entity));
+
+        // store all the 
+        //m_ECS_Manager.GetComponentContainer<Transform3D>().;
+
     }
 
     void TransformSystem::Restore(Entity entity)
     {
-        if (m_restoreLocation == -1) return;
+        if (m_restorationStack.size() == 0) return;
+        //if (m_restoreLocation == -1) return;
 
-        m_ECS_Manager.GetComponentContainer<Transform3D>().ShiftElementsFromBackToIndex(m_restoreLocation, entity);
-        UseDenseArrayAsHierarchy();
-        m_restoreLocation = -1;
+        m_ECS_Manager.GetComponentContainer<Transform3D>().ShiftElementsFromBackToIndex(m_restorationStack.top(),
+            m_ECS_Manager.GetComponentContainer<Transform3D>().GetIndex(entity));
+        RefreshHierarchy();
+        //UseDenseArrayAsHierarchy();
+        //m_restoreLocation = -1;
+        m_restorationStack.pop();
     }
 
 

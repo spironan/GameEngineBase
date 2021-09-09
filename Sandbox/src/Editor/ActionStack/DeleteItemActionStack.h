@@ -16,6 +16,8 @@ public:
 private:
 	engine::Entity m_orignalParent = 0;
 	engine::Entity m_undoData = 0;
+
+	//std::vector<engine::Entity> m_redoData;
 	std::vector<std::shared_ptr<engine::DeletedGameObject>> m_redoData;
 	std::vector<unsigned> m_sparseHierarchy;
 };

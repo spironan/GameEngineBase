@@ -130,7 +130,7 @@ namespace engine
             static_cast<GameObject>(m_parentId).Transform().DecrementChildCount(1 + m_childCount);
         }
 
-        m_parentId = m_entity;
+        //m_parentId = m_entity;
 
         /*SetActive(false);
         auto& result = WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetChildren(*this);

@@ -32,18 +32,41 @@ namespace engine
         return static_cast<GameObject>(WorldManager::GetActiveWorld().DuplicateEntity(source));
     }
 
-    void GameObject::DestroyGameObject(GameObject go)
+    std::shared_ptr<engine::DeletedGameObject> GameObject::Destroy(GameObject go)
     {
         ////go.ActiveSelf() = false;
         ///*tf.DetachFromRoot();*/
         
-        WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Store(go);
+        /*m_redoData.push_back(activeWorld.StoreAsDeleted(object));
+
+        m_sparseHierarchy.emplace_back(0);
+        for (engine::Entity child : orignalChild)
+        {
+            auto& iter = std::find(orignalCopy.begin(), orignalCopy.end(), child);
+            m_sparseHierarchy.emplace_back(std::distance(orignalCopy.begin(), iter));
+
+            m_redoData.push_back(activeWorld.StoreAsDeleted(child));
+        }*/
+        
+        auto* tfSystem = WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>();
+        tfSystem->Store(go);
 
         auto& tf = go.Transform();
-        for(auto const& child : WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->GetChildren(tf))
+        tf.DetachFromRoot();
+        
+        auto result = WorldManager::GetActiveWorld().StoreAsDeleted(go);
+
+        for(auto const& child : tfSystem->GetChildren(tf))
             WorldManager::GetActiveWorld().DestroyEntity(child.GetEntity());
 
         WorldManager::GetActiveWorld().DestroyEntity(go);
+
+        return result;
+    }
+
+    void GameObject::Restore(GameObject go)
+    {
+        WorldManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->Restore(go);
     }
 
 
@@ -70,7 +93,7 @@ namespace engine
         // but add to a stack instead that is used to call the code below
         // at the end of the frame.
         // should use a pair to avoid multiple removes of the same object.
-        DestroyGameObject(m_entity);
+        Destroy(m_entity);
     }
 
 

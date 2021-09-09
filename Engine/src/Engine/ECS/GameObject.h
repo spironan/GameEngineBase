@@ -57,8 +57,9 @@ namespace engine
         /* Static Functions                                                                */
         /*---------------------------------------------------------------------------------*/
         // Duplicating objects
-        static void DestroyGameObject(GameObject entt);
         static GameObject Instantiate(GameObject source);
+        static std::shared_ptr<engine::DeletedGameObject> Destroy(GameObject entt);
+        static void Restore(GameObject entt);
 
 
         // use with caution, this should not immediately delete the object!

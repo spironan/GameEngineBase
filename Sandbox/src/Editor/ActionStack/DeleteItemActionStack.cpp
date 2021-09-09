@@ -9,31 +9,31 @@
 #include "Engine/Prefab/EditorComponent.h"
 #include "Editor/EditorObjectGroup.h"
 DeleteItemActionStack::DeleteItemActionStack(const std::string& desc, engine::Entity object)
-	:ActionBehaviour{ desc }
+	: ActionBehaviour{ desc }
 {
 	engine::World& activeWorld = engine::SceneManager::GetActiveWorld();
 	engine::GameObject& head = static_cast<engine::GameObject>(object);
-	m_orignalParent = head.GetComponent<engine::Transform3D>().GetParentId();
+	/*m_orignalParent = head.GetComponent<engine::Transform3D>().GetParentId();
 
 	std::vector<engine::Entity> orignalCopy = { object };
 	auto& orignalChild = head.GetChildren();
-	orignalCopy.insert(orignalCopy.begin(), orignalChild.begin(), orignalChild.end());
+	orignalCopy.insert(orignalCopy.begin(), orignalChild.begin(), orignalChild.end());*/
 
 	//head.Transform().DetachFromRoot();
 	
 	// parentID still stored
-	m_redoData.push_back(activeWorld.StoreAsDeleted(object));
+	//m_redoData.push_back(activeWorld.StoreAsDeleted(object));
 
-	m_sparseHierarchy.emplace_back(0);
+	/*m_sparseHierarchy.emplace_back(0);
 	for (engine::Entity child : orignalChild)
 	{
 		auto& iter = std::find(orignalCopy.begin(), orignalCopy.end(), child);
 		m_sparseHierarchy.emplace_back(std::distance(orignalCopy.begin(), iter));
 
 		m_redoData.push_back(activeWorld.StoreAsDeleted(child));
-	}
-
-	engine::GameObject::DestroyGameObject(head);
+	}*/
+	m_undoData = head;
+	m_redoData.push_back(engine::GameObject::Destroy(head));
 };
 DeleteItemActionStack::~DeleteItemActionStack()
 {
@@ -43,7 +43,8 @@ DeleteItemActionStack::~DeleteItemActionStack()
 
 void DeleteItemActionStack::undo()
 {
-	engine::World& activeWorld = engine::SceneManager::GetActiveWorld();
+	m_undoData = engine::SceneManager::GetActiveWorld().RestoreFromDeleted(*m_redoData[0]);
+	/*engine::World& activeWorld = engine::SceneManager::GetActiveWorld();
 	m_undoData = activeWorld.RestoreFromDeleted(*m_redoData[0]);
 	std::vector<engine::Entity> listCopy = { m_undoData };
 
@@ -54,9 +55,9 @@ void DeleteItemActionStack::undo()
 		listCopy.emplace_back(go);
 		engine::GameObject parent = listCopy[m_sparseHierarchy[i]];
 		parent.AddChild(go);
-	}
+	}*/
 	
-	activeWorld.GetSystem<engine::TransformSystem>()->Restore(m_undoData);
+	engine::GameObject::Restore(m_undoData);
 }
 void DeleteItemActionStack::redo()
 {
@@ -64,6 +65,6 @@ void DeleteItemActionStack::redo()
 	engine::GameObject& head = static_cast<engine::GameObject>(m_undoData);
 	auto& childList = head.GetChildren();
 
-	engine::GameObject::DestroyGameObject(head);
+	engine::GameObject::Destroy(head);
 
 };
