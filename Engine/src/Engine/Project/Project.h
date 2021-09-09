@@ -1,3 +1,17 @@
+/************************************************************************************//*!
+\file           Project.h
+\project        INSERT PROJECT NAME
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           Sept 09, 2021
+\brief          Project describes a location in space that can used to store relevant
+                Information about the project that can be loaded and saved.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #pragma once
 
 #include "Engine/Core/Base.h"
@@ -5,6 +19,10 @@
 
 namespace engine
 {
+    /********************************************************************************//*!
+     @brief     Describes useful information can be used and 
+                that will be stored in config file
+    *//*********************************************************************************/
     struct ProjectConfig
     {
         std::string Name;
@@ -12,12 +30,17 @@ namespace engine
         std::string StartScene;
         
         std::string AssetDirectory;
+
         std::string ScriptModulePath;
 
         // Not serialized
         std::string ProjectDirectory;
     };
 
+    /********************************************************************************//*!
+     @brief     Describes what a project is and functionality to create, load and save
+                Project files
+    *//*********************************************************************************/
     class Project
     {
     public:
@@ -28,6 +51,7 @@ namespace engine
 
         static void CreateProject(std::string const& projectPath);
         static void LoadProject(std::string const& projectPath);
+        static void SaveCurrentProject();
 
         static std::shared_ptr<Project> GetActiveProject() { return s_activeProject; }
         static void SetActiveProject(std::shared_ptr<Project> project) { s_activeProject = project; };

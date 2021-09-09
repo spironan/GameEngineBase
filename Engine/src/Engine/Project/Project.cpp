@@ -1,3 +1,17 @@
+/************************************************************************************//*!
+\file           Project.cpp
+\project        INSERT PROJECT NAME
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           Sept 09, 2021
+\brief          Project describes a location in space that can used to store relevant
+                Information about the project that can be loaded and saved.
+
+Copyright (C) 2021 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*//*************************************************************************************/
 #include "pch.h"
 #include "Project.h"
 
@@ -17,6 +31,13 @@ namespace engine
         ProjectSerializer serializer(project);
         serializer.Deserialize(projectPath);
         SetActiveProject(project);
+    }
+
+    void Project::SaveCurrentProject()
+    {
+        ENGINE_ASSERT(s_activeProject);
+        ProjectSerializer serializer(s_activeProject);
+        serializer.Deserialize(s_activeProject.get()->m_config.ProjectDirectory);
     }
 
     ProjectSerializer::ProjectSerializer(std::shared_ptr<Project> project)
