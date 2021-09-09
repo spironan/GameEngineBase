@@ -35,6 +35,9 @@ namespace engine
 		Camera& operator=(Camera const&) = default;
 		Camera& operator=(Camera&&) = default;
 
+		Camera(const oom::mat4& projection) :m_projection{ projection } 
+		{}
+
 		/*-----------------------------------------------------------------------------*/
 		/* Getter Functions                                                            */
 		/*-----------------------------------------------------------------------------*/
