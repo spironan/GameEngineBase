@@ -76,7 +76,7 @@ namespace engine
     {
         AddComponent<Transform3D>();
         AddComponent<GameObjectComponent>();
-        /*AddComponent<Scripting>();*/
+        AddComponent<Scripting>();
 
         // could be moved... should also be removed if editor is not enabled...
         AddComponent<EditorComponent>();
