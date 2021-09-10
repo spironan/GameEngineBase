@@ -447,7 +447,7 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
     if(dt > 0.02) LOG_TRACE(dt);
 
     //reset
-    if (engine::Input::IsKeyDown(ENGINE_KEY_R))
+    if (engine::Input::IsKeyPressed(ENGINE_KEY_R))
     {
         m_controller.Transform().Position() = m_spawnPosController;
         m_controller.GetComponent<engine::Rigidbody2D>().SetForce({ 0,0 });
