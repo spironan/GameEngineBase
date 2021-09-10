@@ -17,7 +17,7 @@ void EditorViewport::Show()
 	auto ar = (float)width / height;
 
 
-	if (!ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing ))
+	if (!ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoScrollbar))
 	{
 		ImGui::End();
 		return;
@@ -73,7 +73,11 @@ void EditorViewport::Show()
 	//                   oom::value_ptr(iden),
 	//                   1.0f);
 	ImGuizmo::SetDrawlist();
-	
+	if (ObjectGroup::s_FocusedObject == engine::SceneManager::GetActiveRoot())
+	{
+		ImGui::End();
+		return;
+	}
 
 	if (ImGuizmo::Manipulate(oom::value_ptr(engine::EditorCamera::g_editorCam->GetView()),
 		oom::value_ptr(engine::EditorCamera::g_editorCam->GetProjection()),
