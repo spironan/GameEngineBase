@@ -119,7 +119,7 @@ namespace engine
                     topmost layer is always behind overlay so all overlays will always
                     render ontop of any normal layer.
         *//*****************************************************************************/
-        void PushLayer(Layer* layer);
+        void PushLayer(LayerStack::value_type layer);
         /****************************************************************************//*!
          @brief     Adds a layer to the core layerstack as an OVERLAY and 
                     calls the layers OnAttach.
@@ -129,10 +129,10 @@ namespace engine
          @param     overlay
                     The overlay that will be added to the topmost overlay of the layerstack.
         *//*****************************************************************************/
-        void PushOverlay(Layer* overlay);
+        void PushOverlay(LayerStack::value_type overlay);
 
-        void PopLayer(Layer* layer);
-        void PopOverlay(Layer* overlay);
+        void PopLayer(LayerStack::value_type layer);
+        void PopOverlay(LayerStack::value_type overlay);
 
     private:
         /****************************************************************************//*!
@@ -149,13 +149,13 @@ namespace engine
         CommandLineArgs m_commandLineArgs;
         Window* m_window;
         GraphicsContext* m_renderer;
-        ImGuiLayer* m_imGuiLayer;
+        std::shared_ptr<ImGuiLayer> m_imGuiLayer;
         LayerStack m_layerStack;
         
-        std::queue<Layer*> m_addLayerQueue;
-        std::queue<Layer*> m_addOverlayQueue;
-        std::queue<Layer*> m_removeLayerQueue;
-        std::queue<Layer*> m_removeOverlayQueue;
+        std::queue<LayerStack::value_type> m_addLayerQueue;
+        std::queue<LayerStack::value_type> m_addOverlayQueue;
+        std::queue<LayerStack::value_type> m_removeLayerQueue;
+        std::queue<LayerStack::value_type> m_removeOverlayQueue;
 
         static Application* s_instance;
         friend int ::main(int argc, char** argv);

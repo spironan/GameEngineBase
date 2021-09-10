@@ -33,7 +33,7 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Type aliases                                                                */
         /*-----------------------------------------------------------------------------*/
-        using value_type                = Layer*;
+        using value_type                = std::shared_ptr<Layer>;
         using container_type            = std::vector<value_type>;
         using iterator                  = container_type::iterator;
         using reverse_iterator          = container_type::reverse_iterator;
@@ -49,10 +49,10 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Functions                                                                   */
         /*-----------------------------------------------------------------------------*/
-        void PushLayer(Layer* layer);
-        void PushOverlay(Layer* overlay);
-        void PopLayer(Layer* layer);
-        void PopOverlay(Layer* overlay);
+        void PushLayer(value_type layer);
+        void PushOverlay(value_type overlay);
+        void PopLayer(value_type layer);
+        void PopOverlay(value_type overlay);
 
         /*-----------------------------------------------------------------------------*/
         /* Iterator definitions                                                        */
@@ -68,7 +68,7 @@ namespace engine
         const_reverse_iterator crend() const { return m_layers.crend(); }
 
     private:
-        std::vector<Layer*> m_layers;
+        std::vector<std::shared_ptr<Layer>> m_layers;
         unsigned int m_layerInsertIndex = 0;
     };
 }

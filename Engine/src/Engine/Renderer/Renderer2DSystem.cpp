@@ -64,6 +64,7 @@ namespace engine
 		DrawDebug();
 		
 		engine::Renderer2D::EndScene();
+
 	}
 
 	void Renderer2DSystem::DrawSprites()

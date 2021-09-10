@@ -30,6 +30,13 @@ void SimulationSceneLayer::Init()
     auto& RenderingSystem = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
     auto& ScriptingSystem = GetWorld()->RegisterSystem<engine::ScriptSystem>();
     auto& PhysicsSystem = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
+
+    StartSimulation();
+}
+
+void SimulationSceneLayer::Exit()
+{
+    StopSimulation();
 }
 
 void SimulationSceneLayer::OnUpdate(engine::Timestep dt)
@@ -44,4 +51,14 @@ void SimulationSceneLayer::OnUpdate(engine::Timestep dt)
 
 void SimulationSceneLayer::OnImGuiRender()
 {
+}
+
+void SimulationSceneLayer::StartSimulation()
+{
+    GetWorld()->GetSystem<engine::ScriptSystem>()->StartPlay();
+}
+
+void SimulationSceneLayer::StopSimulation()
+{
+    GetWorld()->GetSystem<engine::ScriptSystem>()->StopPlay();
 }

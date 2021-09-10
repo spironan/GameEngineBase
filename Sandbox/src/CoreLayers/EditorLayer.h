@@ -3,19 +3,25 @@
 #include "UtilityLayers/SceneBaseLayer.h"
 
 #include "Editor/Editor.h"
-////for getting filepath
 #include "Editor/EditorFileGroup.h"
 #include "Seralizer.h"
 #include "Engine/Renderer/EditorCamera.h"
+
+#include "Controller.h"
+
 class EditorLayer : public SceneBaseLayer
 {
 private:
     Editor m_editor;
     bool m_demo = true;
 	Serializer m_serializer;
+    Controller m_controller;
+
 public:
 
-    EditorLayer() : SceneBaseLayer{ "EditorLayer" }
+    EditorLayer(engine::Application& app)
+        : SceneBaseLayer{ "EditorLayer" }
+        , m_controller{ app }
     {
         LOG_WARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         LOG_ERROR("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
@@ -47,4 +53,5 @@ public:
         m_editor.ShowAllWidgets();
         //ImGui::ShowDemoWindow(&m_demo);
     }
+
 };

@@ -42,7 +42,7 @@ namespace engine
         m_renderer = static_cast<GraphicsContext*>(m_window->GetRenderingContext());
 
         //m_imGuiLayer = new ImGuiLayer();
-        m_imGuiLayer = MemoryManager::NewOnStack<ImGuiLayer>();
+        m_imGuiLayer = std::make_shared<ImGuiLayer>(); //MemoryManager::NewOnStack<ImGuiLayer>();
         m_layerStack.PushOverlay(m_imGuiLayer);
 
         /*Initialize Input Management*/
@@ -278,7 +278,7 @@ namespace engine
             {
                 ENGINE_PROFILE_SCOPE("LayerStack OnUpdate");
 
-                for (Layer* layer : m_layerStack)
+                for (LayerStack::value_type layer : m_layerStack)
                 {
                     layer->OnUpdateBegin(dt);
                     layer->OnUpdate(dt);
@@ -291,7 +291,7 @@ namespace engine
             {
                 ENGINE_PROFILE_SCOPE("LayerStack OnImGuiUpdate");
 
-                for (Layer* layer : m_layerStack)
+                for (LayerStack::value_type layer : m_layerStack)
                 {
                     layer->OnImGuiRender();
                 }
@@ -329,22 +329,22 @@ namespace engine
 
     }
 
-    void Application::PushLayer(Layer* layer)
+    void Application::PushLayer(LayerStack::value_type layer)
     {
         m_addLayerQueue.emplace(layer);
     }
 
-    void Application::PushOverlay(Layer* overlay)
+    void Application::PushOverlay(LayerStack::value_type overlay)
     {
         m_addOverlayQueue.emplace(overlay);
     }
 
-    void Application::PopLayer(Layer* layer)
+    void Application::PopLayer(LayerStack::value_type layer)
     {
         m_removeLayerQueue.emplace(layer);
     }
 
-    void Application::PopOverlay(Layer* overlay)
+    void Application::PopOverlay(LayerStack::value_type overlay)
     {
         m_removeOverlayQueue.emplace(overlay);
     }

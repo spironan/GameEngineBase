@@ -31,7 +31,6 @@ void GameSceneLayer::Init()
     auto& ScriptingSystem = GetWorld()->RegisterSystem<engine::ScriptSystem>();
     auto& PhysicsSystem = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
 
-
     // Randomly create ogre texture in the middle
     auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
     auto tex = engine::AssetManager::GetAsset<engine::Texture>(ogreHandle);

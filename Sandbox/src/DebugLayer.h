@@ -2,9 +2,6 @@
 
 #include <Engine.h>
 
-//Non Debug Layers
-#include "CoreLayers/GameSceneLayer.h"
-
 //TestLayers
 #include "TestLayers/TransformTestLayer.h"
 #include "TestLayers/GameObjectTestLayer.h"
@@ -17,8 +14,8 @@ class DebugLayer final : public engine::Layer
 {
 private:
     engine::Application& application;
-    std::vector<SceneBaseLayer*> debugLayers;
-    SceneBaseLayer* currentLayer = nullptr;
+    std::vector<std::shared_ptr<SceneBaseLayer>> debugLayers;
+    std::shared_ptr<SceneBaseLayer> currentLayer = nullptr;
 
 public:
     DebugLayer(engine::Application& app)
@@ -30,24 +27,23 @@ public:
 
     virtual ~DebugLayer() final
     {
-        for (auto& debugLayer : debugLayers)
+        /*for (auto& debugLayer : debugLayers)
             if (debugLayer != currentLayer)
-                delete debugLayer;
+                delete debugLayer;*/
     }
 
     void OnAttach() final override
     {
-        // NON DEBUG LAYER JUST FOR TESTING PURPOSES
-        debugLayers.emplace_back(new GameSceneLayer());
+        //// NON DEBUG LAYER JUST FOR TESTING PURPOSES
+        //debugLayers.emplace_back(new GameSceneLayer());
 
         // Purposeful breaking if uncommented out and choosing to run it.
-        debugLayers.emplace_back(new GameObjectTestLayer());
-
-        debugLayers.emplace_back(new TransformTestLayer());
-        debugLayers.emplace_back(new PhysicsTestLayer());
-        debugLayers.emplace_back(new SceneTestLayer("D:/GameEngine/bin/Debug-OpenGL-windows-x86_64/Sandbox/New folder/Scene.scene"));
-        debugLayers.emplace_back(new RenderingTestLayer());
-        debugLayers.emplace_back(new ScriptingTestLayer());
+        debugLayers.emplace_back(std::make_shared<GameObjectTestLayer>());
+        debugLayers.emplace_back(std::make_shared<TransformTestLayer>());
+        debugLayers.emplace_back(std::make_shared<PhysicsTestLayer>());
+        debugLayers.emplace_back(std::make_shared<SceneTestLayer>("D:/GameEngine/bin/Debug-OpenGL-windows-x86_64/Sandbox/New folder/Scene.scene"));
+        debugLayers.emplace_back(std::make_shared<RenderingTestLayer>());
+        debugLayers.emplace_back(std::make_shared<ScriptingTestLayer>());
         
         if (debugLayers.size() > 0)
         {

@@ -20,26 +20,26 @@ namespace engine
 {
     LayerStack::~LayerStack()
     {
-        for (Layer* layer : m_layers)
+        for (LayerStack::value_type layer : m_layers)
         {
             layer->OnDetach();
-            delete layer;
+            //delete layer;
         }
     }
 
-    void LayerStack::PushLayer(Layer* layer)
+    void LayerStack::PushLayer(value_type layer)
     {
         m_layers.emplace(m_layers.begin() + m_layerInsertIndex++, layer);
         layer->OnAttach();
     }
 
-    void LayerStack::PushOverlay(Layer* overlay)
+    void LayerStack::PushOverlay(value_type overlay)
     {
         m_layers.emplace_back(overlay);
         overlay->OnAttach();
     }
 
-    void LayerStack::PopLayer(Layer* layer)
+    void LayerStack::PopLayer(value_type layer)
     {
         auto it = std::find(m_layers.begin(), m_layers.begin() + m_layerInsertIndex, layer);
         if (it != m_layers.begin() + m_layerInsertIndex)
@@ -50,7 +50,7 @@ namespace engine
         }
     }
 
-    void LayerStack::PopOverlay(Layer* overlay)
+    void LayerStack::PopOverlay(value_type overlay)
     {
         auto it = std::find(m_layers.begin() + m_layerInsertIndex, m_layers.end(), overlay);
         if (it != m_layers.end())

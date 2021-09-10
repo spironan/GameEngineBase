@@ -24,8 +24,12 @@ public:
     SimulationSceneLayer();
 
     virtual void Init() override;
-
+    virtual void Exit() override;
     virtual void OnUpdate(engine::Timestep dt) override;
 
     virtual void OnImGuiRender() override;
+
+    void StartSimulation();
+
+    void StopSimulation();
 };

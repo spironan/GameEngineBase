@@ -28,6 +28,7 @@ Technology is prohibited.
 #include "CoreLayers/EditorControllerLayer.h"
 #include "CoreLayers/GameSceneLayer.h"
 #include "CoreLayers/SimulationSceneLayer.h"
+//#include "CoreLayers/ControllerLayer.h"
 
 // for debugging
 #include "TestLayers/InputDebugLayer.h"
@@ -76,28 +77,29 @@ public:
         LOG_ERROR("Error Log!");
         LOG_CRITICAL("Critical Log!");
 
-        PushLayer(new AssetManagementLayer());
+        PushLayer(std::make_shared<AssetManagementLayer>());
         
         ////Default Samples Layers (inherit from engine::Layer)
-        PushLayer(new ExampleLayer());      // contains ability to quit progrom with esc
-        PushOverlay(new ExampleLayer());
+        PushLayer(std::make_shared<ExampleLayer>());      // contains ability to quit progrom with esc
+        PushOverlay(std::make_shared<ExampleLayer>());
         //// For Input Debugging
-        //PushOverlay(new InputDebugLayer());
+        //PushOverlay(std::make_shared<InputDebugLayer>());
 
         // Official Original Layer
         // Editor Layer
-        PushOverlay(new EditorLayer());
+        PushOverlay(std::make_shared<EditorLayer>(*this));
         // Scripting Layer
-        PushOverlay(new ScriptingLayer());
+        PushOverlay(std::make_shared<ScriptingLayer>());
         // -- editor controller layer
-        PushOverlay(new EditorControllerLayer());
-        // -- actual Game scene layer
-        //PushOverlay(new GameSceneLayer());
+        PushOverlay(std::make_shared<EditorControllerLayer>());
+        // -- actual Editor Back-end
+        //PushLayer(std::make_shared<ControllerLayer>(*this));
+        //PushOverlay(std::make_shared<GameSceneLayer>());
         // Set Default EDITOR Camera
         //editorController->SetEditorCamera();
 
         // Debug Layers!
-        PushOverlay(new DebugLayer(*this));
+        PushOverlay(std::make_shared<DebugLayer>(*this));
 
         // one actual layer - gameplay logic
         // one ui layer - game ui
