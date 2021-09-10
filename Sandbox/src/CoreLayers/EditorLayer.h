@@ -6,6 +6,7 @@
 ////for getting filepath
 #include "Editor/EditorFileGroup.h"
 #include "Seralizer.h"
+#include "Engine/Renderer/EditorCamera.h"
 class EditorLayer : public SceneBaseLayer
 {
 private:
@@ -40,6 +41,7 @@ public:
 
     virtual void OnUpdate(engine::Timestep dt) override
     {
+		engine::EditorCamera::g_editorCam->OnUpdate(dt);
     }
 
     virtual void OnImGuiRender() override

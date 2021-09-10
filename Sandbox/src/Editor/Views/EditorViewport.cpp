@@ -4,9 +4,7 @@
 #include "Editor/EditorObjectGroup.h"
 #include "Engine/Renderer/EditorCamera.h"
 
-#include "imgui.h"
-#include "imgui_internal.h"
-#include "ImGuizmo.h"
+
 
 void EditorViewport::Show()
 {
@@ -19,17 +17,14 @@ void EditorViewport::Show()
 	auto ar = (float)width / height;
 
 
-	if (!ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing))
+	if (!ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoDecoration))
 	{
 		ImGui::End();
 		return;
 	}
-	if (ObjectGroup::s_FocusedObject == engine::SceneManager::GetActiveRoot())
-	{
-		ImGui::End();
-		return;
-	}
+
 	auto& transform = static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).GetComponent<engine::Transform3D>();
+
 	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
 	ImVec2 vMax = ImGui::GetWindowContentRegionMax();
 	vMin.x += ImGui::GetWindowPos().x;
@@ -43,10 +38,10 @@ void EditorViewport::Show()
 
 	// opengl loves saving framebuffers upside down, 
 	// so we flip the UVW in imgui::image()
-	ImGui::Image((ImTextureID)static_cast<uint64_t>(m_fb), ImVec2{ 1600, 900 }, { 0.0f,1.0f }, { 1.0f,0.0f });
+	ImGui::Image((ImTextureID)static_cast<uint64_t>(m_fb), {1600,900}, { 0.0f,1.0f }, { 1.0f,0.0f });
 
 	//Debug Red box
-	//ImGui::GetForegroundDrawList()->AddRect(vMin, vMax, ImU32(0xFF0000FF));
+	ImGui::GetForegroundDrawList()->AddRect(vMin, {vMin.x + 1600, vMin.y+900}, ImU32(0xFF0000FF));
 
 	ImGui::SetNextWindowSize({ vMax.x - vMin.x,vMax.y - vMin.y });
 	ImGui::SetNextWindowPos(vMin);
@@ -55,7 +50,7 @@ void EditorViewport::Show()
 	ImGui::SetWindowHitTestHole(ImGui::GetCurrentWindow(), vMin, { myW,myH });
 
 	// IMPORTANT: we now NEED to call this before begin frame
-	ImGuizmo::SetRect(vMin.x, vMin.y, 1600, 900);
+	ImGuizmo::SetRect(vMin.x, vMin.y, vMin.x+1600, vMin.y+900);
 	ImGuizmo::BeginFrame();
 	oom::vec3 mScale = transform.GetGlobalScale();
 	oom::vec3 mPosition = transform.GetGlobalPosition();
@@ -70,7 +65,7 @@ void EditorViewport::Show()
 	auto mCurrentGizmoMode = ImGuizmo::WORLD;
 	ImGuizmo::SetOrthographic(true);
 
-
+	
 	//static float det{};
 	//oom::mat4 iden = oom::rotation_x_matrix(oom::radians((det = 90.0f)));
 	//ImGuizmo::DrawGrid(oom::value_ptr(engine::EditorCamera::g_editorCam->GetView()),
@@ -78,6 +73,8 @@ void EditorViewport::Show()
 	//                   oom::value_ptr(iden),
 	//                   1.0f);
 	ImGuizmo::SetDrawlist();
+	
+
 	if (ImGuizmo::Manipulate(oom::value_ptr(engine::EditorCamera::g_editorCam->GetView()),
 		oom::value_ptr(engine::EditorCamera::g_editorCam->GetProjection()),
 		m_operation,
@@ -95,7 +92,7 @@ void EditorViewport::Show()
 		transform.SetScale(mScale);
 		transform.SetRotationAngle((mRot.z));
 	}
-	else if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Left) == false)
+	else if (ImGui::IsMouseDown(ImGuiMouseButton_Left) == false)
 	{
 		if (engine::Input::IsKeyPressed(engine::KeyCode::Q))
 		{

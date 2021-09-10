@@ -25,6 +25,7 @@ Technology is prohibited.
 #include "Editor/Views/ProjectRootView.h"
 #include "Editor/Views/WarningView.h"
 #include "Editor/Views/ToolbarView.h"
+#include "Editor/Views/EditorViewport.h"
 
 #include "Widgets/LoggingView.h"
 #include "Widgets/KeyBindingView.h"
@@ -97,6 +98,7 @@ private:
 	KeyBindingView m_keyboard_view;
 	ToolbarView m_toolbar_view;
 	StyleEditorView m_styleEditor_view;
+	EditorViewport m_viewport_view;
 	//remb to change the presets TODO: change the presets
 	bool logging_widget = true;
 	bool action_widget = false;

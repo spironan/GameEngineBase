@@ -229,6 +229,7 @@ void Editor::ShowAllWidgets()
 		m_projectfolder_view.Show();
 	}
 	m_toolbar_view.Show();
+	m_viewport_view.Show();
 	//ImGui::ShowStyleEditor();
 	FileGroup::ProjectViewPopUp();
 	ActionStack::UpdateStack();

@@ -34,6 +34,8 @@ Technology is prohibited.
 #include "Engine/Renderer/RenderPass.h"
 #include "Engine/Platform/OpenGL/OpenGLShader.h"
 
+
+#include "EditorCamera.h"
 namespace engine
 {
 	struct QuadVertex
@@ -281,8 +283,8 @@ void engine::Renderer2D::Shutdown()
 
 void Renderer2D::BeginScene(const oom::mat4& viewProj, const oom::mat4& view)
 {
-	s_Data.CameraBuffer.View = view;
-	s_Data.CameraBuffer.ViewProjection = viewProj;
+	s_Data.CameraBuffer.View = EditorCamera::g_editorCam->GetView();
+	s_Data.CameraBuffer.ViewProjection = EditorCamera::g_editorCam->GetViewProj();
 	glEnable(GL_DEPTH_TEST);
 
 	s_Data.frameBuffer->Bind();
