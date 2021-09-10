@@ -11,6 +11,7 @@
 #include "rttr/type.h"
 #include "rttr/property.h"
 #include "rttr/variant.h"
+#include "Engine/Scene/Scene.h"
 class Serializer
 {
 public:
@@ -30,7 +31,9 @@ public:
 	~Serializer() {};
 	static engine::Entity LoadObject(const std::string& prefab,engine::Entity parent = 0);
 	static void SaveObject(const std::string& prefab);
+	static void SaveWorld(const std::string& path,const engine::Scene& scene);
 	static void SaveWorld(const std::string& path);
+	static void LoadWorld(const std::string& path,const engine::Scene& scene);
 	static void LoadWorld(const std::string& path);
 private:
 	static void SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& osw);

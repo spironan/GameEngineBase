@@ -246,18 +246,18 @@ void Serializer::SaveObject(const std::string& prefab)
 	rapidjson::OStreamWrapper osw(stream);
 	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 	writer.StartObject();
-	SaveHierarchy(static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject), writer);
+	SaveHierarchy(static_cast<engine::GameObject>(ObjectGroup::s_DraggingObject), writer);
 	writer.EndObject();
 	stream.close();
 }
 
-void Serializer::SaveWorld(const std::string& path)
+void Serializer::SaveWorld(const std::string& path, const engine::Scene& scene)
 {
 	std::ofstream stream(path,std::ios::trunc);
 	rapidjson::OStreamWrapper osw(stream);
 	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 	writer.StartObject();
-	auto& list = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
+	auto& list = scene.GetWorld().GetComponentDenseArray<engine::Transform3D>();
 	for (size_t i = 1; i < list.size() ; ++i)//skip the root node
 	{
 		SaveItem(static_cast<engine::GameObject>(list[i].GetEntity()), writer);
@@ -266,6 +266,20 @@ void Serializer::SaveWorld(const std::string& path)
 	stream.close();
 }
 
+void Serializer::SaveWorld(const std::string& path)
+{
+	std::ofstream stream(path, std::ios::trunc);
+	rapidjson::OStreamWrapper osw(stream);
+	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
+	writer.StartObject();
+	auto& list = engine::SceneManager::GetActiveScene().GetWorld().GetComponentDenseArray<engine::Transform3D>();
+	for (size_t i = 1; i < list.size(); ++i)//skip the root node
+	{
+		SaveItem(static_cast<engine::GameObject>(list[i].GetEntity()), writer);
+	}
+	writer.EndObject();
+	stream.close();
+}
 void Serializer::LoadWorld(const std::string& path)
 {
 	//need to add the ability to preload the other world
@@ -306,7 +320,46 @@ void Serializer::LoadWorld(const std::string& path)
 	}
 	ifs.close();
 }
+void Serializer::LoadWorld(const std::string& path, const engine::Scene& scene)
+{
+	//need to add the ability to preload the other world
+	std::unordered_map<engine::Entity, std::pair<engine::Entity, engine::Entity>> hierarchymap;
+	std::ifstream ifs;
+	ifs.open(path);
+	if (!ifs.is_open())
+		return;
+	rapidjson::IStreamWrapper isw(ifs);
+	rapidjson::Document doc;
+	doc.ParseStream(isw);
+	for (auto& iter = doc.MemberBegin(); iter != doc.MemberEnd(); ++iter)
+	{
+		auto& arr = iter->value.GetArray();
+		engine::GameObject object = scene.CreateGameObject();
+		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
 
+		for (rapidjson::SizeType counter = 2; arr.Size(); ++counter)
+		{
+			m_LoadGameObjectCallbacks
+				[engine::utility::StringHash(arr[counter].GetString())]
+			(arr[++counter].GetArray(), object);
+		}
+	}
+
+	for (auto& hierarchyItem : hierarchymap)
+	{
+		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
+		{
+			engine::GameObject temp = static_cast<engine::GameObject>(hierarchymap[hierarchyItem.second.second].first);
+			temp.AddChild(hierarchyItem.second.first);
+		}
+		else
+		{
+			//root
+			engine::GameObject(engine::SceneManager::GetActiveRoot()).AddChild(hierarchyItem.second.first);
+		}
+	}
+	ifs.close();
+}
 void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
 	auto& list = engine::SceneManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
