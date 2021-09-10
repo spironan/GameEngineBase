@@ -179,7 +179,7 @@ Serializer::Serializer()
 	{
 		LOAD_OBJECT(engine::GameObjectComponent),
 		LOAD_OBJECT(engine::Transform3D),
-		LOAD_OBJECT(engine::Scripting),
+		//LOAD_OBJECT(engine::Scripting),
 		LOAD_OBJECT(engine::Collider2D),
 		LOAD_OBJECT(engine::CircleCollider2D),
 		LOAD_OBJECT(engine::BoxCollider2D),
@@ -337,11 +337,24 @@ void Serializer::LoadWorld(const std::string& path, const engine::Scene& scene)
 		engine::GameObject object = scene.CreateGameObject();
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
 
-		for (rapidjson::SizeType counter = 2; arr.Size(); ++counter)
+		/*for (rapidjson::SizeType counter = 2; arr.Size(); ++counter)
 		{
-			m_LoadGameObjectCallbacks
-				[engine::utility::StringHash(arr[counter].GetString())]
-			(arr[++counter].GetArray(), object);
+			auto temp = m_LoadGameObjectCallbacks.find(engine::utility::StringHash(arr[counter].GetString()));
+			if (temp != m_LoadGameObjectCallbacks.end())
+			{
+				temp->second(arr[++counter].GetArray(), object);
+			}
+		}*/
+
+		for (rapidjson::SizeType counter = 2; counter < arr.Size(); ++counter)
+		{
+			std::string temp = arr[counter].GetString();
+			auto& iter = m_LoadGameObjectCallbacks.find(engine::utility::StringHash(temp));
+			if ((temp) == (rttr::type::get<engine::SceneCamera>().get_name()))
+				std::cout << engine::utility::StringHash(temp) << std::endl;
+			++counter;
+			if (iter != m_LoadGameObjectCallbacks.end())
+				iter->second(arr[counter].GetArray(), object);
 		}
 	}
 
