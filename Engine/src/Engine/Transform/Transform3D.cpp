@@ -40,7 +40,7 @@ namespace engine
             .property_readonly("Rotation Axis", &Transform3D::GetRotationAxis)
             .property("Rotation Angle", &Transform3D::GetRotationAngle, &Transform3D::SetRotationAngle)
             .property("Scaling", &Transform3D::GetScale, &Transform3D::SetScale)
-            .property_readonly("My ID", &Transform3D::GetID)
+            .property_readonly("My ID", &Transform3D::GetEntity)
             .property_readonly("Parent ID",&Transform3D::GetParentId)
             .property_readonly("No Of Childs", &Transform3D::GetChildCount)
             .property_readonly("Local Matrix", &Transform3D::GetLocalMatrix)

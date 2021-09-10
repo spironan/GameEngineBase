@@ -186,9 +186,9 @@ namespace engine
 
         // Temporary way to get the id of the transform component : should delete
         // and find better fix.[TODO]
-        Entity GetID() { return GetEntity(); }
+        //Entity GetEntity() { return GetEntity(); }
 
-        RTTR_ENABLE();
+        RTTR_ENABLE(Component);
     
     private:
         

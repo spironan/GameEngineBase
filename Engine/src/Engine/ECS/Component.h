@@ -1,5 +1,8 @@
 #pragma once
 #include "ECS_Utility.h"
+
+#include <rttr/type>
+
 namespace engine
 {
     class WorldManager;
@@ -38,6 +41,8 @@ namespace engine
         {
             return T2::GetActiveWorld().HasComponent<T>(m_entity);
         }
+
+        RTTR_ENABLE()
 
     protected:
         Entity m_entity;

@@ -111,7 +111,7 @@ namespace engine
         auto& tfDense = m_ECS_Manager.GetComponentDenseArray<Transform3D>();
         auto& root = tfDense.front();
         std::stack<Entity> parentStack;
-        for (int i = 1; i < tfDense.size(); ++i) parentStack.emplace(root.GetID());
+        for (int i = 1; i < tfDense.size(); ++i) parentStack.emplace(root.GetEntity());
 
         for (auto& iter = tfDense.begin() + 1; iter != tfDense.end(); ++iter)
         {
@@ -120,7 +120,7 @@ namespace engine
             if (iter->m_childCount > 0)
             {
                 for (int i = 0; i < iter->GetChildCount(); ++i)
-                    parentStack.emplace(iter->GetID());
+                    parentStack.emplace(iter->GetEntity());
             }
         }
     }

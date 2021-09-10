@@ -15,8 +15,6 @@
 #include "Engine/Scripting/ScriptSystem.h"
 
 //components
-#include "Engine/ECS/GameObjectComponent.h"
-
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/PhysicsCollision/RigidBody.h"
 #include "Engine/PhysicsCollision/Colliders.h"
