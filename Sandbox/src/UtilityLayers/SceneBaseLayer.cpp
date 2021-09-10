@@ -100,9 +100,14 @@ engine::GameObject SceneBaseLayer::RootGameObject()
     return m_scene.GetRoot();
 }
 
-engine::SceneCamera SceneBaseLayer::DefaultCamera()
+//engine::SceneCamera SceneBaseLayer::DefaultCamera()
+//{
+//    return m_defaultCamera.GetComponent<engine::SceneCamera>();
+//}
+
+engine::EditorCamera& SceneBaseLayer::DefaultCamera()
 {
-    return m_defaultCamera.GetComponent<engine::SceneCamera>();
+    return *engine::EditorCamera::g_editorCam;
 }
 /*********************************************************************************//*!
 \brief    Saves the scene to its scene file

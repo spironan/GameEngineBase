@@ -56,7 +56,7 @@ public:
     virtual void Init() override
     {
 
-        LOG_ENGINE_INFO(DefaultCamera().GetEntity());
+        //LOG_ENGINE_INFO(DefaultCamera().GetEntity());
         auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(*engine::EditorCamera::g_editorCam);
         auto& ts = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
 

@@ -18,6 +18,10 @@ Technology is prohibited.
 
 #include <Engine.h>
 
+#define _EDITOR
+#ifdef _EDITOR
+#include "Engine/Renderer/EditorCamera.h"
+#endif
 class SceneBaseLayer : public engine::Layer
 {
 public:
@@ -95,7 +99,8 @@ protected:
 
     \return   the default camera of the scene
     *//**********************************************************************************/
-    engine::SceneCamera DefaultCamera();
+    //engine::SceneCamera DefaultCamera();
+    engine::EditorCamera& DefaultCamera();
     
     /*********************************************************************************//*!
     \brief    Saves the scene to its scene file
