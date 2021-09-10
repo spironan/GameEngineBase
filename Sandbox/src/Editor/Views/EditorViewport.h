@@ -1,11 +1,12 @@
 #pragma once
-#include "ImGuizmo.h"
-
-class FrameBuffer
+#include <ImGuizmo.h>
+#include <oom/oom.hpp>
+#include "Engine.h"
+class EditorViewport
 {
 public:
-	FrameBuffer() {};
-	~FrameBuffer() {};
+	EditorViewport() {};
+	~EditorViewport() {};
 
 	void Show();
 private:

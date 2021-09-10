@@ -346,29 +346,6 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 	writer.EndArray();
 }
 
-//this function will need constant updating
-void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& go)
-{
-	std::string component;
-	for (rapidjson::SizeType count = 2; count < arr.Size(); ++count)
-	{
-		component = arr[count].GetString();
-		++count;
-		if (component == rttr::type::get<engine::GameObjectComponent>().get_name())
-		{
-			auto& component_data = arr[count].GetArray();
-			engine::GameObjectComponent& goComponent = go.GetComponent<engine::GameObjectComponent>();
-			goComponent.Active = component_data[0].GetBool();
-			goComponent.Name = component_data[1].GetString();
-		}
-		else if (component == rttr::type::get<engine::Transform3D>().get_name())
-		{
-			auto& trans = arr[count].GetArray();
-			engine::Transform3D& transform = go.GetComponent<engine::Transform3D>();
-		}
-	}
-}
-
 void Serializer::SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
 	auto& scriptInfoList = go.GetComponent<engine::Scripting>().GetScriptInfoAll();
