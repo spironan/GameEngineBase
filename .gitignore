@@ -2,13 +2,16 @@
 .vs/
 bin/
 bin-int/
+#logs
+SandBox/logs
 
 # Files
 *.user
 *.*.filters
 **.vcxproj
 **.csproj
-**.log
+
+
 
 #sln file
 *.sln

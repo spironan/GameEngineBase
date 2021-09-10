@@ -1,9 +1,0 @@
-[16:18:58] [trace] CLIENT: Trace Log!
-[16:18:58] [info] CLIENT: Info Log!
-[16:18:58] [warning] CLIENT: Warning Log!
-[16:18:58] [error] CLIENT: Error Log!
-[16:18:58] [critical] CLIENT: Critical Log!
-[16:18:58] [warning] CLIENT: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-[16:18:58] [error] CLIENT: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-[16:18:58] [trace] CLIENT: cccccccccccccccccccccccccccccccccccccc
-[16:18:59] [trace] CLIENT: SUCCESSFULLY LOADED DEBUG LAYER
