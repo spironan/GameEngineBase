@@ -19,36 +19,3 @@ namespace engine \
         void Force_Link_##name() { extern int force_link_##name; force_link_##name = 1; } \
     } \
 }
-
-//nam namespace scriptAPI void Force_Link_##name() { extern int force_link_##name; force_link_##name = 1; }
-
-// this is stupid
-//#define SCRIPT_API_LINK_API \
-//namespace engine \
-//{ \
-//    namespace scriptAPI \
-//    { \
-//        void PreventAPFromBeingExcludedFromSandbox(); \
-//    } \
-//}
-//
-//#define SCRIPT_API_HOOK_API \
-//namespace engine \
-//{ \
-//    namespace scriptAPI \
-//    { \
-//        void PreventAPFromBeingExcludedFromSandbox() {} \
-//    } \
-//}
-//
-//#define SCRIPT_API_ANCHOR_API \
-//namespace engine \
-//{ \
-//    namespace scriptAPI \
-//    { \
-//        void ScriptAPIAnchor() \
-//        { \
-//            PreventAPFromBeingExcludedFromSandbox(); \
-//        } \
-//    } \
-//}
