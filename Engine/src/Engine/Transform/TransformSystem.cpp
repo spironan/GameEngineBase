@@ -20,7 +20,6 @@ Technology is prohibited.
 #include "Engine/ECS/ComponentManager.h"
 #include "Engine/ECS/ECS_Manager.h"
 
-#include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/ECS/GameObject.h"
 
 

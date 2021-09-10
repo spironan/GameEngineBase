@@ -61,7 +61,7 @@ public:
         {
             if (gameobjects.size() > 0)
             {
-                deletedObjects.emplace_back(GetWorld()->StoreAsDeleted(gameobjects.back().GetID()));
+                deletedObjects.emplace_back(GetWorld()->StoreAsDeleted(gameobjects.back().GetEntity()));
                 gameobjects.back().Destroy();
                 gameobjects.pop_back();
             }

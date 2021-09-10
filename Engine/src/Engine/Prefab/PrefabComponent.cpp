@@ -7,7 +7,7 @@ namespace engine
 PrefabComponent::PrefabComponent(Entity entity, bool active)
 	: Component{ entity, active }
 {
-	static_cast<GameObject>(entity).ActiveSelf() = false;
+	static_cast<GameObject>(entity).Active() = false;
 }
 
 Component& PrefabComponent::CopyComponent(Component const& comp)

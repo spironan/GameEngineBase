@@ -38,7 +38,7 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 	{
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object{ engine::GameObject::Create{} };
-		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetID(), arr[1].GetUint());//first element = parent id
+		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 		object.EnsureComponent<engine::PrefabComponent>();
 	}
@@ -100,7 +100,7 @@ void Serializer::LoadWorld(const std::string& path)
 	{
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object = engine::SceneManager::GetActiveScene().CreateGameObject();
-		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetID(), arr[1].GetUint());//first element = parent id
+		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
 		LoadComponent(arr, object);
 	}
 
@@ -123,7 +123,7 @@ void Serializer::LoadWorld(const std::string& path)
 void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
 	auto& list = engine::SceneManager::GetActiveWorld().GetComponentDenseArray<engine::Transform3D>();
-	engine::Entity id = go.GetID();
+	engine::Entity id = go.GetEntity();
 	int count = 0;
 
 	auto& childrenList = go.GetChildren();
@@ -136,9 +136,9 @@ void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<r
  
 void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
-	writer.Key(std::to_string(go.GetID()).c_str());
+	writer.Key(std::to_string(go.GetEntity()).c_str());
 	writer.StartArray();
-	writer.Uint(go.GetID());
+	writer.Uint(go.GetEntity());
 	writer.Uint(go.GetComponent<engine::Transform3D>().GetParentId());//parent id first
 
 	if (go.TryGetComponent<engine::GameObjectComponent>())
@@ -161,7 +161,7 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& 
 		{
 			auto& component_data = arr[count].GetArray();
 			engine::GameObjectComponent& goComponent = go.GetComponent<engine::GameObjectComponent>();
-			goComponent.ActiveSelf = component_data[0].GetBool();
+			goComponent.Active = component_data[0].GetBool();
 			goComponent.Name = component_data[1].GetString();
 		}
 		if (component == rttr::type::get<engine::Transform3D>().get_name())

@@ -72,10 +72,10 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		engine::Transform3D& copyTransform = copyObject.GetComponent<engine::Transform3D>();
 		//gameobject component
 		child.Name() = copyObject.Name();
-		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
+		child.Active() = static_cast<bool>(copyObject.Active());
 
 		auto& editorComponent = child.AddComponent<EditorComponent>();
-		editorComponent.SetPrefabReference(copyObject.GetID(),head);
+		editorComponent.SetPrefabReference(copyObject.GetEntity(),head);
 		
 
 		{//TODO fix this once its done
@@ -103,8 +103,8 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		static_cast<engine::GameObject>(prevParent).AddChild(child);
 		if (copyTransform.GetChildCount())
 		{
-			orignal.emplace_back(copyTransform.GetID());
-			current.emplace_back(child.GetID());
+			orignal.emplace_back(copyTransform.GetEntity());
+			current.emplace_back(child.GetEntity());
 			prevParent = child;
 		}
 	}
@@ -122,7 +122,7 @@ void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& 
 	if (head.TryGetComponent<EditorComponent>())
 	{
 		EditorComponent& ec = head.GetComponent<EditorComponent>();
-		ec.SetPrefabReference(prefab.GetID(),head);
+		ec.SetPrefabReference(prefab.GetEntity(),head);
 	}
 
 	for (size_t iter = 0; iter < childList.size(); ++iter)

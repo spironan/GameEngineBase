@@ -159,8 +159,8 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	}
 
 	
-	bool beforeActive = goComponent.ActiveSelf;
-	if (ImGui::Checkbox("Active",&goComponent.ActiveSelf))
+	bool beforeActive = goComponent.Active;
+	if (ImGui::Checkbox("Active",&goComponent.Active))
 	{
 		std::string temp = "Change value of element: " + propActive.get_name() + " of " + static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name();
 		rttr::variant undo = beforeActive;
@@ -168,7 +168,7 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 		ActionStack::AllocateInBuffer(new InspectorActionBehaviour<engine::GameObjectComponent>{ temp, ObjectGroup::s_FocusedObject, propActive, undo  , redo ,
 									  object.GetComponent<engine::EditorComponent>().IsPrefabDirty() });
 		object.GetComponent<engine::EditorComponent>().SetPrefabDirty(true);
-		goComponent.ActiveSelf = !beforeActive;
+		goComponent.Active = !beforeActive;
 	}
 	ImGui::EndGroup();
 

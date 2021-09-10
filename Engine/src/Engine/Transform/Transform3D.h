@@ -18,7 +18,6 @@ Technology is prohibited.
 #pragma once
 
 #include "Engine/ECS/Component.h"
-//#include <glm/glm.hpp>
 #include <oom/oom.hpp>
 
 #include <rttr/type>

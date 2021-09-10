@@ -17,7 +17,6 @@ Technology is prohibited.
 #include "ScriptUtility.h"
 
 #include "Utility/Hash.h"
-#include "Engine/ECS/GameObjectComponent.h"
 #include "Engine/PhysicsCollision/ColliderCore.h"
 
 namespace engine
@@ -855,7 +854,7 @@ namespace engine
     uint32_t GameObject_GetName(Entity id)
     {
         GameObject obj{ id };
-        std::string const& name = obj.GetComponent<GameObjectComponent>().Name;
+        std::string const& name = obj.Name();
         MonoString* string = ScriptUtility::MonoStringNew(name.c_str());
         return mono_gchandle_new((MonoObject*)string, false);
     }
@@ -863,19 +862,19 @@ namespace engine
     void GameObject_SetName(Entity id, const char* newName)
     {
         GameObject obj{ id };
-        obj.GetComponent<GameObjectComponent>().Name = newName;
+        obj.Name() = newName;
     }
 
     bool GameObject_GetActive(Entity id)
     {
         GameObject obj{ id };
-        return obj.GetComponent<GameObjectComponent>().ActiveSelf;
+        return obj.Active();
     }
 
     void GameObject_SetActive(Entity id, bool value)
     {
         GameObject obj{ id };
-        obj.GetComponent<GameObjectComponent>().ActiveSelf = value;
+        obj.Active() = value;
     }
 
 

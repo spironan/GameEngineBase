@@ -433,7 +433,7 @@ void HierarchyView::Paste()
 	//create the parent node first
 	engine::GameObject parent = engine::SceneManager::GetActiveScene().CreateGameObject();
 	parent.Name() = targetGameObject.Name() + "-Copy";
-	parent.ActiveSelf() = static_cast<bool>(targetGameObject.ActiveSelf());
+	parent.Active() = static_cast<bool>(targetGameObject.Active());
 	parent.AddComponent<engine::EditorComponent>();
 	
 	//update this once the function is done TODO
@@ -464,7 +464,7 @@ void HierarchyView::Paste()
 		engine::Transform3D&	copyTransform = copyObject.GetComponent<engine::Transform3D>();
 		//gameobject component
 		child.Name() = copyObject.Name();
-		child.ActiveSelf() = static_cast<bool>(copyObject.ActiveSelf());
+		child.Active() = static_cast<bool>(copyObject.Active());
 		child.AddComponent<engine::EditorComponent>();
 
 		{//TODO fix this once its done
@@ -492,8 +492,8 @@ void HierarchyView::Paste()
 		static_cast<engine::GameObject>(prevParent).AddChild(child);
 		if (copyTransform.GetChildCount())
 		{
-			hierarchy.emplace_back(copyObject.GetID());
-			currentHierarchy.emplace_back(child.GetID());
+			hierarchy.emplace_back(copyObject.GetEntity());
+			currentHierarchy.emplace_back(child.GetEntity());
 			prevParent = child;
 		}
 		--childcount;
