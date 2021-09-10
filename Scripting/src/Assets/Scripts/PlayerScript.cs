@@ -12,6 +12,7 @@ public class PlayerScript : MonoBehaviour
     private float elapsed;
 
     private Transform bodyParent;
+    private List<Transform> bodyList;
     private int score;
 
     private void Awake()
@@ -19,6 +20,7 @@ public class PlayerScript : MonoBehaviour
         score = 0;
         moveDir = new Vector3(-1, 0, 0);
         bodyParent = new GameObject().transform;
+        bodyList = new List<Transform>();
         bodyParent.name = "TestParent";
     }
 
@@ -61,14 +63,14 @@ public class PlayerScript : MonoBehaviour
             return;
         elapsed -= moveDelay;
         transform.localPosition += moveDir * (bodySize + bodySpacing);
-        if (bodyParent.childCount == 1)
-            bodyParent.GetChild(0).localPosition = transform.localPosition + (-moveDir * (bodySize + bodySpacing));
-        else if(bodyParent.childCount > 1)
+        if (bodyList.Count == 1)
+            bodyList[0].localPosition = transform.localPosition + (-moveDir * (bodySize + bodySpacing));
+        else if(bodyList.Count > 1)
         {
-            Transform body = bodyParent.GetChild(bodyParent.childCount - 1);
+            Transform body = bodyList[bodyList.Count - 1];
             body.localPosition = transform.localPosition + (-moveDir * (bodySize + bodySpacing));
-            body.parent = null;
-            body.parent = bodyParent;
+            bodyList.RemoveAt(bodyList.Count - 1);
+            bodyList.Insert(0, body);
         }
     }
 
@@ -80,10 +82,19 @@ public class PlayerScript : MonoBehaviour
         instance.AddComponent<Collider2D>().isTrigger = true;
         instance.AddComponent<CircleCollider2D>();
         instance.AddComponent<SpriteRenderer>().color = new Vector4(0, 1.0f / (bodyParent.childCount + 2), 1, 1);
+
         instance.transform.localScale = new Vector3(10, 10, 1);
-        Transform tail = (bodyParent.childCount > 0) ? bodyParent.GetChild(bodyParent.childCount - 1) : transform;
-        instance.transform.localPosition = tail.localPosition + (-moveDir * (bodySize + bodySpacing));
+        Transform tail = (bodyList.Count > 0) ? bodyList[bodyList.Count - 1] : transform;
+        Transform tailHead = null;
+        if(bodyList.Count > 0)
+        {
+            tailHead = (bodyList.Count > 1) ? bodyList[bodyList.Count - 2] : transform;
+        }
+        Vector3 spawnDir = (tailHead == null) ? -moveDir : Vector3.Normalize(tail.localPosition - tailHead.localPosition);
+        instance.transform.localPosition = tail.localPosition + (spawnDir * (bodySize + bodySpacing));
+
         instance.transform.SetParent(bodyParent);
+        bodyList.Add(instance.transform);
     }
 
     private void ClearLength()
@@ -95,5 +106,6 @@ public class PlayerScript : MonoBehaviour
             body.transform.SetParent(null);
             Destroy(body);
         }
+        bodyList.Clear();
     }
 }

@@ -3,7 +3,7 @@
 public class PlayerBodyScript : MonoBehaviour
 {
     public float rotSpeed = 180.0f;
-    public float changeDuration = 15.0f;
+    public float changeDuration = 2.0f;
     private float angleDir;
     private float elapsed;
 
