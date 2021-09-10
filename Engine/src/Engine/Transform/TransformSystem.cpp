@@ -22,6 +22,9 @@ Technology is prohibited.
 
 #include "Engine/ECS/GameObject.h"
 
+#include "TransformAPI.h"
+SCRIPT_API_ANCHOR(Transform)
+
 
 namespace engine
 {

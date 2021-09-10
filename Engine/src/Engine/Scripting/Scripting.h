@@ -17,6 +17,7 @@ Technology is prohibited.
 #include <vector>
 
 #include "Engine/ECS/Component.h"
+#include "Engine/Scene/SceneManager.h"
 #include "ScriptInfo.h"
 
 namespace engine
@@ -88,6 +89,15 @@ namespace engine
         \return     the IntPtr to the desired component interface
         *//**********************************************************************************/
         uint32_t GetComponentInterface(const char* name_space, const char* name);
+
+        template<typename Component>
+        uint32_t GetComponentInterface()
+        {
+            ComponentType compID = SceneManager::GetActiveWorld().GetComponentType<Component>();
+            if (compID >= componentList.size())
+                return 0;
+            return componentList[compID];
+        }
 
         /*********************************************************************************//*!
         \brief      deletes and removes an ECS component C# interface from the GameObject, if any

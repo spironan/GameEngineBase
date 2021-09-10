@@ -11,14 +11,15 @@ public class PlayerScript : MonoBehaviour
     public float bodySpacing = 5.0f;
     private float elapsed;
 
-    private List<Transform> bodyList;
+    private Transform bodyParent;
     private int score;
 
     private void Awake()
     {
-        bodyList = new List<Transform>();
         score = 0;
         moveDir = new Vector3(-1, 0, 0);
+        bodyParent = new GameObject().transform;
+        bodyParent.name = "TestParent";
     }
 
     public void Die()
@@ -60,37 +61,39 @@ public class PlayerScript : MonoBehaviour
             return;
         elapsed -= moveDelay;
         transform.localPosition += moveDir * (bodySize + bodySpacing);
-        if (bodyList.Count == 1)
-            bodyList[0].localPosition = transform.localPosition + (-moveDir * (bodySize + bodySpacing));
-        else if(bodyList.Count > 1)
+        if (bodyParent.childCount == 1)
+            bodyParent.GetChild(0).localPosition = transform.localPosition + (-moveDir * (bodySize + bodySpacing));
+        else if(bodyParent.childCount > 1)
         {
-            Transform body = bodyList[bodyList.Count - 1];
+            Transform body = bodyParent.GetChild(bodyParent.childCount - 1);
             body.localPosition = transform.localPosition + (-moveDir * (bodySize + bodySpacing));
-            bodyList.RemoveAt(bodyList.Count - 1);
-            bodyList.Insert(0, body);
+            body.parent = null;
+            body.parent = bodyParent;
         }
     }
 
     public void AddLength()
     {
-        GameObject instance = new GameObject("PlayerBody_" + (bodyList.Count + 1));
+        GameObject instance = new GameObject("PlayerBody_" + (bodyParent.childCount + 1));
         instance.AddComponent<PlayerBodyScript>();
         instance.AddComponent<Rigidbody2D>().gravityScale = 0;
         instance.AddComponent<Collider2D>().isTrigger = true;
         instance.AddComponent<CircleCollider2D>();
-        instance.AddComponent<SpriteRenderer>().color = new Vector4(0, 1.0f / (bodyList.Count + 2), 1, 1);
+        instance.AddComponent<SpriteRenderer>().color = new Vector4(0, 1.0f / (bodyParent.childCount + 2), 1, 1);
         instance.transform.localScale = new Vector3(10, 10, 1);
-        Transform tail = (bodyList.Count > 0) ? bodyList[bodyList.Count - 1] : transform;
+        Transform tail = (bodyParent.childCount > 0) ? bodyParent.GetChild(bodyParent.childCount - 1) : transform;
         instance.transform.localPosition = tail.localPosition + (-moveDir * (bodySize + bodySpacing));
-        bodyList.Add(instance.transform);
+        instance.transform.SetParent(bodyParent);
     }
 
     private void ClearLength()
     {
-        for (int i = 0; i < bodyList.Count; ++i)
+        while(bodyParent.childCount > 0)
         {
-            Destroy(bodyList[i].gameObject);
+            //Destroy(bodyParent.GetChild(0).gameObject);
+            GameObject body = bodyParent.GetChild(0).gameObject;
+            body.transform.SetParent(null);
+            Destroy(body);
         }
-        bodyList.Clear();
     }
 }
