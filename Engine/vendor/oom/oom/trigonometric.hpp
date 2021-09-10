@@ -15,10 +15,10 @@ namespace oom
     static constexpr T deg_to_rad() { return pi<T>() / static_cast<T>(180.0); }
 
     template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-    static constexpr T radians(T const& degrees) { return degrees * rad_to_deg<T>(); }
+    static constexpr T radians(T const& degrees) { return degrees * deg_to_rad<T>(); }
 
     template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
-    static constexpr T degrees(T const& radians) { return radians * deg_to_rad<T>(); }
+    static constexpr T degrees(T const& radians) { return radians * rad_to_deg<T>(); }
 
     template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
     static constexpr T sin(T const& value) { return std::sin(value); };
