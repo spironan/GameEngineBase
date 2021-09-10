@@ -22,8 +22,19 @@ Technology is prohibited.
 // editor component - damn sus to be here
 #include "Engine/Prefab/EditorComponent.h"
 
+
+#include <rttr/registration>
 namespace engine
 {
+    RTTR_REGISTRATION
+    {
+        using namespace rttr;
+        registration::class_<engine::GameObjectComponent>("GameObject")
+            .property("Active", &GameObjectComponent::Active)
+            .property("Name", &GameObjectComponent::Name)
+            .property_readonly("UUID", &GameObjectComponent::ID);
+    }
+
     /*---------------------------------------------------------------------------------*/
     /* Static Functions                                                                */
     /*---------------------------------------------------------------------------------*/
@@ -72,10 +83,10 @@ namespace engine
 
     // order matters! dont switch it! Instantiate is a dummy type
     GameObject::GameObject(Create)
-        : m_entity  { WorldManager::GetActiveWorld().CreateEntity() }
+        : m_entity{ WorldManager::GetActiveWorld().CreateEntity() }
     {
         AddComponent<Transform3D>();
-        AddComponent<GameObjectComponent>();
+        AddComponent<GameObjectComponent>().ID = {};    // construct uuid
         AddComponent<Scripting>();
 
         // could be moved... should also be removed if editor is not enabled...

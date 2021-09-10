@@ -16,13 +16,24 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "ECS.h"
-#include "WorldManager.h"
+#include "Engine/ECS/ECS.h"
+#include "Engine/ECS/WorldManager.h"
 #include "Engine/Transform/Transform3D.h"
-#include "GameObjectComponent.h"
+#include "Engine/Core/UUID.h"
+
+#include <rttr/type>
 
 namespace engine
 {
+    struct GameObjectComponent
+    {
+        bool Active = true;
+        std::string Name = "new gameobject";
+        UUID ID = 0;
+
+        RTTR_ENABLE();
+    };
+
     class GameObject final
     {
     private:
@@ -30,11 +41,12 @@ namespace engine
 
     public:
         
-        // Getters
+        // Helper Getters
         Transform3D& Transform()    const { return GetComponent<Transform3D>(); };
-        bool& ActiveSelf()          const { return GetComponent<GameObjectComponent>().ActiveSelf; }
+        bool& Active()              const { return GetComponent<GameObjectComponent>().Active; }
         std::string& Name()         const { return GetComponent<GameObjectComponent>().Name; }
-        Entity GetID()              const { return m_entity; }
+        UUID GetID()                const { return GetComponent<GameObjectComponent>().ID; }
+        Entity GetEntity()          const { return m_entity; }
 
         // Rule of 5
         GameObject()                              = default;
@@ -46,7 +58,7 @@ namespace engine
         //gameobject assignment to entity
         GameObject& operator=(Entity entt) { m_entity = entt; return *this; };
 
-        // Explicit Instantiation constructor, instantiate is a dummy type
+        // Explicit Instantiation constructor, Create is a dummy type
         struct Create {};
         explicit GameObject(Create);
 
@@ -62,7 +74,6 @@ namespace engine
         static void Restore(GameObject entt);
 
 
-        // use with caution, this should not immediately delete the object!
         void Destroy();
 
         //implicit cast operator
