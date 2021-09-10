@@ -44,6 +44,21 @@ public:
 		engine::EditorCamera::g_editorCam->OnUpdate(dt);
     }
 
+    //TODO: Remove temporary code
+    bool DoMwheel(engine::MouseScrolledEvent& e)
+    {
+        float delta = e.GetY();
+        engine::EditorCamera::g_editorCam->UpdateScroll(delta);
+        return true;
+    }
+
+    void OnEvent(engine::Event& e)
+    {
+        engine::EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<engine::MouseScrolledEvent>(ENGINE_BIND_EVENT_FN(DoMwheel));
+    }
+    //TODO: end of todo
+
     virtual void OnImGuiRender() override
     {
         m_editor.ShowAllWidgets();

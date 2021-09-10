@@ -17,7 +17,7 @@ void EditorViewport::Show()
 	auto ar = (float)width / height;
 
 
-	if (!ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoDecoration))
+	if (!ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing ))
 	{
 		ImGui::End();
 		return;
@@ -41,16 +41,16 @@ void EditorViewport::Show()
 	ImGui::Image((ImTextureID)static_cast<uint64_t>(m_fb), {1600,900}, { 0.0f,1.0f }, { 1.0f,0.0f });
 
 	//Debug Red box
-	ImGui::GetForegroundDrawList()->AddRect(vMin, {vMin.x + 1600, vMin.y+900}, ImU32(0xFF0000FF));
+	//ImGui::GetForegroundDrawList()->AddRect(vMin, {vMin.x + 1600, vMin.y+900}, ImU32(0xFF0000FF));
 
-	ImGui::SetNextWindowSize({ vMax.x - vMin.x,vMax.y - vMin.y });
+	ImGui::SetNextWindowSize({ myW,myH });
 	ImGui::SetNextWindowPos(vMin);
 
 	//window hole should be same size as content area
 	ImGui::SetWindowHitTestHole(ImGui::GetCurrentWindow(), vMin, { myW,myH });
 
 	// IMPORTANT: we now NEED to call this before begin frame
-	ImGuizmo::SetRect(vMin.x, vMin.y, vMin.x+1600, vMin.y+900);
+	ImGuizmo::SetRect(vMin.x, vMin.y, 1600, 900);
 	ImGuizmo::BeginFrame();
 	oom::vec3 mScale = transform.GetGlobalScale();
 	oom::vec3 mPosition = transform.GetGlobalPosition();
