@@ -23,7 +23,6 @@ Technology is prohibited.
 #include "Engine/PhysicsCollision/ColliderCore.h"
 
 
-
 /****************************************************************************//*!
  @brief     Describes a Test scene used to test The Transform Components
             and Systems Functionality with ECS and Gameobjects.
@@ -31,6 +30,8 @@ Technology is prohibited.
 class RenderingTestLayer : public SceneBaseLayer
 {
 private:
+
+
     engine::GameObject m_child;
     //engine::GameObject m_camera;
 
@@ -49,10 +50,15 @@ public:
     {
     }
 
+    void OnEvent(engine::Event& e) override;
+    bool DoMwheel(engine::MouseScrolledEvent& e);
+
     virtual void Init() override
     {
+
         LOG_ENGINE_INFO(DefaultCamera().GetEntity());
-        auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
+        auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(*engine::EditorCamera::g_editorCam);
+        auto& ts = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
 
         auto ogreHandle = engine::AssetManager::ImportAsset("../Engine/assets/images/ogre.png");
 
@@ -72,20 +78,28 @@ public:
 
         engine::Entity prev = m_child;
 
-        for (int i = 1; i < 10; ++i)
+        auto s = 10;
+        auto minx = 25*s;
+        for (int i = 0; i < 5; ++i)
         {
-            using namespace engine;
-            engine::GameObject ent = CreateGameObject();
-            m_gos.emplace_back(ent);
+            for (int j = 0; j < 5; j++)
+            {
+                using namespace engine;
+                engine::GameObject ent = CreateGameObject();
+                m_gos.emplace_back(ent);
 
-            //ent.Transform.Position() = { -1.f, -1.f, 1.f };
-            ent.Transform().RotationAngle() += 90.f;
-            ent.Transform().Scale() = { scaling, scaling, 1.0f };
-            auto& objSprite = ent.AddComponent<engine::Sprite2D>();
-            ent.AddComponent<Collider2D>().SetNarrowPhaseCollider(ColliderType::BOX);
-            auto& col = ent.AddComponent<BoxCollider2D>();
-            ent.AddComponent<ColliderDebugDraw>().SetColor((float)i/10, (float)i/20, (float)i/30);
-            objSprite.SetTexture(tex->GetID());
+
+                ent.Transform().Position() = {  s +i* s - minx, s+ j* s - minx, 0.0f };
+                ent.Transform().RotationAngle() += i+j*10;
+                ent.Transform().Scale() = { 10 , 10, 1.0f };
+                auto& objSprite = ent.AddComponent<engine::Sprite2D>();
+                objSprite.SetTexture(tex->GetID());
+                //ent.AddComponent<Collider2D>().SetNarrowPhaseCollider(ColliderType::BOX);
+                //ent.AddComponent<Rigidbody2D>();
+                //auto& col = ent.AddComponent<BoxCollider2D>();
+                //ent.AddComponent<ColliderDebugDraw>().SetColor((float)i / 10, (float)j / 10, (float)i / 30);
+            }
+           
 
         }
 
@@ -115,8 +129,25 @@ public:
         float deltaTime = static_cast<float>(dt);
 
         engine::WorldManager::SetActiveWorld(GetWorld()->GetID());
+        engine::EditorCamera::g_editorCam->OnUpdate(dt);
 
         GetWorld()->GetSystem<engine::TransformSystem>()->Update();
+       // GetWorld()->GetSystem<engine::PhysicsSystem>()->Update(dt);
+       // LOG_INFO("{0}", dt);
+        //auto mousDel = engine::Input::GetMouseDelta();
+        //auto mousPos = engine::Input::GetMousePosition();
+        //LOG_INFO("Position {0},{1} | Delta {2},{3}", mousPos.first, mousPos.second,mousDel.first, mousDel.second);
+        float i{1.0f};
+        for (auto& x : m_gos)
+        {
+            ++i;
+            auto* rb = x.TryGetComponent<engine::Rigidbody2D>();
+            if(rb)
+                rb->ApplyForce({ 50*(-1.0f + 0.01f * i),(-1.0f + 0.01f * i)*50 });
+
+            auto a = x.Transform().GetRotationAngle();
+            x.Transform().SetRotationAngle(a + dt* 1.0f/i);
+        }
 
         if (engine::Input::IsKeyHeld(ENGINE_KEY_UP))
         {

@@ -285,8 +285,8 @@ void Renderer2D::BeginScene(const oom::mat4& viewProj, const oom::mat4& view)
 	s_Data.CameraBuffer.ViewProjection = viewProj;
 	glEnable(GL_DEPTH_TEST);
 
-	//s_Data.frameBuffer->Bind();
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	s_Data.frameBuffer->Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	s_Data.QuadIndexCount = 0;
 	s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;

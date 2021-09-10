@@ -10,15 +10,6 @@ namespace engine
 
 class SceneCamera final : public Component, public Camera 
 {
-public:
-	/**
-	 * \brief Projection types of the scene camera.
-	 * 
-	 */
-	enum class ProjectionType
-	{
-		Perspective = 0, Orthographic = 1
-	};
 
 public:
 	/*-----------------------------------------------------------------------------*/

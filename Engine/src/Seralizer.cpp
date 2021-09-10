@@ -365,7 +365,9 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& 
 		{
 			auto& trans = arr[count].GetArray();
 			engine::Transform3D& transform = go.GetComponent<engine::Transform3D>();
-
+		}
+	}
+}
 
 void Serializer::SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {

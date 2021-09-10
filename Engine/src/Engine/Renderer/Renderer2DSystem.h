@@ -17,6 +17,7 @@ Technology is prohibited.
 #include "Engine/ECS/System.h"
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Renderer/Camera.h"
+#include "engine/Renderer/EditorCamera.h"   
 
 namespace engine
 {
