@@ -25,7 +25,7 @@ public:
     \brief    Default Constructor Creating a scene with the indicated scene name
               and setting its world to be the active one.
     *//**********************************************************************************/
-    SceneBaseLayer(std::string scene_name);
+    SceneBaseLayer(std::string scene_name, std::string const filepath = "");
     /*********************************************************************************//*!
     \brief    Default Destructor that unloads the scene if its loaded
     *//**********************************************************************************/
@@ -60,7 +60,7 @@ protected:
     \brief    Initialize Function that should be overloaded by child class for whatever
               additional initialization required
     *//**********************************************************************************/
-    virtual void Init() {};
+    virtual void Init();
     /*********************************************************************************//*!
     \brief    Exit Function that should be overloaded by child class for whatever
               cleanup that may be required

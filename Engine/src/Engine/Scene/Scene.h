@@ -68,6 +68,13 @@ namespace engine
 		*//**********************************************************************************/
 		World& Load();
 		/*********************************************************************************//*!
+		\brief    Loads a world into the scene
+
+		\return   reference to the loaded world
+
+		*//**********************************************************************************/
+		World& LoadFromFile(std::string const& filepath);
+		/*********************************************************************************//*!
 		\brief    True if scene has a world loaded, false otherwise
 		 
 		\return   True if scene has a world loaded, false otherwise
@@ -93,7 +100,7 @@ namespace engine
 		\param    filename specified scene file's filename
 		
 		*//**********************************************************************************/
-		void SaveToFileName(std::string const& filename);
+		void SaveToFilePath(std::string const& filepath);
 		/*********************************************************************************//*!
 		\brief    Get a reference to the loaded world
 		 

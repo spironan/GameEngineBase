@@ -16,6 +16,8 @@ Technology is prohibited.
  *********************************************************************/
 #include "pch.h"
 #include "Scene.h"
+#include "Seralizer.h"
+#include <filesystem>
 namespace engine
 {
 void Scene::SetID(ID_type id)
@@ -37,6 +39,7 @@ std::string Scene::GetSceneName()
 
 World& Scene::Load()
 {
+	if (IsLoaded()) Unload();
 	m_world = &WorldManager::CreateWorld();
 	WorldManager::SetActiveWorld(m_world->GetID());
 	m_root = GameObject{GameObject::Create{}};	//instantiate root game object
@@ -47,6 +50,19 @@ World& Scene::Load()
 	return *m_world;
 }
 
+World& Scene::LoadFromFile(std::string const& filepath)
+{	
+	if (IsLoaded()) Unload();
+	//load world from scene file here
+	m_world = &WorldManager::CreateWorld();
+	WorldManager::SetActiveWorld(m_world->GetID());
+	//Serializer::LoadWorld(filepath);
+
+	return *m_world;
+}
+
+
+
 bool Scene::IsLoaded() const
 {
 	return m_world != nullptr;
@@ -54,7 +70,7 @@ bool Scene::IsLoaded() const
 
 void Scene::Unload()
 {
-	SaveToFile();
+	//SaveToFile();
 
 	if (m_world)
 		WorldManager::DestroyWorld(m_world->GetID());
@@ -63,12 +79,19 @@ void Scene::Unload()
 
 void Scene::SaveToFile()
 {
-	SaveToFileName(m_filename);
+	if (IsLoaded() == false)
+	{
+		LOG_WARN("attempted to save to file without any world loaded!@#!@$#@!");
+		return;
+	}
+	//SaveToFilePath(m_filename);
 }
 
-void Scene::SaveToFileName(std::string const& filename)
+void Scene::SaveToFilePath(std::string const& filepath)
 {
 	//save data to file here
+	Serializer::SaveWorld(filepath);
+
 }
 
 World& Scene::GetWorld() const

@@ -6,7 +6,7 @@
 \author     Chua Teck Lee, c.tecklee, 390008420
 \par        email: c.tecklee\@digipen.edu
 \date       Sept 5, 2021
-\brief      A base scene to be inherited from to have convienience for ECS and 
+\brief      A base scene to be inherited from to have convenience for ECS and 
             Gameobjects.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
@@ -18,10 +18,18 @@ Technology is prohibited.
 #include "SceneBaseLayer.h"
 
 
-SceneBaseLayer::SceneBaseLayer(std::string scene_name)
+SceneBaseLayer::SceneBaseLayer(std::string scene_name, std::string const filepath)
     : Layer { scene_name }
-    , m_scene { engine::SceneManager::CreateScene(scene_name) }
+    , m_scene { engine::SceneManager::AddScene(scene_name) }
 {
+    if (filepath.empty())
+	{
+		m_scene.Load();
+    }
+    else
+    {
+        m_scene.LoadFromFile(filepath);
+    }
     m_scene.SetWorldAsActive();
 }
 
@@ -67,6 +75,11 @@ void SceneBaseLayer::OnUpdateEnd(engine::Timestep dt)
 	m_scene.GetWorld().ProcessDeletions();
 }
 
+void SceneBaseLayer::Init()
+{
+
+}
+
 /*********************************************************************************//*!
 \brief    Create a gameobject from the scene
      
@@ -109,7 +122,8 @@ void SceneBaseLayer::SaveScene()
 *//**********************************************************************************/
 void SceneBaseLayer::SaveSceneToFile(std::string const& filename)
 {
-    m_scene.SaveToFileName(filename);
+    //TODO: add relative director to filename
+    m_scene.SaveToFilePath(filename);
 }
 /*********************************************************************************//*!
 \brief    Sets this layer's scene as the active scene

@@ -17,7 +17,7 @@ Technology is prohibited.
 #include "GameSceneLayer.h"
 
 GameSceneLayer::GameSceneLayer()
-    : SceneBaseLayer{ "Game Scene Layer" }
+    : SceneBaseLayer{ "Game Scene Layer",""}
 {
 }
 

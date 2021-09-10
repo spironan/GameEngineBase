@@ -43,7 +43,7 @@ namespace engine
 		\return   
 			the added scene
 		*//**********************************************************************************/
-		static Scene& AddScene(std::string filename, bool active = false);
+		static Scene& AddScene(std::string filename);
 		/*********************************************************************************//*!
 		\brief    Same as AddScene but also loads the scene and set it as the active scene
 

@@ -30,7 +30,7 @@ namespace engine
 	\return   
 		the added scene
 	*//**********************************************************************************/
-	Scene& SceneManager::AddScene(std::string filename, bool active)
+	Scene& SceneManager::AddScene(std::string filename)
 	{
 		auto result = GetInstance().m_scenes.emplace(std::make_pair(utility::StringHash::GenerateFNV1aHash(filename), filename));
 		ENGINE_VERIFY(result.second);
@@ -54,7 +54,7 @@ namespace engine
 	*//**********************************************************************************/
 	Scene& SceneManager::CreateScene(std::string filename)
 	{
-		auto& temp = GetInstance().AddScene(filename, true);
+		auto& temp = GetInstance().AddScene(filename);
 		temp.Load();
 
 		return temp;
