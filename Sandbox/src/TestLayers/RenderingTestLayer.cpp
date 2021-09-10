@@ -27,7 +27,7 @@ void RenderingTestLayer::OnImGuiRender()
 
 
     ImGui::Begin("Scene", nullptr,
-                    ImGuiWindowFlags_NoBringToFrontOnFocus
+                   ImGuiWindowFlags_NoBringToFrontOnFocus
                  | ImGuiWindowFlags_NoFocusOnAppearing
                  //| ImGuiWindowFlags_NoMove
                  //| ImGuiWindowFlags_NoMouseInputs
@@ -70,16 +70,7 @@ void RenderingTestLayer::OnImGuiRender()
         ImGuizmo::RecomposeMatrixFromComponents(oom::value_ptr(mPosition), oom::value_ptr(mRot), oom::value_ptr(mScale), oom::value_ptr(matrix));
 
         // Do your picking here. Then recompose matrix to update
-        if (engine::Input::IsKeyPressed(engine::KeyCode::Q))
-        {
-            operation = ImGuizmo::TRANSLATE;
-        } else if (engine::Input::IsKeyPressed(engine::KeyCode::W))
-        {
-            operation = ImGuizmo::ROTATE;
-        } else if (engine::Input::IsKeyPressed(engine::KeyCode::E))
-        {
-            operation = ImGuizmo::SCALE;
-        }
+
 
         auto& cam = DefaultCamera();
         auto& camTrans = m_defaultCamera.Transform();
@@ -111,6 +102,19 @@ void RenderingTestLayer::OnImGuiRender()
             transform.SetScale(mScale);
             transform.SetRotationAngle(oom::degrees(mRot.z));
         }
+		else if(ImGui::IsMouseDown(ImGuiMouseButton_Left) == false)
+		{
+			if (engine::Input::IsKeyPressed(engine::KeyCode::Q))
+			{
+				operation = ImGuizmo::TRANSLATE;
+			} else if (engine::Input::IsKeyPressed(engine::KeyCode::W))
+			{
+				operation = ImGuizmo::ROTATE;
+			} else if (engine::Input::IsKeyPressed(engine::KeyCode::E))
+			{
+				operation = ImGuizmo::SCALE;
+			}
+		}
 
        
         // transform.SetRotationAxis(mRot); // maybe??

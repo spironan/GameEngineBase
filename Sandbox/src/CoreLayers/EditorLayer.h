@@ -5,13 +5,13 @@
 #include "Editor/Editor.h"
 ////for getting filepath
 #include "Editor/EditorFileGroup.h"
-
+#include "Seralizer.h"
 class EditorLayer : public SceneBaseLayer
 {
 private:
     Editor m_editor;
     bool m_demo = true;
-
+	Serializer m_serializer;
 public:
 
     EditorLayer() : SceneBaseLayer{ "EditorLayer" }

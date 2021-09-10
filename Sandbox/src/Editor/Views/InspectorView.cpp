@@ -70,8 +70,6 @@ void InspectorView::Show()
 
 			if (go.HasComponent<engine::SceneCamera>())
 				ReadComponents(go.GetComponent<engine::SceneCamera>(), go);
-			if (go.HasComponent<engine::Camera>())
-				ReadComponents(go.GetComponent<engine::Camera>(), go);
 			if (go.HasComponent<engine::Sprite2D>())
 				ReadComponents(go.GetComponent<engine::Sprite2D>(), go);
 
@@ -182,7 +180,7 @@ void InspectorView::ComponentAddButton(float x ,float y)
 		ImGui::BeginChild("##ListOfComponents", { x,y * 0.8f });
 		{
 			AddComponent |= ComponentAddOptions<engine::Transform3D>(go);
-			AddComponent |= ComponentAddOptions<engine::Camera>(go);
+			AddComponent |= ComponentAddOptions<engine::SceneCamera>(go);
 			AddComponent |= ComponentAddOptions<engine::Sprite2D>(go);
 			AddComponent |= ComponentAddOptions<engine::Rigidbody2D>(go);
 			AddComponent |= ComponentAddOptions<engine::BoxCollider2D>(go);

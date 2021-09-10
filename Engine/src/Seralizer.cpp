@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Seralizer.h"
+#include "Engine.h"
 
 #include "../../Sandbox/src/Editor/RttrTypeID.h"
 #include "../../Sandbox/src/Editor/EditorObjectGroup.h"
@@ -15,17 +15,183 @@
 #include <unordered_map>
 
 
-#include "Engine/Scene/SceneManager.h"
-#include "Engine/Transform/Transform3D.h"
-#include "Engine/ECS/GameObject.h"
-#include "Engine/Prefab/PrefabComponent.h"
-#include "Engine/Prefab/EditorComponent.h"
-#include "Engine/Scripting/Scripting.h"
-#include "Engine/Scripting/ScriptSystem.h"
+#include "Seralizer.h"
 
+
+#define  LOAD_OBJECT(T)	LoadGOType\
+	{\
+	engine::utility::StringHash(rttr::type::get<T>().get_name()),\
+		[](rapidjson::Value::Array& arr, engine::GameObject& go)\
+	{\
+		T& var = go.EnsureComponent<T>();\
+		LoadComponent<T>(arr, var);\
+	}\
+	}\
+
+std::map<rttr::type::type_id, Serializer::SaveComponentCallback> Serializer::m_SaveComponentCallbacks
+{
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_INT],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{writer.Int(variant.get_value<int>()); }
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_FLOAT],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{writer.Double(variant.get_value<float>()); }
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_STRING],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{
+			std::string temp = variant.get_value<std::string>();
+			writer.String(temp.c_str(),temp.size());
+		}
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_BOOL],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{
+			writer.Bool(variant.get_value<bool>()); 
+		}
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_ENTITY],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{writer.Uint(variant.get_value<engine::Entity>()); }
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC2],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{
+			writer.StartArray();
+			oom::vec2 value = variant.get_value<oom::vec2>();
+			writer.Double(value.x);writer.Double(value.y);
+			writer.EndArray();
+		}
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC3],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{
+			writer.StartArray();
+			oom::vec3 value = variant.get_value<oom::vec3>();
+			writer.Double(value.x);writer.Double(value.y);writer.Double(value.z);
+			writer.EndArray();
+		}
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_MAT4],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{
+			writer.StartArray();
+			oom::mat4 value = variant.get_value<oom::mat4>();
+			writer.Double(value[0].x);writer.Double(value[0].y);writer.Double(value[0].z);writer.Double(value[0].w);
+			writer.Double(value[1].x);writer.Double(value[1].y);writer.Double(value[1].z);writer.Double(value[1].w);
+			writer.Double(value[2].x);writer.Double(value[2].y);writer.Double(value[2].z);writer.Double(value[2].w);
+			writer.Double(value[3].x);writer.Double(value[3].y);writer.Double(value[3].z);writer.Double(value[3].w);
+			writer.EndArray();
+		}
+	}
+};
+
+std::map<rttr::type::type_id, Serializer::LoadComponentCallback> Serializer::m_LoadComponentCallbacks
+{
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_INT],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{prop.set_value(variant,data.GetInt());}
+	},
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_FLOAT],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{prop.set_value(variant,data.GetFloat()); }
+	},
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_STRING],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{prop.set_value(variant,data.GetString()); }
+	},
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_BOOL],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{prop.set_value(variant,data.GetBool()); }
+	},
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_ENTITY],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{prop.set_value(variant,data.GetUint()); }
+	},
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC2],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{
+			auto& arr = data.GetArray();
+			oom::vec2 vector = { arr[0].GetFloat(),arr[1].GetFloat() };
+			prop.set_value(variant,vector); 
+		}
+	},
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC3],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{
+			auto& arr = data.GetArray();
+			oom::vec3 vector = { arr[0].GetFloat(),arr[1].GetFloat(),arr[2].GetFloat() };
+			prop.set_value(variant,vector);
+		}
+	},
+	LoadType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_MAT4],
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		{
+			auto& arr = data.GetArray();
+			oom::mat4 mat = {	arr[0].GetFloat(),arr[1].GetFloat(),arr[2].GetFloat(),arr[3].GetFloat(),
+								arr[4].GetFloat(),arr[5].GetFloat(),arr[6].GetFloat(),arr[7].GetFloat(), 
+								arr[8].GetFloat(),arr[9].GetFloat(),arr[10].GetFloat(),arr[11].GetFloat(), 
+								arr[12].GetFloat(),arr[13].GetFloat(),arr[14].GetFloat(),arr[15].GetFloat() 
+							};
+			prop.set_value(variant, mat);
+		}
+	}
+};
+std::map<engine::utility::StringHash::size_type, Serializer::LoadGameObjectCallback> Serializer::m_LoadGameObjectCallbacks;
+
+
+Serializer::Serializer()
+{
+	m_LoadGameObjectCallbacks = 
+	{
+		LOAD_OBJECT(engine::GameObjectComponent),
+		LOAD_OBJECT(engine::Transform3D),
+		LOAD_OBJECT(engine::Scripting),
+		LOAD_OBJECT(engine::Collider2D),
+		LOAD_OBJECT(engine::CircleCollider2D),
+		LOAD_OBJECT(engine::BoxCollider2D),
+		LOAD_OBJECT(engine::Sprite2D),
+		LOAD_OBJECT(engine::EditorComponent),
+		LOAD_OBJECT(engine::SceneCamera),
+	};
+}
 
 engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 {
+	
 	std::unordered_map<engine::Entity,std::pair<engine::Entity,engine::Entity>> hierarchymap;
 	std::ifstream ifs;
 	ifs.open(prefab);
@@ -42,9 +208,20 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object{ engine::GameObject::Create{} };
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
-		LoadComponent(arr, object);
+		
+		for (rapidjson::SizeType counter = 2; counter < arr.Size(); ++counter)
+		{
+			std::string temp = arr[counter].GetString();
+			auto& iter = m_LoadGameObjectCallbacks.find(engine::utility::StringHash(temp));
+			if ((temp) == (rttr::type::get<engine::SceneCamera>().get_name()))
+				std::cout << engine::utility::StringHash(temp) << std::endl;
+			++counter;
+			if(iter != m_LoadGameObjectCallbacks.end())
+				iter->second(arr[counter].GetArray(),object);
+		}
+
 		object.EnsureComponent<engine::PrefabComponent>();
-		object.EnsureComponent<engine::EditorComponent>().SetShownInEditor(false);
+		object.EnsureComponent<engine::EditorComponent>().SetShownInEditor(true);//for now set it to true for easier debug
 	}
 	engine::Entity head = 0;
 	for (auto& hierarchyItem : hierarchymap)
@@ -105,7 +282,13 @@ void Serializer::LoadWorld(const std::string& path)
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object = engine::SceneManager::GetActiveScene().CreateGameObject();
 		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
-		LoadComponent(arr, object);
+		
+		for (rapidjson::SizeType counter = 2; arr.Size(); ++counter)
+		{
+			m_LoadGameObjectCallbacks
+				[engine::utility::StringHash(arr[counter].GetString())]
+			(arr[++counter].GetArray(), object);
+		}
 	}
 
 	for (auto& hierarchyItem : hierarchymap)
@@ -149,7 +332,15 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 		SaveComponent<engine::GameObjectComponent>(go.GetComponent<engine::GameObjectComponent>(), writer);
 	if (go.HasComponent<engine::Transform3D>())
 		SaveComponent<engine::Transform3D>(go.GetComponent<engine::Transform3D>(), writer);
-	
+	if (go.HasComponent<engine::Camera>())
+		SaveComponent<engine::Camera>(go.GetComponent<engine::Camera>(), writer);
+	if (go.HasComponent<engine::SceneCamera>())
+		SaveComponent<engine::SceneCamera>(go.GetComponent<engine::SceneCamera>(), writer);
+	if (go.HasComponent<engine::EditorComponent>())
+		SaveComponent<engine::EditorComponent>(go.GetComponent<engine::EditorComponent>(), writer);
+
+
+
 	if (go.HasComponent<engine::Scripting>())
 		SaveScripts(go, writer);
 	writer.EndArray();
@@ -175,21 +366,6 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr,engine::GameObject& 
 			auto& trans = arr[count].GetArray();
 			engine::Transform3D& transform = go.GetComponent<engine::Transform3D>();
 
-			transform.SetPosition(GetVec3(trans[0]));
-			transform.SetRotationAxis(GetVec3(trans[1]));
-			transform.SetRotationAngle(trans[2].GetFloat());
-			
-		}
-		else if (component == rttr::type::get<engine::PrefabComponent>().get_name())
-		{
-
-		}
-		else if (component == "Scripting")
-		{
-			LoadScripts(arr[count].GetArray(), go);
-		}
-	}
-}
 
 void Serializer::SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {

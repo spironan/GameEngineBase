@@ -74,7 +74,7 @@ void LoggingView::Show(bool* active)
 		if (m_collapse_similar)
 		{
 			ImGuiListClipper clipper;
-			clipper.Begin(static_cast<int>(s_messageCollection.size()),35.0f);
+			clipper.Begin(static_cast<int>(s_messageCollection.size()),imageSize + 2.0f*textSize.y);//height of one object = image + repeat count + seperator
 			int counter = 0;
 			while (clipper.Step())
 			{
@@ -195,7 +195,7 @@ void LoggingView::Show(bool* active)
 		if (s_newItemAdded && !interacted)
 		{
 			s_newItemAdded = false;
-			ImGui::SetScrollY(ImGui::GetScrollMaxY());
+			ImGui::SetScrollY(ImGui::GetScrollMaxY()+100);//+100 just to force it to the max as max might be a value from the prev iter
 		}	
 	}
 	ImGui::EndChild();
