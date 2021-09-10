@@ -52,11 +52,10 @@ World& Scene::Load()
 
 World& Scene::LoadFromFile(std::string const& filepath)
 {	
-	if (IsLoaded()) Unload();
+	ENGINE_ASSERT_MSG(IsLoaded(), "WORLD NOT CREATED");
+
 	//load world from scene file here
-	m_world = &WorldManager::CreateWorld();
-	WorldManager::SetActiveWorld(m_world->GetID());
-	//Serializer::LoadWorld(filepath);
+	Serializer::LoadWorld(filepath,*this);
 
 	return *m_world;
 }
@@ -84,13 +83,13 @@ void Scene::SaveToFile()
 		LOG_WARN("attempted to save to file without any world loaded!@#!@$#@!");
 		return;
 	}
-	//SaveToFilePath(m_filename);
+	SaveToFilePath(m_filename);
 }
 
 void Scene::SaveToFilePath(std::string const& filepath)
 {
 	//save data to file here
-	Serializer::SaveWorld(filepath);
+	Serializer::SaveWorld(filepath,*this);
 
 }
 
