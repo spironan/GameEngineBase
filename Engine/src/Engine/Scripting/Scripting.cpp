@@ -499,7 +499,7 @@ namespace engine
         MonoClass* klass = ScriptUtility::GetMonoClass(name_space, name);
         MonoObject* script = ScriptUtility::MonoObjectNew(klass);
         uint32_t scriptPtr = mono_gchandle_new(script, false);
-        scriptList.push_back(ScriptInstance(scriptPtr));
+        scriptList.emplace_back(scriptPtr);
 
         // call script constructor
         mono_runtime_object_init(script);
@@ -846,109 +846,5 @@ namespace engine
             MonoObject* script = mono_gchandle_get_target(scriptList[i].handle);
             DebugPrintObjectFields(script, 1);
         }
-    }
-
-    /*-----------------------------------------------------------------------------*/
-    /* Script Functions for C#                                                     */
-    /*-----------------------------------------------------------------------------*/
-    uint32_t GameObject_GetName(Entity id)
-    {
-        GameObject obj{ id };
-        std::string const& name = obj.Name();
-        MonoString* string = ScriptUtility::MonoStringNew(name.c_str());
-        return mono_gchandle_new((MonoObject*)string, false);
-    }
-
-    void GameObject_SetName(Entity id, const char* newName)
-    {
-        GameObject obj{ id };
-        obj.Name() = newName;
-    }
-
-    bool GameObject_GetActive(Entity id)
-    {
-        GameObject obj{ id };
-        return obj.Active();
-    }
-
-    void GameObject_SetActive(Entity id, bool value)
-    {
-        GameObject obj{ id };
-        obj.Active() = value;
-    }
-
-
-
-    uint32_t AddScript(Entity id, const char* name_space, const char* name)
-    {
-        GameObject obj{ id };
-        return obj.GetComponent<Scripting>().AddScript(name_space, name);
-    }
-
-    uint32_t GetScript(Entity id, const char* name_space, const char* name)
-    {
-        GameObject obj{ id };
-        return obj.GetComponent<Scripting>().GetScript(name_space, name);
-    }
-
-    void RemoveScript(Entity id, const char* name_space, const char* name)
-    {
-        GameObject obj{ id };
-        obj.GetComponent<Scripting>().RemoveScript(name_space, name);
-    }
-
-    void DestroyScript(Entity entityID, int scriptID)
-    {
-        GameObject obj{ entityID };
-        obj.GetComponent<Scripting>().RemoveScript(scriptID);
-    }
-
-    void SetScriptEnabled(Entity entityID, int scriptID, bool enabled)
-    {
-        GameObject obj{ entityID };
-        if(enabled)
-            obj.GetComponent<Scripting>().EnableScript(scriptID);
-        else
-            obj.GetComponent<Scripting>().DisableScript(scriptID);
-    }
-
-    bool CheckScriptEnabled(Entity entityID, int scriptID)
-    {
-        GameObject obj{ entityID };
-        return obj.GetComponent<Scripting>().GetScript(scriptID)->enabled;
-    }
-
-
-
-    uint32_t AddComponentFromScript(Entity id, const char* name_space, const char* name)
-    {
-        GameObject obj{ id };
-        uint32_t currPtr = obj.GetComponent<Scripting>().GetComponentInterface(name_space, name);
-        if (currPtr != 0)
-            return currPtr;
-
-        MonoType* type = mono_class_get_type(ScriptUtility::GetMonoClass(name_space, name));
-        ScriptSystem::RegisteredComponent const& component = ScriptUtility::GetRegisteredComponent(type);
-        component.Add(id);
-        return obj.GetComponent<Scripting>().AddComponentInterface(name_space, name);
-    }
-
-    uint32_t GetComponentFromScript(Entity id, const char* name_space, const char* name)
-    {
-        GameObject obj{ id };
-        return obj.GetComponent<engine::Scripting>().GetComponentInterface(name_space, name);
-    }
-
-    void RemoveComponentFromScript(Entity id, const char* name_space, const char* name)
-    {
-        GameObject obj{ id };
-        uint32_t currPtr = obj.GetComponent<Scripting>().GetComponentInterface(name_space, name);
-        if (currPtr == 0)
-            return;
-
-        MonoType* type = mono_class_get_type(ScriptUtility::GetMonoClass(name_space, name));
-        ScriptSystem::RegisteredComponent const& component = ScriptUtility::GetRegisteredComponent(type);
-        component.Remove(id);
-        obj.GetComponent<Scripting>().RemoveComponentInterface(name_space, name);
     }
 }

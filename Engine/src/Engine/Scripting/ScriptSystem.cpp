@@ -18,6 +18,9 @@ Technology is prohibited.
 #include "Scripting.h"
 #include "ScriptSystem.h"
 
+#include "ScriptUtilityAPI.h"
+SCRIPT_API_ANCHOR(Scripting)
+
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -221,111 +224,5 @@ namespace engine
             scripting.DebugPrint();
         }
         std::cout << std::endl;
-    }
-
-    /*-----------------------------------------------------------------------------*/
-    /* Entity Functions for C#                                                     */
-    /*-----------------------------------------------------------------------------*/
-
-    Entity CreateEntity()
-    {
-        GameObject& instance = SceneManager::GetActiveScene().CreateGameObject();
-        auto& scripting = instance.GetComponent<Scripting>();
-        scripting.SetUpPlay();
-        // scripting.StartPlay();
-        return scripting.GetEntity();
-    }
-
-    uint32_t InstantiateEntity(Entity src)
-    {
-        engine::GameObject instance = GameObject::Instantiate(GameObject(src));
-        auto& scripting = instance.GetComponent<Scripting>();
-        scripting.SetUpPlay();
-        scripting.StartPlay();
-        return scripting.GetGameObjectPtr();
-    }
-
-    void DestroyEntity(Entity id)
-    {
-        GameObject obj{ id };
-        obj.Destroy();
-    }
-
-    /*-----------------------------------------------------------------------------*/
-    /* Input Functions for C#                                                      */
-    /*-----------------------------------------------------------------------------*/
-
-    bool IsAnyKeyPressed()
-    {
-        return Input::IsAnyKeyPressed();
-    }
-
-    bool IsAnyKeyHeld()
-    {
-        return Input::IsAnyKeyHeld();
-    }
-
-    bool IsAnyKeyReleased()
-    {
-        return Input::IsAnyKeyReleased();
-    }
-
-    bool IsKeyPressed(int key)
-    {
-        return Input::IsKeyPressed(static_cast<KeyCode>(key));
-    }
-
-    bool IsKeyHeld (int key)
-    {
-        return Input::IsKeyHeld(static_cast<KeyCode>(key));
-    }
-
-    bool IsKeyReleased(int key)
-    {
-        return Input::IsKeyReleased(static_cast<KeyCode>(key));
-    }
-
-    void GetMousePosition(int* x, int* y)
-    {
-        std::pair<int, int> mousePos = Input::GetMousePosition();
-        *x = mousePos.first;
-        *y = mousePos.second;
-    }
-
-    void GetMouseDelta(int* x, int* y)
-    {
-        std::pair<int, int> mouseDelta = Input::GetMouseDelta();
-        *x = mouseDelta.first;
-        *y = mouseDelta.second;
-    }
-
-    bool IsAnyMouseButtonPressed()
-    {
-        return Input::IsAnyMouseButtonPressed();
-    }
-
-    bool IsAnyMouseButtonHeld()
-    {
-        return Input::IsAnyMouseButtonHeld();
-    }
-
-    bool IsAnyMouseButtonReleased()
-    {
-        return Input::IsAnyMouseButtonReleased();
-    }
-
-    bool IsMouseButtonPressed(int button)
-    {
-        return Input::IsMouseButtonPressed(static_cast<MouseCode>(button));
-    }
-
-    bool IsMouseButtonHeld(int button)
-    {
-        return Input::IsMouseButtonHeld(static_cast<MouseCode>(button));
-    }
-
-    bool IsMouseButtonReleased(int button)
-    {
-        return Input::IsMouseButtonReleased(static_cast<MouseCode>(button));
     }
 }
