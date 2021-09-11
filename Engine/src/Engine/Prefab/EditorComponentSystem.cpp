@@ -82,6 +82,11 @@ void EditorComponentSystem::RemoveUsers(Entity prefab , value_reference object)
 	}
 	auto& vector_reference = iter->second;
 	auto& target = std::find(vector_reference.begin(), vector_reference.end(), object.GetEntity());
+	if (target == vector_reference.end())
+	{
+		LOG_TRACE("List is empty");
+		return;
+	}
 	std::swap(*target, vector_reference.back());
 	vector_reference.pop_back();
 	object.SetIsPrefab(false);

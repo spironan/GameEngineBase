@@ -55,15 +55,17 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 	
 	Transform3D& headTrans = head.GetComponent<Transform3D>();
 	
-	engine::SceneManager::GetActiveWorld().DuplicateEntity(GO, head);
 	
 	auto& childList = GO.GetChildren();
 	std::vector<Entity> orignal{GO};
 	std::vector<Entity> current{head};
 	Entity prevParent = head;
 
+	engine::SceneManager::GetActiveWorld().CloneEntityButWithout<engine::PrefabComponent>(GO, head);
+
 	auto& headEditorComponent = head.EnsureComponent<EditorComponent>();
 	headEditorComponent.SetPrefabReference(obj,head);
+
 
 	for (GameObject childs : childList)
 	{
@@ -74,13 +76,11 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 		child.Name() = copyObject.Name();
 		child.Active() = static_cast<bool>(copyObject.Active());
 
-		auto& editorComponent = child.AddComponent<EditorComponent>();
+		engine::SceneManager::GetActiveWorld().CloneEntityButWithout<engine::PrefabComponent>(copyObject, child);
+
+		auto& editorComponent = child.EnsureComponent<EditorComponent>();
 		editorComponent.SetPrefabReference(copyObject.GetEntity(),head);
 		
-
-		{//TODO fix this once its done
-			engine::SceneManager::GetActiveWorld().DuplicateEntity(copyObject, child);
-		}
 
 		const engine::Entity parentid = copyTransform.GetParentId();
 

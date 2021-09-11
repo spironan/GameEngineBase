@@ -13,7 +13,7 @@
 
 #include <istream>
 #include <unordered_map>
-
+#include <vector>
 
 #include "Seralizer.h"
 
@@ -179,20 +179,27 @@ Serializer::Serializer()
 	{
 		LOAD_OBJECT(engine::GameObjectComponent),
 		LOAD_OBJECT(engine::Transform3D),
-		//LOAD_OBJECT(engine::Scripting),
 		LOAD_OBJECT(engine::Collider2D),
 		LOAD_OBJECT(engine::CircleCollider2D),
 		LOAD_OBJECT(engine::BoxCollider2D),
 		LOAD_OBJECT(engine::Sprite2D),
 		LOAD_OBJECT(engine::EditorComponent),
 		LOAD_OBJECT(engine::SceneCamera),
+		LoadGOType
+		{
+		engine::utility::StringHash(rttr::type::get<engine::Scripting>().get_name()),
+			[](rapidjson::Value::Array& arr, engine::GameObject& go)
+			{
+				LoadScripts(arr,go);
+			}
+		}
 	};
 }
 
 engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
 {
 	
-	std::unordered_map<engine::Entity,std::pair<engine::Entity,engine::Entity>> hierarchymap;
+	std::vector<engine::Entity> entList;
 	std::ifstream ifs;
 	ifs.open(prefab);
 	if (!ifs.is_open())
@@ -207,8 +214,8 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 	{
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object{ engine::GameObject::Create{} };
-		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
-		
+		entList.emplace_back(object);
+		object.GetComponent<engine::Transform3D>().SetChildCount(arr[1].GetInt());
 		for (rapidjson::SizeType counter = 2; counter < arr.Size(); ++counter)
 		{
 			std::string temp = arr[counter].GetString();
@@ -223,21 +230,10 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 		object.EnsureComponent<engine::PrefabComponent>();
 		object.EnsureComponent<engine::EditorComponent>().SetShownInEditor(true);//for now set it to true for easier debug
 	}
-	engine::Entity head = 0;
-	for (auto& hierarchyItem : hierarchymap)
-	{
-		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
-		{
-			engine::GameObject temp = static_cast<engine::GameObject>(hierarchymap[hierarchyItem.second.second].first);
-			temp.AddChild(hierarchyItem.second.first);
-		}
-		else
-		{
-			head = hierarchyItem.second.first;
-		}
-	}
+	engine::SceneManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->UseDenseArrayAsHierarchy();
+
 	ifs.close();
-	return head;
+	return entList.front();
 }
 
 void Serializer::SaveObject(const std::string& prefab)
@@ -250,7 +246,6 @@ void Serializer::SaveObject(const std::string& prefab)
 	writer.EndObject();
 	stream.close();
 }
-
 void Serializer::SaveWorld(const std::string& path, const engine::Scene& scene)
 {
 	std::ofstream stream(path,std::ios::trunc);
@@ -265,7 +260,6 @@ void Serializer::SaveWorld(const std::string& path, const engine::Scene& scene)
 	writer.EndObject();
 	stream.close();
 }
-
 void Serializer::SaveWorld(const std::string& path)
 {
 	std::ofstream stream(path, std::ios::trunc);
@@ -280,6 +274,7 @@ void Serializer::SaveWorld(const std::string& path)
 	writer.EndObject();
 	stream.close();
 }
+
 void Serializer::LoadWorld(const std::string& path)
 {
 	//need to add the ability to preload the other world
@@ -295,8 +290,9 @@ void Serializer::LoadWorld(const std::string& path)
 	{
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object = engine::SceneManager::GetActiveScene().CreateGameObject();
-		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
-		
+		//hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
+		object.GetComponent<engine::Transform3D>().SetChildCount(arr[1].GetInt());
+
 		for (rapidjson::SizeType counter = 2; arr.Size(); ++counter)
 		{
 			m_LoadGameObjectCallbacks
@@ -304,20 +300,8 @@ void Serializer::LoadWorld(const std::string& path)
 			(arr[++counter].GetArray(), object);
 		}
 	}
+	engine::SceneManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->UseDenseArrayAsHierarchy();
 
-	for (auto& hierarchyItem : hierarchymap)
-	{
-		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
-		{
-			engine::GameObject temp = static_cast<engine::GameObject>(hierarchymap[hierarchyItem.second.second].first);
-			temp.AddChild(hierarchyItem.second.first);
-		}
-		else
-		{
-			//root
-			engine::GameObject(engine::SceneManager::GetActiveRoot()).AddChild(hierarchyItem.second.first);
-		}
-	}
 	ifs.close();
 }
 void Serializer::LoadWorld(const std::string& path, const engine::Scene& scene)
@@ -335,17 +319,8 @@ void Serializer::LoadWorld(const std::string& path, const engine::Scene& scene)
 	{
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object = scene.CreateGameObject();
-		hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
-
-		/*for (rapidjson::SizeType counter = 2; arr.Size(); ++counter)
-		{
-			auto temp = m_LoadGameObjectCallbacks.find(engine::utility::StringHash(arr[counter].GetString()));
-			if (temp != m_LoadGameObjectCallbacks.end())
-			{
-				temp->second(arr[++counter].GetArray(), object);
-			}
-		}*/
-
+		//hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
+		object.GetComponent<engine::Transform3D>().SetChildCount(arr[1].GetInt());
 		for (rapidjson::SizeType counter = 2; counter < arr.Size(); ++counter)
 		{
 			std::string temp = arr[counter].GetString();
@@ -357,20 +332,7 @@ void Serializer::LoadWorld(const std::string& path, const engine::Scene& scene)
 				iter->second(arr[counter].GetArray(), object);
 		}
 	}
-
-	for (auto& hierarchyItem : hierarchymap)
-	{
-		if (hierarchymap.find(hierarchyItem.second.second) != hierarchymap.end())
-		{
-			engine::GameObject temp = static_cast<engine::GameObject>(hierarchymap[hierarchyItem.second.second].first);
-			temp.AddChild(hierarchyItem.second.first);
-		}
-		else
-		{
-			//root
-			engine::GameObject(engine::SceneManager::GetActiveRoot()).AddChild(hierarchyItem.second.first);
-		}
-	}
+	engine::SceneManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->UseDenseArrayAsHierarchy();
 	ifs.close();
 }
 void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
@@ -392,7 +354,7 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 	writer.Key(std::to_string(go.GetEntity()).c_str());
 	writer.StartArray();
 	writer.Uint(go.GetEntity());
-	writer.Uint(go.GetComponent<engine::Transform3D>().GetParentId());//parent id first
+	writer.Int(go.GetComponent<engine::Transform3D>().GetChildCount());//parent id first
 
 	if (go.HasComponent<engine::GameObjectComponent>())
 		SaveComponent<engine::GameObjectComponent>(go.GetComponent<engine::GameObjectComponent>(), writer);

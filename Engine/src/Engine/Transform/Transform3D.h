@@ -74,7 +74,7 @@ namespace engine
         void SetRotationAxis(oom::vec3 const& rotAxis)  { m_dirty = true; m_rotationAxis = rotAxis; }
         void SetRotationAngle(float angle)              { m_dirty = true; m_rotationAngle = oom::radians(angle); }
         void SetScale(oom::vec3 const& scale)           { m_dirty = true; m_scale = scale; }
-        
+		void SetChildCount(int child_count)				{ m_childCount = child_count; }
         oom::mat4 const& GetConversionMatrix() { return m_conversionMatrix; }
 
         /****************************************************************************//*!
