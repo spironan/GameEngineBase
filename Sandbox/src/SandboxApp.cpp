@@ -24,11 +24,6 @@ Technology is prohibited.
 #include "CoreLayers/EditorLayer.h"
 //Scripting Layer
 #include "CoreLayers/ScriptingLayer.h"
-// Official Scene Layers
-#include "CoreLayers/EditorControllerLayer.h"
-#include "CoreLayers/GameSceneLayer.h"
-#include "CoreLayers/SimulationSceneLayer.h"
-//#include "CoreLayers/ControllerLayer.h"
 
 // for debugging
 #include "TestLayers/InputDebugLayer.h"
@@ -85,21 +80,19 @@ public:
         //// For Input Debugging
         //PushOverlay(std::make_shared<InputDebugLayer>());
 
+        // Manually turn on either one for now.
+        
+        // Debug Layers! Dont mess with the order!
+        //PushOverlay(std::make_shared<DebugLayer>(*this));
+
         // Official Original Layer
         // Editor Layer
         PushOverlay(std::make_shared<EditorLayer>(*this));
         // Scripting Layer
         PushOverlay(std::make_shared<ScriptingLayer>());
-        // -- editor controller layer
-        PushOverlay(std::make_shared<EditorControllerLayer>());
-        // -- actual Editor Back-end
-        //PushLayer(std::make_shared<ControllerLayer>(*this));
-        //PushOverlay(std::make_shared<GameSceneLayer>());
         // Set Default EDITOR Camera
         //editorController->SetEditorCamera();
 
-        // Debug Layers!
-        PushOverlay(std::make_shared<DebugLayer>(*this));
 
         // one actual layer - gameplay logic
         // one ui layer - game ui

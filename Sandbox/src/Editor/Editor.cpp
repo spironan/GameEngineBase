@@ -40,6 +40,12 @@ std::pair<std::string, void* > Editor::s_copyPayload = {"",nullptr };
 
 engine::BufferAllocator Editor::s_payloadBufferAllocator(engine::MemoryManager::NewBufferAllocator(2048, 8));
 
+engine::EventCallback<> Editor::PlayButton;
+engine::EventCallback<> Editor::PauseButton;
+engine::EventCallback<> Editor::UnpauseButton;
+engine::EventCallback<> Editor::StopButton;
+engine::EventCallback<> Editor::NextButton;
+
 Editor::Editor(const std::string& root)
 {	
 	s_testList.reserve(50);

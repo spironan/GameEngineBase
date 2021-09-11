@@ -16,6 +16,9 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "GameSceneLayer.h"
 
+//temporary code
+const char* filepath = "E:/Digipen/SchoolWork/GAM200/GameEngineBase/bin/Debug-OpenGL-windows-x86_64/Sandbox/scene/test.scn";
+
 GameSceneLayer::GameSceneLayer()
     : SceneBaseLayer{ "Game Scene Layer",""}
 {
@@ -23,6 +26,10 @@ GameSceneLayer::GameSceneLayer()
 
 void GameSceneLayer::Init()
 {
+    //THIS SHOULD BE AN ATTEMPT LOAD AT STARTUP, IF FAILS CREATE NEW
+    if(std::filesystem::exists(filepath))
+        m_scene.LoadFromFile(filepath);
+
     //Register All Systems
     auto& prefabSystem = GetWorld()->RegisterSystem<engine::PrefabComponentSystem>();
     auto& EditorSystem = GetWorld()->RegisterSystem<engine::EditorComponentSystem>();
@@ -39,6 +46,11 @@ void GameSceneLayer::Init()
     sprite.SetTexture(tex);
     testObject.Transform().Scale() = { 50, 50, 1 };
 
+}
+
+void GameSceneLayer::Exit()
+{
+    SaveSceneToFile(filepath);
 }
 
 void GameSceneLayer::OnUpdate(engine::Timestep dt)

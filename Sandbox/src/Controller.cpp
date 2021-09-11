@@ -23,11 +23,23 @@ void Controller::Simulate()
 
 void Controller::Pause()
 {
+    std::reinterpret_pointer_cast<SimulationSceneLayer>(m_simulateScene)->PauseSimulation();
+}
 
+void Controller::UnPause()
+{
+    std::reinterpret_pointer_cast<SimulationSceneLayer>(m_simulateScene)->UnpauseSimulation();
+}
+
+void Controller::Next()
+{
+    std::reinterpret_pointer_cast<SimulationSceneLayer>(m_simulateScene)->ProcessFrame(1);
 }
 
 void Controller::Stop()
 {
+    if (m_currentScene == m_gameScene) return;
+
     m_application.PopOverlay(m_currentScene);
     m_currentScene = m_gameScene;
     m_application.PushOverlay(m_currentScene);

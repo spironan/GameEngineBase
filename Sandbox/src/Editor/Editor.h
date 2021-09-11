@@ -83,6 +83,12 @@ public:
 	static std::pair<std::string, void* > s_copyPayload;
 	static engine::BufferAllocator s_payloadBufferAllocator;
 
+
+	static engine::EventCallback<> PlayButton;
+	static engine::EventCallback<> PauseButton;
+	static engine::EventCallback<> UnpauseButton;
+	static engine::EventCallback<> StopButton;
+	static engine::EventCallback<> NextButton;
 	
 private:
 

@@ -121,7 +121,7 @@ protected:
 protected:
     engine::GameObject m_defaultCamera;
 
-private:
+//private:
     engine::Scene& m_scene;
     engine::World* m_world = nullptr;
 };

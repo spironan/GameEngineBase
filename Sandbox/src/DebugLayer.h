@@ -25,18 +25,8 @@ public:
         LOG_TRACE("SUCCESSFULLY LOADED DEBUG LAYER");
     }
 
-    virtual ~DebugLayer() final
-    {
-        /*for (auto& debugLayer : debugLayers)
-            if (debugLayer != currentLayer)
-                delete debugLayer;*/
-    }
-
     void OnAttach() final override
     {
-        //// NON DEBUG LAYER JUST FOR TESTING PURPOSES
-        //debugLayers.emplace_back(new GameSceneLayer());
-
         // Purposeful breaking if uncommented out and choosing to run it.
         debugLayers.emplace_back(std::make_shared<GameObjectTestLayer>());
         debugLayers.emplace_back(std::make_shared<TransformTestLayer>());
@@ -45,20 +35,11 @@ public:
         debugLayers.emplace_back(std::make_shared<RenderingTestLayer>());
         debugLayers.emplace_back(std::make_shared<ScriptingTestLayer>());
         
-        if (debugLayers.size() > 0)
-        {
-            // Immediately set the first layer to be loaded.
-            currentLayer = debugLayers.front();
-            application.PushOverlay(currentLayer);
-        }
-    }
-
-    void OnUpdate(engine::Timestep dt) final override
-    {
-        //if (currentLayer)
+        //if (debugLayers.size() > 0)
         //{
-        //    engine::SceneManager::SetActiveScene(currentLayer->GetID());
-        //    //engine::WorldManager::SetActiveWorld(currentLayer->getworld()->get)
+        //    // Immediately set the first layer to be loaded.
+        //    currentLayer = debugLayers.front();
+        //    application.PushOverlay(currentLayer);
         //}
     }
 

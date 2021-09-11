@@ -5,6 +5,9 @@
 #include <iostream>
 #include "Engine/Scene/SceneManager.h"
 #include "Engine/Scripting/ScriptSystem.h"
+
+#include "../Editor.h"
+
 void ToolbarView::Show()
 {
 	ImGui::Begin("Toolbar",NULL,ImGuiWindowFlags_NoDecoration);
@@ -21,11 +24,21 @@ void ToolbarView::Show()
 	}
 	{
 		ImGui::BeginChild("ChildToolbar2", { 0,0 });
-		ImGui::Button("##2Play", { btn_width,btn_height });
+		if (ImGui::Button("Play", { btn_width,btn_height }))
+		{
+			Editor::PlayButton();
+		};
 		ImGui::SameLine();
-		ImGui::Button("##2Play2", { btn_width,btn_height });
+		if (ImGui::Button("Pause", { btn_width,btn_height }))
+		{
+			Editor::PauseButton();
+		};
 		ImGui::SameLine();
-		ImGui::Button("##2Play3", { btn_width,btn_height });
+		if (ImGui::Button("Stop", { btn_width,btn_height }))
+		{
+			Editor::StopButton();
+		};
+
 		ImGui::EndChild(); 
 	}
 	{

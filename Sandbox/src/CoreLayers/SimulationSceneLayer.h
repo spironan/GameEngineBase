@@ -20,6 +20,10 @@ Technology is prohibited.
 
 class SimulationSceneLayer : public SceneBaseLayer
 {
+private:
+    bool m_isPause = false;
+    bool m_stepMode = false;
+    int m_framesLeft = 0;
 public:
     SimulationSceneLayer();
 
@@ -29,7 +33,12 @@ public:
 
     virtual void OnImGuiRender() override;
 
+    void ProcessFrame(int count);
+    
     void StartSimulation();
-
     void StopSimulation();
+    
+    void PauseSimulation();
+    void UnpauseSimulation();
+
 };

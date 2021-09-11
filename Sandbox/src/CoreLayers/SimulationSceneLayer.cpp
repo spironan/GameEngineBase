@@ -16,6 +16,7 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "SimulationSceneLayer.h"
 
+
 SimulationSceneLayer::SimulationSceneLayer()
     : SceneBaseLayer{ "Simluation Scene Layer" }
 {
@@ -23,6 +24,12 @@ SimulationSceneLayer::SimulationSceneLayer()
 
 void SimulationSceneLayer::Init()
 {
+    //temporary code
+    const char* filepath = "E:/Digipen/SchoolWork/GAM200/GameEngineBase/bin/Debug-OpenGL-windows-x86_64/Sandbox/scene/test.scn";
+    ENGINE_ASSERT(std::filesystem::exists(filepath)
+        , "this is testing code, comment out for now or use your own file path");
+    m_scene.LoadFromFile(filepath);
+
     //Register All Systems
     auto& prefabSystem = GetWorld()->RegisterSystem<engine::PrefabComponentSystem>();
     auto& EditorSystem = GetWorld()->RegisterSystem<engine::EditorComponentSystem>();
@@ -41,6 +48,10 @@ void SimulationSceneLayer::Exit()
 
 void SimulationSceneLayer::OnUpdate(engine::Timestep dt)
 {
+    if (m_isPause) return;
+    if (m_stepMode && m_framesLeft == 0) return;
+    --m_framesLeft;
+
     //Update All Systems
     auto ss = GetWorld()->GetSystem<engine::ScriptSystem>();
     ss->InvokeFunctionAll("Update", 1, (float)dt);
@@ -53,10 +64,29 @@ void SimulationSceneLayer::OnImGuiRender()
 {
 }
 
+void SimulationSceneLayer::ProcessFrame(int count)
+{
+    ENGINE_ASSERT_MSG(count <= 0, "frames should be lesser at least 1");
+
+    m_stepMode = true;
+    m_framesLeft = count;
+}
+
 void SimulationSceneLayer::StartSimulation()
 {
     GetWorld()->GetSystem<engine::ScriptSystem>()->StartPlay();
 }
+
+void SimulationSceneLayer::PauseSimulation()
+{
+    m_isPause = true;
+}
+
+void SimulationSceneLayer::UnpauseSimulation()
+{
+    m_isPause = false;
+}
+
 
 void SimulationSceneLayer::StopSimulation()
 {
