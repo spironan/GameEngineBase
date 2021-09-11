@@ -124,7 +124,16 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	
 	static char buf[100];
 	strcpy(buf,object.Name().data());
-	ImGui::Image(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab")->Get_IMTEXTURE_ID(), {50,50});
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+	if (ImGui::ImageButton(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab")->Get_IMTEXTURE_ID(), { 50,50 }))
+	{
+		rttr::instance inst (engine::SceneManager::GetActiveWorld().GetComponent<engine::Transform3D>(object));
+		engine::Transform3D& trans = engine::SceneManager::GetActiveWorld().GetComponent<engine::Transform3D>(object);
+		auto& prop = trans.get_type().get_properties();
+		prop[0].set_value(inst, oom::vec3{ -100,-100,-100 });
+		std::cout << inst.get_type().get_name() << std::endl;
+	}
+	ImGui::PopStyleColor();
 	ImGui::SameLine();
 
 	ImGui::BeginGroup();

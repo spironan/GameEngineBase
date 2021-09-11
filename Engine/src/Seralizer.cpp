@@ -108,37 +108,37 @@ std::map<rttr::type::type_id, Serializer::LoadComponentCallback> Serializer::m_L
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_INT],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{prop.set_value(variant,data.GetInt());}
 	},
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_FLOAT],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{prop.set_value(variant,data.GetFloat()); }
 	},
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_STRING],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{prop.set_value(variant,data.GetString()); }
 	},
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_BOOL],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{prop.set_value(variant,data.GetBool()); }
 	},
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_ENTITY],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{prop.set_value(variant,data.GetUint()); }
 	},
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC2],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{
 			auto& arr = data.GetArray();
 			oom::vec2 vector = { arr[0].GetFloat(),arr[1].GetFloat() };
@@ -148,7 +148,7 @@ std::map<rttr::type::type_id, Serializer::LoadComponentCallback> Serializer::m_L
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_VEC3],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{
 			auto& arr = data.GetArray();
 			oom::vec3 vector = { arr[0].GetFloat(),arr[1].GetFloat(),arr[2].GetFloat() };
@@ -158,7 +158,7 @@ std::map<rttr::type::type_id, Serializer::LoadComponentCallback> Serializer::m_L
 	LoadType
 	{
 		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_MAT4],
-		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::variant& variant)
+		[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
 		{
 			auto& arr = data.GetArray();
 			oom::mat4 mat = {	arr[0].GetFloat(),arr[1].GetFloat(),arr[2].GetFloat(),arr[3].GetFloat(),

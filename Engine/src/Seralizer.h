@@ -18,7 +18,7 @@ public:
 
 
 	using SaveComponentCallback = std::function<void(rttr::variant&, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>&)> ;
-	using LoadComponentCallback = std::function<void(rapidjson::Value::ValueType&,rttr::property&, rttr::variant&)>;
+	using LoadComponentCallback = std::function<void(rapidjson::Value::ValueType&,rttr::property&, rttr::instance&)>;
 	using LoadGameObjectCallback = std::function<void(rapidjson::Value::Array&, engine::GameObject&)>;
 
 	using ValueType = std::pair<rttr::type::type_id, SaveComponentCallback>;
@@ -90,7 +90,7 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr, Component& componen
 	rttr::type type = rttr::type::get<Component>();
 	auto& properties = type.get_properties();
 	rapidjson::SizeType counter = 0;
-	rttr::variant var = component;
+	rttr::instance var(component);
 	for (auto& element : properties)
 	{
 		if (element.is_readonly())
@@ -102,5 +102,4 @@ void Serializer::LoadComponent(rapidjson::Value::Array& arr, Component& componen
 		std::cout << typeid(Component).name() <<counter << std::endl;
 		++counter;
 	}
-	component = var.get_value<Component>();
 }
