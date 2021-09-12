@@ -124,7 +124,6 @@ namespace engine
 			// Asset Registry does not exist. First time running program?
 			return;
 		}
-		return;
 		//LOG_ENGINE_INFO("project dir {0}", Project::GetProjectDirectory().string());
 
 		//create dir
@@ -157,9 +156,12 @@ namespace engine
 			for (rapidjson::Value::ConstMemberIterator handle = assetsIter->MemberBegin(); handle != assetsIter->MemberEnd(); ++handle)
 			{
 				meta.Handle = std::stoul(handle->name.GetString());
-				auto& info = handle->value.GetArray();
-				meta.Type = utility::AssetTypeFromString(info[0].GetString());
-				meta.FilePath = info[1].GetString();				
+
+				auto& info = handle->value;
+				
+				meta.Type = utility::AssetTypeFromString(info.FindMember("Type")->value.GetString());
+				meta.FilePath = info.FindMember("Filepath")->value.GetString();
+				//meta.FilePath = info[1].GetString();				
 			}
 			m_registry[meta.Handle] = meta;
 
@@ -190,7 +192,7 @@ namespace engine
 
 		//find each "node" of allAssets. This should be the metadata so we should have the filepath
 
-			// If we cannot find filepath, most likely misplaced file. Loop through each token of their path to find best match
+		// If we cannot find filepath, most likely misplaced file. Loop through each token of their path to find best match
 
 		// Report back any failed loading attempts
 
@@ -239,21 +241,16 @@ namespace engine
 			writer.StartObject();
 			writer.Key(std::to_string(handle).c_str());
 
-			writer.StartArray();
 			//setting the format here lets us have nice indentation
 			//writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatSingleLineArray);
-
 			writer.StartObject();
 			writer.Key("Type");
 			writer.String(utility::AssetTypeToString(asset.type)); // Type
-			writer.EndObject();
-
-			writer.StartObject();
+		
 			writer.Key("Filepath");
 			writer.String(asset.filePath.c_str()); // path
 			writer.EndObject();
 
-			writer.EndArray();
 			writer.EndObject();
 			//writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatDefault);
 		}
