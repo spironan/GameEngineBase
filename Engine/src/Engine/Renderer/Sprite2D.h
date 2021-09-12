@@ -68,7 +68,7 @@ namespace engine
          
         \return   rendering texture ID
         *//**********************************************************************************/
-        ooRendererID GetTexture() { return m_texture; }
+        ooRendererID GetTextureRaw() { return m_texture?m_texture->GetID(): 0 ; }
 
         /*********************************************************************************//*!
         \brief    Gets the colour tint of the texture
@@ -80,20 +80,6 @@ namespace engine
         /*-----------------------------------------------------------------------------*/
         /* Setter Functions                                                            */
         /*-----------------------------------------------------------------------------*/
-
-        /*********************************************************************************//*!
-        \brief    Sets the texture ID using a raw texture value
-         
-        \param    textureID raw rendering texture value
-        *//**********************************************************************************/
-        void SetTexture(ooRendererID textureID);
-
-        /*********************************************************************************//*!
-        \brief    Sets the texture ID using a texture asset
-
-        \param    Texture asset
-        *//**********************************************************************************/
-        void SetTexture(const Texture2D& tex);
 
          /*********************************************************************************//*!
         \brief    Sets the texture ID using a texture2d asset
@@ -108,6 +94,13 @@ namespace engine
         \param    Texture asset
         *//**********************************************************************************/
         void SetTexture(std::shared_ptr<Texture> tex);
+
+          /*********************************************************************************//*!
+        \brief    Sets the texture ID using a texture asset
+
+        \param    Texture asset
+        *//**********************************************************************************/
+        void SetTexture(AssetHandle tex);
 
         /*********************************************************************************//*!
         \brief    Sets the colour tint
@@ -133,11 +126,13 @@ namespace engine
         /* Member Functions                                                            */
         /*-----------------------------------------------------------------------------*/
 
+        AssetHandle GetHandle() const { return m_texture->GetHandle(); }
+
         RTTR_ENABLE();
 
     private:
 
-        uint32_t m_texture{ std::numeric_limits<uint32_t>::max() };
+        std::shared_ptr<Texture> m_texture;
 
         oom::vec4 m_color{1.0f,1.0f,1.0f,1.0f};
 

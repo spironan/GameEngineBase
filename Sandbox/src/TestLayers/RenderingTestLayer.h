@@ -71,7 +71,7 @@ public:
 
         m_child = CreateGameObject();
         auto& childSpr = m_child.AddComponent<engine::Sprite2D>();
-        childSpr.SetTexture(tex->GetID());
+        childSpr.SetTexture(ogreHandle);
         m_child.Transform().Scale() = { scaling, scaling, 1.0f };
 
         m_gos.emplace_back(m_child);
@@ -88,12 +88,11 @@ public:
                 engine::GameObject ent = CreateGameObject();
                 m_gos.emplace_back(ent);
 
-
                 ent.Transform().Position() = {  s +i* s - minx, s+ j* s - minx, 0.0f };
                 ent.Transform().RotationAngle() += i+j*10;
                 ent.Transform().Scale() = { 10 , 10, 1.0f };
                 auto& objSprite = ent.AddComponent<engine::Sprite2D>();
-                objSprite.SetTexture(tex->GetID());
+                objSprite.SetTexture(ogreHandle);
                 //ent.AddComponent<Collider2D>().SetNarrowPhaseCollider(ColliderType::BOX);
                 //ent.AddComponent<Rigidbody2D>();
                 //auto& col = ent.AddComponent<BoxCollider2D>();

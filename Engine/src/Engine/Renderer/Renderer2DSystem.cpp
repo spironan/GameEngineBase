@@ -74,7 +74,7 @@ namespace engine
 			Renderer2D::DrawRotatedQuad(transform.GetGlobalPosition(),
 										transform.GetGlobalScale(),
 										transform.GetGlobalRotationDeg(),
-										sprite.GetTexture(), 1.0f,
+										sprite.GetTextureRaw(), 1.0f,
 										sprite.GetColor());
 		}
 	}

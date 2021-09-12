@@ -17,6 +17,7 @@ Technology is prohibited.
 #include <functional>
 #include <filesystem>
 
+#include "Engine/Project/Project.h"
 #include "AssetTypes.h"
 #include "Asset.h"
 #include "Engine/Asset/AssetExtensions.h"
@@ -25,15 +26,34 @@ Technology is prohibited.
 #include "Engine/Asset/AssetSerializer.h"
 #include "Engine/Asset/AssetImporter.h"
 #include "Utility/Hash.h"
+
 namespace engine
 {
+	struct AssetManagerConfig
+	{
+		std::string AssetDirectory = "Assets/";
+		std::string AssetRegistryPath = "Assets/AssetRegistry.oor";
+
+		std::string MeshPath = "Assets/Meshes/";
+		std::string MeshSourcePath = "Assets/Meshes/Source/";
+	};
+
+
 	class AssetManager
 	{
 	public:
 
 		static void Init();
+		static void Shutdown();
 
+		// Import an asset into the project. This creates an AssetMetadata of the asset.
 		static AssetHandle ImportAsset(const std::string& filepath);
+
+		// This loads the entire asset registry inside our project folder.
+		// Information includes the existing metadata that was serialized previously
+		// ALWAYS LOAD THE REGISTRY BEFORE PROCESSING DIRECTORY
+		static void LoadAssetRegistry();
+		static void SerializeRegistry();
 
 		//static bool ReloadData(AssetHandle assetHandle);
 
@@ -94,7 +114,7 @@ namespace engine
 			{
 				if (iter.second->GetAssetType() == T::GetStaticType())
 				{
-					all.push_back(iter.second);
+					all.push_back(std::reinterpret_pointer_cast<T>(iter.second));
 				}
 			}
 			return all;

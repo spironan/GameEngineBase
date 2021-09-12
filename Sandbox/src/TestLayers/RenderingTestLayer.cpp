@@ -25,6 +25,9 @@ void RenderingTestLayer::OnEvent(engine::Event& e)
 
 void RenderingTestLayer::OnImGuiRender()
 {
+
+	GetWorld()->GetSystem<engine::Renderer2DSystem>()->Update();
+
   //  fb = engine::FramebufferPool::Get("2D_Framebuffer")->GetImage()->GetID();
 
   //  engine::Window& x = engine::Application::Get().GetWindow();

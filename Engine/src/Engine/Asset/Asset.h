@@ -146,7 +146,7 @@ ogre.getID();
 // Maintains referential integrity. (e.g deleting a single 3DModel should never delete a texture which might be an atlas)
 
 //in gameplay code
-auto &ogreTexDiffuse = TextureAssetManager::GetTexture("ogreTex_diffuse");
+auto &ogreTexDiffuse = TextureAssetManager::GetTextureRaw("ogreTex_diffuse");
 
 // Asset
 //  tag : sound, texture, evironment, mesh

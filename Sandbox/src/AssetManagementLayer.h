@@ -19,10 +19,19 @@ namespace engine
 {
 
 class AssetManagementLayer : public Layer{
-
-	virtual void OnAttach() override 
+public:
+	AssetManagementLayer()
 	{
 		AssetManager::Init();
+	}
+	virtual void OnAttach() override 
+	{
+		
+	}
+
+	virtual void OnDetach() override
+	{
+		AssetManager::Shutdown();
 	}
 
 };

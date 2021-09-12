@@ -13,6 +13,7 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "pch.h"
 #include "Sprite2D.h"
+#include "Engine/Asset/AssetsManager.h"
 
 #include "Engine/ECS/GameObject.h"
 
@@ -25,36 +26,31 @@ namespace engine
     {
         using namespace rttr;
         registration::class_<Sprite2D>("Sprite2D")
-        .property("Texture", &Sprite2D::GetTexture, select_overload<void(ooRendererID)>(&Sprite2D::SetTexture))
+        .property("Texture", &Sprite2D::GetHandle, select_overload<void(AssetHandle)>(&Sprite2D::SetTexture))
         .property("Colour", &Sprite2D::GetColor, select_overload<void(oom::vec4)>(&Sprite2D::SetColor));
     }
 
 
 Sprite2D::Sprite2D(Entity _entityID, bool _active): 
     Component{ _entityID, _active },
-    m_texture{ std::numeric_limits<uint32_t>::max() },
     m_color{ 1.0f,1.0f,1.0f,1.0f }
 {
 }
 
-void Sprite2D::SetTexture(ooRendererID textureID)
-{
-     m_texture = textureID; 
-}
-
-void Sprite2D::SetTexture(const Texture2D& tex)
-{
-    m_texture = tex.GetID();
-}
 
 void Sprite2D::SetTexture(std::shared_ptr<Texture2D> tex)
 {
-    m_texture = tex->GetID();
+    m_texture = tex;
 }
 
 void Sprite2D::SetTexture(std::shared_ptr<Texture> tex)
 {
-    m_texture = tex->GetID();
+    m_texture = tex;
+}
+
+void Sprite2D::SetTexture(AssetHandle tex)
+{
+    m_texture = AssetManager::GetAsset<Texture>(tex);
 }
 
 void Sprite2D_GetColor(Entity instanceID, float* r, float* g, float* b, float* a)
