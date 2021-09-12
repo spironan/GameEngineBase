@@ -19,7 +19,7 @@ namespace Utils
 
 	static void CreateTextures(bool multisampled, ooRendererID* outID, uint32_t count)
 	{
-		glCreateTextures(TextureTarget(multisampled), 1, outID);
+		glCreateTextures(TextureTarget(multisampled), 1, outID->data());
 	}
 
 	static void BindTexture(bool multisampled, ooRendererID id)
@@ -162,11 +162,11 @@ void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height, bool forceRecrea
 
 	if (m_RendererID)
 	{
-		glDeleteFramebuffers(1, &m_RendererID);
+		glDeleteFramebuffers(1, m_RendererID.data());
 		m_ColorAttachments.clear();
 	}
 
-	glCreateFramebuffers(1, &m_RendererID);
+	glCreateFramebuffers(1, m_RendererID.data());
 	glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
 	if (m_ColorAttachmentFormats.size())

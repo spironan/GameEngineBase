@@ -30,7 +30,7 @@ void OpenGLImage2D::Generate()
 {
 	Release();
 
-	glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+	glCreateTextures(GL_TEXTURE_2D, 1, m_RendererID.data());
 
 	GLenum internalFormat = Utils::OpenGLImageInternalFormat(m_Specification.Format);
 	uint32_t mipCount = Utils::CalculateMipCount(m_Width, m_Height);
@@ -49,14 +49,14 @@ void OpenGLImage2D::Release()
 {
 	if (m_RendererID)
 	{
-		glDeleteTextures(1, &m_RendererID);
+		glDeleteTextures(1, m_RendererID.data());
 		m_RendererID = 0;
 	}
 }
 
 void OpenGLImage2D::CreateSampler(TextureProperties properties)
 {
-	glCreateSamplers(1, &m_SamplerRendererID);
+	glCreateSamplers(1, m_SamplerRendererID.data());
 	glSamplerParameteri(m_SamplerRendererID, GL_TEXTURE_MIN_FILTER, Utils::OpenGLSamplerFilter(properties.SamplerFilter, properties.GenerateMips));
 	glSamplerParameteri(m_SamplerRendererID, GL_TEXTURE_MAG_FILTER, Utils::OpenGLSamplerFilter(properties.SamplerFilter, false));
 	glSamplerParameteri(m_SamplerRendererID, GL_TEXTURE_WRAP_R, Utils::OpenGLSamplerWrap(properties.SamplerWrap));

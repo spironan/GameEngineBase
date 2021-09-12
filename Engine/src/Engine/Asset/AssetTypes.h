@@ -13,13 +13,37 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
+#include <glad/glad.h>
 #include <memory>
 #include "Engine/Core/Assert.h"
 
 
+
+
 namespace engine
 {
-	using ooRendererID = uint32_t;
+
+	
+	/**
+	 * \brief Custom type for RTTR compliance.
+	 * 
+	 */
+	struct ooRendererID
+	{
+		uint32_t id;
+		
+		ooRendererID() :id{} {}
+		ooRendererID(uint32_t i) :id{ i } {}
+		ooRendererID(const ooRendererID& r) :id{ r.id } {}
+		ooRendererID& operator=(const ooRendererID& r) { id = r.id; return *this; }
+
+		bool operator==(const ooRendererID& r) { return id == r.id; }
+		bool operator<(const ooRendererID& r) { return id < r.id; }
+		operator uint32_t(){ return id; }
+		operator uint32_t()const{ return id; }
+		uint32_t& operator=(uint32_t r) {return id = r; }
+		uint32_t* data() { return &id; }
+	};
 
 
 	enum class AssetType : uint16_t
@@ -57,4 +81,17 @@ namespace engine
 
 	}
 	
+}
+
+// STD hash for compatiblity with unordered_map
+namespace std
+{
+	template <>
+	struct hash<engine::ooRendererID>
+	{
+		std::size_t operator()(const engine::ooRendererID& k) const
+		{
+			return k.id;
+		}
+	};
 }
