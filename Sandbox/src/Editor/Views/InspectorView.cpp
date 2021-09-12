@@ -6,7 +6,7 @@
 #include "../ActionStack/EditorActionStack.h"
 #include "../ActionStack/InspectorActionBehaviour.h"
 #include "../ActionStack/ScriptActionStack.h"
-
+#include "Editor/Widgets/AssetBrowserView.h"
 ////engine code
 #include "Engine.h"
 //libs
@@ -119,19 +119,16 @@ void InspectorView::AddComponentButton()
 void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 {
 	auto& goComponent = object.GetComponent<engine::GameObjectComponent>();
+	auto& editorComponent = object.GetComponent<engine::EditorComponent>();
 	auto& propName = goComponent.get_type().get_property("Name");
 	auto& propActive = goComponent.get_type().get_property("Active");
 	
 	static char buf[100];
 	strcpy(buf,object.Name().data());
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
-	if (ImGui::ImageButton(engine::AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab")->Get_IMTEXTURE_ID(), { 50,50 }))
+	if (ImGui::ImageButton(engine::AssetManager::GetAsset<engine::Texture>(editorComponent.GetTexture())->Get_IMTEXTURE_ID(), { 50,50 }))
 	{
-		rttr::instance inst (engine::SceneManager::GetActiveWorld().GetComponent<engine::Transform3D>(object));
-		engine::Transform3D& trans = engine::SceneManager::GetActiveWorld().GetComponent<engine::Transform3D>(object);
-		auto& prop = trans.get_type().get_properties();
-		prop[0].set_value(inst, oom::vec3{ -100,-100,-100 });
-		std::cout << inst.get_type().get_name() << std::endl;
+		AssetBrowserView::OpenAssetBroswer(editorComponent.get_type().get_property("Object Icons"), editorComponent);
 	}
 	ImGui::PopStyleColor();
 	ImGui::SameLine();

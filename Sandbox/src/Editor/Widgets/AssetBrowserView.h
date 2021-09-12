@@ -1,12 +1,15 @@
 #pragma once
-#include "rttr/instance.h"
 #include "rttr/property.h"
+#include "rttr/type.h"
+#include "rttr/variant.h"
+#include "rttr/variant_array_view.h"
+#include "rttr/instance.h"
 #include "Engine.h"
 class AssetBrowserView
 {
 public:
 	AssetBrowserView() = default;
-	~AssetBrowserView() = default;
+	~AssetBrowserView() { delete s_assetReference; };
 
 	void Show();
 	template<typename Component>
@@ -22,7 +25,7 @@ private:
 		rttr::property prop;
 		rttr::instance inst;
 	};
-	static AssetReferencePoint s_assetReference;
+	static AssetReferencePoint* s_assetReference;
 	static bool s_showView;
 };
 
@@ -30,6 +33,6 @@ template<typename Component>
 inline void AssetBrowserView::OpenAssetBroswer(rttr::property& prop, Component& component)
 {
 	s_showView = true;
-	s_assetReference.inst(component);
-	s_assetReference.prop = prop;
+	delete s_assetReference;
+	s_assetReference = new AssetReferencePoint(prop, rttr::instance(component));
 }

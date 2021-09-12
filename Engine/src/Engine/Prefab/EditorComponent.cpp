@@ -3,7 +3,7 @@
 #include "EditorComponent.h"
 #include "EditorComponentSystem.h"
 #include "Engine/Scene/SceneManager.h"
-
+#include "Engine/Asset/AssetsManager.h"
 namespace engine
 {
 
@@ -11,10 +11,11 @@ RTTR_REGISTRATION
 {
 	using namespace rttr;
 registration::class_<EditorComponent>("Editor Component")
-	.property_readonly("Is Prefab",&EditorComponent::IsPrefab)
-	.property_readonly("Is Dirty" ,&EditorComponent::IsPrefabDirty)
-	.property_readonly("Is Shown", &EditorComponent::GetIsShownInEditor)
-	.property_readonly("Prefab Reference",&EditorComponent::GetPrefabReference);
+.property_readonly("Is Prefab", &EditorComponent::IsPrefab)
+.property_readonly("Is Dirty", &EditorComponent::IsPrefabDirty)
+.property_readonly("Is Shown", &EditorComponent::GetIsShownInEditor)
+.property_readonly("Prefab Reference", &EditorComponent::GetPrefabReference)
+.property("Object Icons", &EditorComponent::GetTexture, &EditorComponent::SetTexture);
 }
 
 
@@ -29,7 +30,7 @@ void EditorComponent::UpdatePrefab()
 	engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->UpdatedPrefab(*this);
 }
 engine::EditorComponent::EditorComponent(engine::Entity entity, bool active)
-	:Component{ entity,active }
+	:Component{ entity,active },m_icon{ AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab")->GetHandle() }
 {
 }
 Component& engine::EditorComponent::CopyComponent(Component const& comp)
@@ -46,25 +47,29 @@ Component& engine::EditorComponent::CopyComponent(Component const& comp)
 	m_headReference = 0;
 	return *this;
 };
-bool EditorComponent::IsPrefab()
+bool EditorComponent::IsPrefab() const 
 {
 	return m_isPrefab; 
 }
-bool EditorComponent::IsPrefabDirty()
+bool EditorComponent::IsPrefabDirty() const
 {
 	return m_isPrefab_Dirty;
 }
-engine::Entity EditorComponent::GetPrefabReference()
+engine::Entity EditorComponent::GetPrefabReference() const 
 {
 	return m_prefabReference; 
 }
-engine::Entity engine::EditorComponent::GetHeadReference()
+engine::Entity engine::EditorComponent::GetHeadReference() const 
 {
 	return m_headReference;
 }
-bool engine::EditorComponent::GetIsShownInEditor()
+bool engine::EditorComponent::GetIsShownInEditor() const
 {
     return m_isShown_inEditor;
+}
+AssetHandle engine::EditorComponent::GetTexture() const
+{
+    return m_icon;
 }
 void EditorComponent::SetPrefabDirty(bool pd)
 {
@@ -83,6 +88,11 @@ void engine::EditorComponent::SetHead(Entity head)
 void engine::EditorComponent::SetShownInEditor(bool isShown)
 {
 	m_isShown_inEditor = isShown;
+}
+
+void engine::EditorComponent::SetTexture(AssetHandle texture)
+{
+	m_icon = texture;
 }
 
 void engine::EditorComponent::SetPrefabReference(Entity reference, Entity head)

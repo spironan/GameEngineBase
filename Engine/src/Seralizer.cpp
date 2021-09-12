@@ -236,13 +236,13 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 	return entList.front();
 }
 
-void Serializer::SaveObject(const std::string& prefab)
+void Serializer::SaveObject(const std::string& prefab, engine::Entity object)
 {
 	std::ofstream stream(prefab, std::ios::trunc);
 	rapidjson::OStreamWrapper osw(stream);
 	rapidjson::PrettyWriter<rapidjson::OStreamWrapper> writer(osw);
 	writer.StartObject();
-	SaveHierarchy(static_cast<engine::GameObject>(ObjectGroup::s_DraggingObject), writer);
+	SaveHierarchy(static_cast<engine::GameObject>(object), writer);
 	writer.EndObject();
 	stream.close();
 }
@@ -351,7 +351,9 @@ void Serializer::SaveHierarchy(engine::GameObject& go, rapidjson::PrettyWriter<r
  
 void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
+
 	writer.Key(std::to_string(go.GetEntity()).c_str());
+	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatSingleLineArray);
 	writer.StartArray();
 	writer.Uint(go.GetEntity());
 	writer.Int(go.GetComponent<engine::Transform3D>().GetChildCount());//parent id first
@@ -372,13 +374,16 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 	if (go.HasComponent<engine::Scripting>())
 		SaveScripts(go, writer);
 	writer.EndArray();
+	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatDefault);
 }
 
 void Serializer::SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
+	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatDefault);
 	auto& scriptInfoList = go.GetComponent<engine::Scripting>().GetScriptInfoAll();
 	std::string temp = "Scripting";
 	writer.String(temp.c_str(),temp.size());
+	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatSingleLineArray);
 	writer.StartArray();
 	
 	for (auto& script : scriptInfoList)

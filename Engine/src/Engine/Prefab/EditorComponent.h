@@ -1,7 +1,9 @@
 #pragma once
 #include "Engine/ECS/Component.h"
 #include "Engine/ECS/ECS_Utility.h"
+#include "Engine/Asset/Asset.h"
 #include <rttr/type>
+#include "Engine/Asset/AssetsManager.h"
 namespace engine
 {
 
@@ -26,11 +28,12 @@ public:
 	\brief
 	 Getters
 	*//**********************************************************************************/
-	bool IsPrefab();
-	bool IsPrefabDirty();
-	engine::Entity GetPrefabReference();
-	engine::Entity GetHeadReference();
-	bool GetIsShownInEditor();
+	bool IsPrefab() const;
+	bool IsPrefabDirty()const;
+	engine::Entity GetPrefabReference()const;
+	engine::Entity GetHeadReference()const;
+	bool GetIsShownInEditor()const;
+	AssetHandle GetTexture()const;
 	/*********************************************************************************//*!
 	\brief
 	 Setters
@@ -39,6 +42,7 @@ public:
 	void SetIsPrefab(bool ip);
 	void SetHead(Entity head);
 	void SetShownInEditor(bool isShown);
+	void SetTexture(AssetHandle texture);
 	/*********************************************************************************//*!
 	\brief    
 	 Unregister the old prefab reference 
@@ -70,7 +74,7 @@ private:
 	engine::Entity m_prefabReference = 0;
 	engine::Entity m_headReference = 0;
 	//custom icon
-
+	AssetHandle m_icon;
 	//
 };
 

@@ -30,10 +30,10 @@ Technology is prohibited.
 #include "Widgets/LoggingView.h"
 #include "Widgets/KeyBindingView.h"
 #include "Widgets/StyleEditorView.h"
+#include "Widgets/AssetBrowserView.h"
 
 #include "ActionStack/EditorActionStack.h"
 #include "Engine/Memory/BufferAllocator.h"
-
 enum class GUIACTIVE_FLAGS:int
 {
 	INSPECTOR_ACTIVE = 1,
@@ -99,6 +99,7 @@ private:
 	ToolbarView m_toolbar_view;
 	StyleEditorView m_styleEditor_view;
 	EditorViewport m_viewport_view;
+	AssetBrowserView m_assetbrowser;
 	//remb to change the presets TODO: change the presets
 	bool logging_widget = true;
 	bool action_widget = false;

@@ -16,7 +16,7 @@ void PrefabComponentSystem::SavePrefab()
 	//currently just forcefully save all prefabs
 	for (auto& iter : m_prefabDetails)
 	{
-		Serializer::SaveObject(iter.second.filename);
+		Serializer::SaveObject(iter.second.filename,iter.second.head);
 	}
 }
 
@@ -111,7 +111,7 @@ void PrefabComponentSystem::InstantiateFromPrefab(const std::string& filepath, G
 
 void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& head)
 {
-	Serializer::SaveObject(filepath);
+	Serializer::SaveObject(filepath,head);
 	GameObject prefab = AddPrefab(filepath);
 
 	auto& prefabChild = prefab.GetChildren();
@@ -133,11 +133,10 @@ void PrefabComponentSystem::MakePrefab(const std::string& filepath, GameObject& 
 
 void PrefabComponentSystem::SavePrefab(GameObject& go)
 {
-
 	for (auto& element : m_prefabDetails)
 	{
 		if (element.second.head == go)
-			Serializer::SaveObject(element.second.filename);
+			Serializer::SaveObject(element.second.filename,go);
 	}
 }
 

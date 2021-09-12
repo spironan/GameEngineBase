@@ -30,7 +30,7 @@ public:
 	Serializer();
 	~Serializer() {};
 	static engine::Entity LoadObject(const std::string& prefab,engine::Entity parent = 0);
-	static void SaveObject(const std::string& prefab);
+	static void SaveObject(const std::string& prefab,engine::Entity object);
 	static void SaveWorld(const std::string& path,const engine::Scene& scene);
 	static void SaveWorld(const std::string& path);
 	static void LoadWorld(const std::string& path,const engine::Scene& scene);
@@ -67,8 +67,11 @@ private:
 template<typename Component>
 void Serializer::SaveComponent(Component& component, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 {
+
 	std::string temp = rttr::type::get<Component>().get_name();
+	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatDefault);
 	writer.String(temp.c_str(),temp.size());
+	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatSingleLineArray);
 	writer.StartArray();
 	std::vector<rttr::property> list = rttr::type::get<Component>().get_properties();
 	rttr::type::type_id id;

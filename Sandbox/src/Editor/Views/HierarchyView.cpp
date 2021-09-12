@@ -115,7 +115,7 @@ void HierarchyView::ListHierarchy()
 	//remb to compile this into settings
 	static const ImVec4 default_textCol = { 0.8f,0.8f,0.8f,1.0f };
 	static const ImVec4 prefab_text_color = { 0.0f,0.8f,0.8f,1.0f };
-
+	static const float font_size = ImGui::GetFontSize();
 	ImVec4 current_color = default_textCol;
 	ImGui::BeginChild("##ListHierarchy");
 	//display the root node
@@ -172,6 +172,8 @@ void HierarchyView::ListHierarchy()
 			ImGui::TreePop();
 			--treePop;
 		}
+
+
 		if (transform.GetChildCount())
 		{
 			flag |= ImGuiTreeNodeFlags_OpenOnArrow;
@@ -194,6 +196,7 @@ void HierarchyView::ListHierarchy()
 			ImGui::PopStyleColor();
 			ImGui::PopID();
 		}
+
 		if ((ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))|| ImGui::IsItemClicked(ImGuiMouseButton_Right))
 			ObjectGroup::s_FocusedObject = objEntity;
 
@@ -207,9 +210,11 @@ void HierarchyView::ListHierarchy()
 			m_dragging = true;
 			ObjectGroup::s_DraggingObject = objEntity;
 			ImGui::SetDragDropPayload("HIERACHY_OBJ", &objEntity, sizeof(objEntity));
-			ImGui::Text("%s", static_cast<engine::GameObject>(ObjectGroup::s_FocusedObject).Name().c_str());
+			ImGui::Text("%s", static_cast<engine::GameObject>(objEntity).Name().c_str());
 			ImGui::EndDragDropSource();
 		}
+		ImGui::SameLine(5.0f);
+		ImGui::Image(engine::AssetManager::GetAsset<engine::Texture>(editor_component.GetTexture())->Get_IMTEXTURE_ID(), { font_size,font_size });
 	}
 	//clear up the remaining branching 
 	while (treePop)

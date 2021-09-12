@@ -164,8 +164,10 @@ void ProjectFolderView::ProjectView()
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERACHY_OBJ");
 		if (payload)
 		{
-			std::string filename = FileGroup::s_CurrentPath+ "/" + engine::GameObject(ObjectGroup::s_FocusedObject).Name() + ".prefab";
-			engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->MakePrefab(filename, engine::GameObject(ObjectGroup::s_FocusedObject));
+			auto data = static_cast<engine::Entity*>(payload->Data);
+			engine::GameObject goData = static_cast<engine::GameObject>(*data);
+			std::string filename = FileGroup::s_CurrentPath+ "/" + goData.Name() + ".prefab";
+			engine::SceneManager::GetActiveWorld().GetSystem<engine::PrefabComponentSystem>()->MakePrefab(filename, goData);
 		}
 		ImGui::EndDragDropTarget();
 	}
