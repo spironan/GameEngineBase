@@ -29,6 +29,7 @@ Technology is prohibited.
 
 #include "Engine/PhysicsCollision/Colliders.h"
 #include "Engine/PhysicsCollision/ColliderCore.h"
+#include "Engine/PhysicsCollision/PhysicsUtils.h"
 
 #include "Engine/Renderer/Debug/ColliderDebugDraw.h"
 
@@ -82,9 +83,14 @@ namespace engine
 
 	void Renderer2DSystem::DrawDebug()
 	{
-		auto view = m_ECS_Manager.GetComponentView<Transform3D, Collider2D, ColliderDebugDraw>();
-		for (auto [transform, collider, debugCol] : view)
+		auto view = m_ECS_Manager.GetComponentView<Transform3D, Collider2D, BoundingVolume, ColliderDebugDraw>();
+		for (auto [transform, collider, broadCollider, debugCol] : view)
 		{
+			// Draw Broadphase Bounding Volume with inverse Colors
+			Renderer2D::DrawAABB2D(
+				PhysicsUtils::MakeCollider(broadCollider, transform, collider),
+				1.f - debugCol.GetColor());
+
 			switch (collider.GetNarrowPhaseCollider())
 			{
 				case ColliderType::BOX:
