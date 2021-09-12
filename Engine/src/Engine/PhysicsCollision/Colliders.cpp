@@ -35,7 +35,10 @@ namespace engine
             .property("Offset", &CircleCollider2D::Offset)
             .property("Bounds", &CircleCollider2D::Bounds)
             .property("Radius", &CircleCollider2D::Radius);
+        
     }
+    
+    
 
     ColliderBase2D::ColliderBase2D(Entity entity, bool active)
         : Component{ entity, active }
@@ -60,7 +63,6 @@ namespace engine
         return GetComponent<Transform3D>().GetGlobalScale();
     }
 
-
     BoxCollider2D::BoxCollider2D(Entity entity, bool active)
         : ColliderBase2D{ entity, active }
         , Bounds{ {-0.5f, -0.5f}, { 0.5f, 0.5f } }
@@ -81,6 +83,22 @@ namespace engine
         return result;
     }
 
+    vec2 engine::BoxCollider2D::GetWidthAndHeight() const
+    {
+        auto worldScale = WorldScale();
+        AABB2D bounds =
+        {
+            Bounds.min * worldScale * Size,
+            Bounds.max * worldScale * Size
+        };
+        return (bounds.max - bounds.min);
+    }
+
+    vec2 engine::BoxCollider2D::GetCentroid() const
+    {
+        return GetWidthAndHeight() * 0.5f;
+    }
+
     CircleCollider2D::CircleCollider2D(Entity entity, bool active/*Transform3D const& transform*/)
         : ColliderBase2D{ entity, active }
         , Bounds{ { 0.f, 0.f }, 1.f }
@@ -91,13 +109,17 @@ namespace engine
 
     Circle CircleCollider2D::GetGlobalBounds() const
     {
-        vec2 worldScale = WorldScale();
-        float scalar = worldScale.x >= worldScale.y ? worldScale.x : worldScale.y;
-
         return Circle
         { WorldPosition() + Bounds.center * Offset
-        , Bounds.radius * Radius * scalar
+        , GetGlobalRadius()
         };
+    }
+
+    float engine::CircleCollider2D::GetGlobalRadius() const
+    {
+        vec2 worldScale = WorldScale();
+        float scalar = worldScale.x >= worldScale.y ? worldScale.x : worldScale.y;
+        return Bounds.radius * Radius * scalar;
     }
 
 }

@@ -21,6 +21,21 @@ Technology is prohibited.
 
 namespace engine
 {
+    //Broadphase collider : Replica of Box Collider stripped to bare minimum
+    struct BoundingVolume : public Component
+    {
+        AABB2D Bounds;
+        vec2 Size;
+
+        DEFAULT_COMPONENT(BoundingVolume);
+
+        explicit BoundingVolume(Entity entity, bool active = true)
+            : Component {entity, active}
+            , Bounds { {-0.5f, -0.5f}, { 0.5f, 0.5f } }
+            , Size{ 1.f, 1.f }
+        {}
+    };
+
     struct ColliderBase2D : public Component
     {
         /*bool IsTrigger;*/
@@ -33,19 +48,21 @@ namespace engine
         virtual ~ColliderBase2D();
 
         DEFAULT_COMPONENT_CONSTRUCTORS(ColliderBase2D);
+        RTTR_ENABLE(Component);
     };
-    
+
     struct CircleCollider2D : public ColliderBase2D
     {
         Circle Bounds;
         float Radius;
 
         Circle GetGlobalBounds() const;
+        float GetGlobalRadius() const;
 
         explicit CircleCollider2D(Entity entity, bool active = true);
         DEFAULT_COMPONENT(CircleCollider2D);
 
-        RTTR_ENABLE();
+        RTTR_ENABLE(ColliderBase2D);
     };
 
     struct BoxCollider2D : public ColliderBase2D
@@ -55,10 +72,13 @@ namespace engine
 
         AABB2D GetGlobalBounds() const;
 
+        vec2 GetWidthAndHeight() const;
+        vec2 GetCentroid() const;
+
         explicit BoxCollider2D(Entity entity, bool active = true);
         DEFAULT_COMPONENT(BoxCollider2D);
 
-        RTTR_ENABLE();
+        RTTR_ENABLE(ColliderBase2D);
     };
 
     /*struct PlaneCollider2D 

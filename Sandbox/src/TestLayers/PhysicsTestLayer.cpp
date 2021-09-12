@@ -15,10 +15,10 @@ Technology is prohibited.
 
 PhysicsTestLayer::PhysicsTestLayer()
     : SceneBaseLayer{ "PhysicsTestLayer" }
-    , m_upperbounds{ 150,  150 }
-    , m_lowerbounds{ -150, -150 }
+    , m_upperbounds{ 250,  250 }
+    , m_lowerbounds{ -250, -250 }
     , m_spawnPosController { 0, 0, 0 }
-    , m_initDiff{ 40 }
+    , m_initDiff{ 35 }
     , m_controller{ }
 {
 }
@@ -28,20 +28,24 @@ void PhysicsTestLayer::Init()
     auto& rs = GetWorld()->RegisterSystem<engine::Renderer2DSystem>(DefaultCamera());
     auto& ps = GetWorld()->RegisterSystem<engine::PhysicsSystem>();
 
-    // Controller : 10 kg box
+    // Controller : 10 kg circle
     {
         m_controller = CreateGameObject();
         m_controller.Name() = "Controller is a 10KG box";
         m_controller.Transform().Scale() = { 10.f, 10.f, 1.0f };
-        m_controller.Transform().Position() = m_spawnPosController;
+        m_controller.Transform().Position() = m_spawnPosController + oom::vec3{ 100, 100, 0 };
         m_controller.AddComponent<engine::ColliderDebugDraw>();
+        m_controller.AddComponent<engine::Sprite2D>();
 
         auto& pc = m_controller.AddComponent<engine::Rigidbody2D>();
+
+        m_controller.AddComponent<engine::CircleCollider2D>();
+        auto& c = m_controller.GetComponent<engine::CollisionInfo>();
+        
+        //Set Mass After adding collider to set inertia.
         pc.SetMass(10.f);
         pc.GravityScale = 0.0f;
 
-        m_controller.AddComponent<engine::BoxCollider2D>();
-        auto& c = m_controller.GetComponent<engine::CollisionInfo>();
         //c.IsTrigger = true;
         
         //c.SetNarrowPhaseCollider(engine::ColliderType::BOX);
@@ -91,7 +95,7 @@ void PhysicsTestLayer::Init()
     {
         engine::GameObject m_other = CreateGameObject();
         m_other.Name() = "100kg box";
-        m_other.Transform().Position().x = m_initDiff;
+        m_other.Transform().Position().x = m_initDiff + 100;
         m_other.Transform().Scale() = { 20.f, 20.f, 1.0f };
         m_other.AddComponent<engine::ColliderDebugDraw>();
         
@@ -147,7 +151,7 @@ void PhysicsTestLayer::Init()
     {
         engine::GameObject m_other = CreateGameObject();
         m_other.Name() = "1 kg box";
-        m_other.Transform().Position().x = -m_initDiff;
+        m_other.Transform().Position().x = -m_initDiff + 100;
         m_other.Transform().Scale() = { 5.f, 5.f, 1.0f };
         m_other.AddComponent<engine::ColliderDebugDraw>();
 
@@ -203,7 +207,7 @@ void PhysicsTestLayer::Init()
     {
         engine::GameObject m_other = CreateGameObject();
         m_other.Name() = "100kg circle";
-        m_other.Transform().Position().y = m_initDiff;
+        m_other.Transform().Position().y = m_initDiff + 100;
         m_other.Transform().Scale() = { 20.f, 20.f, 1.0f };
         m_other.AddComponent<engine::ColliderDebugDraw>();
 
@@ -259,7 +263,7 @@ void PhysicsTestLayer::Init()
     {
         engine::GameObject m_other = CreateGameObject();
         m_other.Name() = "1 kg circle";
-        m_other.Transform().Position().y = -m_initDiff;
+        m_other.Transform().Position().y = -m_initDiff + 100;
         m_other.Transform().Scale() = { 5.f, 5.f, 1.0f };
         m_other.AddComponent<engine::ColliderDebugDraw>();
 
@@ -316,7 +320,7 @@ void PhysicsTestLayer::Init()
     {
         engine::GameObject m_other = CreateGameObject();
         m_other.Name() = "Trigger Box";
-        m_other.Transform().Position().x = m_other.Transform().Position().y = m_initDiff;
+        m_other.Transform().Position().x = m_other.Transform().Position().y = m_initDiff + 100;
         m_other.Transform().Scale() = { 50.f, 50.f, 1.0f };
         m_other.AddComponent<engine::ColliderDebugDraw>();
 
@@ -372,7 +376,7 @@ void PhysicsTestLayer::Init()
     {
         engine::GameObject m_other = CreateGameObject();
         m_other.Name() = "Trigger Circle";
-        m_other.Transform().Position().x = m_other.Transform().Position().y = -m_initDiff;
+        m_other.Transform().Position().x = m_other.Transform().Position().y = -m_initDiff + 100;
         m_other.Transform().Scale() = { 50.f, 50.f, 1.0f };
         m_other.AddComponent<engine::ColliderDebugDraw>();
 
@@ -438,7 +442,6 @@ void PhysicsTestLayer::Init()
     //}
 }
 
-
 void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
 {
     GetWorld()->GetSystem<engine::TransformSystem>()->Update();
@@ -456,35 +459,30 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
     constexpr float force = 300.f;
     constexpr float jumpforce = 10000.f;
     
-
-
     if (engine::Input::IsKeyHeld(ENGINE_KEY_UP))
     {
-        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, force });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForceAtPosition(oom::vec2{ 0, force }, oom::vec2{ -1, 0 });
     }
 
     if (engine::Input::IsKeyHeld(ENGINE_KEY_DOWN))
     {
-        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, -force });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForceAtPosition(oom::vec2{ 0, -force }, oom::vec2{ -1, 0 });
     }
 
     if (engine::Input::IsKeyHeld(ENGINE_KEY_RIGHT))
     {
-        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ force, 0 });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForceAtPosition(oom::vec2{ force, 0 }, oom::vec2{ 0, 1 });
     }
 
     if (engine::Input::IsKeyHeld(ENGINE_KEY_LEFT))
     {
-        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ -force, 0 });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForceAtPosition(oom::vec2{ -force, 0 }, oom::vec2{ 0, 1 });
     }
 
     if (engine::Input::IsKeyPressed(ENGINE_KEY_SPACE))
     {
-        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForce(oom::vec2{ 0, jumpforce });
+        m_controller.GetComponent<engine::Rigidbody2D>().ApplyForceAtPosition(oom::vec2{ 0, jumpforce }, oom::vec2{ -1, 0 });
     }
-
-    /*auto rootsForce = m_controller.GetComponent<engine::Rigidbody2D>().GetForce();
-    LOG_TRACE("{0}{1}", rootsForce.x, rootsForce.y );*/
 
     // transform objects
     auto view = GetWorld()->GetComponentView<engine::Transform3D>();
@@ -495,7 +493,7 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
         {
             transform.Position().y = m_upperbounds.y;
         }
-        if (transform.Position().y > m_upperbounds.y)
+        else if (transform.Position().y > m_upperbounds.y)
         {
             transform.Position().y = m_lowerbounds.y;
         }
@@ -503,11 +501,10 @@ void PhysicsTestLayer::OnUpdate(engine::Timestep dt)
         {
             transform.Position().x = m_upperbounds.x;
         }
-        if (transform.Position().x > m_upperbounds.x)
+        else if (transform.Position().x > m_upperbounds.x)
         {
             transform.Position().x = m_lowerbounds.x;
         }
-
     }
 }
 

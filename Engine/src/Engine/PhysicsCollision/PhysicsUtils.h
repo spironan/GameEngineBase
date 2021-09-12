@@ -14,6 +14,7 @@ Technology is prohibited.
 #pragma once
 
 #include "ColliderCore.h"
+#include "colliders.h"
 
 namespace engine
 {
@@ -30,6 +31,9 @@ namespace engine
 
         // physics based collision
         static Manifold2D GenerateManifold2D(Collider2D const& first, Collider2D const& second);
+
+        // MakeCollider
+        static AABB2D MakeCollider(BoundingVolume const& broadCollider, Transform3D const& transform, Collider2D const& collider);
 
     private:
 

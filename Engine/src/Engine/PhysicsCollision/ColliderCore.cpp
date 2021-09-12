@@ -33,6 +33,7 @@ namespace engine
     CollisionInfo::CollisionInfo(Entity entity, bool active)
         : Component{ entity, active }
     {
+        // Register event callbacks
         OnTriggerEnter += [this](const auto& trigger)
         {
             Scripting& scripting = GetComponent<Scripting>();
@@ -53,64 +54,17 @@ namespace engine
         };
     }
 
-    void CollisionInfo::Update()
-    {
-        if (GetComponent<Collider2D>().IsTrigger)
-        {
-            for (auto const& [entity, trigger] : m_triggers)
-            {
-                // if previously not collided with this object
-                if (m_previousTriggers.find(entity) == m_previousTriggers.end())
-                    OnTriggerEnter(trigger);
-                else
-                    OnTriggerStay(trigger);
-            }
-
-            for (auto const& [entity, prevTrigger] : m_previousTriggers)
-            {
-                // if currently not trigger with this object
-                if (m_triggers.find(entity) == m_triggers.end())
-                    OnTriggerExit(prevTrigger);
-            }
-
-            m_previousTriggers.clear();
-            m_previousTriggers = std::move(m_triggers);
-            m_triggers.clear();
-        }
-        else
-        {
-            for (auto const& [entity, collider] : m_collisions)
-            {
-                // if previously not collided with this object
-                if (m_previousCollisions.find(entity) == m_previousCollisions.end())
-                    OnCollisionEnter(collider);
-                else
-                    OnCollisionStay(collider);
-            }
-
-            for (auto const& [entity, prevTrigger] : m_previousCollisions)
-            {
-                // if currently not colliding with this object
-                if (m_collisions.find(entity) == m_collisions.end())
-                    OnCollisionExit(prevTrigger);
-            }
-
-            m_previousCollisions.clear();
-            m_previousCollisions = std::move(m_collisions);
-            m_collisions.clear();
-        }
-    }
-
-
     Collider2D::Collider2D(Entity entity, bool active)
         : Component{ entity, active }
     {
-        EnsureComponent<CollisionInfo>();
+        EnsureComponent<CollisionInfo>();   // collision callbacks
+        EnsureComponent<BoundingVolume>();  // broadphase collider
     };
 
     Collider2D::~Collider2D()
     {
         //EnsureRemove<CollisionInfo>();
+        //EnsureRemove<BoundingVolume>();
     }
 
     void Collider2D::SetNarrowPhaseCollider(ColliderType narrowPhaseCollider)

@@ -49,10 +49,9 @@ namespace engine
         EventCallback<Collider2D> OnTriggerStay;
         EventCallback<Collider2D> OnTriggerExit;
     
-    private:
-        friend class PhysicsSystem;
-        void Update();
-
+        /*-----------------------------------------------------------------------------*/
+        /* Collision Maps                                                              */
+        /*-----------------------------------------------------------------------------*/
         std::unordered_map<Entity, Manifold2D> m_previousCollisions{};
         std::unordered_map<Entity, Collider2D> m_previousTriggers{};
         std::unordered_map<Entity, Manifold2D> m_collisions{};

@@ -25,7 +25,9 @@ Technology is prohibited.
 
 namespace engine
 {
-
+    // Forward Declare
+    struct BoundingVolume;
+    // Broad-phase sorting
     struct SortSweepCompare
     {
         ECS_Manager& Manager;
@@ -36,8 +38,8 @@ namespace engine
             , Axis{ axis }
         {};
 
-        bool operator()(Entity a, Entity b);
-        
+        bool operator()(BoundingVolume a, BoundingVolume b);
+
     };
 
     class PhysicsSystem : public System
@@ -67,18 +69,19 @@ namespace engine
     private:
         void UpdateDynamics(Timestep deltaTime);
         void UpdatePhysicsCollision();
+        void UpdateCallbacks();
         void UpdatePhysicsResolution(Timestep deltaTime);
+
+        //time accumulator
+        double m_accumulator;
 
         void BroadPhase();
         SortSweepCompare m_broadphaseCompare;
 
         void NarrowPhase();
-        std::vector<std::pair<Entity, Entity>> m_narrowPhase;
 
-        double m_accumulator;
-
-        std::vector<Collider2D> m_narrowPhaseTriggers;
-        std::vector<Collider2D> m_narrowPhaseColliders;
+        std::vector<std::pair<Collider2D, Collider2D>> m_narrowPhaseTriggers;
+        std::vector<std::pair<Collider2D, Collider2D>> m_narrowPhaseColliders;
 
         std::vector<Manifold2D> m_collisions;
         std::vector<Manifold2D> m_triggers;
@@ -86,4 +89,6 @@ namespace engine
 
         ImpulseSolver m_impulseSolver;
     };
+
+
 }

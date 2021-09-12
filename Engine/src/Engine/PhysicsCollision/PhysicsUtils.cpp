@@ -52,6 +52,14 @@ namespace engine
         return m_manifoldMap[std::make_pair(first.GetNarrowPhaseCollider(), second.GetNarrowPhaseCollider())](first, second);
     }
 
+    AABB2D PhysicsUtils::MakeCollider(BoundingVolume const& broadCollider, Transform3D const& transform, Collider2D const& collider)
+    {
+        oom::vec2 worldPos = transform.GetGlobalPosition();
+        oom::vec2 worldScale = transform.GetGlobalScale();
+        return AABB2D { worldPos + broadCollider.Bounds.min * worldScale * broadCollider.Size,
+                        worldPos + broadCollider.Bounds.max * worldScale * broadCollider.Size };
+    }
+
 
 
     bool PhysicsUtils::TestCollision2D_BOX_BOX(Collider2D boxA, Collider2D boxB)

@@ -87,7 +87,11 @@ namespace engine
                 this object. 
         *//**********************************************************************************/
         void ApplyForce(oom::vec2 force) { if(IsDynamic()) m_force += force; }
-        
+
+        /*********************************************************************************//*!
+        *//**********************************************************************************/
+        void ApplyForceAtPosition(oom::vec2 force, oom::vec2 offset) { if (IsDynamic()) { m_force += force; m_torque += offset.Cross(m_force); } }
+
         /*********************************************************************************//*!
         \brief    Applies a velocity to the rigidbody
 
@@ -117,6 +121,8 @@ namespace engine
         float GetMass() const { return m_data.Mass; }
 
         float GetInverseMass() const { return m_data.InverseMass; }
+        float GetInertia() const { return m_data.Inertia; }
+        float GetInverseInertia() const { return m_data.InverseInertia; }
 
         /*********************************************************************************//*!
         \brief    Set the velocity of the rigidbody with new velocity.
@@ -140,6 +146,14 @@ namespace engine
                 The new force to assign this rigidbody's force to.
         *//**********************************************************************************/
         void SetForce(oom::vec2 newForce) { m_force = newForce; }
+
+        /*********************************************************************************//*!
+        \brief    Set the torque of the rigidbody with new force.
+
+        \param    newForce
+                The new force to assign this rigidbody's force to.
+        *//**********************************************************************************/
+        void SetTorque(float newTorque) { m_torque = newTorque; }
 
         /*********************************************************************************//*!
         \brief    Retrieve the current force of the rigidbody
@@ -168,10 +182,10 @@ namespace engine
         oom::vec2 m_linearVelocity;
         oom::vec2 m_force;
 
-        //// Angular components
+        // Angular components : most components are float in 2D, vec3 in 3D
         //float m_orientation;
-        //float m_angularVelocity;
-        //float m_torque;
+        float m_angularVelocity;
+        float m_torque;
 
         oom::vec3 m_prevPos;
 
