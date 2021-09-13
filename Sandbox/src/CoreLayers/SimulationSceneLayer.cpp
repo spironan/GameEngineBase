@@ -21,16 +21,13 @@ SimulationSceneLayer::SimulationSceneLayer(std::string const& filepath)
     : SceneBaseLayer{ "Simluation Scene Layer" }
     , m_filepath{ filepath }
 {
-    //temporary code
-    ENGINE_ASSERT(std::filesystem::exists(filepath)
-        , "this is testing code, comment out for now or use your own file path");
 }
 
 void SimulationSceneLayer::Init()
 {
-    ////temporary code
-    //ENGINE_ASSERT(std::filesystem::exists(m_filepath)
-    //    , "this is testing code, comment out for now or use your own file path");
+    //temporary code
+    ENGINE_ASSERT(std::filesystem::exists(m_filepath)
+        , "this is testing code, the filepath eventually should always be valid.");
     m_scene.LoadFromFile(m_filepath);
 
     //Register All Systems

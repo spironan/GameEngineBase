@@ -24,14 +24,14 @@ GameSceneLayer::GameSceneLayer(std::string const& filepath)
     : SceneBaseLayer{ "Game Scene Layer",""}
     , m_filepath{ filepath }
 {
-    //temporary code
-    /*ENGINE_ASSERT(std::filesystem::exists(filepath)
-        , "this is testing code, the filepath eventually should always be valid.");*/
 }
 
 void GameSceneLayer::Init()
 {
     //THIS SHOULD BE AN ATTEMPT LOAD AT STARTUP, IF FAILS CREATE NEW
+    //temporary code
+    ENGINE_ASSERT(std::filesystem::exists(m_filepath)
+        , "this is testing code, the filepath eventually should always be valid.");
     /*if (!std::filesystem::exists(m_filepath))
         std::filesystem::create_directory(m_filepath);*/
     //m_scene.LoadFromFile(static_cast<std::string>(m_filepath));
