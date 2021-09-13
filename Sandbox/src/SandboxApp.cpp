@@ -83,7 +83,7 @@ public:
         // Manually turn on either one for now.
         
         // Debug Layers! Dont mess with the order!
-        //PushOverlay(std::make_shared<DebugLayer>(*this));
+        PushOverlay(std::make_shared<DebugLayer>(*this));
 
         // Official Original Layer
         // Editor Layer
