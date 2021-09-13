@@ -1,13 +1,13 @@
 /************************************************************************************//*!
-\file          Rigidbody2D.cpp
-\project       <PROJECT_NAME>
-\author        Chua Teck Lee, c.tecklee, 390008420
-\par           email: c.tecklee\@digipen.edu
-\date          July 27, 2021
-\brief         Rigidbody Component describes the gameobject that has it to
-               have physics related dynamics (gravity, restitution, forces etc)
-               and could result itself or others to have physics based
-               responses (collision response)
+\file           Rigidbody2D.cpp
+\project        <PROJECT_NAME>
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           July 27, 2021
+\brief          Rigidbody Component describes the gameobject that has it to
+                have physics related dynamics (gravity, restitution, forces etc)
+                and could result itself or others to have physics based
+                responses (collision response)
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

@@ -1,10 +1,12 @@
 /************************************************************************************//*!
-\file          Colliders.h
-\project       <PROJECT_NAME>
-\author        Chua Teck Lee, c.tecklee, 390008420
-\par           email: c.tecklee\@digipen.edu
-\date          September 2, 2021
-\brief
+\file           Colliders.h
+\project        <PROJECT_NAME>
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           September 2, 2021
+\brief          Describes the various collider components that are supported.
+                Take note not all colliders should be exposed. Some are only for physics
+                to take control of.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

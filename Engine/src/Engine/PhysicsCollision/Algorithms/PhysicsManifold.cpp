@@ -1,10 +1,11 @@
 /************************************************************************************//*!
-\file          PhysicsManifold.cpp
-\project       <PROJECT_NAME>
-\author        Chua Teck Lee, c.tecklee, 390008420
-\par           email: c.tecklee\@digipen.edu
-\date          September 2, 2021
-\brief
+\file           PhysicsManifold.cpp
+\project        <PROJECT_NAME>
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           September 2, 2021
+\brief          Contains a Physics Manifold Generator that generates a manifold
+                between 2 Shapes. See manifold.h for more information
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -13,24 +14,20 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "pch.h"
 #include "PhysicsManifold.h"
-#include "Engine/ECS/WorldManager.h"
-
-#include <oom/oom.hpp>
 
 #include "Collision.h"
-#include "Engine/PhysicsCollision/Manifold.h"
 
+#include "Engine/PhysicsCollision/Manifold.h"
 #include "Engine/PhysicsCollision/Components/Colliders.h"
 #include "Engine/PhysicsCollision/Components/RigidBody.h"
+
+#include <oom/oom.hpp>
 
 namespace engine
 {
     Manifold2D PhysicsManifold::Generate(Circle const& circleA, Circle const& circleB)
     {
         Manifold2D result {};
-
-        //auto circleA = ColliderUtil::GetGlobalBounds(circle, circle.GetComponent<Transform3D>());
-        //auto circleB = ColliderUtil::GetGlobalBounds(circle2, circle2.GetComponent<Transform3D>());
 
         vec2 dirVec = circleB.center - circleA.center;
         // find distance
@@ -65,11 +62,6 @@ namespace engine
     Manifold2D PhysicsManifold::Generate(Circle const& circleA, AABB2D const& boxB)
     {
         Manifold2D result{};
-
-        // Need to update proeprly
-
-        //auto circleA = ColliderUtil::GetGlobalBounds(circle, circle.GetComponent<Transform3D>());
-        //auto boxB = ColliderUtil::GetGlobalBounds(aabb, aabb.GetComponent<Transform3D>());
 
         auto boxCenter = (boxB.max + boxB.min) * 0.5f;
         vec2 dirVec = boxCenter - circleA.center;
@@ -118,9 +110,6 @@ namespace engine
     {
         Manifold2D result{};
 
-        //auto boxA = ColliderUtil::GetGlobalBounds(aabb, aabb.GetComponent<Transform3D>());
-        //auto circleB = ColliderUtil::GetGlobalBounds(circle, circle.GetComponent<Transform3D>());
-
         auto boxCenter = (boxA.max + boxA.min) * 0.5f;
         vec2 dirVec = circleB.center - boxCenter;
 
@@ -167,9 +156,6 @@ namespace engine
     Manifold2D PhysicsManifold::Generate(AABB2D const& boxA, AABB2D const& boxB)
     {
         Manifold2D result{};
-
-        //auto boxA = ColliderUtil::GetGlobalBounds(aabb, aabb.GetComponent<Transform3D>());
-        //auto boxB = ColliderUtil::GetGlobalBounds(aabb2, aabb2.GetComponent<Transform3D>());
 
         oom::vec2 n = (boxB.min + boxB.max) * 0.5f - (boxA.min + boxA.max) * 0.5f;
 

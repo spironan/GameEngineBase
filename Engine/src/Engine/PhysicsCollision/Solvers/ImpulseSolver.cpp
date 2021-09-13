@@ -1,10 +1,11 @@
 /************************************************************************************//*!
-\file          ImpulseSolver.cpp
-\project       <PROJECT_NAME>
-\author        Chua Teck Lee, c.tecklee, 390008420
-\par           email: c.tecklee\@digipen.edu
-\date          September 2, 2021
-\brief
+\file           ImpulseSolver.cpp
+\project        <PROJECT_NAME>
+\author         Chua Teck Lee, c.tecklee, 390008420
+\par            email: c.tecklee\@digipen.edu
+\date           September 2, 2021
+\brief          Describes a Physics based Solver that solves collision between rigidbodies
+                via impulse.
 
 Copyright (C) 2021 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
