@@ -185,6 +185,7 @@ std::map<engine::utility::StringHash::size_type, Serializer::LoadGameObjectCallb
 
 Serializer::Serializer()
 {
+	std::cout << rttr::type::get<engine::Scripting>().get_name() << std::endl;
 	m_LoadGameObjectCallbacks = 
 	{
 		LOAD_OBJECT(engine::GameObjectComponent),
@@ -197,7 +198,7 @@ Serializer::Serializer()
 		LOAD_OBJECT(engine::SceneCamera),
 		LoadGOType
 		{
-		engine::utility::StringHash(rttr::type::get<engine::Scripting>().get_name()),
+			engine::utility::StringHash("Scripting"),
 			[](rapidjson::Value::Array& arr, engine::GameObject& go)
 			{
 				LoadScripts(arr,go);
@@ -240,8 +241,7 @@ engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity p
 		{
 			std::string temp = arr[counter].GetString();
 			auto& iter = m_LoadGameObjectCallbacks.find(engine::utility::StringHash(temp));
-			if ((temp) == (rttr::type::get<engine::SceneCamera>().get_name()))
-				std::cout << engine::utility::StringHash(temp) << std::endl;
+
 			++counter;
 			if(iter != m_LoadGameObjectCallbacks.end())
 				iter->second(arr[counter].GetArray(),object);
@@ -310,14 +310,16 @@ void Serializer::LoadWorld(const std::string& path)
 	{
 		auto& arr = iter->value.GetArray();
 		engine::GameObject object = engine::SceneManager::GetActiveScene().CreateGameObject();
-		//hierarchymap[arr[0].GetUint()] = std::pair<engine::Entity, engine::Entity>(object.GetEntity(), arr[1].GetUint());//first element = parent id
 		object.GetComponent<engine::Transform3D>().SetChildCount(arr[1].GetInt());
 
-		for (rapidjson::SizeType counter = 2; arr.Size(); ++counter)
+		for (rapidjson::SizeType counter = 2; counter < arr.Size(); ++counter)
 		{
-			m_LoadGameObjectCallbacks
-				[engine::utility::StringHash(arr[counter].GetString())]
-			(arr[++counter].GetArray(), object);
+			std::string temp = arr[counter].GetString();
+			auto& iter = m_LoadGameObjectCallbacks.find(engine::utility::StringHash(temp));
+
+			++counter;
+			if (iter != m_LoadGameObjectCallbacks.end())
+				iter->second(arr[counter].GetArray(), object);
 		}
 	}
 	engine::SceneManager::GetActiveWorld().GetSystem<engine::TransformSystem>()->UseDenseArrayAsHierarchy();
@@ -344,9 +346,9 @@ void Serializer::LoadWorld(const std::string& path, const engine::Scene& scene)
 		for (rapidjson::SizeType counter = 2; counter < arr.Size(); ++counter)
 		{
 			std::string temp = arr[counter].GetString();
+			std::cout << temp << std::endl;
 			auto& iter = m_LoadGameObjectCallbacks.find(engine::utility::StringHash(temp));
-			if ((temp) == (rttr::type::get<engine::SceneCamera>().get_name()))
-				std::cout << engine::utility::StringHash(temp) << std::endl;
+
 			++counter;
 			if (iter != m_LoadGameObjectCallbacks.end())
 				iter->second(arr[counter].GetArray(), object);
