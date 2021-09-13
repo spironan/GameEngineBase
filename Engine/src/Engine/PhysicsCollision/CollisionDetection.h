@@ -13,12 +13,12 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "ColliderCore.h"
-#include "colliders.h"
+#include "Components/ColliderCore.h"
+#include "Components/Colliders.h"
 
 namespace engine
 {
-    struct PhysicsUtils
+    struct CollisionDetection
     {
         using CombinationKey = std::pair<ColliderType, ColliderType>;
         using StaticTriggerCollisionFnc = bool((*)(Collider2D, Collider2D));
@@ -27,10 +27,10 @@ namespace engine
         //static void ResolveStaticCollisions(Collider2D const& first, Collider2D const& second);
 
         // non physics - triggers only test
-        static bool TestCollision2D(Collider2D const& first, Collider2D const& second);
+        static bool StaticTrigger2D(Collider2D const& first, Collider2D const& second);
 
         // physics based collision
-        static Manifold2D GenerateManifold2D(Collider2D const& first, Collider2D const& second);
+        static Manifold2D StaticCollider2D(Collider2D const& first, Collider2D const& second);
 
     private:
 
@@ -40,15 +40,15 @@ namespace engine
 
         //helper functions
         // collision detection
-        static bool TestCollision2D_BOX_BOX(Collider2D, Collider2D);
-        static bool TestCollision2D_CIRCLE_CIRCLE(Collider2D, Collider2D);
-        static bool TestCollision2D_CIRCLE_BOX(Collider2D, Collider2D);
-        static bool TestCollision2D_BOX_CIRCLE(Collider2D, Collider2D);
+        static bool StaticTrigger2D_BOX_BOX(Collider2D, Collider2D);
+        static bool StaticTrigger2D_CIRCLE_CIRCLE(Collider2D, Collider2D);
+        static bool StaticTrigger2D_CIRCLE_BOX(Collider2D, Collider2D);
+        static bool StaticTrigger2D_BOX_CIRCLE(Collider2D, Collider2D);
 
         // manifold generation
-        static Manifold2D GenerateManifold2D_BOX_BOX(Collider2D, Collider2D);
-        static Manifold2D GenerateManifold2D_CIRCLE_CIRCLE(Collider2D, Collider2D);
-        static Manifold2D GenerateManifold2D_CIRCLE_BOX(Collider2D, Collider2D);
-        static Manifold2D GenerateManifold2D_BOX_CIRCLE(Collider2D, Collider2D);
+        static Manifold2D StaticCollider2D_BOX_BOX(Collider2D, Collider2D);
+        static Manifold2D StaticCollider2D_CIRCLE_CIRCLE(Collider2D, Collider2D);
+        static Manifold2D StaticCollider2D_CIRCLE_BOX(Collider2D, Collider2D);
+        static Manifold2D StaticCollider2D_BOX_CIRCLE(Collider2D, Collider2D);
     };
 }

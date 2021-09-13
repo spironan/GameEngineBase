@@ -25,12 +25,12 @@ Technology is prohibited.
 
 #include "Engine/Transform/TransformSystem.h"
 
-#include "Rigidbody.h"
+#include "Components/Rigidbody.h"
 #include "Manifold.h"
 #include "Algorithms/PhysicsManifold.h"
-#include "Colliders.h"
-#include "ColliderCore.h"
-#include "PhysicsUtils.h"
+#include "Components/Colliders.h"
+#include "Components/ColliderCore.h"
+#include "CollisionDetection.h"
 
 namespace engine
 {
@@ -127,7 +127,7 @@ namespace engine
         //        // skip same entity and everything onwards
         //        if (colliderA.GetEntity() == colliderB.GetEntity()) break;
         //        
-        //        if (PhysicsUtils::TestCollision2D(colliderA, colliderB))
+        //        if (CollisionDetection::StaticTrigger2D(colliderA, colliderB))
         //        {
         //            if (colliderA.IsTrigger || colliderB.IsTrigger)
         //            {
@@ -142,7 +142,7 @@ namespace engine
         //            }
         //            else
         //            {
-        //                Manifold2D result = PhysicsUtils::GenerateManifold2D(colliderA, colliderB);
+        //                Manifold2D result = CollisionDetection::StaticCollider2D(colliderA, colliderB);
         //                result.ObjA = &rigidbodyA;
         //                result.ObjB = &rigidbodyB;
         //                m_collisions.emplace_back(result);
@@ -171,7 +171,7 @@ namespace engine
         for (auto& broadColliderA : dense)
         {
             auto& [transformA, colliderA] = m_ECS_Manager.GetComponents<Transform3D, Collider2D>(broadColliderA.GetEntity());
-            AABB2D result = PhysicsUtils::MakeCollider(broadColliderA, transformA, colliderA);
+            AABB2D result = CollisionDetection::MakeCollider(broadColliderA, transformA, colliderA);
 
             LOG_ENGINE_INFO("original map entry {0}, Min ({1}, {2}), Max({3}, {4})", count++, result.min.x, result.min.y, result.max.x, result.max.y);
         }*/
@@ -180,7 +180,7 @@ namespace engine
         for (auto& broadColliderA : dense)
         {
             auto& [transformA, colliderA] = m_ECS_Manager.GetComponents<Transform3D, Collider2D>(broadColliderA.GetEntity());
-            AABB2D result = PhysicsUtils::MakeCollider(broadColliderA, transformA, colliderA);
+            AABB2D result = CollisionDetection::MakeCollider(broadColliderA, transformA, colliderA);
 
             LOG_ENGINE_INFO("After Sorted map entry {0}, Min({1}, {2}), Max({3}, {4})", count++, result.min.x, result.min.y, result.max.x, result.max.y);
         }*/
@@ -259,12 +259,12 @@ namespace engine
         // Stringent Physics Collision Detection : both object will have rigidbody
         for (auto& [colliderA, colliderB] : m_narrowPhaseColliders)
         {
-            if (PhysicsUtils::TestCollision2D(colliderA, colliderB))
+            if (CollisionDetection::StaticTrigger2D(colliderA, colliderB))
             {
                 auto& collisionInfoA = m_ECS_Manager.GetComponent<CollisionInfo>(colliderA.GetEntity());
                 auto& collisionInfoB = m_ECS_Manager.GetComponent<CollisionInfo>(colliderB.GetEntity());
 
-                Manifold2D result = PhysicsUtils::GenerateManifold2D(colliderA, colliderB);
+                Manifold2D result = CollisionDetection::StaticCollider2D(colliderA, colliderB);
                 result.ObjA = &colliderA.GetComponent<Rigidbody2D>();
                 result.ObjB = &colliderB.GetComponent<Rigidbody2D>();
                 m_collisions.emplace_back(result);
@@ -277,7 +277,7 @@ namespace engine
         // narrowphase checks : one or both objects are triggers, meaning triggers only check
         for (auto& [triggerA, triggerB] : m_narrowPhaseTriggers)
         {
-            if (PhysicsUtils::TestCollision2D(triggerA, triggerB))
+            if (CollisionDetection::StaticTrigger2D(triggerA, triggerB))
             {
                 auto& collisionInfoA = m_ECS_Manager.GetComponent<CollisionInfo>(triggerA.GetEntity());
                 auto& collisionInfoB = m_ECS_Manager.GetComponent<CollisionInfo>(triggerB.GetEntity());

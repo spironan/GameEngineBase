@@ -13,7 +13,7 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "shapes.h"
+#include "Engine/PhysicsCollision/Shapes.h"
 #include "Engine/ECS/Component.h"
 #include "Engine/Transform/Transform3D.h"
 

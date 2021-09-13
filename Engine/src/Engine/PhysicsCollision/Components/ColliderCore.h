@@ -15,8 +15,8 @@ Technology is prohibited.
 
 #include "Engine/ECS/Component.h"
 
-#include "Shapes.h"
-#include "Manifold.h"   // requires full definition for events to compile
+#include "Engine/PhysicsCollision/Shapes.h"
+#include "Engine/PhysicsCollision/Manifold.h"   // requires full definition for events to compile
 
 #include <rttr/type>
 

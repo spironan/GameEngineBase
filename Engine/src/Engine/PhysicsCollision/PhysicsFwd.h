@@ -23,11 +23,16 @@ namespace engine
     using mat3 = oom::mat3;
 
     class Rigidbody2D;
+    enum class BodyType;
 
     class Collider2D;
+
+    struct BoundingVolume2D;    // broadphase AABB-Collider
+    struct ColliderBase2D;
     struct BoxCollider2D;
     struct CircleCollider2D;
 
+    struct Contact2D;
     struct Manifold2D;
     struct PhysicsMaterial;
     struct MassData;

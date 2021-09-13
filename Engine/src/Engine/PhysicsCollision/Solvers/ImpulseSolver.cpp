@@ -15,7 +15,7 @@ Technology is prohibited.
 
 #include "ImpulseSolver.h"
 
-#include "Engine/PhysicsCollision/RigidBody.h"
+#include "Engine/PhysicsCollision/Components/RigidBody.h"
 
 #include "Engine/ECS/WorldManager.h"
 #include "Engine/Transform/Transform3D.h"

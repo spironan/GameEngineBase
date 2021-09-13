@@ -13,17 +13,17 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include "Engine/PhysicsCollision/Colliders.h"
+#include "Engine/PhysicsCollision/Components/Colliders.h"
 
 namespace engine
 {
     // generate manifold assumes that collision has been detected.
     struct PhysicsManifold
     {
-        static Manifold2D GenerateManifold2D(CircleCollider2D const& circle, CircleCollider2D const& circle2);
-        static Manifold2D GenerateManifold2D(CircleCollider2D const& circle, BoxCollider2D const& aabb);
-        static Manifold2D GenerateManifold2D(BoxCollider2D const& aabb, CircleCollider2D const& circle);
-        static Manifold2D GenerateManifold2D(BoxCollider2D const& aabb, BoxCollider2D const& aabb2);
+        static Manifold2D Generate(Circle const& circleA, Circle const& circleB);
+        static Manifold2D Generate(Circle const& circle, AABB2D const& aabb);
+        static Manifold2D Generate(AABB2D const& aabb, Circle const& circle);
+        static Manifold2D Generate(AABB2D const& aabbA, AABB2D const& aabbB);
     };
 
 }
