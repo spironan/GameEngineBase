@@ -20,7 +20,7 @@ Technology is prohibited.
 
 #include "UtilityLayers/SceneBaseLayer.h"
 
-#include "Engine/PhysicsCollision/ColliderCore.h"
+#include "Engine/PhysicsCollision/Components/ColliderCore.h"
 
 
 /****************************************************************************//*!

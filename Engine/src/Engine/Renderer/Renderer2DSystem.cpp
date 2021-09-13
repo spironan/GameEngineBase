@@ -27,8 +27,8 @@ Technology is prohibited.
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Transform/TransformSystem.h"
 
-#include "Engine/PhysicsCollision/Colliders.h"
-#include "Engine/PhysicsCollision/ColliderCore.h"
+#include "Engine/PhysicsCollision/Components/Colliders.h"
+#include "Engine/PhysicsCollision/Components/ColliderCore.h"
 
 #include "Engine/Renderer/Debug/ColliderDebugDraw.h"
 
