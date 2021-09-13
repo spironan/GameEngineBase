@@ -4,6 +4,8 @@ bin/
 bin-int/
 #logs
 SandBox/logs
+#Test Scene files
+SandBox/**.scn
 
 # Files
 *.user
