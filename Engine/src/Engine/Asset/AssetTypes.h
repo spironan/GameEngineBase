@@ -13,17 +13,11 @@ Technology is prohibited.
 *//*************************************************************************************/
 #pragma once
 
-#include <glad/glad.h>
 #include <memory>
 #include "Engine/Core/Assert.h"
 
-
-
-
 namespace engine
 {
-
-	
 	/**
 	 * \brief Custom type for RTTR compliance.
 	 * 
