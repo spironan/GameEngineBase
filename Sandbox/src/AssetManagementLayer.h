@@ -36,13 +36,6 @@ public:
 		AssetManager::ImportAsset("Icons/Ouroboros_Warning_Icon_Yellow.png");
 		AssetManager::ImportAsset("Icons/Ouroboros_Error_Icon_Red.png");
 	};
-	virtual void OnAttach() override 
-	{
-	}
-	virtual void OnAttach() override 
-	{
-		
-	}
 
 	virtual void OnDetach() override
 	{
