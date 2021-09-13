@@ -59,14 +59,7 @@ public:
 	*//**********************************************************************************/
 	static void ReassignRootPath(const std::string& exePath);
 
-	///**
-	//* \brief
-	//* after setting current path call this function to preload all the filenames
-	//* so as to reduce the need to reiterate all the items
-	//* this function is required to be call everytime there are changes made to the file
-	//*/
-	//static void LoadFolderItems();
-
+	static void SelectProjectRootPath();
 private:
 	static void ProjectViewPopUpOptions();
 	static void RenamePopUp();

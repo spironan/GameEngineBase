@@ -92,20 +92,11 @@ void FileGroup::ReassignRootPath(const std::string& exePath)
 	s_hoveredPath = s_rootPath;
 }
 
-///**
-//* \brief
-//* after setting current path call this function to preload all the filenames
-//* so as to reduce the need to reiterate all the items
-//* this function is required to be call everytime there are changes made to the file
-//*/
-//void FileGroup::LoadFolderItems()
-//{
-//	s_currentfolderview.clear();
-//	for (auto& entry : std::filesystem::directory_iterator(FileGroup::s_CurrentPath))
-//	{
-//		s_currentfolderview.emplace_back(entry.path().filename().u8string());
-//	}
-//}
+void FileGroup::SelectProjectRootPath()
+{
+
+}
+
 void FileGroup::ProjectViewPopUpOptions()
 {
 	bool item_selected = (FileGroup::s_hoveredPath != FileGroup::s_rootPath);
