@@ -6,6 +6,11 @@
 
 class Controller
 {
+private:
+    //Temporary
+    // filepath to scene
+    std::filesystem::path m_filepath; 
+
 public:
     Controller(engine::Application& app);
     ~Controller() = default;

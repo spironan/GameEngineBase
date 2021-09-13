@@ -5,8 +5,10 @@
 
 Controller::Controller(engine::Application& app)
     : m_application{ app }
-    , m_gameScene { std::make_shared<GameSceneLayer>() }
-    , m_simulateScene { std::make_shared<SimulationSceneLayer>() }
+    , m_filepath { std::filesystem::current_path() / "ExampleScene.scn" }
+    // [TODO] TEMPORARY CODE
+    , m_gameScene { std::make_shared<GameSceneLayer>(m_filepath.u8string()) }
+    , m_simulateScene { std::make_shared<SimulationSceneLayer>(m_filepath.u8string()) }
 {
     m_currentScene = m_gameScene;
     m_application.PushOverlay(m_currentScene);

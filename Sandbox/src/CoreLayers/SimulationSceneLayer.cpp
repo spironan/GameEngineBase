@@ -17,18 +17,21 @@ Technology is prohibited.
 #include "SimulationSceneLayer.h"
 
 
-SimulationSceneLayer::SimulationSceneLayer()
+SimulationSceneLayer::SimulationSceneLayer(std::string const& filepath)
     : SceneBaseLayer{ "Simluation Scene Layer" }
+    , m_filepath{ filepath }
 {
+    //temporary code
+    ENGINE_ASSERT(std::filesystem::exists(filepath)
+        , "this is testing code, comment out for now or use your own file path");
 }
 
 void SimulationSceneLayer::Init()
 {
-    //temporary code
-    const char* filepath = "E:/Digipen/SchoolWork/GAM200/GameEngineBase/bin/Debug-OpenGL-windows-x86_64/Sandbox/scene/test.scn";
-    ENGINE_ASSERT(std::filesystem::exists(filepath)
-        , "this is testing code, comment out for now or use your own file path");
-    m_scene.LoadFromFile(filepath);
+    ////temporary code
+    //ENGINE_ASSERT(std::filesystem::exists(m_filepath)
+    //    , "this is testing code, comment out for now or use your own file path");
+    m_scene.LoadFromFile(m_filepath);
 
     //Register All Systems
     auto& prefabSystem = GetWorld()->RegisterSystem<engine::PrefabComponentSystem>();

@@ -24,8 +24,10 @@ private:
     bool m_isPause = false;
     bool m_stepMode = false;
     int m_framesLeft = 0;
+
+    std::string m_filepath;
 public:
-    SimulationSceneLayer();
+    SimulationSceneLayer(std::string const& filepath);
 
     virtual void Init() override;
     virtual void Exit() override;

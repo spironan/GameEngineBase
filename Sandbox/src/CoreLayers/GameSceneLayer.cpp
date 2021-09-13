@@ -16,19 +16,25 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "GameSceneLayer.h"
 
-//temporary code
-const char* filepath = "E:/Digipen/SchoolWork/GAM200/GameEngineBase/bin/Debug-OpenGL-windows-x86_64/Sandbox/scene/test.scn";
 
-GameSceneLayer::GameSceneLayer()
+//temporary code
+//const char* filepath = "E:/Digipen/SchoolWork/GAM200/GameEngineBase/bin/Debug-OpenGL-windows-x86_64/Sandbox/scene/test.scn";
+
+GameSceneLayer::GameSceneLayer(std::string const& filepath)
     : SceneBaseLayer{ "Game Scene Layer",""}
+    , m_filepath{ filepath }
 {
+    //temporary code
+    /*ENGINE_ASSERT(std::filesystem::exists(filepath)
+        , "this is testing code, the filepath eventually should always be valid.");*/
 }
 
 void GameSceneLayer::Init()
 {
     //THIS SHOULD BE AN ATTEMPT LOAD AT STARTUP, IF FAILS CREATE NEW
-    if(std::filesystem::exists(filepath))
-        m_scene.LoadFromFile(filepath);
+    /*if (!std::filesystem::exists(m_filepath))
+        std::filesystem::create_directory(m_filepath);*/
+    //m_scene.LoadFromFile(static_cast<std::string>(m_filepath));
 
     //Register All Systems
     auto& prefabSystem = GetWorld()->RegisterSystem<engine::PrefabComponentSystem>();
@@ -50,7 +56,7 @@ void GameSceneLayer::Init()
 
 void GameSceneLayer::Exit()
 {
-    SaveSceneToFile(filepath);
+    SaveSceneToFile(m_filepath);
 }
 
 void GameSceneLayer::OnUpdate(engine::Timestep dt)

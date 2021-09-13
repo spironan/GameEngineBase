@@ -17,10 +17,15 @@ Technology is prohibited.
 #pragma once
 #include "UtilityLayers/SceneBaseLayer.h"
 
+#include <string>
+
 class GameSceneLayer : public SceneBaseLayer
 {
+private:
+    std::string m_filepath; // filepath to scene
+
 public:
-    GameSceneLayer();
+    GameSceneLayer(std::string const& filepath);
 
     virtual void Init() override;
 
