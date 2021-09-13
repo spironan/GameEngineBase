@@ -17,7 +17,7 @@ Technology is prohibited.
 #include "ScriptUtility.h"
 
 #include "Utility/Hash.h"
-#include "Engine/PhysicsCollision/ColliderCore.h"
+#include "Engine/PhysicsCollision/Components/ColliderCore.h"
 
 namespace engine
 {
