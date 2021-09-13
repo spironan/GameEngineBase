@@ -60,23 +60,6 @@ namespace engine
 
     class Collider2D : public Component
     {
-    /*public:
-        virtual Manifold2D TestCollision(Collider2D const* collider) const = 0;
-        virtual Manifold2D TestCollision(BoxCollider2D const* boxCollider2D) const = 0;
-        virtual Manifold2D TestCollision(CircleCollider2D const* circleCollider2D) const = 0;*/
-
-        // third attempt : double components - function map collision
-        ColliderType m_broadphaseCollider   = ColliderType::BOX;
-        ColliderType m_narrowPhaseCollider  = ColliderType::CIRCLE;
-
-        //std::unordered_map<Entity, Manifold2D> m_previousCollisions{};
-        //std::unordered_map<Entity, Collider2D> m_previousTriggers{};
-        //std::unordered_map<Entity, Manifold2D> m_collisions{};
-        //std::unordered_map<Entity, Collider2D> m_triggers{};
-
-        /*friend class PhysicsSystem;
-        void Update();*/
-
     public:
         bool IsTrigger = false; // for now the entire object is either a trigger or collider
 
@@ -93,20 +76,13 @@ namespace engine
 
         void SetNarrowPhaseCollider(ColliderType narrowPhaseCollider);
 
-        /*Manifold2D TestCollision(Collider2D other) const
-        {
-            return CollisionMap::TestCollision(*this, other);
-        }*/
+        RTTR_ENABLE(Component);
 
-        // second attempt : using std::variant for collision
-        //std::variant<BoxCollider2D, CircleCollider2D> collider;
+    private:
+        // third attempt : double components - function map collision
+        ColliderType m_broadphaseCollider = ColliderType::BOX;
+        ColliderType m_narrowPhaseCollider = ColliderType::CIRCLE;
 
-        /* original first attempt: inheritence double dispatch
-        virtual void OnTriggerEnter(Collider2D collider) {};
-        virtual void OnTriggerStay(Collider2D collider) {};
-        virtual void OnTriggerExit(Collider2D collider) {};*/
-
-        RTTR_ENABLE();
     };
 
     extern "C"

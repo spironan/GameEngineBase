@@ -41,13 +41,9 @@ namespace engine
         /*bool IsTrigger;*/
         vec2 Offset;
 
-        oom::vec2 WorldScale() const;
-        oom::vec2 WorldPosition() const;
-
         explicit ColliderBase2D(Entity entity, bool active = true);
-        virtual ~ColliderBase2D();
 
-        DEFAULT_COMPONENT_CONSTRUCTORS(ColliderBase2D);
+        DEFAULT_COMPONENT(ColliderBase2D);
         RTTR_ENABLE(Component);
     };
 
@@ -55,9 +51,6 @@ namespace engine
     {
         Circle Bounds;
         float Radius;
-
-        Circle GetGlobalBounds() const;
-        float GetGlobalRadius() const;
 
         explicit CircleCollider2D(Entity entity, bool active = true);
         DEFAULT_COMPONENT(CircleCollider2D);
@@ -70,30 +63,36 @@ namespace engine
         AABB2D Bounds;
         vec2 Size;
 
-        AABB2D GetGlobalBounds() const;
-
-        vec2 GetWidthAndHeight() const;
-        vec2 GetCentroid() const;
-
         explicit BoxCollider2D(Entity entity, bool active = true);
         DEFAULT_COMPONENT(BoxCollider2D);
 
         RTTR_ENABLE(ColliderBase2D);
     };
 
-    /*struct PlaneCollider2D 
+    /*struct PlaneCollider2D : public ColliderBase2D
     {
-        AABB2D GetGlobalBounds() const;
-
+        
         explicit BoxCollider2D(Entity entity, bool active = true);
-
-        BoxCollider2D() = delete;
-        BoxCollider2D(BoxCollider2D const&) = default;
-        BoxCollider2D(BoxCollider2D&&) = default;
-        BoxCollider2D& operator=(BoxCollider2D const&) = default;
-        BoxCollider2D& operator=(BoxCollider2D&&) = default;
-        virtual ~BoxCollider2D() = default;
-
-        RTTR_ENABLE();
+        DEFAULT_COMPONENT(PlaneCollider2D);
+        RTTR_ENABLE(ColliderBase2D);
     };*/
+
+
+
+    struct ColliderUtil
+    {
+        // Retrieving various global bounds 
+        static AABB2D GetGlobalBounds(BoundingVolume const& broadCollider, Transform3D const& transform);
+        static AABB2D GetGlobalBounds(BoxCollider2D const& boxCollider, Transform3D const& transform);
+        static Circle GetGlobalBounds(CircleCollider2D const& circleCollider, Transform3D const& transform);
+
+        //static GetGlobalBounds(Collider2D const& collider);
+        static vec2 GetGlobalDimensions(BoxCollider2D const& boxCollider, Transform3D const& transform);
+        
+        // More utility functions
+        static float GetGlobalRadius(CircleCollider2D const& circleCollider, Transform3D const& transform);
+
+
+
+    };
 }

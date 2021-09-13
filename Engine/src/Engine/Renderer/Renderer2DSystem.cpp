@@ -29,7 +29,6 @@ Technology is prohibited.
 
 #include "Engine/PhysicsCollision/Colliders.h"
 #include "Engine/PhysicsCollision/ColliderCore.h"
-#include "Engine/PhysicsCollision/PhysicsUtils.h"
 
 #include "Engine/Renderer/Debug/ColliderDebugDraw.h"
 
@@ -88,14 +87,14 @@ namespace engine
 		{
 			// Draw Broadphase Bounding Volume with inverse Colors
 			Renderer2D::DrawAABB2D(
-				PhysicsUtils::MakeCollider(broadCollider, transform, collider),
+				ColliderUtil::GetGlobalBounds(broadCollider, transform),
 				1.f - debugCol.GetColor());
 
 			switch (collider.GetNarrowPhaseCollider())
 			{
 				case ColliderType::BOX:
 					{
-						auto box = collider.GetComponent<BoxCollider2D>().GetGlobalBounds();
+						auto box = ColliderUtil::GetGlobalBounds(collider.GetComponent<BoxCollider2D>(), collider.GetComponent<Transform3D>());
 						Renderer2D::DrawAABB2D(box,
 											   debugCol.GetColor());
 					}break;
@@ -103,7 +102,7 @@ namespace engine
 					{
 						Renderer2D::DrawCircle(transform.GetGlobalPosition(),
 											   transform.GetGlobalRotationDeg(),
-											   collider.GetComponent<CircleCollider2D>().GetGlobalBounds().radius,
+											   ColliderUtil::GetGlobalRadius(collider.GetComponent<CircleCollider2D>(), collider.GetComponent<Transform3D>()),
 											   debugCol.GetColor());
 					}break;
 				default:

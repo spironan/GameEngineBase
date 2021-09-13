@@ -17,7 +17,7 @@ Technology is prohibited.
 #include "pch.h"
 
 #include "Rigidbody.h"
-
+#include "Engine/ECS/WorldManager.h"
 #include "Engine/ECS/GameObject.h"
 
 #include "ColliderCore.h"
@@ -82,14 +82,14 @@ namespace engine
             {
             case ColliderType::BOX:
                 {
-                    auto bounds = GetComponent<BoxCollider2D>().GetWidthAndHeight();
+                    auto bounds = ColliderUtil::GetGlobalDimensions(GetComponent<BoxCollider2D>(), GetComponent<Transform3D>());
                     m_data.Inertia = m_data.Mass * (bounds.x * bounds.x + bounds.y * bounds.y)/ 12;
                     m_data.InverseInertia = 1.0f / m_data.Inertia;
                 }
                 break;
             case ColliderType::CIRCLE:
                 {
-                    m_data.Inertia = 0.5f * m_data.Mass * GetComponent<CircleCollider2D>().GetGlobalRadius();
+                    m_data.Inertia = 0.5f * m_data.Mass * ColliderUtil::GetGlobalRadius(GetComponent<CircleCollider2D>(), GetComponent<Transform3D>());
                     m_data.InverseInertia = 1.0f / m_data.Inertia;
                 }
                 break;

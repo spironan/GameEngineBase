@@ -32,16 +32,7 @@ namespace engine
         // physics based collision
         static Manifold2D GenerateManifold2D(Collider2D const& first, Collider2D const& second);
 
-        // MakeCollider
-        static AABB2D MakeCollider(BoundingVolume const& broadCollider, Transform3D const& transform, Collider2D const& collider);
-
     private:
-
-        //Collision Maps
-        //static std::map<Entity, std::map<Entity, Collider2D>> S_PreviousTriggers;
-        //static std::map<Entity, std::map<Entity, Collider2D>> S_CurrentTriggers;
-        //static std::map<Entity, std::map<Entity, Manifold2D>> S_PreviousCollisions;
-        //static std::map<Entity, std::map<Entity, Manifold2D>> S_CurrentCollisions;
 
         //Maps
         static std::map<CombinationKey, StaticTriggerCollisionFnc> m_collisionMap;

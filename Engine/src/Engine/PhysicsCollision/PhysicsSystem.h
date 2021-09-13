@@ -69,24 +69,21 @@ namespace engine
     private:
         void UpdateDynamics(Timestep deltaTime);
         void UpdatePhysicsCollision();
-        void UpdateCallbacks();
         void UpdatePhysicsResolution(Timestep deltaTime);
+        
+        void BroadPhase();
+        void NarrowPhase();
+        void UpdateCallbacks();
 
         //time accumulator
         double m_accumulator;
 
-        void BroadPhase();
         SortSweepCompare m_broadphaseCompare;
-
-        void NarrowPhase();
-
         std::vector<std::pair<Collider2D, Collider2D>> m_narrowPhaseTriggers;
         std::vector<std::pair<Collider2D, Collider2D>> m_narrowPhaseColliders;
 
         std::vector<Manifold2D> m_collisions;
-        std::vector<Manifold2D> m_triggers;
         std::vector<Solver*> m_solvers;
-
         ImpulseSolver m_impulseSolver;
     };
 

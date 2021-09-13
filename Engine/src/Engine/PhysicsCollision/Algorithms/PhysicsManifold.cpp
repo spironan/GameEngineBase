@@ -13,6 +13,7 @@ Technology is prohibited.
 *//*************************************************************************************/
 #include "pch.h"
 #include "PhysicsManifold.h"
+#include "Engine/ECS/WorldManager.h"
 
 #include <oom/oom.hpp>
 
@@ -28,8 +29,8 @@ namespace engine
     {
         Manifold2D result {};
 
-        auto circleA = circle.GetGlobalBounds();
-        auto circleB = circle2.GetGlobalBounds();
+        auto circleA = ColliderUtil::GetGlobalBounds(circle, circle.GetComponent<Transform3D>());
+        auto circleB = ColliderUtil::GetGlobalBounds(circle2, circle2.GetComponent<Transform3D>());
 
         vec2 dirVec = circleB.center - circleA.center;
         // find distance
@@ -67,8 +68,8 @@ namespace engine
 
         // Need to update proeprly
 
-        auto circleA = circle.GetGlobalBounds();
-        auto boxB = aabb.GetGlobalBounds();
+        auto circleA = ColliderUtil::GetGlobalBounds(circle, circle.GetComponent<Transform3D>());
+        auto boxB = ColliderUtil::GetGlobalBounds(aabb, aabb.GetComponent<Transform3D>());
 
         auto boxCenter = (boxB.max + boxB.min) * 0.5f;
         vec2 dirVec = boxCenter - circleA.center;
@@ -117,8 +118,8 @@ namespace engine
     {
         Manifold2D result{};
 
-        auto boxA = aabb.GetGlobalBounds();
-        auto circleB = circle.GetGlobalBounds();
+        auto boxA = ColliderUtil::GetGlobalBounds(aabb, aabb.GetComponent<Transform3D>());
+        auto circleB = ColliderUtil::GetGlobalBounds(circle, circle.GetComponent<Transform3D>());
 
         auto boxCenter = (boxA.max + boxA.min) * 0.5f;
         vec2 dirVec = circleB.center - boxCenter;
@@ -167,8 +168,8 @@ namespace engine
     {
         Manifold2D result{};
 
-        auto boxA = aabb.GetGlobalBounds();
-        auto boxB = aabb2.GetGlobalBounds();
+        auto boxA = ColliderUtil::GetGlobalBounds(aabb, aabb.GetComponent<Transform3D>());
+        auto boxB = ColliderUtil::GetGlobalBounds(aabb2, aabb2.GetComponent<Transform3D>());
 
         oom::vec2 n = (boxB.min + boxB.max) * 0.5f - (boxA.min + boxA.max) * 0.5f;
 

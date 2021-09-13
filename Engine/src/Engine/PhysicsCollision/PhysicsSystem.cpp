@@ -43,7 +43,6 @@ namespace engine
     PhysicsSystem::PhysicsSystem(ECS_Manager& ECS_Manager)
         : System{ ECS_Manager }
         , m_collisions{ }
-        , m_triggers{ }
         , m_solvers{ }
         , m_impulseSolver {}
         , m_accumulator{ 0.f }
@@ -195,11 +194,11 @@ namespace engine
             {
                 // Later Object
                 auto& [transformA, colliderA] = m_ECS_Manager.GetComponents<Transform3D, Collider2D>(iterA->GetEntity());
-                float maxA = PhysicsUtils::MakeCollider(*iterA, transformA, colliderA).max[m_broadphaseCompare.Axis];
+                float maxA = ColliderUtil::GetGlobalBounds(*iterA, transformA).max[m_broadphaseCompare.Axis];
 
                 // Earlier Object 
                 auto& [transformB, colliderB] = m_ECS_Manager.GetComponents<Transform3D, Collider2D>(iterB->GetEntity());
-                float minB = PhysicsUtils::MakeCollider(*iterB, transformB, colliderB).min[m_broadphaseCompare.Axis];
+                float minB = ColliderUtil::GetGlobalBounds(*iterB, transformB).min[m_broadphaseCompare.Axis];
 
                 // Early out condition : should happen relatively often
                 if (minB > maxA)
@@ -369,14 +368,13 @@ namespace engine
 
     bool SortSweepCompare::operator()(BoundingVolume a, BoundingVolume b)
     {
-        auto& [transformA, colliderA] = Manager.GetComponents<Transform3D, Collider2D>(a.GetEntity());
-        float minA = PhysicsUtils::MakeCollider(a, transformA, colliderA).min[Axis];
+        auto& transformA = Manager.GetComponent<Transform3D>(a.GetEntity());
+        float minA = ColliderUtil::GetGlobalBounds(a, transformA).min[Axis];
 
-        auto& [transformB, colliderB] = Manager.GetComponents<Transform3D, Collider2D>(b.GetEntity());
-        float minB = PhysicsUtils::MakeCollider(b, transformB, colliderB).min[Axis];
+        auto& transformB = Manager.GetComponent<Transform3D>(b.GetEntity());
+        float minB = ColliderUtil::GetGlobalBounds(b, transformB).min[Axis];
 
         return minA < minB;
     }
-
 
 }
