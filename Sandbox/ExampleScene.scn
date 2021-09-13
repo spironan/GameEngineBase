@@ -1,64 +1,13 @@
 {
-    "2": [
-        2,
-        0,
-        "GameObject",
-        [
-            true,
-            "new gameobject"
-        ],
-        "Transform3D",
-        [
-            [
-                0.0,
-                0.0,
-                0.0
-            ],
-            0.0,
-            [
-                50.0,
-                50.0,
-                1.0
-            ]
-        ],
-        "Editor Component",
-        [],
-        "Scripting",
-        []
-    ],
-    "1": [
-        1,
-        0,
-        "GameObject",
-        [
-            true,
-            "Default Camera"
-        ],
-        "Transform3D",
-        [
-            [
-                0.0,
-                0.0,
-                0.0
-            ],
-            0.0,
-            [
-                1.0,
-                1.0,
-                1.0
-            ]
-        ],
-        "Camera",
-        [
-            500.0,
-            -1.0,
-            -1.0,
-            45.000003814697269,
-            1000.0
-        ],
-        "Editor Component",
-        [],
-        "Scripting",
-        []
-    ]
+    "2": [2, 0,
+        "GameObject", [true, "new gameobject"],
+        "Transform3D", [[0.0, 0.0, 0.0], 0.0, [50.0, 50.0, 1.0]],
+        "Editor Component", [2453918268],
+        "Scripting", []],
+    "1": [1, 0,
+        "GameObject", [true, "Default Camera"],
+        "Transform3D", [[0.0, 0.0, 0.0], 0.0, [1.0, 1.0, 1.0]],
+        "Camera", [500.0, -1.0, -1.0, 45.000003814697269, 1000.0],
+        "Editor Component", [2453918268],
+        "Scripting", []]
 }

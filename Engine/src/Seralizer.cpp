@@ -48,7 +48,7 @@ std::map<rttr::type::type_id, Serializer::SaveComponentCallback> Serializer::m_S
 		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
 		{
 			std::string temp = variant.get_value<std::string>();
-			writer.String(temp.c_str(),temp.size());
+			writer.String(temp.c_str(), static_cast<rapidjson::SizeType>(temp.size()));
 		}
 	},
 	ValueType
@@ -382,14 +382,14 @@ void Serializer::SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rap
 	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatDefault);
 	auto& scriptInfoList = go.GetComponent<engine::Scripting>().GetScriptInfoAll();
 	std::string temp = "Scripting";
-	writer.String(temp.c_str(),temp.size());
+	writer.String(temp.c_str(), static_cast<rapidjson::SizeType>(temp.size()));
 	writer.SetFormatOptions(rapidjson::PrettyFormatOptions::kFormatSingleLineArray);
 	writer.StartArray();
 	
 	for (auto& script : scriptInfoList)
 	{
 		temp = script.second.classInfo.ToString();
-		writer.String(temp.c_str(), temp.size());
+		writer.String(temp.c_str(), static_cast<rapidjson::SizeType>(temp.size()));
 		writer.StartArray();
 		for (auto& values : script.second.fieldMap)
 		{
@@ -414,7 +414,7 @@ void Serializer::SaveScripts(engine::GameObject& go, rapidjson::PrettyWriter<rap
 				case engine::ScriptValueType::STRING:
 				{
 					temp = sfValue.GetValue<std::string>();
-					writer.String(temp.c_str(), temp.size());
+					writer.String(temp.c_str(), static_cast<rapidjson::SizeType>(temp.size()));
 					break;
 				}
 				case engine::ScriptValueType::GAMEOBJECT:
@@ -452,22 +452,22 @@ void Serializer::LoadScripts(rapidjson::Value::Array& arr, engine::GameObject& g
 			{
 			case engine::ScriptValueType::BOOL:
 			{
-				sfValue.SetValue<bool>(componentData[component_iter].GetBool());
+				sfValue.SetValue<bool>(componentData[static_cast<rapidjson::SizeType>(component_iter)].GetBool());
 				break;
 			}
 			case engine::ScriptValueType::INT:
 			{
-				sfValue.SetValue<int>(componentData[component_iter].GetInt());
+				sfValue.SetValue<int>(componentData[static_cast<rapidjson::SizeType>(component_iter)].GetInt());
 				break;
 			}
 			case engine::ScriptValueType::FLOAT:
 			{
-				sfValue.SetValue<float>(componentData[component_iter].GetFloat());
+				sfValue.SetValue<float>(componentData[static_cast<rapidjson::SizeType>(component_iter)].GetFloat());
 				break;
 			}
 			case engine::ScriptValueType::STRING:
 			{
-				sfValue.SetValue<std::string>(componentData[component_iter].GetString());
+				sfValue.SetValue<std::string>(componentData[static_cast<rapidjson::SizeType>(component_iter)].GetString());
 				
 				break;
 			}

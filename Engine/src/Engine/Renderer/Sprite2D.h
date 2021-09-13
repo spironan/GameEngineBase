@@ -126,7 +126,7 @@ namespace engine
         /* Member Functions                                                            */
         /*-----------------------------------------------------------------------------*/
 
-        AssetHandle GetHandle() const { return m_texture->GetHandle(); }
+        AssetHandle GetHandle() const { return m_texture ? m_texture->GetHandle() : 0; }
 
         RTTR_ENABLE();
 
