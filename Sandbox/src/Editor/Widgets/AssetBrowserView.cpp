@@ -22,7 +22,7 @@ void AssetBrowserView::Show()
 	//if the asset is selected set s_assetReference.instance to the id
 	auto textureList = engine::AssetManager::GetAll<engine::Texture>();
 	float row = ImGui::GetContentRegionAvailWidth() / (padding + imgSize);
-	ImGui::BeginTable("AssetTable", row);
+	ImGui::BeginTable("AssetTable", static_cast<int>(row));
 
 	for (auto tex : textureList)
 	{
@@ -31,7 +31,7 @@ void AssetBrowserView::Show()
 		if (ImGui::ImageButton(tex->Get_IMTEXTURE_ID(), { imgSize,imgSize }))
 		{
 			s_showView = false;
-			s_assetReference->prop.set_value(s_assetReference->inst, tex->GetHandle());
+			s_assetReference->prop.set_value(s_assetReference->inst, tex);
 		}
 		ImGui::Text(tex->GetFileName().data());
 		ImGui::EndGroup();

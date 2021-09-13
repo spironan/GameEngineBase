@@ -3,6 +3,7 @@
         "GameObject", [true, "new gameobject"],
         "Transform3D", [[0.0, 0.0, 0.0], 0.0, [50.0, 50.0, 1.0]],
         "Editor Component", [2453918268],
+        "Sprite2D", [3842916710],
         "Scripting", []],
     "1": [1, 0,
         "GameObject", [true, "Default Camera"],

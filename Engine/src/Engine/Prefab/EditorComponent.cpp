@@ -30,7 +30,7 @@ void EditorComponent::UpdatePrefab()
 	engine::SceneManager::GetActiveWorld().GetSystem<EditorComponentSystem>()->UpdatedPrefab(*this);
 }
 engine::EditorComponent::EditorComponent(engine::Entity entity, bool active)
-	:Component{ entity,active },m_icon{ AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab")->GetHandle() }
+	:Component{ entity,active },m_icon{ AssetManager::GetNamedAsset<engine::Texture>("Ouroboros_Prefab") }
 {
 }
 Component& engine::EditorComponent::CopyComponent(Component const& comp)
@@ -67,7 +67,7 @@ bool engine::EditorComponent::GetIsShownInEditor() const
 {
     return m_isShown_inEditor;
 }
-AssetHandle engine::EditorComponent::GetTexture() const
+std::shared_ptr<Texture> engine::EditorComponent::GetTexture() const
 {
     return m_icon;
 }
@@ -90,7 +90,7 @@ void engine::EditorComponent::SetShownInEditor(bool isShown)
 	m_isShown_inEditor = isShown;
 }
 
-void engine::EditorComponent::SetTexture(AssetHandle texture)
+void engine::EditorComponent::SetTexture(std::shared_ptr<Texture> texture)
 {
 	m_icon = texture;
 }

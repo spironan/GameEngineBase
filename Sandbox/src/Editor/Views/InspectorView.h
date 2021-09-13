@@ -8,7 +8,7 @@
 #include "Engine/Transform/Transform3D.h"
 #include "Engine/Prefab/EditorComponent.h"
 #include "../RttrTypeID.h"
-
+#include "Editor/Widgets/AssetBrowserView.h"
 #include <oom/oom.hpp>
 #include <iostream>
 class InspectorView
@@ -57,7 +57,7 @@ private:
 		ImGui::SameLine();
 		ImGui::BeginGroup();
 		ImGui::PushID(component.get_type().get_name().c_str());
-		for (const rttr::property& element : types)
+		for (rttr::property& element : types)
 		{
 			is_readonly = element.is_readonly();
 			if (is_readonly)
@@ -166,6 +166,20 @@ private:
 				ImGui::PopID();
 				if (activated)
 					element.set_value(component, value);
+			}
+			else if (id == m_tracked_ids[type_TEXTURE])
+			{
+				auto value = element.get_value(component).get_value<std::shared_ptr<engine::Texture>>();
+				ImGuiSliderFlags flag = 0;
+				current_value = value;
+				ImGui::BeginGroup();
+				ImGui::Text("%s : ", element.get_name().c_str());
+				ImGui::SameLine();
+				if (ImGui::ImageButton(value->Get_IMTEXTURE_ID(), { 50,50 }))
+				{
+					AssetBrowserView::OpenAssetBroswer(element, component);
+				}
+				ImGui::EndGroup();
 			}
 			//new types add here
 

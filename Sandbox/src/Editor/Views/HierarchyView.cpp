@@ -214,7 +214,7 @@ void HierarchyView::ListHierarchy()
 			ImGui::EndDragDropSource();
 		}
 		ImGui::SameLine(5.0f);
-		ImGui::Image(engine::AssetManager::GetAsset<engine::Texture>(editor_component.GetTexture())->Get_IMTEXTURE_ID(), { font_size,font_size });
+		ImGui::Image(editor_component.GetTexture()->Get_IMTEXTURE_ID(), { font_size,font_size });
 	}
 	//clear up the remaining branching 
 	while (treePop)

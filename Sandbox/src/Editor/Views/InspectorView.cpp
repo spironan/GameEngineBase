@@ -126,7 +126,7 @@ void InspectorView::ShowGameObjectDetails(engine::GameObject& object)
 	static char buf[100];
 	strcpy(buf,object.Name().data());
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
-	if (ImGui::ImageButton(engine::AssetManager::GetAsset<engine::Texture>(editorComponent.GetTexture())->Get_IMTEXTURE_ID(), { 50,50 }))
+	if (ImGui::ImageButton(editorComponent.GetTexture()->Get_IMTEXTURE_ID(), { 50,50 }))
 	{
 		AssetBrowserView::OpenAssetBroswer(editorComponent.get_type().get_property("Object Icons"), editorComponent);
 	}

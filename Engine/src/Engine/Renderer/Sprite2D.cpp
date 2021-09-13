@@ -26,7 +26,7 @@ namespace engine
     {
         using namespace rttr;
         registration::class_<Sprite2D>("Sprite2D")
-        .property("Texture", &Sprite2D::GetHandle, select_overload<void(AssetHandle)>(&Sprite2D::SetTexture))
+        .property("Texture", &Sprite2D::GetTexture, select_overload<void(std::shared_ptr<Texture>)>(&Sprite2D::SetTexture))
         .property("Colour", &Sprite2D::GetColor, select_overload<void(oom::vec4)>(&Sprite2D::SetColor));
     }
 
@@ -38,7 +38,12 @@ Sprite2D::Sprite2D(Entity _entityID, bool _active):
 }
 
 
-void Sprite2D::SetTexture(std::shared_ptr<Texture2D> tex)
+	std::shared_ptr<Texture> engine::Sprite2D::GetTexture()
+	{
+		return m_texture;
+	}
+
+	void Sprite2D::SetTexture(std::shared_ptr<Texture2D> tex)
 {
     m_texture = tex;
 }

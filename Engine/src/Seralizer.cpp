@@ -100,7 +100,17 @@ std::map<rttr::type::type_id, Serializer::SaveComponentCallback> Serializer::m_S
 			writer.Double(value[3].x);writer.Double(value[3].y);writer.Double(value[3].z);writer.Double(value[3].w);
 			writer.EndArray();
 		}
-	}
+	},
+	ValueType
+	{
+		rttr_type_ID::m_tracked_ids[rttr_type_ID::type_TEXTURE],
+		[](rttr::variant& variant, rapidjson::PrettyWriter<rapidjson::OStreamWrapper>& writer)
+		{
+			auto data = variant.get_value<std::shared_ptr<engine::Texture>>()->GetHandle();
+			writer.Uint(data); 
+		}
+	},
+
 };
 
 std::map<rttr::type::type_id, Serializer::LoadComponentCallback> Serializer::m_LoadComponentCallbacks
@@ -168,7 +178,7 @@ std::map<rttr::type::type_id, Serializer::LoadComponentCallback> Serializer::m_L
 							};
 			prop.set_value(variant, mat);
 		}
-	}
+	},
 };
 std::map<engine::utility::StringHash::size_type, Serializer::LoadGameObjectCallback> Serializer::m_LoadGameObjectCallbacks;
 
@@ -194,6 +204,16 @@ Serializer::Serializer()
 			}
 		}
 	};
+	m_LoadComponentCallbacks.emplace(
+		LoadType
+		{
+			rttr_type_ID::m_tracked_ids[rttr_type_ID::type_TEXTURE],
+			[](rapidjson::Value::ValueType& data,rttr::property& prop, rttr::instance& variant)
+			{
+				auto datatexture = engine::AssetManager::GetAsset<engine::Texture>(data.GetUint());
+				prop.set_value(variant, datatexture);
+			}
+		});
 }
 
 engine::Entity Serializer::LoadObject(const std::string& prefab,engine::Entity parent)
@@ -368,6 +388,8 @@ void Serializer::SaveItem(engine::GameObject& go, rapidjson::PrettyWriter<rapidj
 		SaveComponent<engine::SceneCamera>(go.GetComponent<engine::SceneCamera>(), writer);
 	if (go.HasComponent<engine::EditorComponent>())
 		SaveComponent<engine::EditorComponent>(go.GetComponent<engine::EditorComponent>(), writer);
+	if (go.HasComponent<engine::Sprite2D>())
+		SaveComponent<engine::Sprite2D>(go.GetComponent<engine::Sprite2D>(), writer);
 
 
 
